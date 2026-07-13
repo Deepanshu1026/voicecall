@@ -1,0 +1,31 @@
+﻿[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 37 modules transformed.
+node.exe : [31mx[39m Build failed in 1.38s
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([31mx[39m Build failed in 1.38s:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[31merror during build:
+[31m[vite:build-import-analysis] [plugin vite:build-import-analysis] src/hooks/useWebRTC.js (327:0): Failed to parse 
+source for import analysis because the content contains invalid JS syntax. If you are using JSX, make sure to name the 
+file with the .jsx or .tsx extension.[31m
+file: [36mC:/Users/chair/OneDrive/Desktop/voicecall/voicecall/frontend/src/hooks/useWebRTC.js:327:0[31m
+[33m
+325:   ]);
+326: };
+327: };
+     ^
+[31m
+    at getRollupError (file:///C:/Users/chair/OneDrive/Desktop/voicecall/voicecall/frontend/node_modules/rollup/dist/es
+/shared/parseAst.js:317:41)
+    at error (file:///C:/Users/chair/OneDrive/Desktop/voicecall/voicecall/frontend/node_modules/rollup/dist/es/shared/p
+arseAst.js:313:42)
+    at Object.error (file:///C:/Users/chair/OneDrive/Desktop/voicecall/voicecall/frontend/node_modules/rollup/dist/es/s
+hared/node-entry.js:22704:20)
+    at Object.error (file:///C:/Users/chair/OneDrive/Desktop/voicecall/voicecall/frontend/node_modules/rollup/dist/es/s
+hared/node-entry.js:21755:42)
+    at Object.transform (file:///C:/Users/chair/OneDrive/Desktop/voicecall/voicecall/frontend/node_modules/vite/dist/no
+de/chunks/dep-BK3b2jBa.js:64913:14)[39m
