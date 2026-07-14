@@ -55,14 +55,12 @@ const callSchema = new mongoose.Schema(
     ],
     signalData: {
       offer: {
-        type: String,
-        sdp: String,
-        iceCandidates: [mongoose.Schema.Types.Mixed],
+        type: mongoose.Schema.Types.Mixed,
+        default: null,
       },
       answer: {
-        type: String,
-        sdp: String,
-        iceCandidates: [mongoose.Schema.Types.Mixed],
+        type: mongoose.Schema.Types.Mixed,
+        default: null,
       },
     },
   },
