@@ -70,7 +70,7 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
           <div className="flex items-center gap-2 flex-shrink-0 ml-2">
             {online && (
               <button
-                onClick={(e) => { e.stopPropagation(); startCall(otherParticipant?._id, 'audio'); }}
+                onClick={(e) => { e.stopPropagation(); startCall(otherParticipant?._id, otherParticipant, 'audio'); }}
                 className="p-1 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors"
                 title="Call"
               >

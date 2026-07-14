@@ -36,13 +36,18 @@ const Chat = () => {
       notifyCall(data.caller?.displayName || data.caller?.username || 'Someone', data.call?.type || 'audio');
     });
 
+    const cleanupRinging = webrtc.handleRinging((data) => {
+      setActiveCall(data.call);
+      setShowCallModal(true);
+    });
+
     const cleanupRejected = webrtc.handleCallRejected((data) => {
       toast.error('Call rejected');
       setActiveCall(null);
       setShowCallModal(false);
     });
 
-    const cleanupEnded = webrtc.handleCallEnded((data) => {
+    const cleanupEnded = webrtc.handleCallEnded(() => {
       setActiveCall(null);
       setShowCallModal(false);
     });
@@ -51,19 +56,43 @@ const Chat = () => {
       setActiveCall(data.call);
       setShowCallModal(true);
     });
-    const cleanupWebRTCAccepted = webrtc.handleCallAcceptedSocket();
+
+    const cleanupError = webrtc.handleCallError((data) => {
+      setActiveCall(null);
+      setShowCallModal(false);
+      setIncomingCall(null);
+    });
+
+    const cleanupMissed = webrtc.handleCallMissed((data) => {
+      toast('Missed call', { icon: '📞' });
+      setIncomingCall(null);
+    });
+
     const cleanupSignal = webrtc.handleSignal();
 
     return () => {
       cleanupIncoming();
+      cleanupRinging();
       cleanupRejected();
       cleanupEnded();
       cleanupAccepted();
-      cleanupWebRTCAccepted();
+      cleanupError();
+      cleanupMissed();
       cleanupSignal();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // End active call if the user closes the tab
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (webrtc.callState !== 'idle') {
+        webrtc.endCall();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [webrtc]);
 
   // Message listeners
   useEffect(() => {
@@ -147,10 +176,22 @@ const Chat = () => {
     setShowMobileSidebar(true);
   }, []);
 
-  const startCall = useCallback(async (receiverId, type = 'audio') => {
-    await webrtc.startCall(receiverId, type);
-    toast('Calling...', { icon: '📞' });
-  }, [webrtc]);
+  const startCall = useCallback(async (receiverId, receiver = null, type = 'audio') => {
+    const result = await webrtc.startCall(receiverId, type);
+    if (result.success) {
+      if (receiver) {
+        setActiveCall({
+          caller: user,
+          receiver,
+          type,
+          status: 'ringing',
+          _id: null,
+        });
+      }
+      setShowCallModal(true);
+      toast('Calling...', { icon: '📞' });
+    }
+  }, [webrtc, user]);
 
   const callContextValue = useMemo(() => ({
     webrtc,
@@ -162,7 +203,9 @@ const Chat = () => {
     incomingCall,
     setIncomingCall,
     startCall,
-  }), [webrtc, webrtc.localStream, activeCall, showCallModal, incomingCall, startCall]);
+    cancelCall: webrtc.cancelCall,
+    missCall: webrtc.missCall,
+  }), [webrtc, webrtc.localStream, activeCall, showCallModal, incomingCall, startCall, webrtc.cancelCall, webrtc.missCall]);
 
   return (
     <CallProvider value={callContextValue}>
@@ -206,13 +249,19 @@ const Chat = () => {
           <IncomingCallModal
             call={incomingCall}
             onAccept={() => {
-              webrtc.acceptCall(incomingCall.call._id, incomingCall.roomId);
-              setActiveCall(incomingCall.call);
-              setShowCallModal(true);
+              const result = webrtc.acceptCall(incomingCall.call._id, incomingCall.roomId);
+              if (result.success) {
+                setActiveCall(incomingCall.call);
+                setShowCallModal(true);
+              }
               setIncomingCall(null);
             }}
             onReject={() => {
               webrtc.rejectCall(incomingCall.call._id);
+              setIncomingCall(null);
+            }}
+            onMissed={() => {
+              webrtc.missCall(incomingCall.call._id);
               setIncomingCall(null);
             }}
           />

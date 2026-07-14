@@ -21,8 +21,6 @@ const markStaleUsersOffline = async () => {
   }
 };
 
-const isUserOnline = (userId) => onlineUsers.has(userId);
-
 const refreshOnlineList = async () => {
   await markStaleUsersOffline();
   const onlineUserIds = await User.find({ status: 'online' }).select('_id').lean();
@@ -343,21 +341,94 @@ const setupSocket = (io) => {
       }
     });
 
+    // ==================== Helpers ====================
+
+    const getCall = async (callId) => {
+      return Call.findById(callId)
+        .populate('caller', 'username displayName avatar')
+        .populate('receiver', 'username displayName avatar');
+    };
+
+    const isParticipant = (call, uid) => {
+      const callerId = call.caller._id?.toString() || call.caller.toString();
+      const receiverId = call.receiver._id?.toString() || call.receiver.toString();
+      return callerId === uid || receiverId === uid;
+    };
+
+    const isUserBusy = (uid) => {
+      return userCallRooms.has(uid);
+    };
+
+    const isUserOnlineDB = async (uid) => {
+      const user = await User.findById(uid).select('status lastSeen').lean();
+      if (!user || user.status !== 'online') return false;
+      return Date.now() - new Date(user.lastSeen).getTime() < HEARTBEAT_TIMEOUT_MS;
+    };
+
+    const endCallRoom = async (roomId, status, duration = 0) => {
+      const callId = roomId.replace('call:', '');
+      try {
+        const call = await Call.findByIdAndUpdate(
+          callId,
+          { status, duration, endedAt: new Date() },
+          { new: true }
+        )
+          .populate('caller', 'username displayName avatar')
+          .populate('receiver', 'username displayName avatar');
+        if (call) {
+          io.to(roomId).emit('call:ended', { call: call.toObject() });
+          const socketsInRoom = await io.in(roomId).fetchSockets();
+          socketsInRoom.forEach((s) => s.leave(roomId));
+          userCallRooms.delete(call.caller._id.toString());
+          userCallRooms.delete(call.receiver._id.toString());
+        }
+      } catch (err) {
+        console.error('End call room error:', err);
+      }
+    };
+
     // ==================== WebRTC Signaling ====================
 
-    socket.on('call:initiate', async ({ receiverId, type = 'audio', callId }) => {
+    socket.on('call:initiate', async ({ receiverId, type = 'audio', offer }) => {
       try {
-        const receiverSocketId = onlineUsers.get(receiverId);
-        const callerUser = await User.findById(userId).select('username displayName avatar');
+        if (!receiverId || receiverId === userId) {
+          socket.emit('call:error', { message: 'Invalid receiver' });
+          return;
+        }
 
-        if (!receiverSocketId) {
+        if (!offer || !offer.sdp || !offer.type) {
+          socket.emit('call:error', { message: 'Missing call offer' });
+          return;
+        }
+
+        if (isUserBusy(userId)) {
+          socket.emit('call:error', { message: 'You are already in a call' });
+          return;
+        }
+
+        const receiverOnline = await isUserOnlineDB(receiverId);
+        if (!receiverOnline) {
           socket.emit('call:error', { message: 'User is offline', receiverId });
           return;
         }
 
-        const receiverUser = await User.findById(receiverId);
-        if (receiverUser && receiverUser.blockedUsers.includes(userId)) {
+        const [receiverUser, callerUser] = await Promise.all([
+          User.findById(receiverId).select('blockedUsers'),
+          User.findById(userId).select('username displayName avatar blockedUsers'),
+        ]);
+
+        if (!receiverUser) {
+          socket.emit('call:error', { message: 'Receiver not found', receiverId });
+          return;
+        }
+
+        if (receiverUser.blockedUsers.includes(userId) || callerUser.blockedUsers.includes(receiverId)) {
           socket.emit('call:error', { message: 'Cannot call this user', receiverId });
+          return;
+        }
+
+        if (isUserBusy(receiverId)) {
+          socket.emit('call:error', { message: 'User is busy', receiverId });
           return;
         }
 
@@ -366,6 +437,7 @@ const setupSocket = (io) => {
           receiver: receiverId,
           type: type || 'audio',
           status: 'ringing',
+          signalData: { offer: { type: offer.type, sdp: offer.sdp } },
         });
 
         await call.populate('caller', 'username displayName avatar');
@@ -375,7 +447,7 @@ const setupSocket = (io) => {
         socket.join(roomId);
         userCallRooms.set(userId, roomId);
 
-        io.to(receiverSocketId).emit('call:incoming', {
+        io.to(`user:${receiverId}`).emit('call:incoming', {
           call: call.toObject(),
           caller: callerUser,
           roomId,
@@ -390,6 +462,25 @@ const setupSocket = (io) => {
 
     socket.on('call:accept', async ({ callId, roomId }) => {
       try {
+        if (isUserBusy(userId)) {
+          socket.emit('call:error', { message: 'You are already in a call' });
+          return;
+        }
+
+        const call = await getCall(callId);
+        if (!call) {
+          socket.emit('call:error', { message: 'Call not found' });
+          return;
+        }
+        if (!isParticipant(call, userId)) {
+          socket.emit('call:error', { message: 'Not authorized' });
+          return;
+        }
+        if (call.status !== 'ringing') {
+          socket.emit('call:error', { message: 'Call is no longer ringing' });
+          return;
+        }
+
         socket.join(roomId);
         userCallRooms.set(userId, roomId);
 
@@ -398,11 +489,17 @@ const setupSocket = (io) => {
           startedAt: new Date(),
         });
 
-        const call = await Call.findById(callId)
-          .populate('caller', 'username displayName avatar')
-          .populate('receiver', 'username displayName avatar');
+        const updatedCall = await getCall(callId);
+        io.to(roomId).emit('call:accepted', { call: updatedCall.toObject(), roomId });
 
-        io.to(roomId).emit('call:accepted', { call: call.toObject(), roomId });
+        // Send the caller's offer to the receiver so they can create an answer
+        if (call.signalData?.offer) {
+          socket.emit('call:signal', {
+            callId,
+            signal: { sdp: { type: call.signalData.offer.type, sdp: call.signalData.offer.sdp } },
+            from: call.caller._id.toString(),
+          });
+        }
       } catch (error) {
         console.error('Call accept error:', error);
         socket.emit('call:error', { message: 'Failed to accept call' });
@@ -411,17 +508,19 @@ const setupSocket = (io) => {
 
     socket.on('call:reject', async ({ callId }) => {
       try {
-        await Call.findByIdAndUpdate(callId, { status: 'rejected', endedAt: new Date() });
+        const call = await getCall(callId);
+        if (!call || !isParticipant(call, userId)) return;
+        if (!['ringing', 'ongoing'].includes(call.status)) return;
 
-        const call = await Call.findById(callId)
-          .populate('caller', 'username displayName avatar')
-          .populate('receiver', 'username displayName avatar');
+        await Call.findByIdAndUpdate(callId, { status: 'rejected', endedAt: new Date() });
 
         const otherUserId = call.caller._id.toString() === userId
           ? call.receiver._id.toString()
           : call.caller._id.toString();
 
         io.to(`user:${otherUserId}`).emit('call:rejected', { call: call.toObject() });
+        userCallRooms.delete(userId);
+        userCallRooms.delete(otherUserId);
       } catch (error) {
         console.error('Call reject error:', error);
       }
@@ -429,15 +528,15 @@ const setupSocket = (io) => {
 
     socket.on('call:end', async ({ callId, duration }) => {
       try {
+        const call = await getCall(callId);
+        if (!call || !isParticipant(call, userId)) return;
+        if (['ended', 'rejected', 'missed'].includes(call.status)) return;
+
         await Call.findByIdAndUpdate(callId, {
           status: 'ended',
           duration: duration || 0,
           endedAt: new Date(),
         });
-
-        const call = await Call.findById(callId)
-          .populate('caller', 'username displayName avatar')
-          .populate('receiver', 'username displayName avatar');
 
         const roomId = `call:${callId}`;
         io.to(roomId).emit('call:ended', { call: call.toObject() });
@@ -451,40 +550,52 @@ const setupSocket = (io) => {
       }
     });
 
-    socket.on('call:signal', ({ callId, signal }) => {
-      socket.to(`call:${callId}`).emit('call:signal', { callId, signal, from: userId });
+    socket.on('call:signal', async ({ callId, signal }) => {
+      try {
+        const call = await getCall(callId);
+        if (!call || !isParticipant(call, userId)) return;
+        if (!['ringing', 'ongoing'].includes(call.status)) return;
+
+        const roomId = `call:${callId}`;
+        socket.to(roomId).emit('call:signal', { callId, signal, from: userId });
+      } catch (error) {
+        console.error('Call signal error:', error);
+      }
     });
 
     socket.on('call:missed', async ({ callId }) => {
       try {
+        const call = await getCall(callId);
+        if (!call || !isParticipant(call, userId)) return;
+        if (call.status !== 'ringing') return;
+
         await Call.findByIdAndUpdate(callId, { status: 'missed', endedAt: new Date() });
 
-        const call = await Call.findById(callId)
-          .populate('caller', 'username displayName avatar')
-          .populate('receiver', 'username displayName avatar');
-
-        io.to(`user:${call.receiver._id}`).emit('call:missed', { call: call.toObject() });
+        const roomId = `call:${callId}`;
+        const updatedCall = await getCall(callId);
+        io.to(roomId).emit('call:missed', { call: updatedCall.toObject() });
 
         let conversation = await Conversation.findOne({
           type: 'direct',
-          participants: { $all: [call.caller, call.receiver], $size: 2 },
+          participants: { $all: [call.caller._id, call.receiver._id], $size: 2 },
         });
 
         if (!conversation) {
           conversation = await Conversation.create({
             type: 'direct',
-            participants: [call.caller, call.receiver],
+            participants: [call.caller._id, call.receiver._id],
           });
         }
 
         const systemMsg = await Message.create({
           conversation: conversation._id,
-          sender: call.caller,
-          recipient: call.receiver,
+          sender: call.caller._id,
+          recipient: call.receiver._id,
           type: 'system',
           isSystemMessage: true,
           content: 'Missed voice call',
           callReference: call._id,
+          status: 'delivered',
         });
 
         conversation.lastMessage = systemMsg._id;
@@ -492,6 +603,9 @@ const setupSocket = (io) => {
 
         io.to(`user:${call.receiver._id}`).emit('message:new', systemMsg);
         io.to(`user:${call.caller._id}`).emit('message:new', systemMsg);
+
+        userCallRooms.delete(call.caller._id.toString());
+        userCallRooms.delete(call.receiver._id.toString());
       } catch (error) {
         console.error('Missed call error:', error);
       }
@@ -502,6 +616,11 @@ const setupSocket = (io) => {
     socket.on('disconnect', async () => {
       console.log(`User disconnected: ${userId}`);
       onlineUsers.delete(userId);
+
+      const roomId = userCallRooms.get(userId);
+      if (roomId) {
+        await endCallRoom(roomId, 'ended');
+      }
 
       try {
         await User.findByIdAndUpdate(userId, { status: 'offline', lastSeen: new Date() });

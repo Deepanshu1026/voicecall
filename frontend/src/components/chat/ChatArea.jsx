@@ -127,7 +127,7 @@ const ChatArea = ({ conversation, chat, onBack }) => {
 
         <div className="flex items-center gap-1">
           <button
-            onClick={() => startCall(otherParticipant?._id, 'audio')}
+            onClick={() => startCall(otherParticipant?._id, otherParticipant, 'audio')}
             className="btn-ghost p-2 text-gray-500 hover:text-primary-600 dark:hover:text-primary-400"
             title="Voice call"
           >

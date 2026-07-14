@@ -3,7 +3,7 @@ import Avatar from '../common/Avatar';
 import { getDisplayName } from '../../utils/helpers';
 import { HiPhone, HiPhoneXMark } from 'react-icons/hi2';
 
-const IncomingCallModal = ({ call, onAccept, onReject }) => {
+const IncomingCallModal = ({ call, onAccept, onReject, onMissed }) => {
   const [timeout, setTimeoutState] = useState(30);
   const caller = call?.caller || {};
   const callType = call?.call?.type || 'audio';
@@ -13,14 +13,14 @@ const IncomingCallModal = ({ call, onAccept, onReject }) => {
       setTimeoutState((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          onReject();
+          onMissed?.() || onReject();
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, [onReject]);
+  }, [onReject, onMissed]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 animate-fade-in">

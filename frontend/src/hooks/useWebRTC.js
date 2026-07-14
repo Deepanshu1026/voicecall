@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useSocket } from '../context/SocketContext';
+import toast from 'react-hot-toast';
 
 const ICE_SERVERS = {
   iceServers: [
@@ -7,6 +8,19 @@ const ICE_SERVERS = {
     { urls: 'stun:stun1.l.google.com:19302' },
   ],
 };
+
+// Optional TURN server (highly recommended for production / mobile networks)
+const TURN_URL = import.meta.env.VITE_TURN_SERVER_URL;
+const TURN_USER = import.meta.env.VITE_TURN_USERNAME;
+const TURN_PASS = import.meta.env.VITE_TURN_PASSWORD;
+
+if (TURN_URL) {
+  ICE_SERVERS.iceServers.push({
+    urls: TURN_URL,
+    username: TURN_USER || '',
+    credential: TURN_PASS || '',
+  });
+}
 
 const PEER_CONNECTION_CONFIG = {
   ...ICE_SERVERS,
@@ -22,16 +36,29 @@ export const useWebRTC = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeakerOn, setIsSpeakerOn] = useState(true);
   const [callQuality, setCallQuality] = useState({});
+  const [callError, setCallError] = useState(null);
 
   const peerRef = useRef(null);
   const callIdRef = useRef(null);
+  const roomIdRef = useRef(null);
+  const isInitiatorRef = useRef(false);
+  const iceCandidatesQueueRef = useRef([]);
+  const pendingSignalsRef = useRef([]);
   const durationIntervalRef = useRef(null);
   const statsIntervalRef = useRef(null);
-  const isInitiatorRef = useRef(false);
   const localStreamRef = useRef(null);
   const callDurationRef = useRef(0);
+  const remoteAudioRef = useRef(null);
 
-  // Keep refs in sync with state so callbacks always see the current values
+  const flushPendingSignals = useCallback(() => {
+    const callId = callIdRef.current;
+    if (!callId) return;
+    while (pendingSignalsRef.current.length) {
+      const signal = pendingSignalsRef.current.shift();
+      emit('call:signal', { callId, signal });
+    }
+  }, [emit]);
+
   useEffect(() => {
     localStreamRef.current = localStream;
   }, [localStream]);
@@ -41,9 +68,7 @@ export const useWebRTC = () => {
   }, [callDuration]);
 
   const startDurationTimer = useCallback(() => {
-    if (durationIntervalRef.current) {
-      clearInterval(durationIntervalRef.current);
-    }
+    if (durationIntervalRef.current) clearInterval(durationIntervalRef.current);
     durationIntervalRef.current = setInterval(() => {
       setCallDuration((prev) => prev + 1);
     }, 1000);
@@ -116,7 +141,6 @@ export const useWebRTC = () => {
   }, []);
 
   const getMediaStream = useCallback(async () => {
-    // Reuse existing stream if it still has active audio tracks
     const currentStream = localStreamRef.current;
     if (currentStream && currentStream.getAudioTracks().some((t) => t.readyState === 'live')) {
       console.log('[WebRTC] Reusing existing local stream');
@@ -139,6 +163,13 @@ export const useWebRTC = () => {
       return stream;
     } catch (err) {
       console.error('Failed to get media stream:', err);
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        toast.error('Microphone permission denied. Please allow access and try again.');
+      } else if (err.name === 'NotFoundError') {
+        toast.error('No microphone found. Please connect a microphone.');
+      } else {
+        toast.error('Could not access microphone: ' + err.message);
+      }
       return null;
     }
   }, []);
@@ -152,10 +183,27 @@ export const useWebRTC = () => {
     }
   }, []);
 
+  const processIceQueue = useCallback((pc) => {
+    if (!pc || !pc.remoteDescription) return;
+    while (iceCandidatesQueueRef.current.length) {
+      const candidate = iceCandidatesQueueRef.current.shift();
+      try {
+        pc.addIceCandidate(new RTCIceCandidate(candidate));
+        console.log('[WebRTC] Added queued ICE candidate');
+      } catch (err) {
+        console.error('[WebRTC] Failed to add queued ICE candidate:', err);
+      }
+    }
+  }, []);
+
   const createPeerConnection = useCallback((stream, callId) => {
-    if (peerRef.current) {
-      console.log('[WebRTC] PC already exists, reusing');
+    if (peerRef.current && peerRef.current.connectionState !== 'closed') {
+      console.log('[WebRTC] PC already exists and is active, reusing');
       return peerRef.current;
+    }
+    if (peerRef.current) {
+      console.log('[WebRTC] Previous PC was closed, creating new one');
+      peerRef.current = null;
     }
 
     console.log('[WebRTC] Creating RTCPeerConnection for call', callId);
@@ -164,8 +212,13 @@ export const useWebRTC = () => {
     pc.onicecandidate = (event) => {
       if (event.candidate) {
         console.log('[WebRTC] Sending ICE candidate');
+        const currentCallId = callIdRef.current || callId;
+        if (!currentCallId) {
+          pendingSignalsRef.current.push({ candidate: event.candidate });
+          return;
+        }
         emit('call:signal', {
-          callId,
+          callId: currentCallId,
           signal: { candidate: event.candidate },
         });
       }
@@ -174,6 +227,12 @@ export const useWebRTC = () => {
     pc.ontrack = (event) => {
       console.log('[WebRTC] Received remote track', event.streams[0]?.getTracks().map((t) => t.kind));
       setRemoteStream(event.streams[0]);
+      if (remoteAudioRef.current) {
+        remoteAudioRef.current.srcObject = event.streams[0];
+        remoteAudioRef.current.play().catch((err) => {
+          console.log('Autoplay prevented, waiting for user interaction', err);
+        });
+      }
     };
 
     pc.onconnectionstatechange = () => {
@@ -191,6 +250,18 @@ export const useWebRTC = () => {
       }
     };
 
+    pc.oniceconnectionstatechange = () => {
+      console.log('[WebRTC] ICE connection state:', pc.iceConnectionState);
+      if (pc.iceConnectionState === 'failed') {
+        console.warn('[WebRTC] ICE failed, attempting restart');
+        try {
+          pc.restartIce();
+        } catch (err) {
+          console.error('[WebRTC] ICE restart failed:', err);
+        }
+      }
+    };
+
     if (stream) {
       stream.getTracks().forEach((track) => {
         console.log('[WebRTC] Adding local track', track.kind);
@@ -202,78 +273,106 @@ export const useWebRTC = () => {
     return pc;
   }, [emit, startDurationTimer, startStatsMonitoring, stopStatsMonitoring]);
 
+  const resetCall = useCallback(() => {
+    stopDurationTimer();
+    stopStatsMonitoring();
+    stopMediaStream();
+    if (peerRef.current) {
+      try {
+        peerRef.current.close();
+      } catch (err) {
+        console.error('[WebRTC] Error closing peer:', err);
+      }
+      peerRef.current = null;
+    }
+    iceCandidatesQueueRef.current = [];
+    pendingSignalsRef.current = [];
+    setRemoteStream(null);
+    setCallState('idle');
+    setCallDuration(0);
+    setCallQuality({});
+    setCallError(null);
+    callIdRef.current = null;
+    roomIdRef.current = null;
+    isInitiatorRef.current = false;
+  }, [stopMediaStream, stopDurationTimer, stopStatsMonitoring]);
+
   const startCall = useCallback(async (receiverId, type = 'audio') => {
     try {
       console.log('[WebRTC] Starting call to', receiverId);
       const stream = await getMediaStream();
       if (!stream) {
         setCallState('idle');
-        return;
+        return { success: false };
       }
+
       setCallState('calling');
-      emit('call:initiate', { receiverId, type });
+      isInitiatorRef.current = true;
+
+      const pc = createPeerConnection(stream, null);
+      setOpusCodecPreference(pc);
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      console.log('[WebRTC] Created offer');
+
+      emit('call:initiate', { receiverId, type, offer });
+      return { success: true };
     } catch (error) {
       console.error('Failed to start call:', error);
-      setCallState('idle');
+      toast.error('Failed to start call: ' + error.message);
+      resetCall();
+      return { success: false };
     }
-  }, [emit, getMediaStream]);
+  }, [emit, getMediaStream, createPeerConnection, setOpusCodecPreference, resetCall]);
 
   const acceptCall = useCallback(async (callId, roomId) => {
     try {
       console.log('[WebRTC] Accepting call', callId);
       callIdRef.current = callId;
+      roomIdRef.current = roomId;
       isInitiatorRef.current = false;
+
       const stream = await getMediaStream();
       if (!stream) {
         console.error('[WebRTC] Cannot accept call: no media stream');
         setCallState('idle');
-        return;
+        return { success: false };
       }
-      const pc = createPeerConnection(stream, callId);
-      setOpusCodecPreference(pc);
-
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
-      console.log('[WebRTC] Created offer, sending');
 
       emit('call:accept', { callId, roomId });
-      emit('call:signal', {
-        callId,
-        signal: { sdp: pc.localDescription },
-      });
       setCallState('connecting');
+      return { success: true };
     } catch (error) {
       console.error('Failed to accept call:', error);
-      setCallState('idle');
+      toast.error('Failed to accept call: ' + error.message);
+      resetCall();
+      return { success: false };
     }
-  }, [createPeerConnection, emit, getMediaStream, setOpusCodecPreference]);
+  }, [emit, getMediaStream, resetCall]);
 
   const rejectCall = useCallback((callId) => {
     emit('call:reject', { callId });
-    setCallState('idle');
-  }, [emit]);
+    resetCall();
+  }, [emit, resetCall]);
+
+  const missCall = useCallback((callId) => {
+    emit('call:missed', { callId });
+    resetCall();
+  }, [emit, resetCall]);
+
+  const cancelCall = useCallback(() => {
+    emit('call:end', { callId: callIdRef.current, duration: 0 });
+    resetCall();
+  }, [emit, resetCall]);
 
   const endCall = useCallback(() => {
-    stopDurationTimer();
-    stopStatsMonitoring();
-    stopMediaStream();
-
-    if (peerRef.current) {
-      peerRef.current.close();
-      peerRef.current = null;
-    }
-
     emit('call:end', {
       callId: callIdRef.current,
       duration: callDurationRef.current,
     });
-
-    setRemoteStream(null);
-    setCallState('idle');
-    setCallDuration(0);
-    callIdRef.current = null;
-    isInitiatorRef.current = false;
-  }, [emit, stopMediaStream, stopStatsMonitoring]);
+    resetCall();
+  }, [emit, resetCall]);
 
   const toggleMute = useCallback(() => {
     if (localStream) {
@@ -294,27 +393,66 @@ export const useWebRTC = () => {
     return () => off('call:incoming', handler);
   }, [on, off]);
 
+  const handleRinging = useCallback((handler) => {
+    const wrapped = (data) => {
+      callIdRef.current = data.call?._id;
+      roomIdRef.current = data.roomId;
+      flushPendingSignals();
+      if (handler) handler(data);
+    };
+    on('call:ringing', wrapped);
+    return () => off('call:ringing', wrapped);
+  }, [on, off, flushPendingSignals]);
+
   const handleCallAccepted = useCallback((handler) => {
     on('call:accepted', handler);
     return () => off('call:accepted', handler);
   }, [on, off]);
 
   const handleCallRejected = useCallback((handler) => {
-    on('call:rejected', handler);
-    return () => off('call:rejected', handler);
-  }, [on, off]);
+    const wrapped = (data) => {
+      resetCall();
+      if (handler) handler(data);
+    };
+    on('call:rejected', wrapped);
+    return () => off('call:rejected', wrapped);
+  }, [on, off, resetCall]);
 
   const handleCallEnded = useCallback((handler) => {
-    on('call:ended', handler);
-    return () => off('call:ended', handler);
-  }, [on, off]);
+    on('call:ended', (data) => {
+      resetCall();
+      if (handler) handler(data);
+    });
+    return () => off('call:ended');
+  }, [on, off, resetCall]);
+
+  const handleCallError = useCallback((handler) => {
+    on('call:error', (data) => {
+      setCallError(data.message);
+      toast.error(data.message || 'Call error');
+      resetCall();
+      if (handler) handler(data);
+    });
+    return () => off('call:error');
+  }, [on, off, resetCall]);
+
+  const handleCallMissed = useCallback((handler) => {
+    const wrapped = (data) => {
+      resetCall();
+      if (handler) handler(data);
+    };
+    on('call:missed', wrapped);
+    return () => off('call:missed', wrapped);
+  }, [on, off, resetCall]);
 
   const handleSignal = useCallback(() => {
     const signalHandler = async (data) => {
       try {
         console.log('[WebRTC] Received signal', data.signal?.sdp?.type || 'candidate', 'for call', data.callId);
-        let pc = peerRef.current;
         const callId = data.callId;
+        callIdRef.current = callId;
+
+        let pc = peerRef.current;
 
         if (data.signal.sdp) {
           if (data.signal.sdp.type === 'offer') {
@@ -328,6 +466,7 @@ export const useWebRTC = () => {
               setOpusCodecPreference(pc);
             }
             await pc.setRemoteDescription(new RTCSessionDescription(data.signal.sdp));
+            processIceQueue(pc);
             console.log('[WebRTC] Set remote offer, creating answer');
             const answer = await pc.createAnswer();
             await pc.setLocalDescription(answer);
@@ -336,7 +475,6 @@ export const useWebRTC = () => {
               callId,
               signal: { sdp: pc.localDescription },
             });
-            callIdRef.current = callId;
             setCallState('connecting');
           } else if (data.signal.sdp.type === 'answer') {
             if (!pc) {
@@ -344,12 +482,19 @@ export const useWebRTC = () => {
               return;
             }
             await pc.setRemoteDescription(new RTCSessionDescription(data.signal.sdp));
+            processIceQueue(pc);
             console.log('[WebRTC] Set remote answer');
             setCallState('connecting');
           }
         } else if (data.signal.candidate) {
           if (!pc) {
-            console.log('[WebRTC] Received candidate before PC created, ignoring');
+            console.log('[WebRTC] Received candidate before PC created, queuing');
+            iceCandidatesQueueRef.current.push(data.signal.candidate);
+            return;
+          }
+          if (!pc.remoteDescription) {
+            console.log('[WebRTC] Received candidate before remote desc, queuing');
+            iceCandidatesQueueRef.current.push(data.signal.candidate);
             return;
           }
           await pc.addIceCandidate(new RTCIceCandidate(data.signal.candidate));
@@ -357,47 +502,19 @@ export const useWebRTC = () => {
         }
       } catch (error) {
         console.error('[WebRTC] Signal error:', error);
+        toast.error('Call connection failed');
       }
     };
 
     on('call:signal', signalHandler);
     return () => off('call:signal', signalHandler);
-  }, [on, off, emit, getMediaStream, createPeerConnection, setOpusCodecPreference, startDurationTimer]);
-
-  const handleCallAcceptedSocket = useCallback(() => {
-    const handler = async (data) => {
-      const callId = data.call?._id;
-      console.log('[WebRTC] Call accepted event', callId);
-      if (!callId) {
-        console.error('[WebRTC] call:accepted event missing call id');
-        return;
-      }
-      callIdRef.current = callId;
-      if (peerRef.current) {
-        console.log('[WebRTC] PC already exists from signal handler');
-        return;
-      }
-      const stream = await getMediaStream();
-      if (!stream) {
-        console.error('[WebRTC] Cannot prepare accepted call: no media stream');
-        return;
-      }
-      createPeerConnection(stream, callId);
-      setOpusCodecPreference(peerRef.current);
-      setCallState('connecting');
-    };
-
-    on('call:accepted', handler);
-    return () => off('call:accepted', handler);
-  }, [on, off, createPeerConnection, getMediaStream, setOpusCodecPreference]);
+  }, [on, off, emit, getMediaStream, createPeerConnection, setOpusCodecPreference, processIceQueue]);
 
   useEffect(() => {
     return () => {
-      if (peerRef.current) peerRef.current.close();
-      if (localStream) localStream.getTracks().forEach((t) => t.stop());
-      stopDurationTimer();
+      resetCall();
     };
-  }, [localStream, stopDurationTimer]);
+  }, [resetCall]);
 
   return useMemo(() => ({
     localStream,
@@ -407,18 +524,25 @@ export const useWebRTC = () => {
     isMuted,
     isSpeakerOn,
     callQuality,
+    callError,
+    remoteAudioRef,
     startCall,
     acceptCall,
     rejectCall,
+    missCall,
+    cancelCall,
     endCall,
     toggleMute,
     toggleSpeaker,
     handleIncomingCall,
+    handleRinging,
     handleCallAccepted,
     handleCallRejected,
     handleCallEnded,
+    handleCallError,
+    handleCallMissed,
     handleSignal,
-    handleCallAcceptedSocket,
+    resetCall,
   }), [
     localStream,
     remoteStream,
@@ -427,17 +551,25 @@ export const useWebRTC = () => {
     isMuted,
     isSpeakerOn,
     callQuality,
+    callError,
     startCall,
     acceptCall,
     rejectCall,
+    missCall,
+    cancelCall,
     endCall,
     toggleMute,
     toggleSpeaker,
     handleIncomingCall,
+    handleRinging,
     handleCallAccepted,
     handleCallRejected,
     handleCallEnded,
+    handleCallError,
+    handleCallMissed,
     handleSignal,
-    handleCallAcceptedSocket,
+    resetCall,
   ]);
 };
+
+export default useWebRTC;

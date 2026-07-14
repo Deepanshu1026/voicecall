@@ -24,3 +24,9 @@ services:
         value: https://voicecall-6ylg.onrender.com
       - key: ENCRYPTION_KEY
         generateValue: true
+      - key: VITE_TURN_SERVER_URL
+        sync: false
+      - key: VITE_TURN_USERNAME
+        sync: false
+      - key: VITE_TURN_PASSWORD
+        sync: false
