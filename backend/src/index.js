@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
+const fs = require('fs');
 const { Server } = require('socket.io');
 
 const connectDB = require('./config/db');
@@ -84,9 +85,21 @@ app.use('/api/users', userRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/calls', callRoutes);
 
+// Serve built frontend in production and fall back to index.html for SPA routes
+const frontendDistPath = path.join(__dirname, '..', '..', 'frontend', 'dist');
+if (config.nodeEnv === 'production' && fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+}
+
 app.use(errorHandler);
 
 app.use((req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'Route not found' });
+  }
+  if (config.nodeEnv === 'production' && fs.existsSync(frontendDistPath)) {
+    return res.sendFile(path.join(frontendDistPath, 'index.html'));
+  }
   res.status(404).json({ error: 'Route not found' });
 });
 
