@@ -52,6 +52,17 @@ export const SocketProvider = ({ children }) => {
     if (!socket) return;
 
     const handleOnlineUsers = (users) => setOnlineUsers(users);
+    const handleUserStatus = (data) => {
+      setOnlineUsers((prev) => {
+        const set = new Set(prev);
+        if (data.status === 'online') {
+          set.add(data.userId);
+        } else {
+          set.delete(data.userId);
+        }
+        return Array.from(set);
+      });
+    };
     const handleTypingStart = (data) => {
       setTypingUsers((prev) => ({ ...prev, [data.conversationId]: data.userId }));
     };
@@ -64,11 +75,18 @@ export const SocketProvider = ({ children }) => {
     };
 
     socket.on('online:users', handleOnlineUsers);
+    socket.on('user:status', handleUserStatus);
     socket.on('typing:start', handleTypingStart);
     socket.on('typing:stop', handleTypingStop);
 
+    // Request current online list after a short delay so the backend connect handler
+    // has time to mark this user online in the database.
+    const getOnlineTimeout = setTimeout(() => socket.emit('user:getOnline'), 500);
+
     return () => {
+      clearTimeout(getOnlineTimeout);
       socket.off('online:users', handleOnlineUsers);
+      socket.off('user:status', handleUserStatus);
       socket.off('typing:start', handleTypingStart);
       socket.off('typing:stop', handleTypingStop);
     };

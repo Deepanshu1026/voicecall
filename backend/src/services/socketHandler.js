@@ -71,9 +71,18 @@ const setupSocket = (io) => {
 
     socket.on('heartbeat', async () => {
       try {
-        await User.findByIdAndUpdate(userId, { lastSeen: new Date() });
+        await User.findByIdAndUpdate(userId, { status: 'online', lastSeen: new Date() });
       } catch (err) {
         console.error('Heartbeat update error:', err);
+      }
+    });
+
+    socket.on('user:getOnline', async () => {
+      try {
+        const onlineList = await refreshOnlineList();
+        socket.emit('online:users', onlineList);
+      } catch (err) {
+        console.error('Get online users error:', err);
       }
     });
 
