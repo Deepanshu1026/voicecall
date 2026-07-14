@@ -1,3 +1,5 @@
+# Single-service Render blueprint.
+# Replace https://voicecall-6ylg.onrender.com with your actual Render URL.
 services:
   - type: web
     name: voicecall

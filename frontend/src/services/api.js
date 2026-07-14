@@ -5,10 +5,22 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const isRetryableError = (error) => {
+  return (
+    !error.response ||
+    error.code === 'ECONNABORTED' ||
+    error.code === 'ERR_NETWORK' ||
+    (error.response && error.response.status >= 500)
+  );
+};
 
 api.interceptors.request.use(
   (config) => {
@@ -25,6 +37,16 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    if (!originalRequest) return Promise.reject(error);
+
+    // Retry on network errors or 5xx before trying to refresh token
+    if (isRetryableError(error) && !originalRequest._retry && originalRequest._retryCount < 2) {
+      originalRequest._retryCount = originalRequest._retryCount || 0;
+      originalRequest._retryCount += 1;
+      await delay(1000 * originalRequest._retryCount);
+      return api(originalRequest);
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
@@ -60,6 +82,7 @@ export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   logout: () => api.post('/auth/logout'),
   getMe: () => api.get('/auth/me'),
+  refreshToken: (data) => axios.post(`${API_BASE_URL}/auth/refresh-token`, data),
   updateProfile: (data) => api.put('/auth/profile', data),
   updatePassword: (data) => api.put('/auth/password', data),
   updateSettings: (data) => api.put('/auth/settings', data),

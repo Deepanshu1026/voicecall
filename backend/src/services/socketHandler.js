@@ -7,8 +7,32 @@ const config = require('../config');
 
 const onlineUsers = new Map();
 const userCallRooms = new Map();
+const HEARTBEAT_TIMEOUT_MS = 2 * 60 * 1000;
+
+const markStaleUsersOffline = async () => {
+  try {
+    const staleThreshold = new Date(Date.now() - HEARTBEAT_TIMEOUT_MS);
+    await User.updateMany(
+      { status: 'online', lastSeen: { $lt: staleThreshold } },
+      { status: 'offline', lastSeen: new Date() }
+    );
+  } catch (err) {
+    console.error('Failed to mark stale users offline:', err);
+  }
+};
+
+const isUserOnline = (userId) => onlineUsers.has(userId);
+
+const refreshOnlineList = async () => {
+  await markStaleUsersOffline();
+  const onlineUserIds = await User.find({ status: 'online' }).select('_id').lean();
+  return onlineUserIds.map((u) => u._id.toString());
+};
 
 const setupSocket = (io) => {
+  // Mark users that were online before a server restart as offline
+  markStaleUsersOffline();
+
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth.token || socket.handshake.query.token;
@@ -40,23 +64,38 @@ const setupSocket = (io) => {
 
     socket.join(`user:${userId}`);
     socket.broadcast.emit('user:status', { userId, status: 'online' });
-    io.emit('online:users', Array.from(onlineUsers.keys()));
+
+    refreshOnlineList().then((onlineList) => {
+      io.emit('online:users', onlineList);
+    });
 
     socket.emit('connected', { userId, message: 'Connected to server' });
 
+    socket.on('heartbeat', async () => {
+      try {
+        await User.findByIdAndUpdate(userId, { lastSeen: new Date() });
+      } catch (err) {
+        console.error('Heartbeat update error:', err);
+      }
+    });
+
     socket.on('user:getStatus', async ({ userId: targetId }) => {
-      const isOnline = onlineUsers.has(targetId);
-      if (!isOnline) {
-        try {
-          const user = await User.findById(targetId).select('status lastSeen');
-          socket.emit('user:status', {
-            userId: targetId,
-            status: user ? user.status : 'offline',
-            lastSeen: user ? user.lastSeen : null,
-          });
-        } catch {
+      try {
+        const user = await User.findById(targetId).select('status lastSeen').lean();
+        if (!user) {
           socket.emit('user:status', { userId: targetId, status: 'offline' });
+          return;
         }
+        const isRecentlyActive =
+          user.status === 'online' && new Date() - new Date(user.lastSeen) < HEARTBEAT_TIMEOUT_MS;
+        const status = isRecentlyActive || onlineUsers.has(targetId) ? 'online' : 'offline';
+        socket.emit('user:status', {
+          userId: targetId,
+          status,
+          lastSeen: user.lastSeen,
+        });
+      } catch {
+        socket.emit('user:status', { userId: targetId, status: 'offline' });
       }
     });
 
@@ -471,7 +510,10 @@ const setupSocket = (io) => {
       }
 
       socket.broadcast.emit('user:status', { userId, status: 'offline', lastSeen: new Date() });
-      io.emit('online:users', Array.from(onlineUsers.keys()));
+
+      refreshOnlineList().then((onlineList) => {
+        io.emit('online:users', onlineList);
+      });
     });
   });
 };

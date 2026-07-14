@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { useKeepAlive } from './hooks/useKeepAlive';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import LoadingScreen from './components/common/LoadingScreen';
 import Login from './pages/Login';
@@ -10,6 +11,7 @@ import ProfilePage from './pages/ProfilePage';
 
 function App() {
   const { isAuthenticated, loading } = useAuth();
+  useKeepAlive();
 
   if (loading) return <LoadingScreen />;
 
