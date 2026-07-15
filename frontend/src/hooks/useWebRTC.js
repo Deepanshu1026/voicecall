@@ -214,12 +214,14 @@ export const useWebRTC = () => {
   }, []);
 
   const createPeerConnection = useCallback((stream, callId) => {
-    if (peerRef.current && peerRef.current.connectionState !== 'closed') {
-      console.log('[WebRTC] PC already exists and is active, reusing');
-      return peerRef.current;
-    }
+    // Always start a fresh peer connection for a new call to avoid stale state
     if (peerRef.current) {
-      console.log('[WebRTC] Previous PC was closed, creating new one');
+      console.log('[WebRTC] Closing existing peer before creating new one');
+      try {
+        peerRef.current.close();
+      } catch (err) {
+        console.error('[WebRTC] Error closing existing peer:', err);
+      }
       peerRef.current = null;
     }
 
@@ -268,6 +270,13 @@ export const useWebRTC = () => {
       } else if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
         setCallQuality((prev) => ({ ...prev, state: 'poor', packetLoss: 10 }));
         stopStatsMonitoring();
+        // Give ICE a moment to recover, then clean up if still failed
+        setTimeout(() => {
+          if (peerRef.current === pc && ['failed', 'closed', 'disconnected'].includes(pc.connectionState)) {
+            console.log('[WebRTC] Connection did not recover, resetting call');
+            resetCall();
+          }
+        }, 4000);
       } else if (pc.connectionState === 'closed') {
         setCallQuality({});
         stopStatsMonitoring();
@@ -295,7 +304,7 @@ export const useWebRTC = () => {
 
     peerRef.current = pc;
     return pc;
-  }, [emit, startDurationTimer, startStatsMonitoring, stopStatsMonitoring]);
+  }, [emit, startDurationTimer, startStatsMonitoring, stopStatsMonitoring, resetCall]);
 
   const resetCall = useCallback(() => {
     stopDurationTimer();

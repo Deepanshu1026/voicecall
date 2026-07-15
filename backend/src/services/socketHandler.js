@@ -5,9 +5,11 @@ const Conversation = require('../models/Conversation');
 const Call = require('../models/Call');
 const config = require('../config');
 
-const onlineUsers = new Map();
+const onlineUserSockets = new Map(); // userId -> Set of socket ids
+const pendingOfflineTimeouts = new Map(); // userId -> timeout id
 const userCallRooms = new Map();
 const HEARTBEAT_TIMEOUT_MS = 2 * 60 * 1000;
+const OFFLINE_GRACE_PERIOD_MS = 5000; // small delay to avoid flicker during reconnect
 
 const markStaleUsersOffline = async () => {
   try {
@@ -19,6 +21,47 @@ const markStaleUsersOffline = async () => {
   } catch (err) {
     console.error('Failed to mark stale users offline:', err);
   }
+};
+
+const scheduleUserOffline = (io, userId) => {
+  if (pendingOfflineTimeouts.has(userId)) return;
+  const timeout = setTimeout(async () => {
+    pendingOfflineTimeouts.delete(userId);
+    if (onlineUserSockets.has(userId) && onlineUserSockets.get(userId).size > 0) return;
+
+    onlineUserSockets.delete(userId);
+    try {
+      await User.findByIdAndUpdate(userId, { status: 'offline', lastSeen: new Date() });
+    } catch (err) {
+      console.error('Failed to update offline status:', err);
+    }
+    io.emit('user:status', { userId, status: 'offline', lastSeen: new Date() });
+    refreshOnlineList().then((onlineList) => {
+      io.emit('online:users', onlineList);
+    });
+  }, OFFLINE_GRACE_PERIOD_MS);
+  pendingOfflineTimeouts.set(userId, timeout);
+};
+
+const cancelUserOffline = (userId) => {
+  const timeout = pendingOfflineTimeouts.get(userId);
+  if (timeout) {
+    clearTimeout(timeout);
+    pendingOfflineTimeouts.delete(userId);
+  }
+};
+
+const markUserOnline = async (io, userId) => {
+  cancelUserOffline(userId);
+  try {
+    await User.findByIdAndUpdate(userId, { status: 'online', lastSeen: new Date() });
+  } catch (err) {
+    console.error('Failed to update user status:', err);
+  }
+  io.emit('user:status', { userId, status: 'online', lastSeen: new Date() });
+  refreshOnlineList().then((onlineList) => {
+    io.emit('online:users', onlineList);
+  });
 };
 
 const refreshOnlineList = async () => {
@@ -52,22 +95,23 @@ const setupSocket = (io) => {
     const userId = socket.userId;
     console.log(`User connected: ${socket.user.displayName || socket.user.username} (${userId})`);
 
-    onlineUsers.set(userId, socket.id);
-
-    try {
-      await User.findByIdAndUpdate(userId, { status: 'online', lastSeen: new Date() });
-    } catch (err) {
-      console.error('Failed to update user status:', err);
-    }
+    const userSocketSet = onlineUserSockets.get(userId) || new Set();
+    const wasOnline = userSocketSet.size > 0;
+    userSocketSet.add(socket.id);
+    onlineUserSockets.set(userId, userSocketSet);
 
     socket.join(`user:${userId}`);
-    socket.broadcast.emit('user:status', { userId, status: 'online' });
-
-    refreshOnlineList().then((onlineList) => {
-      io.emit('online:users', onlineList);
-    });
-
     socket.emit('connected', { userId, message: 'Connected to server' });
+
+    // Only broadcast online status if this is the first active socket for the user
+    if (!wasOnline) {
+      markUserOnline(io, userId);
+    } else {
+      // Still refresh the list for this socket so it has the latest state
+      refreshOnlineList().then((onlineList) => {
+        socket.emit('online:users', onlineList);
+      });
+    }
 
     socket.on('heartbeat', async () => {
       try {
@@ -95,7 +139,8 @@ const setupSocket = (io) => {
         }
         const isRecentlyActive =
           user.status === 'online' && new Date() - new Date(user.lastSeen) < HEARTBEAT_TIMEOUT_MS;
-        const status = isRecentlyActive || onlineUsers.has(targetId) ? 'online' : 'offline';
+        const hasActiveSocket = onlineUserSockets.has(targetId) && onlineUserSockets.get(targetId).size > 0;
+        const status = isRecentlyActive || hasActiveSocket ? 'online' : 'offline';
         socket.emit('user:status', {
           userId: targetId,
           status,
@@ -623,25 +668,26 @@ const setupSocket = (io) => {
     // ==================== Disconnect ====================
 
     socket.on('disconnect', async () => {
-      console.log(`User disconnected: ${userId}`);
-      onlineUsers.delete(userId);
+      console.log(`User disconnected: ${userId} socket ${socket.id}`);
 
+      const userSocketSet = onlineUserSockets.get(userId);
+      if (userSocketSet) {
+        userSocketSet.delete(socket.id);
+        if (userSocketSet.size === 0) {
+          onlineUserSockets.delete(userId);
+          scheduleUserOffline(io, userId);
+        }
+      }
+
+      // Only end the call room if this socket was the one participating in the call
       const roomId = userCallRooms.get(userId);
       if (roomId) {
-        await endCallRoom(roomId, 'ended');
+        const stillInRoom = await io.in(roomId).fetchSockets();
+        const userStillInRoom = stillInRoom.some((s) => s.userId === userId);
+        if (!userStillInRoom) {
+          await endCallRoom(roomId, 'ended');
+        }
       }
-
-      try {
-        await User.findByIdAndUpdate(userId, { status: 'offline', lastSeen: new Date() });
-      } catch (err) {
-        console.error('Failed to update offline status:', err);
-      }
-
-      socket.broadcast.emit('user:status', { userId, status: 'offline', lastSeen: new Date() });
-
-      refreshOnlineList().then((onlineList) => {
-        io.emit('online:users', onlineList);
-      });
     });
   });
 };

@@ -50,6 +50,7 @@ const Chat = () => {
     const cleanupEnded = webrtc.handleCallEnded(() => {
       setActiveCall(null);
       setShowCallModal(false);
+      setIncomingCall(null);
     });
 
     const cleanupAccepted = webrtc.handleCallAccepted((data) => {
