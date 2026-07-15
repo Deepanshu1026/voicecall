@@ -2,29 +2,20 @@ import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useSocket } from '../context/SocketContext';
 import toast from 'react-hot-toast';
 
-const ICE_SERVERS = {
-  iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-  ],
-};
+const STUN_SERVERS = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+];
 
-// Optional TURN server (highly recommended for production / mobile networks)
-const TURN_URL = import.meta.env.VITE_TURN_SERVER_URL;
-const TURN_USER = import.meta.env.VITE_TURN_USERNAME;
-const TURN_PASS = import.meta.env.VITE_TURN_PASSWORD;
-
-if (TURN_URL) {
-  ICE_SERVERS.iceServers.push({
-    urls: TURN_URL,
-    username: TURN_USER || '',
-    credential: TURN_PASS || '',
-  });
-}
-
-const PEER_CONNECTION_CONFIG = {
-  ...ICE_SERVERS,
-  iceCandidatePoolSize: 10,
+const getTurnServers = () => {
+  const servers = [...STUN_SERVERS];
+  const turnUrl = import.meta.env.VITE_TURN_SERVER_URL;
+  const turnUser = import.meta.env.VITE_TURN_USERNAME;
+  const turnPass = import.meta.env.VITE_TURN_PASSWORD;
+  if (turnUrl) {
+    servers.push({ urls: turnUrl, username: turnUser || '', credential: turnPass || '' });
+  }
+  return servers;
 };
 
 export const useWebRTC = () => {
@@ -49,6 +40,7 @@ export const useWebRTC = () => {
   const localStreamRef = useRef(null);
   const callDurationRef = useRef(0);
   const remoteAudioRef = useRef(null);
+  const iceServersRef = useRef(getTurnServers());
 
   const flushPendingSignals = useCallback(() => {
     const callId = callIdRef.current;
@@ -58,6 +50,31 @@ export const useWebRTC = () => {
       emit('call:signal', { callId, signal });
     }
   }, [emit]);
+
+  useEffect(() => {
+    const apiKey = import.meta.env.VITE_TURN_API_KEY;
+    const appName = import.meta.env.VITE_TURN_APP_NAME || 'openrelay';
+    if (!apiKey) return;
+
+    const fetchIceServers = async () => {
+      try {
+        const response = await fetch(
+          `https://${appName}.metered.live/api/v1/turn/credentials?apiKey=${apiKey}`,
+          { cache: 'no-store' }
+        );
+        if (!response.ok) throw new Error(`TURN credentials fetch failed: ${response.status}`);
+        const servers = await response.json();
+        if (Array.isArray(servers) && servers.length > 0) {
+          iceServersRef.current = servers;
+          console.log('[WebRTC] TURN credentials loaded');
+        }
+      } catch (err) {
+        console.error('[WebRTC] Failed to fetch TURN credentials:', err.message);
+      }
+    };
+
+    fetchIceServers();
+  }, []);
 
   useEffect(() => {
     localStreamRef.current = localStream;
@@ -207,7 +224,12 @@ export const useWebRTC = () => {
     }
 
     console.log('[WebRTC] Creating RTCPeerConnection for call', callId);
-    const pc = new RTCPeerConnection(PEER_CONNECTION_CONFIG);
+    const pc = new RTCPeerConnection({
+      iceServers: iceServersRef.current,
+      iceCandidatePoolSize: 10,
+      bundlePolicy: 'max-bundle',
+      rtcpMuxPolicy: 'require',
+    });
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
@@ -225,10 +247,12 @@ export const useWebRTC = () => {
     };
 
     pc.ontrack = (event) => {
-      console.log('[WebRTC] Received remote track', event.streams[0]?.getTracks().map((t) => t.kind));
-      setRemoteStream(event.streams[0]);
+      const track = event.track;
+      const stream = event.streams[0] || new MediaStream([track]);
+      console.log('[WebRTC] Received remote track', track.kind);
+      setRemoteStream(stream);
       if (remoteAudioRef.current) {
-        remoteAudioRef.current.srcObject = event.streams[0];
+        remoteAudioRef.current.srcObject = stream;
         remoteAudioRef.current.play().catch((err) => {
           console.log('Autoplay prevented, waiting for user interaction', err);
         });
