@@ -460,6 +460,7 @@ const setupSocket = (io) => {
 
     socket.on('call:initiate', async ({ receiverId, type = 'audio', offer }) => {
       try {
+        console.log(`[Call] ${userId} initiating call to ${receiverId}`);
         if (!receiverId || receiverId === userId) {
           socket.emit('call:error', { message: 'Invalid receiver' });
           return;
@@ -531,6 +532,7 @@ const setupSocket = (io) => {
 
     socket.on('call:accept', async ({ callId, roomId }) => {
       try {
+        console.log(`[Call] ${userId} accepting call ${callId}`);
         if (isUserBusy(userId)) {
           socket.emit('call:error', { message: 'You are already in a call' });
           return;
@@ -563,11 +565,14 @@ const setupSocket = (io) => {
 
         // Send the caller's offer to the receiver so they can create an answer
         if (call.signalData?.offer) {
+          console.log(`[Call] Sending stored offer to receiver ${userId}`);
           socket.emit('call:signal', {
             callId,
             signal: { sdp: { type: call.signalData.offer.type, sdp: call.signalData.offer.sdp } },
             from: call.caller._id.toString(),
           });
+        } else {
+          console.log(`[Call] No stored offer found for call ${callId}`);
         }
       } catch (error) {
         console.error('Call accept error:', error);
@@ -597,6 +602,7 @@ const setupSocket = (io) => {
 
     socket.on('call:end', async ({ callId, duration }) => {
       try {
+        console.log(`[Call] ${userId} ending call ${callId}`);
         const call = await getCall(callId);
         if (!call || !isParticipant(call, userId)) return;
         if (['ended', 'rejected', 'missed'].includes(call.status)) return;
@@ -621,9 +627,17 @@ const setupSocket = (io) => {
 
     socket.on('call:signal', async ({ callId, signal }) => {
       try {
+        const signalType = signal?.sdp?.type || 'candidate';
+        console.log(`[Call] ${userId} forwarding signal ${signalType} for call ${callId}`);
         const call = await getCall(callId);
-        if (!call || !isParticipant(call, userId)) return;
-        if (!['ringing', 'ongoing'].includes(call.status)) return;
+        if (!call || !isParticipant(call, userId)) {
+          console.log(`[Call] Signal rejected: not a participant or call not found`);
+          return;
+        }
+        if (!['ringing', 'ongoing'].includes(call.status)) {
+          console.log(`[Call] Signal rejected: call status is ${call.status}`);
+          return;
+        }
 
         const roomId = `call:${callId}`;
         socket.to(roomId).emit('call:signal', { callId, signal, from: userId });

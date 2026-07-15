@@ -236,12 +236,15 @@ export const useWebRTC = () => {
 
     pc.onicecandidate = (event) => {
       if (event.candidate) {
-        console.log('[WebRTC] Sending ICE candidate');
         const currentCallId = callIdRef.current || callId;
-        if (!currentCallId) {
+        // Queue candidates until the remote description is set so they are not
+        // emitted before the other peer has joined the signalling room.
+        if (!currentCallId || !pc.remoteDescription) {
+          console.log('[WebRTC] Queuing ICE candidate until remote description is set');
           pendingSignalsRef.current.push({ candidate: event.candidate });
           return;
         }
+        console.log('[WebRTC] Sending ICE candidate');
         emit('call:signal', {
           callId: currentCallId,
           signal: { candidate: event.candidate },
@@ -433,12 +436,11 @@ export const useWebRTC = () => {
     const wrapped = (data) => {
       callIdRef.current = data.call?._id;
       roomIdRef.current = data.roomId;
-      flushPendingSignals();
       if (handler) handler(data);
     };
     on('call:ringing', wrapped);
     return () => off('call:ringing', wrapped);
-  }, [on, off, flushPendingSignals]);
+  }, [on, off]);
 
   const handleCallAccepted = useCallback((handler) => {
     on('call:accepted', handler);
@@ -505,6 +507,7 @@ export const useWebRTC = () => {
             }
             await pc.setRemoteDescription(new RTCSessionDescription(data.signal.sdp));
             processIceQueue(pc);
+            flushPendingSignals();
             console.log('[WebRTC] Set remote offer, creating answer');
             const answer = await pc.createAnswer();
             await pc.setLocalDescription(answer);
@@ -521,6 +524,7 @@ export const useWebRTC = () => {
             }
             await pc.setRemoteDescription(new RTCSessionDescription(data.signal.sdp));
             processIceQueue(pc);
+            flushPendingSignals();
             console.log('[WebRTC] Set remote answer');
             setCallState('connecting');
           }
@@ -546,7 +550,7 @@ export const useWebRTC = () => {
 
     on('call:signal', signalHandler);
     return () => off('call:signal', signalHandler);
-  }, [on, off, emit, getMediaStream, createPeerConnection, setOpusCodecPreference, processIceQueue]);
+  }, [on, off, emit, getMediaStream, createPeerConnection, setOpusCodecPreference, processIceQueue, flushPendingSignals]);
 
   useEffect(() => {
     return () => {
