@@ -10,14 +10,18 @@ const pendingOfflineTimeouts = new Map(); // userId -> timeout id
 const userCallRooms = new Map();
 const HEARTBEAT_TIMEOUT_MS = 2 * 60 * 1000;
 const OFFLINE_GRACE_PERIOD_MS = 5000; // small delay to avoid flicker during reconnect
+const STALE_CLEANUP_INTERVAL_MS = 60 * 1000; // run stale cleanup once a minute
 
 const markStaleUsersOffline = async () => {
   try {
     const staleThreshold = new Date(Date.now() - HEARTBEAT_TIMEOUT_MS);
-    await User.updateMany(
+    const result = await User.updateMany(
       { status: 'online', lastSeen: { $lt: staleThreshold } },
       { status: 'offline', lastSeen: new Date() }
     );
+    if (result.modifiedCount > 0) {
+      console.log(`Marked ${result.modifiedCount} stale user(s) offline`);
+    }
   } catch (err) {
     console.error('Failed to mark stale users offline:', err);
   }
@@ -65,14 +69,23 @@ const markUserOnline = async (io, userId) => {
 };
 
 const refreshOnlineList = async () => {
-  await markStaleUsersOffline();
+  // Lightweight read-only query; stale cleanup is handled by a separate interval
   const onlineUserIds = await User.find({ status: 'online' }).select('_id').lean();
   return onlineUserIds.map((u) => u._id.toString());
+};
+
+const startStaleCleanup = (io) => {
+  return setInterval(async () => {
+    await markStaleUsersOffline();
+    const onlineList = await refreshOnlineList();
+    io.emit('online:users', onlineList);
+  }, STALE_CLEANUP_INTERVAL_MS);
 };
 
 const setupSocket = (io) => {
   // Mark users that were online before a server restart as offline
   markStaleUsersOffline();
+  const staleCleanupInterval = startStaleCleanup(io);
 
   io.use(async (socket, next) => {
     try {
@@ -116,6 +129,8 @@ const setupSocket = (io) => {
     socket.on('heartbeat', async () => {
       try {
         await User.findByIdAndUpdate(userId, { status: 'online', lastSeen: new Date() });
+        // Broadcast status so clients that saw the user as stale-offline are corrected
+        io.emit('user:status', { userId, status: 'online', lastSeen: new Date() });
       } catch (err) {
         console.error('Heartbeat update error:', err);
       }
@@ -690,6 +705,14 @@ const setupSocket = (io) => {
       }
     });
   });
+
+  // Clean up the stale-user interval when the process shuts down
+  const cleanup = () => {
+    clearInterval(staleCleanupInterval);
+    process.exit(0);
+  };
+  process.once('SIGINT', cleanup);
+  process.once('SIGTERM', cleanup);
 };
 
 module.exports = setupSocket;

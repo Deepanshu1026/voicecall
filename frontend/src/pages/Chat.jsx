@@ -13,13 +13,18 @@ import { CallProvider } from '../context/CallContext';
 
 const Chat = () => {
   const { user } = useAuth();
-  const { on } = useSocket();
+  const { on, socketVersion } = useSocket();
   const chat = useChat();
   const { notifyMessage, notifyCall } = useNotifications();
   const [activeConversation, setActiveConversation] = useState(null);
   const [showMobileSidebar, setShowMobileSidebar] = useState(true);
 
   const webrtc = useWebRTC();
+  const webrtcRef = useRef(webrtc);
+
+  useEffect(() => {
+    webrtcRef.current = webrtc;
+  }, [webrtc]);
 
   const [incomingCall, setIncomingCall] = useState(null);
   const [activeCall, setActiveCall] = useState(null);
@@ -29,47 +34,49 @@ const Chat = () => {
     chat.loadConversations();
   }, []);
 
-  // WebRTC/call listeners - stable function deps, should run once
+  // WebRTC/call listeners - re-register on socket reconnect so closures stay fresh
   useEffect(() => {
-    const cleanupIncoming = webrtc.handleIncomingCall((data) => {
+    const w = webrtcRef.current;
+
+    const cleanupIncoming = w.handleIncomingCall((data) => {
       setIncomingCall(data);
       notifyCall(data.caller?.displayName || data.caller?.username || 'Someone', data.call?.type || 'audio');
     });
 
-    const cleanupRinging = webrtc.handleRinging((data) => {
+    const cleanupRinging = w.handleRinging((data) => {
       setActiveCall(data.call);
       setShowCallModal(true);
     });
 
-    const cleanupRejected = webrtc.handleCallRejected((data) => {
+    const cleanupRejected = w.handleCallRejected((data) => {
       toast.error('Call rejected');
       setActiveCall(null);
       setShowCallModal(false);
     });
 
-    const cleanupEnded = webrtc.handleCallEnded(() => {
+    const cleanupEnded = w.handleCallEnded(() => {
       setActiveCall(null);
       setShowCallModal(false);
       setIncomingCall(null);
     });
 
-    const cleanupAccepted = webrtc.handleCallAccepted((data) => {
+    const cleanupAccepted = w.handleCallAccepted((data) => {
       setActiveCall(data.call);
       setShowCallModal(true);
     });
 
-    const cleanupError = webrtc.handleCallError((data) => {
+    const cleanupError = w.handleCallError((data) => {
       setActiveCall(null);
       setShowCallModal(false);
       setIncomingCall(null);
     });
 
-    const cleanupMissed = webrtc.handleCallMissed((data) => {
+    const cleanupMissed = w.handleCallMissed((data) => {
       toast('Missed call', { icon: '📞' });
       setIncomingCall(null);
     });
 
-    const cleanupSignal = webrtc.handleSignal();
+    const cleanupSignal = w.handleSignal();
 
     return () => {
       cleanupIncoming();
@@ -81,8 +88,7 @@ const Chat = () => {
       cleanupMissed();
       cleanupSignal();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [socketVersion, notifyCall]);
 
   // End active call if the user closes the tab
   useEffect(() => {
@@ -165,7 +171,7 @@ const Chat = () => {
       cleanupDelete();
       cleanupRead();
     };
-  }, [user, on, notifyMessage, chat, activeConversation]);
+  }, [user, on, notifyMessage, chat, activeConversation, socketVersion]);
 
   const handleSelectConversation = useCallback((conv) => {
     setActiveConversation(conv);
@@ -249,8 +255,8 @@ const Chat = () => {
         {incomingCall && (
           <IncomingCallModal
             call={incomingCall}
-            onAccept={() => {
-              const result = webrtc.acceptCall(incomingCall.call._id, incomingCall.roomId);
+            onAccept={async () => {
+              const result = await webrtcRef.current.acceptCall(incomingCall.call._id, incomingCall.roomId);
               if (result.success) {
                 setActiveCall(incomingCall.call);
                 setShowCallModal(true);

@@ -41,6 +41,7 @@ export const useWebRTC = () => {
   const callDurationRef = useRef(0);
   const remoteAudioRef = useRef(null);
   const iceServersRef = useRef(getTurnServers());
+  const resetCallRef = useRef(null);
 
   const flushPendingSignals = useCallback(() => {
     const callId = callIdRef.current;
@@ -274,7 +275,7 @@ export const useWebRTC = () => {
         setTimeout(() => {
           if (peerRef.current === pc && ['failed', 'closed', 'disconnected'].includes(pc.connectionState)) {
             console.log('[WebRTC] Connection did not recover, resetting call');
-            resetCall();
+            resetCallRef.current?.();
           }
         }, 4000);
       } else if (pc.connectionState === 'closed') {
@@ -304,7 +305,7 @@ export const useWebRTC = () => {
 
     peerRef.current = pc;
     return pc;
-  }, [emit, startDurationTimer, startStatsMonitoring, stopStatsMonitoring, resetCall]);
+  }, [emit, startDurationTimer, startStatsMonitoring, stopStatsMonitoring]);
 
   const resetCall = useCallback(() => {
     stopDurationTimer();
@@ -329,6 +330,8 @@ export const useWebRTC = () => {
     roomIdRef.current = null;
     isInitiatorRef.current = false;
   }, [stopMediaStream, stopDurationTimer, stopStatsMonitoring]);
+
+  resetCallRef.current = resetCall;
 
   const startCall = useCallback(async (receiverId, type = 'audio') => {
     try {
@@ -452,21 +455,23 @@ export const useWebRTC = () => {
   }, [on, off, resetCall]);
 
   const handleCallEnded = useCallback((handler) => {
-    on('call:ended', (data) => {
+    const wrapped = (data) => {
       resetCall();
       if (handler) handler(data);
-    });
-    return () => off('call:ended');
+    };
+    on('call:ended', wrapped);
+    return () => off('call:ended', wrapped);
   }, [on, off, resetCall]);
 
   const handleCallError = useCallback((handler) => {
-    on('call:error', (data) => {
+    const wrapped = (data) => {
       setCallError(data.message);
       toast.error(data.message || 'Call error');
       resetCall();
       if (handler) handler(data);
-    });
-    return () => off('call:error');
+    };
+    on('call:error', wrapped);
+    return () => off('call:error', wrapped);
   }, [on, off, resetCall]);
 
   const handleCallMissed = useCallback((handler) => {
