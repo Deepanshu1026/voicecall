@@ -42,6 +42,13 @@ export const useWebRTC = () => {
   const remoteAudioRef = useRef(null);
   const iceServersRef = useRef(getTurnServers());
   const resetCallRef = useRef(null);
+  const callTimeoutRef = useRef(null);
+  const dataChannelRef = useRef(null);
+  const keepAliveIntervalRef = useRef(null);
+
+  const CALL_CONNECT_TIMEOUT_MS = 15000;
+  const CALL_RINGING_TIMEOUT_MS = 30000;
+  const KEEP_ALIVE_INTERVAL_MS = 5000;
 
   const flushPendingSignals = useCallback(() => {
     const callId = callIdRef.current;
@@ -75,6 +82,9 @@ export const useWebRTC = () => {
     };
 
     fetchIceServers();
+    // TURN credentials from Metered expire after ~5-10 minutes; refresh every 4 minutes
+    const refreshInterval = setInterval(fetchIceServers, 4 * 60 * 1000);
+    return () => clearInterval(refreshInterval);
   }, []);
 
   useEffect(() => {
@@ -105,6 +115,52 @@ export const useWebRTC = () => {
       statsIntervalRef.current = null;
     }
   }, []);
+
+  const clearCallTimeout = useCallback(() => {
+    if (callTimeoutRef.current) {
+      clearTimeout(callTimeoutRef.current);
+      callTimeoutRef.current = null;
+    }
+  }, []);
+
+  const stopKeepAlive = useCallback(() => {
+    if (keepAliveIntervalRef.current) {
+      clearInterval(keepAliveIntervalRef.current);
+      keepAliveIntervalRef.current = null;
+    }
+    const dc = dataChannelRef.current;
+    if (dc && dc._keepAliveInterval) {
+      clearInterval(dc._keepAliveInterval);
+      dc._keepAliveInterval = null;
+    }
+  }, []);
+
+  const startKeepAlive = useCallback((dc) => {
+    stopKeepAlive();
+    if (!dc || dc.readyState !== 'open') return;
+    if (dc._keepAliveInterval) clearInterval(dc._keepAliveInterval);
+    dc._keepAliveInterval = setInterval(() => {
+      try {
+        dc.send('ping');
+      } catch (err) {
+        console.log('[WebRTC] Keep-alive ping failed:', err.message);
+      }
+    }, KEEP_ALIVE_INTERVAL_MS);
+    keepAliveIntervalRef.current = dc._keepAliveInterval;
+  }, [stopKeepAlive]);
+
+  const startCallTimeout = useCallback((timeoutMs, message) => {
+    clearCallTimeout();
+    callTimeoutRef.current = setTimeout(() => {
+      console.log('[WebRTC] Call timeout:', message);
+      toast.error(message);
+      const callId = callIdRef.current;
+      if (callId) {
+        emit('call:end', { callId, duration: callDurationRef.current });
+      }
+      resetCallRef.current?.();
+    }, timeoutMs);
+  }, [clearCallTimeout, emit]);
 
   const startStatsMonitoring = useCallback((pc) => {
     stopStatsMonitoring();
@@ -265,22 +321,72 @@ export const useWebRTC = () => {
       }
     };
 
+    if (isInitiatorRef.current) {
+      try {
+        const dc = pc.createDataChannel('keepalive', { ordered: false, maxRetransmits: 0 });
+        dc.onopen = () => {
+          console.log('[WebRTC] Keep-alive channel open');
+          startKeepAlive(dc);
+        };
+        dc.onclose = () => stopKeepAlive();
+        dc.onerror = (err) => console.error('[WebRTC] Keep-alive channel error:', err);
+        dataChannelRef.current = dc;
+      } catch (err) {
+        console.error('[WebRTC] Failed to create keep-alive channel:', err);
+      }
+    }
+
+    pc.ondatachannel = (event) => {
+      const dc = event.channel;
+      dc.onopen = () => {
+        console.log('[WebRTC] Keep-alive channel open (receiver)');
+      };
+      dc.onclose = () => stopKeepAlive();
+      dc.onmessage = (msg) => {
+        // Echo back to keep NAT binding alive on both sides
+        if (msg.data === 'ping' && dc.readyState === 'open') {
+          try {
+            dc.send('pong');
+          } catch (err) {
+            console.log('[WebRTC] Pong failed:', err.message);
+          }
+        }
+      };
+      dataChannelRef.current = dc;
+    };
+
     pc.onconnectionstatechange = () => {
       console.log('[WebRTC] Connection state:', pc.connectionState);
       if (pc.connectionState === 'connected') {
+        clearCallTimeout();
         setCallState('connected');
         startDurationTimer();
         startStatsMonitoring(pc);
-      } else if (pc.connectionState === 'disconnected' || pc.connectionState === 'failed') {
+      } else if (pc.connectionState === 'disconnected') {
+        // 'disconnected' is often transient; try ICE restart and wait
         setCallQuality((prev) => ({ ...prev, state: 'poor', packetLoss: 10 }));
         stopStatsMonitoring();
-        // Give ICE a moment to recover, then clean up if still failed
+        console.warn('[WebRTC] Connection disconnected, attempting ICE restart');
+        try {
+          pc.restartIce();
+        } catch (err) {
+          console.error('[WebRTC] ICE restart failed:', err);
+        }
+      } else if (pc.connectionState === 'failed') {
+        setCallQuality((prev) => ({ ...prev, state: 'poor', packetLoss: 10 }));
+        stopStatsMonitoring();
+        // 'failed' is terminal; give ICE 15s to recover before ending the call
         setTimeout(() => {
-          if (peerRef.current === pc && ['failed', 'closed', 'disconnected'].includes(pc.connectionState)) {
-            console.log('[WebRTC] Connection did not recover, resetting call');
+          if (peerRef.current === pc && pc.connectionState === 'failed') {
+            const callId = callIdRef.current;
+            const duration = callDurationRef.current;
+            console.log('[WebRTC] Connection did not recover, ending call', { callId, duration });
+            if (callId) {
+              emit('call:end', { callId, duration });
+            }
             resetCallRef.current?.();
           }
-        }, 4000);
+        }, 15000);
       } else if (pc.connectionState === 'closed') {
         setCallQuality({});
         stopStatsMonitoring();
@@ -308,9 +414,11 @@ export const useWebRTC = () => {
 
     peerRef.current = pc;
     return pc;
-  }, [emit, startDurationTimer, startStatsMonitoring, stopStatsMonitoring]);
+  }, [emit, startDurationTimer, startStatsMonitoring, stopStatsMonitoring, clearCallTimeout, startKeepAlive, stopKeepAlive]);
 
   const resetCall = useCallback(() => {
+    clearCallTimeout();
+    stopKeepAlive();
     stopDurationTimer();
     stopStatsMonitoring();
     stopMediaStream();
@@ -332,7 +440,7 @@ export const useWebRTC = () => {
     callIdRef.current = null;
     roomIdRef.current = null;
     isInitiatorRef.current = false;
-  }, [stopMediaStream, stopDurationTimer, stopStatsMonitoring]);
+  }, [stopMediaStream, stopDurationTimer, stopStatsMonitoring, clearCallTimeout, stopKeepAlive]);
 
   resetCallRef.current = resetCall;
 
@@ -347,6 +455,7 @@ export const useWebRTC = () => {
 
       setCallState('calling');
       isInitiatorRef.current = true;
+      startCallTimeout(CALL_RINGING_TIMEOUT_MS, 'Call timed out: no answer');
 
       const pc = createPeerConnection(stream, null);
       setOpusCodecPreference(pc);
@@ -363,7 +472,7 @@ export const useWebRTC = () => {
       resetCall();
       return { success: false };
     }
-  }, [emit, getMediaStream, createPeerConnection, setOpusCodecPreference, resetCall]);
+  }, [emit, getMediaStream, createPeerConnection, setOpusCodecPreference, resetCall, startCallTimeout]);
 
   const acceptCall = useCallback(async (callId, roomId) => {
     try {
@@ -381,6 +490,7 @@ export const useWebRTC = () => {
 
       emit('call:accept', { callId, roomId });
       setCallState('connecting');
+      startCallTimeout(CALL_CONNECT_TIMEOUT_MS, 'Call connection failed');
       return { success: true };
     } catch (error) {
       console.error('Failed to accept call:', error);
@@ -388,7 +498,7 @@ export const useWebRTC = () => {
       resetCall();
       return { success: false };
     }
-  }, [emit, getMediaStream, resetCall]);
+  }, [emit, getMediaStream, resetCall, startCallTimeout]);
 
   const rejectCall = useCallback((callId) => {
     emit('call:reject', { callId });

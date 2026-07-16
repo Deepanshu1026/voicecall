@@ -24,6 +24,7 @@ export const connectSocket = (token) => {
     randomizationFactor: 0.5,
     timeout: 20000,
     withCredentials: true,
+    // Note: pingInterval/pingTimeout are server-controlled; set them in backend/src/index.js
   });
 
   socket.on('connect', () => {
@@ -31,7 +32,7 @@ export const connectSocket = (token) => {
     if (heartbeatInterval) clearInterval(heartbeatInterval);
     heartbeatInterval = setInterval(() => {
       socket.emit('heartbeat');
-    }, 30000);
+    }, 20000);
   });
 
   socket.on('connect_error', (err) => {

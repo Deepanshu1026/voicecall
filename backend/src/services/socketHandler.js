@@ -8,15 +8,24 @@ const config = require('../config');
 const onlineUserSockets = new Map(); // userId -> Set of socket ids
 const pendingOfflineTimeouts = new Map(); // userId -> timeout id
 const userCallRooms = new Map();
-const HEARTBEAT_TIMEOUT_MS = 2 * 60 * 1000;
+const callSignalBuffers = new Map(); // callId -> [{ signal, fromSocketId }]
+const callDisconnectTimeouts = new Map(); // roomId -> timeout id
+const callParticipantsCache = new Map(); // callId -> { callerId, receiverId }
+const HEARTBEAT_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes to survive background-tab throttling
 const OFFLINE_GRACE_PERIOD_MS = 5000; // small delay to avoid flicker during reconnect
 const STALE_CLEANUP_INTERVAL_MS = 60 * 1000; // run stale cleanup once a minute
+const CALL_DISCONNECT_GRACE_PERIOD_MS = 30 * 1000; // wait 30s before ending a call on socket disconnect
 
 const markStaleUsersOffline = async () => {
   try {
     const staleThreshold = new Date(Date.now() - HEARTBEAT_TIMEOUT_MS);
+    const inCallUserIds = Array.from(userCallRooms.keys());
     const result = await User.updateMany(
-      { status: 'online', lastSeen: { $lt: staleThreshold } },
+      {
+        status: 'online',
+        lastSeen: { $lt: staleThreshold },
+        _id: { $nin: inCallUserIds },
+      },
       { status: 'offline', lastSeen: new Date() }
     );
     if (result.modifiedCount > 0) {
@@ -82,6 +91,76 @@ const startStaleCleanup = (io) => {
   }, STALE_CLEANUP_INTERVAL_MS);
 };
 
+// ==================== Call Signal Buffer ====================
+// Ensures WebRTC signals are not lost when the other peer has not yet joined the room.
+
+const bufferCallSignal = (callId, signal, fromSocketId) => {
+  if (!callSignalBuffers.has(callId)) {
+    callSignalBuffers.set(callId, []);
+  }
+  callSignalBuffers.get(callId).push({ signal, fromSocketId });
+};
+
+const flushCallSignalBuffer = async (io, roomId) => {
+  const callId = roomId.replace('call:', '');
+  const buffer = callSignalBuffers.get(callId);
+  if (!buffer || buffer.length === 0) return;
+
+  const sockets = await io.in(roomId).fetchSockets();
+  const delivered = [];
+
+  buffer.forEach(({ signal, fromSocketId }) => {
+    const otherSocket = sockets.find((s) => s.id !== fromSocketId);
+    if (otherSocket) {
+      otherSocket.emit('call:signal', signal);
+      delivered.push({ signal, fromSocketId });
+    }
+  });
+
+  const remaining = buffer.filter((item) => !delivered.includes(item));
+  if (remaining.length === 0) {
+    callSignalBuffers.delete(callId);
+  } else {
+    callSignalBuffers.set(callId, remaining);
+  }
+};
+
+const forwardOrBufferCallSignal = async (io, roomId, fromSocketId, signal) => {
+  const sockets = await io.in(roomId).fetchSockets();
+  const otherSocket = sockets.find((s) => s.id !== fromSocketId);
+
+  if (otherSocket) {
+    otherSocket.emit('call:signal', signal);
+    return true;
+  }
+
+  const callId = roomId.replace('call:', '');
+  bufferCallSignal(callId, signal, fromSocketId);
+  return false;
+};
+
+const clearCallSignalBuffer = (callId) => {
+  callSignalBuffers.delete(callId);
+};
+
+const setCallParticipants = (callId, callerId, receiverId) => {
+  callParticipantsCache.set(callId, { callerId, receiverId });
+};
+
+const getCallParticipants = (callId) => {
+  return callParticipantsCache.get(callId);
+};
+
+const clearCallParticipants = (callId) => {
+  callParticipantsCache.delete(callId);
+};
+
+const isCallParticipant = (callId, userId) => {
+  const participants = callParticipantsCache.get(callId);
+  if (!participants) return false;
+  return participants.callerId === userId || participants.receiverId === userId;
+};
+
 const setupSocket = (io) => {
   // Mark users that were online before a server restart as offline
   markStaleUsersOffline();
@@ -115,6 +194,17 @@ const setupSocket = (io) => {
 
     socket.join(`user:${userId}`);
     socket.emit('connected', { userId, message: 'Connected to server' });
+
+    // If the user was in a call that is waiting for them to reconnect, rejoin them
+    const pendingCallRoomId = userCallRooms.get(userId);
+    if (pendingCallRoomId && callDisconnectTimeouts.has(pendingCallRoomId)) {
+      console.log(`[Call] ${userId} reconnected, rejoining call room ${pendingCallRoomId}`);
+      clearTimeout(callDisconnectTimeouts.get(pendingCallRoomId));
+      callDisconnectTimeouts.delete(pendingCallRoomId);
+      socket.join(pendingCallRoomId);
+      // Flush any buffered signals that arrived while disconnected
+      await flushCallSignalBuffer(io, pendingCallRoomId);
+    }
 
     // Only broadcast online status if this is the first active socket for the user
     if (!wasOnline) {
@@ -436,20 +526,37 @@ const setupSocket = (io) => {
 
     const endCallRoom = async (roomId, status, duration = 0) => {
       const callId = roomId.replace('call:', '');
+      clearCallSignalBuffer(callId);
+      clearCallParticipants(callId);
+      if (callDisconnectTimeouts.has(roomId)) {
+        clearTimeout(callDisconnectTimeouts.get(roomId));
+        callDisconnectTimeouts.delete(roomId);
+      }
       try {
-        const call = await Call.findByIdAndUpdate(
+        const call = await Call.findById(callId).lean();
+        if (!call) return;
+
+        const endedAt = new Date();
+        const finalDuration =
+          duration > 0
+            ? duration
+            : call.startedAt
+            ? Math.round((endedAt - new Date(call.startedAt)) / 1000)
+            : 0;
+
+        const updatedCall = await Call.findByIdAndUpdate(
           callId,
-          { status, duration, endedAt: new Date() },
+          { status, duration: finalDuration, endedAt },
           { new: true }
         )
           .populate('caller', 'username displayName avatar')
           .populate('receiver', 'username displayName avatar');
-        if (call) {
-          io.to(roomId).emit('call:ended', { call: call.toObject() });
+        if (updatedCall) {
+          io.to(roomId).emit('call:ended', { call: updatedCall.toObject() });
           const socketsInRoom = await io.in(roomId).fetchSockets();
           socketsInRoom.forEach((s) => s.leave(roomId));
-          userCallRooms.delete(call.caller._id.toString());
-          userCallRooms.delete(call.receiver._id.toString());
+          userCallRooms.delete(updatedCall.caller._id.toString());
+          userCallRooms.delete(updatedCall.receiver._id.toString());
         }
       } catch (err) {
         console.error('End call room error:', err);
@@ -516,6 +623,7 @@ const setupSocket = (io) => {
         const roomId = `call:${call._id}`;
         socket.join(roomId);
         userCallRooms.set(userId, roomId);
+        setCallParticipants(call._id.toString(), userId, receiverId);
 
         io.to(`user:${receiverId}`).emit('call:incoming', {
           call: call.toObject(),
@@ -554,6 +662,10 @@ const setupSocket = (io) => {
 
         socket.join(roomId);
         userCallRooms.set(userId, roomId);
+        setCallParticipants(callId, call.caller._id.toString(), call.receiver._id.toString());
+
+        // Flush any signals that arrived before the receiver joined the room
+        await flushCallSignalBuffer(io, roomId);
 
         await Call.findByIdAndUpdate(callId, {
           status: 'ongoing',
@@ -593,6 +705,8 @@ const setupSocket = (io) => {
           : call.caller._id.toString();
 
         io.to(`user:${otherUserId}`).emit('call:rejected', { call: call.toObject() });
+        clearCallSignalBuffer(callId);
+        clearCallParticipants(callId);
         userCallRooms.delete(userId);
         userCallRooms.delete(otherUserId);
       } catch (error) {
@@ -618,6 +732,7 @@ const setupSocket = (io) => {
 
         const socketsInRoom = await io.in(roomId).fetchSockets();
         socketsInRoom.forEach((s) => s.leave(roomId));
+        clearCallSignalBuffer(callId);
         userCallRooms.delete(call.caller._id.toString());
         userCallRooms.delete(call.receiver._id.toString());
       } catch (error) {
@@ -629,18 +744,36 @@ const setupSocket = (io) => {
       try {
         const signalType = signal?.sdp?.type || 'candidate';
         console.log(`[Call] ${userId} forwarding signal ${signalType} for call ${callId}`);
-        const call = await getCall(callId);
-        if (!call || !isParticipant(call, userId)) {
-          console.log(`[Call] Signal rejected: not a participant or call not found`);
+
+        // Fast path: use cached participant info to avoid a DB query per ICE candidate
+        let isParticipant = isCallParticipant(callId, userId);
+        let status = 'ongoing';
+        if (!isParticipant) {
+          const call = await getCall(callId);
+          if (!call) {
+            console.log(`[Call] Signal rejected: call not found`);
+            return;
+          }
+          isParticipant = call.caller._id.toString() === userId || call.receiver._id.toString() === userId;
+          status = call.status;
+          if (isParticipant) {
+            setCallParticipants(callId, call.caller._id.toString(), call.receiver._id.toString());
+          }
+        }
+        if (!isParticipant) {
+          console.log(`[Call] Signal rejected: not a participant`);
           return;
         }
-        if (!['ringing', 'ongoing'].includes(call.status)) {
-          console.log(`[Call] Signal rejected: call status is ${call.status}`);
+        // For the cached fast path, assume the call is still ongoing if it is in the cache.
+        // The DB fallback above already captured the real status.
+        if (!['ringing', 'ongoing'].includes(status)) {
+          console.log(`[Call] Signal rejected: call status is ${status}`);
           return;
         }
 
         const roomId = `call:${callId}`;
-        socket.to(roomId).emit('call:signal', { callId, signal, from: userId });
+        const delivered = await forwardOrBufferCallSignal(io, roomId, socket.id, { callId, signal, from: userId });
+        console.log(`[Call] Signal ${delivered ? 'delivered' : 'buffered'} for call ${callId}`);
       } catch (error) {
         console.error('Call signal error:', error);
       }
@@ -657,6 +790,8 @@ const setupSocket = (io) => {
         const roomId = `call:${callId}`;
         const updatedCall = await getCall(callId);
         io.to(roomId).emit('call:missed', { call: updatedCall.toObject() });
+        clearCallSignalBuffer(callId);
+        clearCallParticipants(callId);
 
         let conversation = await Conversation.findOne({
           type: 'direct',
@@ -714,7 +849,23 @@ const setupSocket = (io) => {
         const stillInRoom = await io.in(roomId).fetchSockets();
         const userStillInRoom = stillInRoom.some((s) => s.userId === userId);
         if (!userStillInRoom) {
-          await endCallRoom(roomId, 'ended');
+          console.log(`[Call] ${userId} disconnected from call ${roomId}, scheduling grace period`);
+          // Give the user a chance to reconnect before ending the call
+          if (callDisconnectTimeouts.has(roomId)) {
+            clearTimeout(callDisconnectTimeouts.get(roomId));
+          }
+          const timeout = setTimeout(async () => {
+            callDisconnectTimeouts.delete(roomId);
+            const currentSockets = await io.in(roomId).fetchSockets();
+            const rejoined = currentSockets.some((s) => s.userId === userId);
+            if (!rejoined) {
+              console.log(`[Call] Grace period expired, ending call ${roomId}`);
+              await endCallRoom(roomId, 'ended');
+            } else {
+              console.log(`[Call] ${userId} rejoined call ${roomId} during grace period`);
+            }
+          }, CALL_DISCONNECT_GRACE_PERIOD_MS);
+          callDisconnectTimeouts.set(roomId, timeout);
         }
       }
     });
