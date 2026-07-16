@@ -721,10 +721,18 @@ const setupSocket = (io) => {
         if (!call || !isParticipant(call, userId)) return;
         if (['ended', 'rejected', 'missed'].includes(call.status)) return;
 
+        const endedAt = new Date();
+        const finalDuration =
+          duration > 0
+            ? duration
+            : call.startedAt
+            ? Math.round((endedAt - new Date(call.startedAt)) / 1000)
+            : 0;
+
         await Call.findByIdAndUpdate(callId, {
           status: 'ended',
-          duration: duration || 0,
-          endedAt: new Date(),
+          duration: finalDuration,
+          endedAt,
         });
 
         const roomId = `call:${callId}`;
@@ -733,6 +741,7 @@ const setupSocket = (io) => {
         const socketsInRoom = await io.in(roomId).fetchSockets();
         socketsInRoom.forEach((s) => s.leave(roomId));
         clearCallSignalBuffer(callId);
+        clearCallParticipants(callId);
         userCallRooms.delete(call.caller._id.toString());
         userCallRooms.delete(call.receiver._id.toString());
       } catch (error) {
