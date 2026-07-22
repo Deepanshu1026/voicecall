@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    background: #f5f7fa;
+    font-family: Arial;
+}
+
+.logout {
+    color: red !important;
+}
+
+.content {
+    margin-left: 240px;
+    padding: 20px;
+}
+
+form input, form select, form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #007bff;
+    border: none;
+    padding: 12px 18px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}

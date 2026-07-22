@@ -12,7 +12,7 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
   const { startCall } = useCall();
 
   const otherParticipant = conversation.otherParticipant || conversation.participants?.find(
-    (p) => p._id !== user?._id
+    (p) => String(p._id) !== String(user?._id)
   );
 
   const online = otherParticipant && isUserOnline(otherParticipant._id);

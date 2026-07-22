@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const chatController = require('../controllers/chatController');
-const { auth } = require('../middleware/auth');
+const { unifiedAuth } = require('../middleware/unifiedAuth');
 const { uploadFile } = require('../middleware/upload');
 
-router.use(auth);
+router.use(unifiedAuth);
 
 router.get('/', chatController.getConversations);
 router.post('/conversation', chatController.getOrCreateConversation);
@@ -17,5 +17,7 @@ router.post('/messages/:messageId/reactions', chatController.addReaction);
 router.delete('/messages/:messageId/reactions', chatController.removeReaction);
 router.put('/messages/delivered', chatController.markAsDelivered);
 router.put('/:conversationId/read', chatController.markConversationRead);
+router.post('/:conversationId/pay', chatController.payForConversation);
+router.post('/:conversationId/reset', chatController.resetConversation);
 
 module.exports = router;

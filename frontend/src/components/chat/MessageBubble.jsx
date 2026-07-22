@@ -1,17 +1,22 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { formatMessageTime, formatFileSize } from '../../utils/helpers';
+import Avatar from '../common/Avatar';
 import { HiCheck, HiCheckBadge, HiPencil, HiTrash, HiArrowUturnLeft, HiFaceSmile, HiDocumentText, HiChevronDoubleRight, HiXMark, HiCheckCircle } from 'react-icons/hi2';
 
 const emojis = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
-const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply }) => {
+const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply, variant = 'default' }) => {
   const { user } = useAuth();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editContent, setEditContent] = useState('');
 
   const currentUserId = user?._id;
+  const sentClass = variant === 'user' ? 'message-bubble-sent-user' : 'message-bubble-sent';
+  const receivedClass = variant === 'user' ? 'message-bubble-received-user' : 'message-bubble-received';
+  const bubbleClass = isOwn ? sentClass : receivedClass;
+
   const deletedForMe = message.deletedFor?.some((id) => {
     const idStr = typeof id === 'object' ? id?._id || id?.toString() : id;
     return idStr === currentUserId;
@@ -22,7 +27,7 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply }
   if (message.isDeleted && !isOwn) {
     return (
       <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} opacity-50`}>
-        <div className={`${isOwn ? 'message-bubble-sent' : 'message-bubble-received'} bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 italic text-xs px-3 py-2`}>
+        <div className={`${bubbleClass} bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 italic text-xs px-3 py-2`}>
           This message was deleted
         </div>
       </div>
@@ -69,7 +74,8 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply }
   });
 
   return (
-    <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} group relative`}>
+    <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} items-end gap-2 group relative`}>
+      {variant === 'user' && !isOwn && <Avatar user={message.sender} size="sm" />}
       <div className="max-w-[75%] sm:max-w-[65%]">
         {message.replyTo && (
           <div className={`mb-0.5 px-3 pt-1.5 pb-0.5 text-xs border-l-2 ${isOwn ? 'border-white/50' : 'border-primary-500'} rounded-t-md ${isOwn ? 'bg-primary-700/50' : 'bg-gray-200 dark:bg-gray-600/50'}`}>
@@ -83,7 +89,7 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply }
         )}
 
         <div
-          className={`relative ${isOwn ? 'message-bubble-sent' : 'message-bubble-received'}`}
+          className={`relative ${bubbleClass}`}
         >
           {editing ? (
             <div className="min-w-[200px]">
@@ -181,6 +187,7 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply }
           </div>
         )}
       </div>
+      {variant === 'user' && isOwn && <Avatar user={user} size="sm" />}
     </div>
   );
 };

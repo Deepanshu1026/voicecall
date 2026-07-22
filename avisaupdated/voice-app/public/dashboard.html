@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Dashboard - Avisa Voice</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="dashboard-header">
+            <div>
+                <h1>Agent Call Dashboard</h1>
+                <p>Welcome, <strong id="agentName">Agent</strong></p>
+            </div>
+            <span class="status-badge status-online" id="statusBadge">
+                <span class="status-dot"></span> Online
+            </span>
+        </div>
+
+        <div class="info-text">
+            <p>You are available to receive voice calls from clients. Keep this tab open.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="panel">
+                <h3>Incoming Calls</h3>
+                <div id="incomingCalls">
+                    <p class="muted">No incoming calls yet.</p>
+                </div>
+            </div>
+            <div class="panel">
+                <h3>Connection Log</h3>
+                <div id="log" style="max-height: 200px; overflow-y: auto; font-size: 0.85rem; color: var(--muted);">
+                    <p>Ready.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Call Overlay -->
+    <div id="callRoom" class="call-room">
+        <audio id="remoteAudio" autoplay style="display: none;"></audio>
+        <div class="call-avatar" id="callerAvatar">U</div>
+        <h2 id="callTitle">Incoming Call</h2>
+        <div class="call-status" id="callStatus">Connecting...</div>
+        <div class="call-timer" id="callTimer">00:00</div>
+        <div class="call-controls">
+            <button class="btn btn-danger" id="endCallBtn" onclick="endCall()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.68 13.31a16 16 0 0 0 3.41-3.41M19 12a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('accessToken');
+        const userData = JSON.parse(localStorage.getItem('voiceUser') || '{}');
+
+        if (!token) {
+            window.location.href = '/';
+        }
+
+        document.getElementById('agentName').textContent = userData.displayName || 'Agent';
+
+        const log = document.getElementById('log');
+        const incomingCalls = document.getElementById('incomingCalls');
+        const callRoom = document.getElementById('callRoom');
+        const callTitle = document.getElementById('callTitle');
+        const callStatus = document.getElementById('callStatus');
+        const callerAvatar = document.getElementById('callerAvatar');
+
+        let socket = null;
+        let currentCallId = null;
+        let currentRoomId = null;
+        let peerConnection = null;
+        let localStream = null;
+        let remoteStream = null;
+        let callTimerInterval = null;
+        let callStartTime = null;
+
+        function addLog(message) {
+            const p = document.createElement('p');
+            p.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            log.appendChild(p);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function connectSocket() {
+            socket = io({
+                auth: { token },
+                transports: ['websocket', 'polling']
+            });
+
+            socket.on('connect', () => {
+                addLog('Connected to voice server');
+                document.getElementById('statusBadge').className = 'status-badge status-online';
+                document.getElementById('statusBadge').innerHTML = '<span class="status-dot"></span> Online';
+            });
+
+            socket.on('disconnect', () => {
+                addLog('Disconnected from voice server');
+                document.getElementById('statusBadge').className = 'status-badge status-offline';
+                document.getElementById('statusBadge').innerHTML = '<span class="status-dot"></span> Offline';
+            });
+
+            socket.on('connect_error', (err) => {
+                addLog('Connection error: ' + err.message);
+            });
+
+            socket.on('incoming_call', ({ callId, callerId, callerName, roomId }) => {
+                addLog(`Incoming call from ${callerName || callerId}`);
+                renderIncomingCall(callId, callerId, callerName, roomId);
+            });
+
+            socket.on('call_accepted', ({ callId, roomId }) => {
+                addLog('Call accepted, joining room');
+                joinRoom(roomId);
+            });
+
+            socket.on('call_error', ({ error }) => {
+                addLog('Call error: ' + error);
+                alert('Call error: ' + error);
+            });
+
+            socket.on('signal', async ({ type, data, from }) => {
+                if (!peerConnection) return;
+
+                try {
+                    if (type === 'offer') {
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+                        const answer = await peerConnection.createAnswer();
+                        await peerConnection.setLocalDescription(answer);
+                        socket.emit('signal', { roomId: currentRoomId, type: 'answer', data: answer });
+                    } else if (type === 'answer') {
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+                    } else if (type === 'ice-candidate') {
+                        await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+                    }
+                } catch (err) {
+                    console.error('Signal error:', err);
+                    addLog('Signal error: ' + err.message);
+                }
+            });
+
+            socket.on('call_ended', () => {
+                addLog('Call ended by other party');
+                closeCall();
+            });
+        }
+
+        function renderIncomingCall(callId, callerId, callerName, roomId) {
+            const div = document.createElement('div');
+            div.className = 'call-card';
+            div.innerHTML = `
+                <div>
+                    <h4>${callerName || 'Unknown Caller'}</h4>
+                    <p>User ID: ${callerId}</p>
+                </div>
+                <div class="call-actions">
+                    <button class="btn btn-success" onclick="acceptCall('${callId}', '${roomId}')">Accept</button>
+                    <button class="btn btn-danger" onclick="rejectCall('${callId}')">Reject</button>
+                </div>
+            `;
+            incomingCalls.innerHTML = '';
+            incomingCalls.appendChild(div);
+        }
+
+        async function acceptCall(callId, roomId) {
+            currentCallId = callId;
+            currentRoomId = roomId;
+            incomingCalls.innerHTML = '<p class="muted">Joining call...</p>';
+
+            socket.emit('accept_call', { callId });
+            // joinRoom will be triggered by call_accepted event
+        }
+
+        function rejectCall(callId) {
+            socket.emit('reject_call', { callId });
+            incomingCalls.innerHTML = '<p class="muted">Call rejected.</p>';
+            addLog('Call rejected');
+        }
+
+        async function joinRoom(roomId) {
+            currentRoomId = roomId;
+            callRoom.classList.add('active');
+            callTitle.textContent = 'On Call';
+            callStatus.textContent = 'Setting up audio...';
+            callerAvatar.textContent = (userData.displayName || 'U').charAt(0).toUpperCase();
+
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+                peerConnection = new RTCPeerConnection({
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' }
+                    ]
+                });
+
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+
+                remoteStream = new MediaStream();
+                const remoteAudio = document.getElementById('remoteAudio');
+                remoteAudio.srcObject = remoteStream;
+
+                peerConnection.ontrack = (event) => {
+                    event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
+                };
+
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        socket.emit('signal', {
+                            roomId: currentRoomId,
+                            type: 'ice-candidate',
+                            data: event.candidate
+                        });
+                    }
+                };
+
+                peerConnection.onconnectionstatechange = () => {
+                    if (peerConnection.connectionState === 'connected') {
+                        callStatus.textContent = 'Connected';
+                        startCallTimer();
+                    } else if (peerConnection.connectionState === 'disconnected' || peerConnection.connectionState === 'failed') {
+                        callStatus.textContent = 'Disconnected';
+                    }
+                };
+
+                // If we're the callee, we wait for the caller's offer via signal event
+                // The offer handler will create and send answer automatically
+                callStatus.textContent = 'Waiting for caller audio...';
+
+            } catch (err) {
+                console.error('Join room error:', err);
+                callStatus.textContent = 'Microphone access denied or error.';
+                addLog('Error joining call: ' + err.message);
+            }
+        }
+
+        function startCallTimer() {
+            callStartTime = Date.now();
+            const timer = document.getElementById('callTimer');
+            callTimerInterval = setInterval(() => {
+                const diff = Math.floor((Date.now() - callStartTime) / 1000);
+                const m = String(Math.floor(diff / 60)).padStart(2, '0');
+                const s = String(diff % 60).padStart(2, '0');
+                timer.textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function endCall() {
+            if (socket && currentRoomId) {
+                socket.emit('end_call', { roomId: currentRoomId });
+            }
+            closeCall();
+        }
+
+        function closeCall() {
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            if (callTimerInterval) {
+                clearInterval(callTimerInterval);
+                callTimerInterval = null;
+            }
+            currentCallId = null;
+            currentRoomId = null;
+            callRoom.classList.remove('active');
+            document.getElementById('callTimer').textContent = '00:00';
+            incomingCalls.innerHTML = '<p class="muted">No incoming calls yet.</p>';
+            addLog('Call closed');
+        }
+
+        connectSocket();
+    </script>
+</body>
+</html>

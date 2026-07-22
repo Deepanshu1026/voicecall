@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Drive Upload Test</title>
+</head>
+<body style="font-family: Arial;">
+
+<h2>Google Drive Upload Tester</h2>
+
+<input type="file" id="fileInput"><br><br>
+
+<button onclick="upload()">Upload File</button>
+
+<h3>Response:</h3>
+<pre id="output" style="background:#111;color:#0f0;padding:10px;white-space:pre-wrap;"></pre>
+
+<script>
+async function upload() {
+    let fileInput = document.getElementById("fileInput");
+    let file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please select a file!");
+        return;
+    }
+
+    document.getElementById("output").textContent = "Reading file...";
+
+    // Read file as base64
+    let base64 = await toBase64(file);
+
+    document.getElementById("output").textContent = "Uploading...";
+
+    // Prepare JSON payload for Google Script
+    let payload = {
+        filename: file.name,
+        mimeType: file.type,
+        file_base64: base64.split(",")[1] // remove prefix part
+    };
+
+    try {
+        let response = await fetch("https://script.google.com/macros/s/AKfycbyVJ_NbB76rgb_UqjXlaCx_CdDeBvToiM1t13hSafN_F9Sp0Eg2xnOdMV7flmOjFKTM/exec');", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        let result = await response.text();
+        document.getElementById("output").textContent = result;
+
+    } catch (err) {
+        document.getElementById("output").textContent = "Error:\n" + err;
+    }
+}
+
+function toBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+    });
+}
+</script>
+
+</body>
+</html>

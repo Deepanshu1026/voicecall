@@ -8,11 +8,13 @@ import { getAvatarUrl, getDisplayName, getInitials } from '../utils/helpers';
 
 const ProfilePage = () => {
   const { user, updateUser } = useAuth();
+  const isAgent = user?.role === 'agent';
   const [form, setForm] = useState({
     username: user?.username || '',
     displayName: user?.displayName || '',
     bio: user?.bio || '',
     email: user?.email || '',
+    callRate: user?.callRate ?? 20,
   });
   const [editMode, setEditMode] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
@@ -77,7 +79,7 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-surface-dark">
       <div className="max-w-2xl mx-auto p-4">
         <div className="flex items-center gap-4 mb-6">
-          <Link to="/" className="btn-ghost p-2">
+          <Link to="/consultants" className="btn-ghost p-2">
             <HiArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
@@ -119,6 +121,12 @@ const ProfilePage = () => {
               <span className="text-sm text-gray-500 dark:text-gray-400">Email</span>
               <span className="font-medium text-gray-900 dark:text-white">{user?.email}</span>
             </div>
+            {isAgent && (
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500 dark:text-gray-400">Call Rate</span>
+                <span className="font-medium text-gray-900 dark:text-white">₹{user?.callRate ?? 20}/min</span>
+              </div>
+            )}
             <div className="flex gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
               <button onClick={() => setEditMode(true)} className="btn-primary flex-1">Edit Profile</button>
               <button onClick={() => setShowPasswordForm(true)} className="btn-secondary flex-1">Change Password</button>
@@ -144,9 +152,22 @@ const ProfilePage = () => {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
               <input type="email" className="input-field" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
+            {isAgent && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Call Rate (₹/min)</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  className="input-field"
+                  value={form.callRate}
+                  onChange={(e) => setForm({ ...form, callRate: Number(e.target.value) })}
+                />
+              </div>
+            )}
             <div className="flex gap-3">
               <button onClick={handleUpdateProfile} disabled={saving} className="btn-primary flex-1">{saving ? 'Saving...' : 'Save'}</button>
-              <button onClick={() => { setEditMode(false); setForm({ username: user?.username || '', displayName: user?.displayName || '', bio: user?.bio || '', email: user?.email || '' }); }} className="btn-secondary">Cancel</button>
+              <button onClick={() => { setEditMode(false); setForm({ username: user?.username || '', displayName: user?.displayName || '', bio: user?.bio || '', email: user?.email || '', callRate: user?.callRate ?? 20 }); }} className="btn-secondary">Cancel</button>
             </div>
           </div>
         )}

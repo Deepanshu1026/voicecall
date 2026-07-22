@@ -1,0 +1,433 @@
+.agent-auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #111827 100%);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: white;
+}
+
+.agent-auth-page::before,
+.agent-auth-page::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.agent-auth-page::before {
+  width: 440px;
+  height: 440px;
+  background: #f97316;
+  top: -140px;
+  right: -140px;
+}
+
+.agent-auth-page::after {
+  width: 380px;
+  height: 380px;
+  background: #4f46e5;
+  bottom: -120px;
+  left: -120px;
+}
+
+.agent-auth-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  background: rgba(30, 41, 59, 0.95);
+  border-radius: 24px;
+  padding: 48px 40px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(249, 115, 22, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: agentAuthFadeIn 0.5s ease-out;
+}
+
+@keyframes agentAuthFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.agent-auth-logo {
+  width: 72px;
+  height: auto;
+  display: block;
+  margin: 0 auto 12px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.agent-portal-badge {
+  display: block;
+  width: max-content;
+  margin: 0 auto 12px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  background: rgba(249, 115, 22, 0.15);
+  color: #fb923c;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  text-align: center;
+}
+
+.agent-auth-title {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  color: white;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.agent-auth-subtitle {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 15px;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+.agent-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.agent-auth-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.agent-auth-input-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.agent-auth-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: white;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.agent-auth-input::placeholder {
+  color: #64748b;
+}
+
+.agent-auth-input:hover {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.agent-auth-input:focus {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: #f97316;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+}
+
+.agent-auth-input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+.agent-auth-error {
+  color: #f87171;
+  font-size: 13px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.agent-auth-button {
+  width: 100%;
+  padding: 14px 20px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.25);
+}
+
+.agent-auth-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.35);
+}
+
+.agent-auth-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.agent-auth-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.agent-auth-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: agentAuthSpin 0.8s linear infinite;
+}
+
+@keyframes agentAuthSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.agent-auth-footer {
+  text-align: center;
+  margin-top: 24px;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.agent-auth-link {
+  color: #fb923c;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.agent-auth-link:hover {
+  color: #f97316;
+  text-decoration: underline;
+}
+
+.agent-auth-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 14px;
+  text-decoration: none;
+  margin-top: 20px;
+  transition: color 0.2s ease;
+}
+
+.agent-auth-back-link:hover {
+  color: #fb923c;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .agent-auth-page {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 60px;
+  }
+
+  .agent-auth-card {
+    padding: 32px 24px;
+    border-radius: 20px;
+  }
+
+  .agent-auth-title {
+    font-size: 24px;
+  }
+
+  .agent-auth-subtitle {
+    font-size: 14px;
+  }
+}
+
+/* Dashboard */
+.agent-dashboard {
+  min-height: 100vh;
+  background: #f5f7fb;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.agent-dashboard-header {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.agent-dashboard-header .logo {
+  height: 40px;
+}
+
+.agent-dashboard-header .actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.agent-dashboard-header .user-name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.agent-dashboard-header .logout-btn {
+  background: #f97316;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.agent-dashboard-header .logout-btn:hover {
+  background: #ea580c;
+}
+
+.agent-dashboard-nav {
+  display: flex;
+  gap: 8px;
+  margin-left: 16px;
+}
+
+.agent-dashboard-nav button {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.agent-dashboard-nav button:hover,
+.agent-dashboard-nav button.active {
+  background: #f97316;
+  border-color: #f97316;
+  color: white;
+}
+
+.agent-dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.agent-dashboard-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.agent-dashboard-subtitle {
+  color: #6b7280;
+  margin-bottom: 32px;
+}
+
+.agent-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.agent-stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.agent-stat-card .label {
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.agent-stat-card .value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.agent-stat-card .value.primary {
+  color: #f97316;
+}
+
+.agent-dashboard-section {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 24px;
+}
+
+.agent-dashboard-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 16px;
+}
+
+.agent-empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .agent-dashboard-header {
+    padding: 16px 20px;
+  }
+
+  .agent-dashboard-content {
+    padding: 20px;
+  }
+
+  .agent-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

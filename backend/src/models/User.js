@@ -50,6 +50,13 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    sqlId: {
+      type: Number,
+      default: null,
+    },
+    countryCode: { type: String, default: null },
+    mobile: { type: String, default: null },
+    loginFrom: { type: String, enum: ['web', 'app'], default: 'web' },
     settings: {
       theme: { type: String, enum: ['light', 'dark'], default: 'light' },
       notifications: { type: Boolean, default: true },
@@ -70,6 +77,23 @@ const userSchema = new mongoose.Schema(
     passwordResetToken: String,
     passwordResetExpires: Date,
     lastPasswordChange: Date,
+    role: {
+      type: String,
+      enum: ['user', 'agent'],
+      default: 'user',
+    },
+    walletBalance: {
+      type: Number,
+      default: 0,
+      min: [0, 'Wallet balance cannot be negative'],
+    },
+    callRate: {
+      type: Number,
+      default: function () {
+        return this.role === 'agent' ? 20 : 0;
+      },
+      min: [0, 'Call rate cannot be negative'],
+    },
     isVerified: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

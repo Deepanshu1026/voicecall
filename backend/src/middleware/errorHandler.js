@@ -30,7 +30,9 @@ const sendErrorDev = (err, res) => {
 
 const sendErrorProd = (err, res) => {
   if (err.isOperational) {
-    res.status(err.statusCode).json({ error: err.message });
+    const response = { error: err.message };
+    if (err.details) response.details = err.details;
+    res.status(err.statusCode).json(response);
   } else {
     console.error('ERROR:', err);
     res.status(500).json({ error: 'Something went wrong.' });

@@ -3,9 +3,10 @@ const asyncHandler = require('../utils/asyncHandler');
 const { generateTokens, verifyRefreshToken } = require('../utils/generateToken');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
+const { getAccountById } = require('../utils/account');
 
 const register = asyncHandler(async (req, res) => {
-  const { username, email, password, displayName } = req.body;
+  const { username, email, password, displayName, role } = req.body;
 
   const existingUser = await User.findOne({ $or: [{ email }, { username }] });
   if (existingUser) {
@@ -18,6 +19,7 @@ const register = asyncHandler(async (req, res) => {
     email,
     password,
     displayName: displayName || username,
+    role: role || 'user',
   });
 
   const { accessToken, refreshToken } = generateTokens(user._id);
@@ -84,15 +86,36 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 const getMe = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.userId)
-    .populate('contacts.user', 'username displayName avatar status lastSeen')
-    .populate('blockedUsers', 'username displayName avatar');
+  const user = await User.findById(req.userId).lean();
+  if (!user) throw new AppError('User not found', 404);
+
+  // Populate contacts and blocked users across both account types
+  if (user.contacts?.length) {
+    user.contacts = await Promise.all(
+      user.contacts.map(async (c) => {
+        const contact = await getAccountById(c.user, 'username displayName avatar status lastSeen');
+        return { ...c, user: contact ? { ...contact, _id: c.user.toString() } : c.user };
+      })
+    );
+  }
+
+  if (user.blockedUsers?.length) {
+    const blocked = await Promise.all(
+      user.blockedUsers.map((id) => getAccountById(id, 'username displayName avatar'))
+    );
+    user.blockedUsers = blocked
+      .filter(Boolean)
+      .map((acc) => ({ ...acc, _id: acc._id.toString() }));
+  }
 
   ApiResponse.success(res, { user }, 'User profile retrieved');
 });
 
 const updateProfile = asyncHandler(async (req, res) => {
   const allowedFields = ['username', 'displayName', 'bio', 'email'];
+  if (req.user && req.user.role === 'agent') {
+    allowedFields.push('callRate');
+  }
   const updates = {};
 
   allowedFields.forEach((field) => {
@@ -100,6 +123,15 @@ const updateProfile = asyncHandler(async (req, res) => {
       updates[field] = req.body[field];
     }
   });
+
+  // Validate callRate for agents
+  if (updates.callRate !== undefined) {
+    const rate = Number(updates.callRate);
+    if (Number.isNaN(rate) || rate < 0) {
+      throw new AppError('Call rate must be a non-negative number', 400);
+    }
+    updates.callRate = rate;
+  }
 
   if (req.file) {
     updates.avatar = {

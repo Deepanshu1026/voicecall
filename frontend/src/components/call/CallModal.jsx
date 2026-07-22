@@ -40,7 +40,7 @@ const CallModal = ({ call }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 animate-fade-in">
+    <div className="fixed inset-0 z-[500] flex items-center justify-center bg-black/80 animate-fade-in">
       <audio ref={remoteAudioRef} autoPlay playsInline style={{ display: 'none' }} />
       <div className="w-full max-w-md mx-4">
         <div className="text-center mb-8">
@@ -53,6 +53,10 @@ const CallModal = ({ call }) => {
               : webrtc.callState === 'calling'
               ? 'Calling...'
               : 'Connecting...'}
+          </p>
+          <p className="text-sm text-gray-300 mt-1">
+            {call?.ratePerMinute > 0 ? `₹${call.ratePerMinute}/min` : 'Free call'}
+            {call?.amountCharged > 0 ? ` • Charged: ₹${call.amountCharged}` : ''}
           </p>
         </div>
 

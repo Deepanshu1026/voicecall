@@ -20,6 +20,10 @@ const registerValidator = [
     .trim()
     .isLength({ max: 50 })
     .withMessage('Display name must be at most 50 characters'),
+  body('role')
+    .optional()
+    .isIn(['user', 'agent'])
+    .withMessage('Role must be either user or agent'),
 ];
 
 const loginValidator = [

@@ -44,9 +44,15 @@ export const getInitials = (name) => {
 };
 
 export const getAvatarUrl = (user) => {
-  if (user?.avatar?.url) {
+  if (!user) return null;
+  if (user.avatar?.url) {
     if (user.avatar.url.startsWith('http')) return user.avatar.url;
     return user.avatar.url;
+  }
+  // Handle plain string avatar (used by SQL-imported users/employees)
+  if (typeof user.avatar === 'string' && user.avatar) {
+    if (user.avatar.startsWith('http')) return user.avatar;
+    return user.avatar.startsWith('/') ? user.avatar : '/' + user.avatar;
   }
   return null;
 };

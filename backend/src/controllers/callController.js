@@ -1,10 +1,11 @@
 const Call = require('../models/Call');
 const Message = require('../models/Message');
 const Conversation = require('../models/Conversation');
-const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
+const { getAccountById } = require('../utils/account');
+const { populateCall, populateCalls } = require('../utils/populate');
 
 const initiateCall = asyncHandler(async (req, res) => {
   const { receiverId, type = 'audio' } = req.body;
@@ -12,10 +13,12 @@ const initiateCall = asyncHandler(async (req, res) => {
   if (!receiverId) throw new AppError('Receiver ID is required', 400);
   if (receiverId === req.userId.toString()) throw new AppError('Cannot call yourself', 400);
 
-  const receiver = await User.findById(receiverId);
+  const receiver = await getAccountById(receiverId, 'blockedUsers callRate username displayName avatar');
   if (!receiver) throw new AppError('Receiver not found', 404);
 
-  if (receiver.blockedUsers.includes(req.userId) || req.user.blockedUsers.includes(receiverId)) {
+  const callerBlocked = (req.user.blockedUsers || []).map((id) => id.toString());
+  const receiverBlocked = (receiver.blockedUsers || []).map((id) => id.toString());
+  if (receiverBlocked.includes(req.userId.toString()) || callerBlocked.includes(receiverId.toString())) {
     throw new AppError('Cannot call this user', 403);
   }
 
@@ -26,10 +29,9 @@ const initiateCall = asyncHandler(async (req, res) => {
     status: 'initiated',
   });
 
-  await call.populate('caller', 'username displayName avatar');
-  await call.populate('receiver', 'username displayName avatar');
+  const populatedCall = await populateCall(call, 'username displayName avatar');
 
-  ApiResponse.success(res, call, 'Call initiated', 201);
+  ApiResponse.success(res, populatedCall, 'Call initiated', 201);
 });
 
 const getCallHistory = asyncHandler(async (req, res) => {
@@ -47,15 +49,14 @@ const getCallHistory = asyncHandler(async (req, res) => {
   }
 
   const calls = await Call.find(query)
-    .populate('caller', 'username displayName avatar')
-    .populate('receiver', 'username displayName avatar')
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
     .limit(parseInt(limit));
 
+  const populatedCalls = await populateCalls(calls, 'username displayName avatar');
   const total = await Call.countDocuments(query);
 
-  ApiResponse.paginated(res, calls, {
+  ApiResponse.paginated(res, populatedCalls, {
     page: parseInt(page),
     limit: parseInt(limit),
     total,
@@ -66,18 +67,17 @@ const getCallHistory = asyncHandler(async (req, res) => {
 const getCallById = asyncHandler(async (req, res) => {
   const { callId } = req.params;
 
-  const call = await Call.findById(callId)
-    .populate('caller', 'username displayName avatar')
-    .populate('receiver', 'username displayName avatar');
-
+  const call = await Call.findById(callId);
   if (!call) throw new AppError('Call not found', 404);
 
-  const isParticipant = call.caller._id.toString() === req.userId.toString() ||
-    call.receiver._id.toString() === req.userId.toString();
+  const populatedCall = await populateCall(call, 'username displayName avatar');
+
+  const isParticipant = populatedCall.caller._id.toString() === req.userId.toString() ||
+    populatedCall.receiver._id.toString() === req.userId.toString();
 
   if (!isParticipant) throw new AppError('Not authorized', 403);
 
-  ApiResponse.success(res, call);
+  ApiResponse.success(res, populatedCall);
 });
 
 const updateCallStatus = asyncHandler(async (req, res) => {
@@ -106,6 +106,7 @@ const updateCallStatus = asyncHandler(async (req, res) => {
   }
 
   await call.save();
+  const populatedCall = await populateCall(call, 'username displayName avatar');
 
   if (status === 'missed' || status === 'ended') {
     let conversation = await Conversation.findOne({
@@ -142,18 +143,18 @@ const updateCallStatus = asyncHandler(async (req, res) => {
     await conversation.save();
   }
 
-  ApiResponse.success(res, call, 'Call updated');
+  ApiResponse.success(res, populatedCall, 'Call updated');
 });
 
 const getMissedCalls = asyncHandler(async (req, res) => {
   const missedCalls = await Call.find({
     receiver: req.userId,
     status: 'missed',
-  })
-    .populate('caller', 'username displayName avatar')
-    .sort({ createdAt: -1 });
+  }).sort({ createdAt: -1 });
 
-  ApiResponse.success(res, missedCalls);
+  const populatedMissedCalls = await populateCalls(missedCalls, 'username displayName avatar');
+
+  ApiResponse.success(res, populatedMissedCalls);
 });
 
 module.exports = {

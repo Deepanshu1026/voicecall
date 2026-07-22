@@ -1,9 +1,20 @@
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
-const User = require('../models/User');
+const Transaction = require('../models/Transaction');
+const config = require('../config');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
+const { getAccountById, getAccountDocumentById } = require('../utils/account');
+const {
+  populateConversationParticipants,
+  populateMessages,
+  populateMessage,
+  populateMessageSender,
+} = require('../utils/populate');
+
+const EMPLOYEE_ROLES = ['case_manager', 'manager', 'senior_manager', 'admin'];
+const isAgentRole = (role) => role === 'agent' || EMPLOYEE_ROLES.includes(role);
 
 const getOrCreateConversation = asyncHandler(async (req, res) => {
   const { participantId } = req.body;
@@ -11,29 +22,52 @@ const getOrCreateConversation = asyncHandler(async (req, res) => {
   if (!participantId) throw new AppError('Participant ID is required', 400);
   if (participantId === req.userId.toString()) throw new AppError('Cannot create conversation with yourself', 400);
 
-  const participant = await User.findById(participantId);
+  const participant = await getAccountById(participantId, 'role blockedUsers callRate');
   if (!participant) throw new AppError('User not found', 404);
 
-  const blocked = req.user.blockedUsers.includes(participantId) || participant.blockedUsers.includes(req.userId);
+  const callerBlocked = (req.user.blockedUsers || []).map((id) => id.toString());
+  const participantBlocked = (participant.blockedUsers || []).map((id) => id.toString());
+  const blocked = callerBlocked.includes(participantId) || participantBlocked.includes(req.userId.toString());
   if (blocked) throw new AppError('Cannot create conversation with blocked user', 403);
+
+  const isUserToAgent = req.user.role === 'user' && isAgentRole(participant.role);
 
   let conversation = await Conversation.findOne({
     type: 'direct',
     participants: { $all: [req.userId, participantId], $size: 2 },
-  }).populate('participants', 'username displayName avatar status lastSeen');
+  });
 
-  if (!conversation) {
-    conversation = await Conversation.create({
-      type: 'direct',
-      participants: [req.userId, participantId],
-    });
-    conversation = await conversation.populate('participants', 'username displayName avatar status lastSeen');
+    if (!conversation) {
+      const conversationData = {
+        type: 'direct',
+        participants: [req.userId, participantId],
+      };
+
+      if (isUserToAgent) {
+        conversationData.freeUntil = new Date(Date.now() + config.freeChatDurationSeconds * 1000);
+        conversationData.isPaid = false;
+        conversationData.paymentAmount = config.chatPaymentAmount;
+        conversationData.lockedToAgent = participantId;
+      }
+
+      conversation = await Conversation.create(conversationData);
+    }
+
+  // If an existing conversation is user-to-agent but not locked, convert it into a consultation
+  if (conversation && isUserToAgent && !conversation.lockedToAgent) {
+    conversation.lockedToAgent = participantId;
+    conversation.freeUntil = new Date(Date.now() + config.freeChatDurationSeconds * 1000);
+    conversation.isPaid = false;
+    conversation.paymentAmount = config.chatPaymentAmount;
+    await conversation.save();
   }
 
-  const unreadEntry = conversation.unreadCount.find((u) => u.user.toString() === req.userId.toString());
+  const convObj = await populateConversationParticipants(conversation);
+
+  const unreadEntry = convObj.unreadCount.find((u) => u.user.toString() === req.userId.toString());
   const unreadCount = unreadEntry ? unreadEntry.count : 0;
 
-  ApiResponse.success(res, { ...conversation.toObject(), unreadCount }, 'Conversation ready', conversation.isNew ? 201 : 200);
+  ApiResponse.success(res, { ...convObj, unreadCount }, 'Conversation ready', conversation.isNew ? 201 : 200);
 });
 
 const getConversations = asyncHandler(async (req, res) => {
@@ -43,7 +77,6 @@ const getConversations = asyncHandler(async (req, res) => {
     participants: req.userId,
     isActive: true,
   })
-    .populate('participants', 'username displayName avatar status lastSeen')
     .populate('lastMessage')
     .sort({ updatedAt: -1 })
     .skip((page - 1) * limit)
@@ -54,11 +87,15 @@ const getConversations = asyncHandler(async (req, res) => {
     isActive: true,
   });
 
-  const enrichedConversations = conversations.map((conv) => {
+  const populatedConversations = await Promise.all(
+    conversations.map((conv) => populateConversationParticipants(conv))
+  );
+
+  const enrichedConversations = populatedConversations.map((conv) => {
     const unreadEntry = conv.unreadCount.find((u) => u.user.toString() === req.userId.toString());
     const otherParticipant = conv.participants.find((p) => p._id.toString() !== req.userId.toString());
     return {
-      ...conv.toObject(),
+      ...conv,
       otherParticipant,
       unreadCount: unreadEntry ? unreadEntry.count : 0,
     };
@@ -93,11 +130,11 @@ const getMessages = asyncHandler(async (req, res) => {
   }
 
   const messages = await Message.find(query)
-    .populate('sender', 'username displayName avatar')
     .populate('replyTo')
-    .populate('reactions.user', 'username displayName avatar')
     .sort({ createdAt: -1 })
     .limit(parseInt(limit));
+
+  const populatedMessages = await populateMessages(messages);
 
   const unreadMessages = await Message.find({
     conversation: conversationId,
@@ -127,7 +164,7 @@ const getMessages = asyncHandler(async (req, res) => {
 
   const total = await Message.countDocuments(query);
 
-  ApiResponse.paginated(res, messages.reverse(), {
+  ApiResponse.paginated(res, populatedMessages.reverse(), {
     page: parseInt(page),
     limit: parseInt(limit),
     total,
@@ -150,9 +187,25 @@ const sendMessage = asyncHandler(async (req, res) => {
     (p) => p.toString() !== req.userId.toString()
   );
 
-  const recipientUser = await User.findById(recipient);
-  if (recipientUser && recipientUser.blockedUsers.includes(req.userId)) {
+  const recipientAccount = await getAccountById(recipient, 'blockedUsers');
+  if (recipientAccount && (recipientAccount.blockedUsers || []).map((id) => id.toString()).includes(req.userId.toString())) {
     throw new AppError('Cannot send message to this user', 403);
+  }
+
+  // Free/paid consultation check for user -> agent conversations
+  if (
+    conversation.lockedToAgent &&
+    conversation.lockedToAgent.toString() === recipient.toString() &&
+    req.userId.toString() !== conversation.lockedToAgent.toString()
+  ) {
+    const now = new Date();
+    if (conversation.freeUntil && now > conversation.freeUntil && !conversation.isPaid) {
+      throw new AppError(
+        'Free chat has ended. Please pay to continue chatting.',
+        402,
+        { paymentAmount: conversation.paymentAmount }
+      );
+    }
   }
 
   let fileData = {};
@@ -179,8 +232,8 @@ const sendMessage = asyncHandler(async (req, res) => {
     $addToSet: { deliveredTo: recipient },
   });
 
-  await message.populate('sender', 'username displayName avatar');
   await message.populate('replyTo');
+  const populatedMessage = await populateMessageSender(message);
 
   const existingUnread = conversation.unreadCount.find((u) => u.user.toString() === recipient.toString());
   if (existingUnread) {
@@ -191,7 +244,12 @@ const sendMessage = asyncHandler(async (req, res) => {
   conversation.lastMessage = message._id;
   await conversation.save();
 
-  ApiResponse.success(res, message, 'Message sent', 201);
+  if (req.io) {
+    req.io.to(`user:${recipient}`).emit('message:new', populatedMessage);
+    req.io.to(`user:${req.userId}`).emit('message:new', populatedMessage);
+  }
+
+  ApiResponse.success(res, populatedMessage, 'Message sent', 201);
 });
 
 const editMessage = asyncHandler(async (req, res) => {
@@ -211,6 +269,16 @@ const editMessage = asyncHandler(async (req, res) => {
   message.isEdited = true;
   message.editedAt = new Date();
   await message.save();
+
+  if (req.io && message.recipient) {
+    req.io.to(`user:${message.recipient.toString()}`).emit('message:edited', {
+      messageId: message._id,
+      content,
+      isEdited: true,
+      editedAt: message.editedAt,
+      conversation: message.conversation.toString(),
+    });
+  }
 
   ApiResponse.success(res, message, 'Message edited');
 });
@@ -240,6 +308,15 @@ const deleteMessage = asyncHandler(async (req, res) => {
   }
 
   await message.save();
+
+  if (req.io && deleteForEveryone && message.recipient) {
+    req.io.to(`user:${message.recipient.toString()}`).emit('message:deleted', {
+      messageId: message._id,
+      forEveryone: true,
+      conversation: message.conversation.toString(),
+    });
+  }
+
   ApiResponse.success(res, null, 'Message deleted');
 });
 
@@ -283,8 +360,8 @@ const forwardMessage = asyncHandler(async (req, res) => {
       'statusTimestamps.sent': new Date(),
     });
 
-    await forwardedMsg.populate('sender', 'username displayName avatar');
-    forwardedMessages.push(forwardedMsg);
+    const populatedForwardedMsg = await populateMessageSender(forwardedMsg);
+    forwardedMessages.push(populatedForwardedMsg);
   }
 
   originalMessage.forwardCount = (originalMessage.forwardCount || 0) + 1;
@@ -314,9 +391,17 @@ const addReaction = asyncHandler(async (req, res) => {
   }
 
   await message.save();
-  await message.populate('reactions.user', 'username displayName avatar');
+  const populatedMessage = await populateMessage(message);
 
-  ApiResponse.success(res, message.reactions, 'Reaction updated');
+  if (req.io && message.recipient) {
+    req.io.to(`user:${message.recipient.toString()}`).emit('message:reaction:updated', {
+      messageId: message._id,
+      reactions: populatedMessage.reactions,
+      conversation: message.conversation.toString(),
+    });
+  }
+
+  ApiResponse.success(res, populatedMessage.reactions, 'Reaction updated');
 });
 
 const removeReaction = asyncHandler(async (req, res) => {
@@ -329,6 +414,14 @@ const removeReaction = asyncHandler(async (req, res) => {
     (r) => r.user.toString() !== req.userId.toString()
   );
   await message.save();
+
+  if (req.io && message.recipient) {
+    req.io.to(`user:${message.recipient.toString()}`).emit('message:reaction:updated', {
+      messageId: message._id,
+      reactions: message.reactions,
+      conversation: message.conversation.toString(),
+    });
+  }
 
   ApiResponse.success(res, message.reactions, 'Reaction removed');
 });
@@ -352,6 +445,17 @@ const markAsDelivered = asyncHandler(async (req, res) => {
       'statusTimestamps.delivered': new Date(),
     }
   );
+
+  if (req.io) {
+    const messages = await Message.find({ _id: { $in: messageIds } });
+    messages.forEach((msg) => {
+      req.io.to(`user:${msg.sender.toString()}`).emit('message:status', {
+        messageId: msg._id,
+        status: 'delivered',
+        conversation: msg.conversation.toString(),
+      });
+    });
+  }
 
   ApiResponse.success(res, null, 'Messages marked as delivered');
 });
@@ -382,9 +486,114 @@ const markConversationRead = asyncHandler(async (req, res) => {
     const unreadEntry = conversation.unreadCount.find((u) => u.user.toString() === req.userId.toString());
     if (unreadEntry) unreadEntry.count = 0;
     await conversation.save();
+
+    if (req.io) {
+      const otherParticipantId = conversation.participants.find((p) => p.toString() !== req.userId.toString());
+      if (otherParticipantId) {
+        req.io.to(`user:${otherParticipantId.toString()}`).emit('messages:read', { conversationId });
+      }
+    }
   }
 
   ApiResponse.success(res, null, 'Conversation marked as read');
+});
+
+const payForConversation = asyncHandler(async (req, res) => {
+  const { conversationId } = req.params;
+
+  let conversation = await Conversation.findOne({
+    _id: conversationId,
+    participants: req.userId,
+  });
+
+  if (!conversation) throw new AppError('Conversation not found', 404);
+
+  let convObj = await populateConversationParticipants(conversation, '-password');
+
+  if (conversation.isPaid) {
+    const otherParticipant = convObj.participants.find(
+      (p) => p._id.toString() !== req.userId.toString()
+    );
+    return ApiResponse.success(res, {
+      ...convObj,
+      otherParticipant,
+      walletBalance: req.user?.walletBalance,
+    }, 'Conversation already paid');
+  }
+
+  const amount = conversation.paymentAmount || 0;
+  const userResult = await getAccountDocumentById(req.userId, 'walletBalance');
+
+  if (!userResult) throw new AppError('User not found', 404);
+  const { account: user } = userResult;
+  const balance = user.walletBalance || 0;
+  if (balance < amount) {
+    throw new AppError(
+      'Insufficient wallet balance. Please add money to your wallet.',
+      402,
+      { balance, requiredAmount: amount }
+    );
+  }
+
+  // Deduct from wallet and mark conversation as paid
+  user.walletBalance -= amount;
+  await user.save();
+
+  await Transaction.create({
+    user: req.userId,
+    amount,
+    type: 'debit',
+    description: 'Consultation payment',
+    status: 'completed',
+    conversation: conversation._id,
+  });
+
+  conversation.isPaid = true;
+  conversation.freeUntil = null;
+  await conversation.save();
+
+  // Re-populate to return full participant data to the frontend
+  convObj = await populateConversationParticipants(conversation, '-password');
+
+  const otherParticipant = convObj.participants.find(
+    (p) => p._id.toString() !== req.userId.toString()
+  );
+
+  ApiResponse.success(res, {
+    ...convObj,
+    otherParticipant,
+    walletBalance: user.walletBalance,
+  }, 'Payment successful. You can now continue chatting.');
+});
+
+const resetConversation = asyncHandler(async (req, res) => {
+  const { conversationId } = req.params;
+
+  const conversation = await Conversation.findOne({
+    _id: conversationId,
+    participants: req.userId,
+    lockedToAgent: { $ne: null },
+  });
+
+  if (!conversation) throw new AppError('Consultation not found', 404);
+
+  const isCaller = conversation.participants.some(
+    (p) => p.toString() === req.userId.toString() && p.toString() !== conversation.lockedToAgent.toString()
+  );
+
+  if (!isCaller) throw new AppError('Only the caller can reset this consultation', 403);
+
+  conversation.isPaid = false;
+  conversation.freeUntil = new Date(Date.now() + config.freeChatDurationSeconds * 1000);
+  await conversation.save();
+
+  const convObj = await populateConversationParticipants(conversation);
+
+  const otherParticipant = convObj.participants.find(
+    (p) => p._id.toString() !== req.userId.toString()
+  );
+
+  ApiResponse.success(res, { ...convObj, otherParticipant }, 'Consultation reset to free chat');
 });
 
 module.exports = {
@@ -399,4 +608,6 @@ module.exports = {
   removeReaction,
   markAsDelivered,
   markConversationRead,
+  payForConversation,
+  resetConversation,
 };

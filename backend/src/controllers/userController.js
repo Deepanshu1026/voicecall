@@ -1,7 +1,9 @@
 const User = require('../models/User');
+const Employee = require('../models/Employee');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
+const { getAccountById, getAccountDocumentById } = require('../utils/account');
 
 const searchUsers = asyncHandler(async (req, res) => {
   const { query, page = 1, limit = 20 } = req.query;
@@ -114,8 +116,8 @@ const blockUser = asyncHandler(async (req, res) => {
   if (!userId) throw new AppError('User ID is required', 400);
   if (userId === req.userId.toString()) throw new AppError('Cannot block yourself', 400);
 
-  const targetUser = await User.findById(userId);
-  if (!targetUser) throw new AppError('User not found', 404);
+  const targetResult = await getAccountDocumentById(userId);
+  if (!targetResult) throw new AppError('User not found', 404);
 
   const user = await User.findById(req.userId);
   if (user.blockedUsers.includes(userId)) throw new AppError('User already blocked', 409);
@@ -124,8 +126,10 @@ const blockUser = asyncHandler(async (req, res) => {
   user.contacts = user.contacts.filter((c) => c.user.toString() !== userId);
   await user.save();
 
-  targetUser.blockedBy.push(req.userId);
-  await targetUser.save();
+  if (targetResult.accountType === 'user') {
+    targetResult.account.blockedBy.push(req.userId);
+    await targetResult.account.save();
+  }
 
   ApiResponse.success(res, null, 'User blocked');
 });
@@ -137,22 +141,39 @@ const unblockUser = asyncHandler(async (req, res) => {
   user.blockedUsers = user.blockedUsers.filter((id) => id.toString() !== userId);
   await user.save();
 
-  const targetUser = await User.findById(userId);
-  if (targetUser) {
-    targetUser.blockedBy = targetUser.blockedBy.filter((id) => id.toString() !== req.userId);
-    await targetUser.save();
+  const targetResult = await getAccountDocumentById(userId);
+  if (targetResult && targetResult.accountType === 'user') {
+    targetResult.account.blockedBy = targetResult.account.blockedBy.filter(
+      (id) => id.toString() !== req.userId
+    );
+    await targetResult.account.save();
   }
 
   ApiResponse.success(res, null, 'User unblocked');
 });
 
 const getBlockedUsers = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.userId).populate(
-    'blockedUsers',
-    'username displayName avatar status'
-  );
+  const user = await User.findById(req.userId).select('blockedUsers');
+  if (!user) throw new AppError('User not found', 404);
 
-  ApiResponse.success(res, user.blockedUsers);
+  const blocked = await Promise.all(
+    user.blockedUsers.map((id) => getAccountById(id, 'username displayName avatar status'))
+  );
+  const validBlocked = blocked
+    .filter(Boolean)
+    .map((acc) => ({ ...acc, _id: acc._id.toString() }));
+
+  ApiResponse.success(res, validBlocked);
+});
+
+// Public consultant list for the landing page (uses Employee case managers)
+const getConsultants = asyncHandler(async (req, res) => {
+  const consultants = await Employee.find({ role: 'case_manager', status: 'active' })
+    .select('username displayName avatar workStatus languages expertise experience totalOrder callRate createdAt')
+    .sort({ workStatus: 1, createdAt: -1 })
+    .limit(100);
+
+  ApiResponse.success(res, consultants);
 });
 
 module.exports = {
@@ -164,4 +185,5 @@ module.exports = {
   blockUser,
   unblockUser,
   getBlockedUsers,
+  getConsultants,
 };

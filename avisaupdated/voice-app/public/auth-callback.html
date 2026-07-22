@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecting to Avisa Voice...</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="loader"></div>
+            <h2>Connecting to call dashboard...</h2>
+            <p id="statusText">Please wait while we verify your session.</p>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+            const statusText = document.getElementById('statusText');
+
+            if (!token) {
+                statusText.textContent = 'No token provided. Redirecting to login...';
+                setTimeout(() => window.location.href = '/', 2000);
+                return;
+            }
+
+            try {
+                // Decode token payload (without verifying - server verifies on socket connect)
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                localStorage.setItem('accessToken', token);
+                localStorage.setItem('voiceUser', JSON.stringify(payload));
+
+                statusText.textContent = `Welcome, ${payload.displayName || 'User'}. Redirecting...`;
+
+                // Redirect based on role
+                setTimeout(() => {
+                    if (payload.role === 'agent') {
+                        window.location.href = '/dashboard';
+                    } else {
+                        const agentId = payload.agentId || '';
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const agentName = urlParams.get('agentName') || payload.displayName || 'Visa Expert';
+                        window.location.href = '/call?agentId=' + encodeURIComponent(agentId) + '&agentName=' + encodeURIComponent(agentName);
+                    }
+                }, 1000);
+            } catch (err) {
+                console.error(err);
+                statusText.textContent = 'Invalid token. Redirecting...';
+                setTimeout(() => window.location.href = '/', 2000);
+            }
+        })();
+    </script>
+</body>
+</html>

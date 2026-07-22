@@ -24,7 +24,9 @@ const Avatar = ({ user, size = 'md', showStatus = false, className = '' }) => {
   };
 
   const getStatusColor = () => {
-    if (online || status === 'online') return 'bg-green-500';
+    // Only the real-time socket list should drive the online dot; the DB
+    // user.status/workStatus can be stale, so don't use it as a fallback.
+    if (online) return 'bg-green-500';
     if (status === 'away') return 'bg-yellow-500';
     return 'bg-gray-400';
   };

@@ -1,0 +1,21 @@
+{
+  "name": "Avisa Experts Portal",
+  "short_name": "AvisaPortal",
+  "start_url": "../landing.php",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    }
+  ]
+}

@@ -19,6 +19,8 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const callRoutes = require('./routes/callRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
+const agentPortalRoutes = require('./routes/agentPortalRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -60,6 +62,12 @@ if (config.nodeEnv === 'development') {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+app.set('io', io);
+app.use((req, res, next) => {
+  req.io = app.get('io');
+  next();
+});
+
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 const limiter = rateLimit({
@@ -82,6 +90,8 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/employees', employeeRoutes);
+app.use('/api/agent-portal', agentPortalRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/calls', callRoutes);
 
@@ -128,6 +138,14 @@ connectDB().then(() => {
 
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
+  // In production, don't crash — just log. A process manager (PM2) will restart if needed.
+  if (process.env.NODE_ENV === 'production') return;
+  server.close(() => process.exit(1));
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  if (process.env.NODE_ENV === 'production') return;
   server.close(() => process.exit(1));
 });
 

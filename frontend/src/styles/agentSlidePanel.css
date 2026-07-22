@@ -1,0 +1,176 @@
+/* ===== Agent Slide-in Panel ===== */
+.agent-slide-trigger {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.15s ease;
+}
+
+.agent-slide-trigger:hover {
+  background: var(--surface-hover);
+  color: var(--primary);
+}
+
+.agent-slide-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 2px solid var(--surface);
+}
+
+.agent-slide-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.3);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.agent-slide-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.agent-slide-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  max-width: 100vw;
+  height: 100vh;
+  background: var(--surface);
+  z-index: 1000;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.agent-slide-panel.open {
+  transform: translateX(0);
+}
+
+.agent-slide-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.agent-slide-header h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+
+.agent-slide-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.agent-slide-info {
+  background: #f8fafc;
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  margin-bottom: 8px;
+}
+
+.agent-slide-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== Chat inside agent portal overrides ===== */
+.agent-portal-main .chat-agent-wrapper {
+  height: 100% !important;
+  width: 100% !important;
+  display: flex !important;
+  overflow: hidden !important;
+  background: var(--content-bg) !important;
+}
+
+/* Chat sidebar */
+.agent-portal-main .chat-agent-wrapper > div:first-child {
+  width: 360px !important;
+  flex-shrink: 0 !important;
+  border-right: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+}
+
+/* Chat area */
+.agent-portal-main .chat-agent-wrapper > div:last-child {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--content-bg) !important;
+}
+
+/* Chat input area */
+.agent-portal-main .chat-input-area {
+  border-top: 1px solid var(--border) !important;
+  background: var(--surface) !important;
+  padding: 0.75rem 1rem !important;
+}
+
+/* Welcome screen */
+.agent-portal-main .chat-welcome {
+  color: var(--text-secondary) !important;
+  background: var(--content-bg) !important;
+}
+
+/* Override Tailwind text classes inside agent portal chat */
+.agent-portal-main .chat-agent-wrapper .text-gray-900,
+.agent-portal-main .chat-agent-wrapper .dark\:text-white,
+.agent-portal-main .chat-agent-wrapper .text-gray-500,
+.agent-portal-main .chat-agent-wrapper .dark\:text-gray-400,
+.agent-portal-main .chat-agent-wrapper .text-gray-400,
+.agent-portal-main .chat-agent-wrapper .text-gray-700 {
+  color: var(--text) !important;
+}
+
+.agent-portal-main .chat-agent-wrapper .dark\:bg-surface-dark,
+.agent-portal-main .chat-agent-wrapper .bg-white {
+  background: var(--surface) !important;
+}
+
+.agent-portal-main .chat-agent-wrapper .bg-gray-50 {
+  background: var(--content-bg) !important;
+}
+
+.agent-portal-main .chat-agent-wrapper .border-gray-200,
+.agent-portal-main .chat-agent-wrapper .dark\:border-gray-700 {
+  border-color: var(--border) !important;
+}
+
+.agent-portal-main .chat-agent-wrapper .hover\:bg-gray-50:hover,
+.agent-portal-main .chat-agent-wrapper .dark\:hover\:bg-gray-800:hover {
+  background: var(--surface-hover) !important;
+}
+
+@media (max-width: 768px) {
+  .agent-slide-panel {
+    width: 100vw;
+  }
+}

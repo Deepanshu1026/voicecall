@@ -26,6 +26,19 @@ const callSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    ratePerMinute: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    amountCharged: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    billingStartedAt: Date,
+    billingEndedAt: Date,
+    lastBilledAt: Date,
     quality: {
       bitrate: Number,
       packetLoss: Number,

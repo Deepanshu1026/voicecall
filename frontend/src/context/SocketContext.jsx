@@ -61,8 +61,6 @@ export const SocketProvider = ({ children }) => {
   }, [socketVersion]);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
-
     const socket = socketRef.current || getSocket();
     if (!socket) return;
 
@@ -115,7 +113,7 @@ export const SocketProvider = ({ children }) => {
   }, [isAuthenticated, socketVersion]);
 
   const isUserOnline = useCallback((userId) => {
-    return onlineUsers.includes(userId);
+    return onlineUsers.includes(String(userId));
   }, [onlineUsers]);
 
   const value = useMemo(() => ({

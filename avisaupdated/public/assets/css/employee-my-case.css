@@ -1,0 +1,104 @@
+        body {
+            background: #f5f7fa;
+        }
+
+        .section-card {
+            padding: 18px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            margin-bottom: 18px;
+        }
+
+        .case-item {
+            padding: 12px;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            margin-bottom: 10px;
+            border: 1px solid #eef0f2;
+        }
+
+        .case-item:hover {
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.04);
+            transform: translateY(-1px);
+        }
+
+        .active-case {
+            border-left: 4px solid #198754;
+            background: #eaf8ee;
+        }
+
+        .locked-case {
+            opacity: 0.88;
+            background: #fbfbfb;
+        }
+
+        .thumb-img {
+            height: 90px;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .muted {
+            color: #6c757d;
+        }
+
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .timeline-entry {
+            border-left: 3px solid #0d6efd;
+            margin-left: 10px;
+            padding-left: 12px;
+            margin-bottom: 12px;
+        }
+
+        .lock-note {
+            background: #fff3cd;
+            border-left: 4px solid #ffecb5;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .case-list-scroll {
+            max-height: 72vh;
+            overflow: auto;
+            padding: 6px;
+        }
+
+        .small-muted {
+            color: #6c757d;
+            font-size: .9rem;
+        }
+
+        .file-card {
+            border: 1px solid #eef0f2;
+            border-radius: 6px;
+            padding: 8px;
+            background: #fff;
+        }
+
+        .disabled-overlay {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .file-name {
+            font-size: 0.875rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }

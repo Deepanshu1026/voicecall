@@ -1,18 +1,24 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Employee = require('../models/Employee');
 const Message = require('../models/Message');
 const Conversation = require('../models/Conversation');
 const Call = require('../models/Call');
+const callBilling = require('./callBillingService');
 const config = require('../config');
+const { getAccountById } = require('../utils/account');
+const { populateMessage, populateCall } = require('../utils/populate');
 
 const onlineUserSockets = new Map(); // userId -> Set of socket ids
+const onlineEmployeeSockets = new Map(); // employeeId -> Set of socket ids
 const pendingOfflineTimeouts = new Map(); // userId -> timeout id
+const pendingEmployeeOfflineTimeouts = new Map(); // employeeId -> timeout id
 const userCallRooms = new Map();
 const callSignalBuffers = new Map(); // callId -> [{ signal, fromSocketId }]
 const callDisconnectTimeouts = new Map(); // roomId -> timeout id
 const callParticipantsCache = new Map(); // callId -> { callerId, receiverId }
 const HEARTBEAT_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes to survive background-tab throttling
-const OFFLINE_GRACE_PERIOD_MS = 5000; // small delay to avoid flicker during reconnect
+const OFFLINE_GRACE_PERIOD_MS = 1000; // 1 second DB grace period; status is broadcast instantly
 const STALE_CLEANUP_INTERVAL_MS = 60 * 1000; // run stale cleanup once a minute
 const CALL_DISCONNECT_GRACE_PERIOD_MS = 30 * 1000; // wait 30s before ending a call on socket disconnect
 
@@ -36,6 +42,26 @@ const markStaleUsersOffline = async () => {
   }
 };
 
+const markStaleEmployeesOffline = async () => {
+  try {
+    const staleThreshold = new Date(Date.now() - HEARTBEAT_TIMEOUT_MS);
+    const inCallUserIds = Array.from(userCallRooms.keys());
+    const result = await Employee.updateMany(
+      {
+        workStatus: 'active',
+        lastSeen: { $lt: staleThreshold },
+        _id: { $nin: inCallUserIds },
+      },
+      { workStatus: 'unavailable', lastSeen: new Date() }
+    );
+    if (result.modifiedCount > 0) {
+      console.log(`Marked ${result.modifiedCount} stale employee(s) offline`);
+    }
+  } catch (err) {
+    console.error('Failed to mark stale employees offline:', err);
+  }
+};
+
 const scheduleUserOffline = (io, userId) => {
   if (pendingOfflineTimeouts.has(userId)) return;
   const timeout = setTimeout(async () => {
@@ -49,9 +75,7 @@ const scheduleUserOffline = (io, userId) => {
       console.error('Failed to update offline status:', err);
     }
     io.emit('user:status', { userId, status: 'offline', lastSeen: new Date() });
-    refreshOnlineList().then((onlineList) => {
-      io.emit('online:users', onlineList);
-    });
+    io.emit('online:users', refreshOnlineList());
   }, OFFLINE_GRACE_PERIOD_MS);
   pendingOfflineTimeouts.set(userId, timeout);
 };
@@ -64,6 +88,43 @@ const cancelUserOffline = (userId) => {
   }
 };
 
+const scheduleEmployeeOffline = (io, employeeId) => {
+  if (pendingEmployeeOfflineTimeouts.has(employeeId)) return;
+  const timeout = setTimeout(async () => {
+    pendingEmployeeOfflineTimeouts.delete(employeeId);
+    if (onlineEmployeeSockets.has(employeeId) && onlineEmployeeSockets.get(employeeId).size > 0) return;
+
+    onlineEmployeeSockets.delete(employeeId);
+    try {
+      await Employee.findByIdAndUpdate(employeeId, { workStatus: 'unavailable', lastSeen: new Date() });
+    } catch (err) {
+      console.error('Failed to update employee offline status:', err);
+    }
+    io.emit('user:status', { userId: employeeId, status: 'offline', lastSeen: new Date() });
+    io.emit('online:users', refreshOnlineList());
+  }, OFFLINE_GRACE_PERIOD_MS);
+  pendingEmployeeOfflineTimeouts.set(employeeId, timeout);
+};
+
+const cancelEmployeeOffline = (employeeId) => {
+  const timeout = pendingEmployeeOfflineTimeouts.get(employeeId);
+  if (timeout) {
+    clearTimeout(timeout);
+    pendingEmployeeOfflineTimeouts.delete(employeeId);
+  }
+};
+
+const markEmployeeOnline = async (io, employeeId) => {
+  cancelEmployeeOffline(employeeId);
+  try {
+    await Employee.findByIdAndUpdate(employeeId, { workStatus: 'active', lastSeen: new Date() });
+  } catch (err) {
+    console.error('Failed to update employee status:', err);
+  }
+  io.emit('user:status', { userId: employeeId, status: 'online', lastSeen: new Date() });
+  io.emit('online:users', refreshOnlineList());
+};
+
 const markUserOnline = async (io, userId) => {
   cancelUserOffline(userId);
   try {
@@ -72,22 +133,21 @@ const markUserOnline = async (io, userId) => {
     console.error('Failed to update user status:', err);
   }
   io.emit('user:status', { userId, status: 'online', lastSeen: new Date() });
-  refreshOnlineList().then((onlineList) => {
-    io.emit('online:users', onlineList);
-  });
+  io.emit('online:users', refreshOnlineList());
 };
 
-const refreshOnlineList = async () => {
-  // Lightweight read-only query; stale cleanup is handled by a separate interval
-  const onlineUserIds = await User.find({ status: 'online' }).select('_id').lean();
-  return onlineUserIds.map((u) => u._id.toString());
+const refreshOnlineList = () => {
+  // Real-time online list built from active socket sets (fast, no DB query)
+  const userIds = Array.from(onlineUserSockets.keys()).filter((id) => onlineUserSockets.get(id)?.size > 0);
+  const employeeIds = Array.from(onlineEmployeeSockets.keys()).filter((id) => onlineEmployeeSockets.get(id)?.size > 0);
+  return [...userIds, ...employeeIds];
 };
 
 const startStaleCleanup = (io) => {
   return setInterval(async () => {
     await markStaleUsersOffline();
-    const onlineList = await refreshOnlineList();
-    io.emit('online:users', onlineList);
+    await markStaleEmployeesOffline();
+    io.emit('online:users', refreshOnlineList());
   }, STALE_CLEANUP_INTERVAL_MS);
 };
 
@@ -169,56 +229,143 @@ const setupSocket = (io) => {
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth.token || socket.handshake.query.token;
-      if (!token) return next(new Error('Authentication required'));
+      if (!token) {
+        socket.isGuest = true;
+        return next();
+      }
 
       const decoded = jwt.verify(token, config.jwt.secret);
-      const user = await User.findById(decoded.id);
-      if (!user) return next(new Error('User not found'));
+      let account = await User.findById(decoded.id);
+      if (account) {
+        socket.userId = account._id.toString();
+        socket.user = account;
+        socket.isEmployee = false;
+        socket.isGuest = false;
+        return next();
+      }
 
-      socket.userId = user._id.toString();
-      socket.user = user;
-      next();
+      account = await Employee.findById(decoded.id);
+      if (account) {
+        socket.userId = account._id.toString();
+        socket.employee = account;
+        socket.isEmployee = true;
+        socket.isGuest = false;
+        return next();
+      }
+
+      return next(new Error('Account not found'));
     } catch (err) {
       next(new Error('Authentication failed'));
     }
   });
 
   io.on('connection', async (socket) => {
-    const userId = socket.userId;
-    console.log(`User connected: ${socket.user.displayName || socket.user.username} (${userId})`);
+    if (socket.isGuest) {
+      console.log(`Guest connected: ${socket.id}`);
+      try {
+        socket.emit('online:users', refreshOnlineList());
+      } catch (err) {
+        console.error('Failed to send online list to guest:', err);
+      }
 
-    const userSocketSet = onlineUserSockets.get(userId) || new Set();
-    const wasOnline = userSocketSet.size > 0;
-    userSocketSet.add(socket.id);
-    onlineUserSockets.set(userId, userSocketSet);
+      socket.on('user:getOnline', async () => {
+        try {
+          socket.emit('online:users', refreshOnlineList());
+        } catch (err) {
+          console.error('Guest get online users error:', err);
+        }
+      });
 
-    socket.join(`user:${userId}`);
-    socket.emit('connected', { userId, message: 'Connected to server' });
+      socket.on('user:getStatus', async ({ userId: targetId }) => {
+        try {
+          const hasActiveSocket =
+            (onlineUserSockets.has(targetId) && onlineUserSockets.get(targetId).size > 0) ||
+            (onlineEmployeeSockets.has(targetId) && onlineEmployeeSockets.get(targetId).size > 0);
+          if (hasActiveSocket) {
+            socket.emit('user:status', { userId: targetId, status: 'online', lastSeen: new Date() });
+            return;
+          }
 
-    // If the user was in a call that is waiting for them to reconnect, rejoin them
-    const pendingCallRoomId = userCallRooms.get(userId);
-    if (pendingCallRoomId && callDisconnectTimeouts.has(pendingCallRoomId)) {
-      console.log(`[Call] ${userId} reconnected, rejoining call room ${pendingCallRoomId}`);
-      clearTimeout(callDisconnectTimeouts.get(pendingCallRoomId));
-      callDisconnectTimeouts.delete(pendingCallRoomId);
-      socket.join(pendingCallRoomId);
-      // Flush any buffered signals that arrived while disconnected
-      await flushCallSignalBuffer(io, pendingCallRoomId);
+          const user = await User.findById(targetId).select('status lastSeen').lean();
+          if (user) {
+            const isRecentlyActive =
+              user.status === 'online' && new Date() - new Date(user.lastSeen) < HEARTBEAT_TIMEOUT_MS;
+            const status = isRecentlyActive ? 'online' : 'offline';
+            socket.emit('user:status', { userId: targetId, status, lastSeen: user.lastSeen });
+            return;
+          }
+
+          const employee = await Employee.findById(targetId).select('workStatus lastSeen').lean();
+          if (employee) {
+            const isRecentlyActive =
+              employee.workStatus === 'active' && new Date() - new Date(employee.lastSeen) < HEARTBEAT_TIMEOUT_MS;
+            const status = isRecentlyActive ? 'online' : 'offline';
+            socket.emit('user:status', { userId: targetId, status, lastSeen: employee.lastSeen });
+            return;
+          }
+
+          socket.emit('user:status', { userId: targetId, status: 'offline' });
+        } catch {
+          socket.emit('user:status', { userId: targetId, status: 'offline' });
+        }
+      });
+
+      return;
     }
 
-    // Only broadcast online status if this is the first active socket for the user
-    if (!wasOnline) {
-      markUserOnline(io, userId);
+    const userId = socket.userId;
+
+    if (socket.isEmployee) {
+      console.log(`Employee connected: ${socket.employee.displayName || socket.employee.username} (${userId})`);
+      const employeeSocketSet = onlineEmployeeSockets.get(userId) || new Set();
+      const wasOnline = employeeSocketSet.size > 0;
+      employeeSocketSet.add(socket.id);
+      onlineEmployeeSockets.set(userId, employeeSocketSet);
+
+      socket.join(`user:${userId}`);
+      socket.emit('connected', { userId, message: 'Connected to server' });
+
+      if (!wasOnline) {
+        markEmployeeOnline(io, userId);
+      } else {
+        socket.emit('online:users', refreshOnlineList());
+      }
     } else {
-      // Still refresh the list for this socket so it has the latest state
-      refreshOnlineList().then((onlineList) => {
-        socket.emit('online:users', onlineList);
-      });
+      console.log(`User connected: ${socket.user.displayName || socket.user.username} (${userId})`);
+      const userSocketSet = onlineUserSockets.get(userId) || new Set();
+      const wasOnline = userSocketSet.size > 0;
+      userSocketSet.add(socket.id);
+      onlineUserSockets.set(userId, userSocketSet);
+
+      socket.join(`user:${userId}`);
+      socket.emit('connected', { userId, message: 'Connected to server' });
+
+      // If the user was in a call that is waiting for them to reconnect, rejoin them
+      const pendingCallRoomId = userCallRooms.get(userId);
+      if (pendingCallRoomId && callDisconnectTimeouts.has(pendingCallRoomId)) {
+        console.log(`[Call] ${userId} reconnected, rejoining call room ${pendingCallRoomId}`);
+        clearTimeout(callDisconnectTimeouts.get(pendingCallRoomId));
+        callDisconnectTimeouts.delete(pendingCallRoomId);
+        socket.join(pendingCallRoomId);
+        // Flush any buffered signals that arrived while disconnected
+        await flushCallSignalBuffer(io, pendingCallRoomId);
+      }
+
+      if (!wasOnline) {
+        markUserOnline(io, userId);
+      } else {
+        socket.emit('online:users', refreshOnlineList());
+      }
     }
 
     socket.on('heartbeat', async () => {
+      if (socket.isGuest) return;
       try {
-        await User.findByIdAndUpdate(userId, { status: 'online', lastSeen: new Date() });
+        if (socket.isEmployee) {
+          await Employee.findByIdAndUpdate(userId, { workStatus: 'active', lastSeen: new Date() });
+        } else {
+          await User.findByIdAndUpdate(userId, { status: 'online', lastSeen: new Date() });
+        }
         // Broadcast status so clients that saw the user as stale-offline are corrected
         io.emit('user:status', { userId, status: 'online', lastSeen: new Date() });
       } catch (err) {
@@ -228,8 +375,7 @@ const setupSocket = (io) => {
 
     socket.on('user:getOnline', async () => {
       try {
-        const onlineList = await refreshOnlineList();
-        socket.emit('online:users', onlineList);
+        socket.emit('online:users', refreshOnlineList());
       } catch (err) {
         console.error('Get online users error:', err);
       }
@@ -237,20 +383,33 @@ const setupSocket = (io) => {
 
     socket.on('user:getStatus', async ({ userId: targetId }) => {
       try {
-        const user = await User.findById(targetId).select('status lastSeen').lean();
-        if (!user) {
-          socket.emit('user:status', { userId: targetId, status: 'offline' });
+        const hasActiveSocket =
+          (onlineUserSockets.has(targetId) && onlineUserSockets.get(targetId).size > 0) ||
+          (onlineEmployeeSockets.has(targetId) && onlineEmployeeSockets.get(targetId).size > 0);
+        if (hasActiveSocket) {
+          socket.emit('user:status', { userId: targetId, status: 'online', lastSeen: new Date() });
           return;
         }
-        const isRecentlyActive =
-          user.status === 'online' && new Date() - new Date(user.lastSeen) < HEARTBEAT_TIMEOUT_MS;
-        const hasActiveSocket = onlineUserSockets.has(targetId) && onlineUserSockets.get(targetId).size > 0;
-        const status = isRecentlyActive || hasActiveSocket ? 'online' : 'offline';
-        socket.emit('user:status', {
-          userId: targetId,
-          status,
-          lastSeen: user.lastSeen,
-        });
+
+        const user = await User.findById(targetId).select('status lastSeen').lean();
+        if (user) {
+          const isRecentlyActive =
+            user.status === 'online' && new Date() - new Date(user.lastSeen) < HEARTBEAT_TIMEOUT_MS;
+          const status = isRecentlyActive ? 'online' : 'offline';
+          socket.emit('user:status', { userId: targetId, status, lastSeen: user.lastSeen });
+          return;
+        }
+
+        const employee = await Employee.findById(targetId).select('workStatus lastSeen').lean();
+        if (employee) {
+          const isRecentlyActive =
+            employee.workStatus === 'active' && new Date() - new Date(employee.lastSeen) < HEARTBEAT_TIMEOUT_MS;
+          const status = isRecentlyActive ? 'online' : 'offline';
+          socket.emit('user:status', { userId: targetId, status, lastSeen: employee.lastSeen });
+          return;
+        }
+
+        socket.emit('user:status', { userId: targetId, status: 'offline' });
       } catch {
         socket.emit('user:status', { userId: targetId, status: 'offline' });
       }
@@ -286,10 +445,29 @@ const setupSocket = (io) => {
 
         const recipient = conversation.participants.find((p) => p.toString() !== userId);
 
-        const recipientUser = await User.findById(recipient);
-        if (recipientUser && recipientUser.blockedUsers.includes(userId)) {
+        const recipientAccount = await getAccountById(recipient, 'blockedUsers');
+        if (recipientAccount && (recipientAccount.blockedUsers || []).map((id) => id.toString()).includes(userId)) {
           if (callback) callback({ error: 'Cannot send message to this user' });
           return;
+        }
+
+        // Free/paid consultation check for user -> agent conversations
+        if (
+          conversation.lockedToAgent &&
+          conversation.lockedToAgent.toString() === recipient.toString() &&
+          userId.toString() !== conversation.lockedToAgent.toString()
+        ) {
+          const now = new Date();
+          if (conversation.freeUntil && now > conversation.freeUntil && !conversation.isPaid) {
+            if (callback) {
+              callback({
+                error: 'Free chat has ended. Please pay to continue chatting.',
+                paymentRequired: true,
+                paymentAmount: conversation.paymentAmount,
+              });
+            }
+            return;
+          }
         }
 
         const message = await Message.create({
@@ -307,8 +485,12 @@ const setupSocket = (io) => {
           'statusTimestamps.sent': new Date(),
         });
 
-        await message.populate('sender', 'username displayName avatar');
         await message.populate('replyTo');
+        const populatedSender = await getAccountById(userId, 'username displayName avatar');
+        const messageObj = message.toObject();
+        if (populatedSender) {
+          messageObj.sender = { ...populatedSender, _id: userId };
+        }
 
         const existingUnread = conversation.unreadCount.find((u) => u.user.toString() === recipient.toString());
         if (existingUnread) {
@@ -319,10 +501,10 @@ const setupSocket = (io) => {
         conversation.lastMessage = message._id;
         await conversation.save();
 
-        io.to(`user:${recipient}`).emit('message:new', message);
-        io.to(`user:${userId}`).emit('message:new', message);
+        io.to(`user:${recipient}`).emit('message:new', messageObj);
+        io.to(`user:${userId}`).emit('message:new', messageObj);
 
-        if (callback) callback({ success: true, message });
+        if (callback) callback({ success: true, message: messageObj });
       } catch (error) {
         console.error('Socket message send error:', error);
         if (callback) callback({ error: error.message });
@@ -336,14 +518,14 @@ const setupSocket = (io) => {
           { $addToSet: { deliveredTo: userId }, status: 'delivered', 'statusTimestamps.delivered': new Date() }
         );
 
-        const messages = await Message.find({ _id: { $in: messageIds } })
-          .populate('sender', 'username displayName avatar');
+        const messages = await Message.find({ _id: { $in: messageIds } });
 
         messages.forEach((msg) => {
-          const senderId = msg.sender._id.toString();
+          const senderId = msg.sender.toString();
           io.to(`user:${senderId}`).emit('message:status', {
             messageId: msg._id,
             status: 'delivered',
+            conversation: msg.conversation.toString(),
           });
         });
       } catch (error) {
@@ -367,11 +549,10 @@ const setupSocket = (io) => {
 
         io.to(`user:${userId}`).emit('messages:read', { conversationId });
 
-        const otherParticipant = await Conversation.findById(conversationId).populate('participants');
-        if (otherParticipant) {
-          const other = otherParticipant.participants.find((p) => p._id.toString() !== userId);
-          if (other) {
-            io.to(`user:${other._id}`).emit('messages:read', { conversationId });
+        if (convo) {
+          const otherParticipantId = convo.participants.find((p) => p.toString() !== userId);
+          if (otherParticipantId) {
+            io.to(`user:${otherParticipantId}`).emit('messages:read', { conversationId });
           }
         }
       } catch (error) {
@@ -395,6 +576,7 @@ const setupSocket = (io) => {
             content,
             isEdited: true,
             editedAt: message.editedAt,
+            conversation: message.conversation.toString(),
           });
         }
 
@@ -403,6 +585,7 @@ const setupSocket = (io) => {
           content,
           isEdited: true,
           editedAt: message.editedAt,
+          conversation: message.conversation.toString(),
         });
       } catch (error) {
         console.error('Edit message error:', error);
@@ -434,10 +617,11 @@ const setupSocket = (io) => {
           io.to(`user:${message.recipient}`).emit('message:deleted', {
             messageId,
             forEveryone: true,
+            conversation: message.conversation.toString(),
           });
         }
 
-        socket.emit('message:deleted', { messageId, forEveryone: deleteForEveryone });
+        socket.emit('message:deleted', { messageId, forEveryone: deleteForEveryone, conversation: message.conversation.toString() });
       } catch (error) {
         console.error('Delete message error:', error);
       }
@@ -460,15 +644,17 @@ const setupSocket = (io) => {
         }
 
         await message.save();
-        await message.populate('reactions.user', 'username displayName avatar');
+        const populatedMessage = await populateMessage(message);
 
         io.to(`user:${message.recipient}`).emit('message:reaction:updated', {
           messageId,
-          reactions: message.reactions,
+          reactions: populatedMessage.reactions,
+          conversation: message.conversation.toString(),
         });
         socket.emit('message:reaction:updated', {
           messageId,
-          reactions: message.reactions,
+          reactions: populatedMessage.reactions,
+          conversation: message.conversation.toString(),
         });
       } catch (error) {
         console.error('Reaction error:', error);
@@ -485,15 +671,18 @@ const setupSocket = (io) => {
         );
         await message.save();
 
+        const populatedMessage = await populateMessage(message);
         if (message.recipient) {
           io.to(`user:${message.recipient}`).emit('message:reaction:updated', {
             messageId,
-            reactions: message.reactions,
+            reactions: populatedMessage.reactions,
+            conversation: message.conversation.toString(),
           });
         }
         socket.emit('message:reaction:updated', {
           messageId,
-          reactions: message.reactions,
+          reactions: populatedMessage.reactions,
+          conversation: message.conversation.toString(),
         });
       } catch (error) {
         console.error('Remove reaction error:', error);
@@ -503,9 +692,9 @@ const setupSocket = (io) => {
     // ==================== Helpers ====================
 
     const getCall = async (callId) => {
-      return Call.findById(callId)
-        .populate('caller', 'username displayName avatar')
-        .populate('receiver', 'username displayName avatar');
+      const call = await Call.findById(callId).lean();
+      if (!call) return null;
+      return populateCall(call, 'username displayName avatar');
     };
 
     const isParticipant = (call, uid) => {
@@ -519,13 +708,21 @@ const setupSocket = (io) => {
     };
 
     const isUserOnlineDB = async (uid) => {
-      const user = await User.findById(uid).select('status lastSeen').lean();
-      if (!user || user.status !== 'online') return false;
-      return Date.now() - new Date(user.lastSeen).getTime() < HEARTBEAT_TIMEOUT_MS;
+      const hasActiveSocket =
+        (onlineUserSockets.has(uid) && onlineUserSockets.get(uid).size > 0) ||
+        (onlineEmployeeSockets.has(uid) && onlineEmployeeSockets.get(uid).size > 0);
+      if (hasActiveSocket) return true;
+
+      const account = await getAccountById(uid, 'status workStatus lastSeen');
+      if (!account) return false;
+      const isActive = account.status === 'online' || account.workStatus === 'active';
+      if (!isActive) return false;
+      return Date.now() - new Date(account.lastSeen).getTime() < HEARTBEAT_TIMEOUT_MS;
     };
 
     const endCallRoom = async (roomId, status, duration = 0) => {
       const callId = roomId.replace('call:', '');
+      await callBilling.stopBilling(callId);
       clearCallSignalBuffer(callId);
       clearCallParticipants(callId);
       if (callDisconnectTimeouts.has(roomId)) {
@@ -541,18 +738,13 @@ const setupSocket = (io) => {
           duration > 0
             ? duration
             : call.startedAt
-            ? Math.round((endedAt - new Date(call.startedAt)) / 1000)
-            : 0;
+              ? Math.round((endedAt - new Date(call.startedAt)) / 1000)
+              : 0;
 
-        const updatedCall = await Call.findByIdAndUpdate(
-          callId,
-          { status, duration: finalDuration, endedAt },
-          { new: true }
-        )
-          .populate('caller', 'username displayName avatar')
-          .populate('receiver', 'username displayName avatar');
+        await Call.findByIdAndUpdate(callId, { status, duration: finalDuration, endedAt });
+        const updatedCall = await getCall(callId);
         if (updatedCall) {
-          io.to(roomId).emit('call:ended', { call: updatedCall.toObject() });
+          io.to(roomId).emit('call:ended', { call: updatedCall });
           const socketsInRoom = await io.in(roomId).fetchSockets();
           socketsInRoom.forEach((s) => s.leave(roomId));
           userCallRooms.delete(updatedCall.caller._id.toString());
@@ -589,17 +781,19 @@ const setupSocket = (io) => {
           return;
         }
 
-        const [receiverUser, callerUser] = await Promise.all([
-          User.findById(receiverId).select('blockedUsers'),
-          User.findById(userId).select('username displayName avatar blockedUsers'),
+        const [receiverAccount, callerAccount] = await Promise.all([
+          getAccountById(receiverId, 'blockedUsers callRate username displayName avatar'),
+          getAccountById(userId, 'username displayName avatar blockedUsers walletBalance'),
         ]);
 
-        if (!receiverUser) {
+        if (!receiverAccount) {
           socket.emit('call:error', { message: 'Receiver not found', receiverId });
           return;
         }
 
-        if (receiverUser.blockedUsers.includes(userId) || callerUser.blockedUsers.includes(receiverId)) {
+        const receiverBlocked = (receiverAccount.blockedUsers || []).map((id) => id.toString());
+        const callerBlocked = (callerAccount.blockedUsers || []).map((id) => id.toString());
+        if (receiverBlocked.includes(userId) || callerBlocked.includes(receiverId)) {
           socket.emit('call:error', { message: 'Cannot call this user', receiverId });
           return;
         }
@@ -609,16 +803,26 @@ const setupSocket = (io) => {
           return;
         }
 
+        const ratePerMinute = callBilling.getEffectiveRate(receiverAccount, receiverAccount.callRate);
+        if (ratePerMinute > 0 && !(await callBilling.hasSufficientBalance(userId, ratePerMinute))) {
+          socket.emit('call:error', {
+            message: 'Insufficient balance to start this call',
+            receiverId,
+            ratePerMinute,
+          });
+          return;
+        }
+
         const call = await Call.create({
           caller: userId,
           receiver: receiverId,
           type: type || 'audio',
           status: 'ringing',
+          ratePerMinute,
           signalData: { offer: { type: offer.type, sdp: offer.sdp } },
         });
 
-        await call.populate('caller', 'username displayName avatar');
-        await call.populate('receiver', 'username displayName avatar');
+        const populatedCall = await getCall(call._id);
 
         const roomId = `call:${call._id}`;
         socket.join(roomId);
@@ -626,12 +830,12 @@ const setupSocket = (io) => {
         setCallParticipants(call._id.toString(), userId, receiverId);
 
         io.to(`user:${receiverId}`).emit('call:incoming', {
-          call: call.toObject(),
-          caller: callerUser,
+          call: populatedCall,
+          caller: callerAccount,
           roomId,
         });
 
-        socket.emit('call:ringing', { call: call.toObject(), roomId });
+        socket.emit('call:ringing', { call: populatedCall, roomId });
       } catch (error) {
         console.error('Call initiate error:', error);
         socket.emit('call:error', { message: 'Failed to initiate call' });
@@ -672,8 +876,10 @@ const setupSocket = (io) => {
           startedAt: new Date(),
         });
 
+        await callBilling.startBilling(callId, roomId, io, () => endCallRoom(roomId, 'ended'));
+
         const updatedCall = await getCall(callId);
-        io.to(roomId).emit('call:accepted', { call: updatedCall.toObject(), roomId });
+        io.to(roomId).emit('call:accepted', { call: updatedCall, roomId });
 
         // Send the caller's offer to the receiver so they can create an answer
         if (call.signalData?.offer) {
@@ -698,13 +904,15 @@ const setupSocket = (io) => {
         if (!call || !isParticipant(call, userId)) return;
         if (!['ringing', 'ongoing'].includes(call.status)) return;
 
+        await callBilling.stopBilling(callId);
+
         await Call.findByIdAndUpdate(callId, { status: 'rejected', endedAt: new Date() });
 
         const otherUserId = call.caller._id.toString() === userId
           ? call.receiver._id.toString()
           : call.caller._id.toString();
 
-        io.to(`user:${otherUserId}`).emit('call:rejected', { call: call.toObject() });
+        io.to(`user:${otherUserId}`).emit('call:rejected', { call: call });
         clearCallSignalBuffer(callId);
         clearCallParticipants(callId);
         userCallRooms.delete(userId);
@@ -721,13 +929,15 @@ const setupSocket = (io) => {
         if (!call || !isParticipant(call, userId)) return;
         if (['ended', 'rejected', 'missed'].includes(call.status)) return;
 
+        await callBilling.stopBilling(callId);
+
         const endedAt = new Date();
         const finalDuration =
           duration > 0
             ? duration
             : call.startedAt
-            ? Math.round((endedAt - new Date(call.startedAt)) / 1000)
-            : 0;
+              ? Math.round((endedAt - new Date(call.startedAt)) / 1000)
+              : 0;
 
         await Call.findByIdAndUpdate(callId, {
           status: 'ended',
@@ -736,7 +946,7 @@ const setupSocket = (io) => {
         });
 
         const roomId = `call:${callId}`;
-        io.to(roomId).emit('call:ended', { call: call.toObject() });
+        io.to(roomId).emit('call:ended', { call: call });
 
         const socketsInRoom = await io.in(roomId).fetchSockets();
         socketsInRoom.forEach((s) => s.leave(roomId));
@@ -794,11 +1004,13 @@ const setupSocket = (io) => {
         if (!call || !isParticipant(call, userId)) return;
         if (call.status !== 'ringing') return;
 
+        await callBilling.stopBilling(callId);
+
         await Call.findByIdAndUpdate(callId, { status: 'missed', endedAt: new Date() });
 
         const roomId = `call:${callId}`;
         const updatedCall = await getCall(callId);
-        io.to(roomId).emit('call:missed', { call: updatedCall.toObject() });
+        io.to(roomId).emit('call:missed', { call: updatedCall });
         clearCallSignalBuffer(callId);
         clearCallParticipants(callId);
 
@@ -841,42 +1053,70 @@ const setupSocket = (io) => {
     // ==================== Disconnect ====================
 
     socket.on('disconnect', async () => {
-      console.log(`User disconnected: ${userId} socket ${socket.id}`);
+      try {
+      const isEmployee = socket.isEmployee;
+      console.log(`${isEmployee ? 'Employee' : 'User'} disconnected: ${userId} socket ${socket.id}`);
 
-      const userSocketSet = onlineUserSockets.get(userId);
-      if (userSocketSet) {
-        userSocketSet.delete(socket.id);
-        if (userSocketSet.size === 0) {
-          onlineUserSockets.delete(userId);
-          scheduleUserOffline(io, userId);
+      if (isEmployee) {
+        const employeeSocketSet = onlineEmployeeSockets.get(userId);
+        if (employeeSocketSet) {
+          employeeSocketSet.delete(socket.id);
+          if (employeeSocketSet.size === 0) {
+            onlineEmployeeSockets.delete(userId);
+            // Don't emit offline immediately — wait for the grace period.
+            // If the employee reconnects within the window, the timeout is cancelled
+            // and no flicker happens. scheduleEmployeeOffline handles the eventual emit.
+            scheduleEmployeeOffline(io, userId);
+          }
+        }
+      } else {
+        const userSocketSet = onlineUserSockets.get(userId);
+        if (userSocketSet) {
+          userSocketSet.delete(socket.id);
+          if (userSocketSet.size === 0) {
+            onlineUserSockets.delete(userId);
+            // Same grace-period logic as above for users.
+            scheduleUserOffline(io, userId);
+          }
         }
       }
 
       // Only end the call room if this socket was the one participating in the call
       const roomId = userCallRooms.get(userId);
       if (roomId) {
-        const stillInRoom = await io.in(roomId).fetchSockets();
-        const userStillInRoom = stillInRoom.some((s) => s.userId === userId);
-        if (!userStillInRoom) {
-          console.log(`[Call] ${userId} disconnected from call ${roomId}, scheduling grace period`);
-          // Give the user a chance to reconnect before ending the call
-          if (callDisconnectTimeouts.has(roomId)) {
-            clearTimeout(callDisconnectTimeouts.get(roomId));
-          }
-          const timeout = setTimeout(async () => {
-            callDisconnectTimeouts.delete(roomId);
-            const currentSockets = await io.in(roomId).fetchSockets();
-            const rejoined = currentSockets.some((s) => s.userId === userId);
-            if (!rejoined) {
-              console.log(`[Call] Grace period expired, ending call ${roomId}`);
-              await endCallRoom(roomId, 'ended');
-            } else {
-              console.log(`[Call] ${userId} rejoined call ${roomId} during grace period`);
+        try {
+          const stillInRoom = await io.in(roomId).fetchSockets();
+          const userStillInRoom = stillInRoom.some((s) => s.userId === userId);
+          if (!userStillInRoom) {
+            console.log(`[Call] ${userId} disconnected from call ${roomId}, scheduling grace period`);
+            // Give the user a chance to reconnect before ending the call
+            if (callDisconnectTimeouts.has(roomId)) {
+              clearTimeout(callDisconnectTimeouts.get(roomId));
             }
-          }, CALL_DISCONNECT_GRACE_PERIOD_MS);
-          callDisconnectTimeouts.set(roomId, timeout);
+            const timeout = setTimeout(async () => {
+              try {
+                callDisconnectTimeouts.delete(roomId);
+                const currentSockets = await io.in(roomId).fetchSockets();
+                const rejoined = currentSockets.some((s) => s.userId === userId);
+                if (!rejoined) {
+                  console.log(`[Call] Grace period expired, ending call ${roomId}`);
+                  await endCallRoom(roomId, 'ended');
+                } else {
+                  console.log(`[Call] ${userId} rejoined call ${roomId} during grace period`);
+                }
+              } catch (callErr) {
+                console.error('[Call] Error ending call room after disconnect:', callErr);
+              }
+            }, CALL_DISCONNECT_GRACE_PERIOD_MS);
+            callDisconnectTimeouts.set(roomId, timeout);
+          }
+        } catch (roomErr) {
+          console.error('[Call] Error fetching call room sockets on disconnect:', roomErr);
         }
       }
+    } catch (err) {
+      console.error('Error in socket disconnect handler:', err);
+    }
     });
   });
 

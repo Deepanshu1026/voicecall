@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Call - Avisa</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card" id="setupCard">
+            <h1>Start a Voice Call</h1>
+            <p id="welcomeText">Connect with your visa expert instantly.</p>
+            <div id="agentInfo" class="info-text" style="display: none;">
+                <p>Calling agent: <strong id="agentNameDisplay">-</strong></p>
+            </div>
+            <div id="noTokenMessage" class="info-text" style="display: none; border-left-color: var(--danger);">
+                <p>You are not authenticated. Please start the call from the consultant page.</p>
+            </div>
+            <button class="btn btn-primary" id="startCallBtn" onclick="startCall()" disabled>
+                Start Voice Call
+            </button>
+            <div id="statusMessage"></div>
+        </div>
+    </div>
+
+    <!-- Active Call Overlay -->
+    <div id="callRoom" class="call-room">
+        <audio id="remoteAudio" autoplay style="display: none;"></audio>
+        <div class="call-avatar" id="expertAvatar">E</div>
+        <h2 id="callTitle">Calling...</h2>
+        <div class="call-status" id="callStatus">Connecting to expert...</div>
+        <div class="call-timer" id="callTimer">00:00</div>
+        <div class="call-controls">
+            <button class="btn btn-danger" id="endCallBtn" onclick="endCall()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const agentId = params.get('agentId') || params.get('agent');
+        const agentName = params.get('agentName') || 'Visa Expert';
+
+        const token = localStorage.getItem('accessToken');
+        const userData = JSON.parse(localStorage.getItem('voiceUser') || '{}');
+
+        const startCallBtn = document.getElementById('startCallBtn');
+        const setupCard = document.getElementById('setupCard');
+        const statusMessage = document.getElementById('statusMessage');
+        const callRoom = document.getElementById('callRoom');
+        const callTitle = document.getElementById('callTitle');
+        const callStatus = document.getElementById('callStatus');
+        const expertAvatar = document.getElementById('expertAvatar');
+
+        let socket = null;
+        let currentRoomId = null;
+        let peerConnection = null;
+        let localStream = null;
+        let remoteStream = null;
+        let callTimerInterval = null;
+        let callStartTime = null;
+        let isCallEstablished = false;
+
+        if (token) {
+            document.getElementById('welcomeText').textContent = `Welcome, ${userData.displayName || 'User'}. Ready to connect.`;
+            if (agentId) {
+                document.getElementById('agentInfo').style.display = 'block';
+                document.getElementById('agentNameDisplay').textContent = agentName;
+                startCallBtn.disabled = false;
+            } else {
+                showStatus('No agent selected. Please start from the consultant page.', 'error');
+            }
+        } else {
+            document.getElementById('noTokenMessage').style.display = 'block';
+            startCallBtn.style.display = 'none';
+        }
+
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = type ? type : '';
+        }
+
+        function connectSocket() {
+            return new Promise((resolve, reject) => {
+                socket = io({
+                    auth: { token },
+                    transports: ['websocket', 'polling']
+                });
+
+                socket.on('connect', () => {
+                    showStatus('Connected to voice server', 'success');
+                    resolve();
+                });
+
+                socket.on('connect_error', (err) => {
+                    showStatus('Connection error: ' + err.message, 'error');
+                    reject(err);
+                });
+
+                socket.on('call_ringing', ({ callId, roomId }) => {
+                    currentRoomId = roomId;
+                    callTitle.textContent = 'Ringing...';
+                    callStatus.textContent = 'Waiting for expert to answer...';
+                });
+
+                socket.on('call_accepted', ({ callId, roomId }) => {
+                    currentRoomId = roomId;
+                    callTitle.textContent = 'On Call';
+                    callStatus.textContent = 'Connecting audio...';
+                    joinRoom(roomId);
+                });
+
+                socket.on('call_rejected', ({ reason }) => {
+                    showStatus('Call rejected: ' + reason, 'error');
+                    closeCall();
+                });
+
+                socket.on('call_error', ({ error }) => {
+                    showStatus('Call error: ' + error, 'error');
+                    closeCall();
+                });
+
+                socket.on('signal', async ({ type, data }) => {
+                    if (!peerConnection) return;
+
+                    try {
+                        if (type === 'answer') {
+                            await peerConnection.setRemoteDescription(new RTCSessionDescription(data));
+                        } else if (type === 'ice-candidate') {
+                            await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+                        }
+                    } catch (err) {
+                        console.error('Signal error:', err);
+                        showStatus('Signal error: ' + err.message, 'error');
+                    }
+                });
+
+                socket.on('call_ended', () => {
+                    showStatus('Call ended by expert', 'info');
+                    closeCall();
+                });
+            });
+        }
+
+        async function startCall() {
+            if (!agentId) {
+                showStatus('No agent selected', 'error');
+                return;
+            }
+
+            startCallBtn.disabled = true;
+            startCallBtn.textContent = 'Connecting...';
+            showStatus('Connecting to voice server...', 'info');
+
+            try {
+                await connectSocket();
+                socket.emit('initiate_call', { targetAgentId: agentId });
+                setupCard.style.display = 'none';
+                callRoom.classList.add('active');
+                expertAvatar.textContent = agentName.charAt(0).toUpperCase();
+            } catch (err) {
+                startCallBtn.disabled = false;
+                startCallBtn.textContent = 'Start Voice Call';
+                showStatus('Failed to connect: ' + err.message, 'error');
+            }
+        }
+
+        async function joinRoom(roomId) {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+                peerConnection = new RTCPeerConnection({
+                    iceServers: [
+                        { urls: 'stun:stun.l.google.com:19302' },
+                        { urls: 'stun:stun1.l.google.com:19302' }
+                    ]
+                });
+
+                localStream.getTracks().forEach(track => {
+                    peerConnection.addTrack(track, localStream);
+                });
+
+                remoteStream = new MediaStream();
+                const remoteAudio = document.getElementById('remoteAudio');
+                remoteAudio.srcObject = remoteStream;
+
+                peerConnection.ontrack = (event) => {
+                    event.streams[0].getTracks().forEach(track => remoteStream.addTrack(track));
+                };
+
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        socket.emit('signal', {
+                            roomId: currentRoomId,
+                            type: 'ice-candidate',
+                            data: event.candidate
+                        });
+                    }
+                };
+
+                peerConnection.onconnectionstatechange = () => {
+                    if (peerConnection.connectionState === 'connected') {
+                        callStatus.textContent = 'Connected';
+                        startCallTimer();
+                    } else if (peerConnection.connectionState === 'disconnected' || peerConnection.connectionState === 'failed') {
+                        callStatus.textContent = 'Disconnected';
+                    }
+                };
+
+                // Create and send offer
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+                socket.emit('signal', {
+                    roomId: currentRoomId,
+                    type: 'offer',
+                    data: offer
+                });
+
+                callStatus.textContent = 'Establishing secure audio connection...';
+
+            } catch (err) {
+                console.error('Join room error:', err);
+                callStatus.textContent = 'Microphone access denied or error.';
+                showStatus('Error: ' + err.message, 'error');
+            }
+        }
+
+        function startCallTimer() {
+            callStartTime = Date.now();
+            const timer = document.getElementById('callTimer');
+            callTimerInterval = setInterval(() => {
+                const diff = Math.floor((Date.now() - callStartTime) / 1000);
+                const m = String(Math.floor(diff / 60)).padStart(2, '0');
+                const s = String(diff % 60).padStart(2, '0');
+                timer.textContent = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function endCall() {
+            if (socket && currentRoomId) {
+                socket.emit('end_call', { roomId: currentRoomId });
+            }
+            closeCall();
+        }
+
+        function closeCall() {
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            if (callTimerInterval) {
+                clearInterval(callTimerInterval);
+                callTimerInterval = null;
+            }
+            currentRoomId = null;
+            callRoom.classList.remove('active');
+            setupCard.style.display = 'block';
+            document.getElementById('callTimer').textContent = '00:00';
+            startCallBtn.disabled = false;
+            startCallBtn.textContent = 'Start Voice Call';
+        }
+    </script>
+</body>
+</html>

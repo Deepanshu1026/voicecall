@@ -6,7 +6,9 @@ import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { SocketProvider } from './context/SocketContext';
+import CallManager from './context/CallManager';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import WalletSync from './components/common/WalletSync';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -15,10 +17,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ThemeProvider>
         <AuthProvider>
           <SocketProvider>
-            <ErrorBoundary>
-              <App />
-            </ErrorBoundary>
-            <Toaster
+            <CallManager>
+              <WalletSync />
+              <ErrorBoundary>
+                <App />
+              </ErrorBoundary>
+              <Toaster
               position="top-center"
               toastOptions={{
                 duration: 3000,
@@ -28,6 +32,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 },
               }}
             />
+            </CallManager>
           </SocketProvider>
         </AuthProvider>
       </ThemeProvider>

@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #4e73df;
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+    --sidebar-bg: #ffffff;
+    --sidebar-text: #5a5c69;
+    --sidebar-hover-bg: #f8f9fc;
+    --sidebar-active-bg: #f8f9fc;
+    --sidebar-active-text: #4e73df;
+    --body-bg: #f8f9fc;
+    --card-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--body-bg);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    height: 100vh;
+    z-index: 1000;
+    padding-top: 0;
+    transition: all 0.3s ease;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.sidebar h4 {
+    font-weight: 800;
+    font-size: 1.5rem;
+    padding: 1.5rem 1rem;
+    margin-bottom: 0.5rem;
+    color: transparent;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    text-transform: uppercase;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1.5rem;
+    color: #6c757d;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+    margin: 0.25rem 0.8rem;
+    border-radius: 0.5rem;
+    position: relative;
+}
+
+.sidebar a:hover {
+    background-color: #f8f9fa;
+    color: #4e73df;
+}
+
+.sidebar a.active {
+    background: var(--primary-gradient);
+    color: white;
+}
+
+.sidebar a i {
+    width: 20px;
+    margin-right: 10px;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+}
+
+.sidebar a.active i {
+    color: white;
+}
+
+.sidebar a:not(.active) i {
+    color: #b0b3b8;
+}
+
+.sidebar a:hover i {
+    color: #4e73df;
+}
+
+/* Menu Badges */
+.menu-badge {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%) !important;
+    margin: 0 !important;
+    font-size: 0.7rem;
+    padding: 0.35em 0.6em;
+}
+
+/* Logout Button Special Styling */
+.sidebar a[href*="logout"] {
+    margin-top: auto !important;
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.05);
+    border: 1px solid rgba(220, 53, 69, 0.1);
+}
+
+.sidebar a[href*="logout"]:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.sidebar a[href*="logout"] i {
+    color: #dc3545;
+}
+
+.sidebar a[href*="logout"]:hover i {
+    color: white;
+}
+
+/* Content Area Adjustment */
+.content {
+    margin-left: 16.66667%;
+    /* Valid for col-2 */
+    padding: 2rem;
+    transition: all 0.3s;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .content {
+        margin-left: 0;
+    }
+}

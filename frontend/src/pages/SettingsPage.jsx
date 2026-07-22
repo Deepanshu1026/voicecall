@@ -35,7 +35,7 @@ const SettingsPage = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-surface-dark">
       <div className="max-w-2xl mx-auto p-4">
         <div className="flex items-center gap-4 mb-6">
-          <Link to="/" className="btn-ghost p-2">
+          <Link to="/consultants" className="btn-ghost p-2">
             <HiArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>

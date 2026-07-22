@@ -38,6 +38,11 @@ const conversationSchema = new mongoose.Schema(
       },
     ],
     isActive: { type: Boolean, default: true },
+    // Free/paid consultation fields
+    freeUntil: { type: Date, default: null },
+    isPaid: { type: Boolean, default: false },
+    paymentAmount: { type: Number, default: 0 },
+    lockedToAgent: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },

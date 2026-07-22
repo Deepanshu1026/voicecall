@@ -23,7 +23,7 @@ const IncomingCallModal = ({ call, onAccept, onReject, onMissed }) => {
   }, [onReject, onMissed]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 animate-fade-in">
+    <div className="fixed inset-0 z-[500] flex items-end sm:items-center justify-center bg-black/60 animate-fade-in">
       <div className="w-full sm:max-w-sm bg-gray-900 sm:rounded-2xl rounded-t-2xl p-6 animate-slide-up">
         <div className="text-center mb-6">
           <Avatar user={caller} size="xl" className="mx-auto mb-4 animate-call-incoming" />

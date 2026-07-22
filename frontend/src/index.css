@@ -76,6 +76,14 @@
   .message-bubble-received {
     @apply bg-chat-received dark:bg-chat-receivedDark text-gray-900 dark:text-gray-100 rounded-2xl rounded-bl-md px-3 py-2 max-w-[75%];
   }
+
+  .message-bubble-sent-user {
+    @apply bg-[#cce5ff] text-gray-900 rounded-2xl rounded-br-md px-3 py-2 max-w-[75%];
+  }
+
+  .message-bubble-received-user {
+    @apply bg-[#D4D4FF] text-gray-900 rounded-2xl rounded-bl-md px-3 py-2 max-w-[75%];
+  }
 }
 
 @layer utilities {

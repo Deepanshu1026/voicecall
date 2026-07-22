@@ -1,0 +1,261 @@
+/* public/assets/css/admin-appointments.css */
+
+:root {
+    --primary-color: #6366f1;
+    --primary-hover: #4f46e5;
+    --bg-light: #f8fafc;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --white: #ffffff;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.content {
+    margin-left: 16.666667%;
+    /* col-2 width */
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.page-header h3 {
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.filter-group {
+    min-width: 150px;
+}
+
+/* Filter Tabs */
+.filter-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    padding: 0.6rem 1.8rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    color: var(--text-muted);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.filter-tab:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.filter-tab.active {
+    background: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Date Carousel */
+.date-selector-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    background: var(--white);
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    position: relative;
+    z-index: 5;
+}
+
+.date-items-container {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scroll-behavior: smooth;
+    padding: 12px 2px;
+    /* Increased top padding for badges */
+}
+
+.date-items-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera */
+}
+
+.date-item {
+    flex: 0 0 auto;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    text-align: center;
+    cursor: pointer;
+    min-width: 120px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.date-item .day-label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.date-item .date-label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+#todayDateItem {
+    border: 2px solid #0891b2;
+    background: #f0f9ff;
+}
+
+.date-item.active {
+    background: #0e7490 !important;
+    /* Force active background */
+    border-color: #0e7490 !important;
+}
+
+.date-item.active .day-label,
+.date-item.active .date-label {
+    color: var(--white) !important;
+    /* Force white text on dark background */
+}
+
+.date-item .today-badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0891b2;
+    color: white;
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    z-index: 10;
+}
+
+.nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+    background: #f1f5f9;
+    color: var(--text-main);
+}
+
+.table-container {
+    background: var(--white);
+    border-radius: 1rem;
+    overflow: hidden;
+    /* Changed from hidden to auto if you want internal scroll, or keep it responsive */
+    border: 1px solid var(--border-color);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table td {
+    white-space: nowrap;
+}
+
+.text-wrap {
+    white-space: normal !important;
+}
+
+@media (max-width: 992px) {
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+.table thead th {
+    background: #f1f5f9;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table tbody td {
+    padding: 1rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+    border-radius: 0.5rem;
+}
+
+.bg-info {
+    background-color: #e0f2fe !important;
+    color: #0369a1 !important;
+}
+
+.bg-success {
+    background-color: #dcfce7 !important;
+    color: #15803d !important;
+}
+
+.bg-secondary {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
