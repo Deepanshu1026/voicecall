@@ -35,7 +35,7 @@ const sendErrorProd = (err, res) => {
     res.status(err.statusCode).json(response);
   } else {
     console.error('ERROR:', err);
-    res.status(500).json({ error: 'Something went wrong.' });
+    res.status(500).json({ error: err.message, stack: err.stack ? err.stack.split('\n')[0] : null });
   }
 };
 
