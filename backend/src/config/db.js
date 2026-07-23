@@ -6,11 +6,12 @@ const RETRY_DELAY_MS = 5000;
 
 const connectDB = async (retries = MAX_RETRIES) => {
   try {
+    console.log('Connecting to MongoDB URI:', config.mongodbUri.replace(/\/\/[^:]+:[^@]+@/, '//USER:PASS@'));
     const conn = await mongoose.connect(config.mongodbUri, {
       serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 45000,
     });
-    console.log(`MongoDB connected: ${conn.connection.host}`);
+    console.log(`MongoDB connected: ${conn.connection.host} / ${conn.connection.db.databaseName}`);
   } catch (error) {
     console.error(`MongoDB connection error: ${error.message}`);
     if (retries > 0) {
