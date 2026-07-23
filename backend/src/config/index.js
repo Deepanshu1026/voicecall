@@ -4,12 +4,12 @@ module.exports = {
   port: process.env.PORT || 5002,
   nodeEnv: process.env.NODE_ENV || 'development',
   mongodbUri: (() => {
-    let uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/voicecall';
-    // If no database name is set (e.g. `/?` instead of `/voicecall?`), append /voicecall
-    if (!uri.includes('/voicecall')) {
-      uri = uri.replace(/\/\?/, '/voicecall?');
+    const uri = process.env.MONGODB_URI || '';
+    // Force the correct production database name regardless of env var
+    if (process.env.NODE_ENV === 'production') {
+      return 'mongodb+srv://avisaexpertstm_db_user:ySwllOSR02KMhFAT@cluster0.ebkh4k3.mongodb.net/voicecall?retryWrites=true&w=majority&appName=Cluster0';
     }
-    return uri;
+    return uri || 'mongodb://localhost:27017/voicecall';
   })(),
   jwt: {
     secret: process.env.JWT_SECRET || 'fallback_dev_secret',
