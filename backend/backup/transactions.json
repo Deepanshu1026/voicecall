@@ -1,0 +1,660 @@
+[
+  {
+    "_id": "6a5dda0c845eba4a43716829",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5b4f37a8bffbd388f07ee9",
+    "call": null,
+    "createdAt": "2026-07-20T08:19:24.943Z",
+    "updatedAt": "2026-07-20T08:19:24.943Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5ddcfe26d7c8ac2279b0da",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5ddcbd26d7c8ac2279b0bf",
+    "metadata": {
+      "call": "6a5ddcbd26d7c8ac2279b0bf"
+    },
+    "createdAt": "2026-07-20T08:31:58.987Z",
+    "updatedAt": "2026-07-20T08:31:58.987Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5ddd3a26d7c8ac2279b0e9",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5ddcbd26d7c8ac2279b0bf",
+    "metadata": {
+      "call": "6a5ddcbd26d7c8ac2279b0bf"
+    },
+    "createdAt": "2026-07-20T08:32:58.975Z",
+    "updatedAt": "2026-07-20T08:32:58.975Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5ddd7626d7c8ac2279b0f8",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5ddcbd26d7c8ac2279b0bf",
+    "metadata": {
+      "call": "6a5ddcbd26d7c8ac2279b0bf"
+    },
+    "createdAt": "2026-07-20T08:33:58.971Z",
+    "updatedAt": "2026-07-20T08:33:58.971Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5ddda426d7c8ac2279b109",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 15,
+    "type": "debit",
+    "description": "Call charge (prorated)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5ddcbd26d7c8ac2279b0bf",
+    "metadata": {
+      "call": "6a5ddcbd26d7c8ac2279b0bf"
+    },
+    "createdAt": "2026-07-20T08:34:44.215Z",
+    "updatedAt": "2026-07-20T08:34:44.215Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5ddedd26d7c8ac2279b17d",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5b4f37a8bffbd388f07ee9",
+    "call": null,
+    "createdAt": "2026-07-20T08:39:57.368Z",
+    "updatedAt": "2026-07-20T08:39:57.368Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5ddf9d26d7c8ac2279b23b",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5b4f37a8bffbd388f07ee9",
+    "call": null,
+    "createdAt": "2026-07-20T08:43:09.521Z",
+    "updatedAt": "2026-07-20T08:43:09.521Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5de11626d7c8ac2279b372",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5b4f37a8bffbd388f07ee9",
+    "call": null,
+    "createdAt": "2026-07-20T08:49:26.655Z",
+    "updatedAt": "2026-07-20T08:49:26.655Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5df82226d7c8ac2279b639",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-20T10:27:46.660Z",
+    "updatedAt": "2026-07-20T10:27:46.660Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e025c9a34e8821efb11ad",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5b4f37a8bffbd388f07ee9",
+    "call": null,
+    "createdAt": "2026-07-20T11:11:24.704Z",
+    "updatedAt": "2026-07-20T11:11:24.704Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e02bd9a34e8821efb125a",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-20T11:13:01.898Z",
+    "updatedAt": "2026-07-20T11:13:01.898Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e02c89a34e8821efb12de",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5b4f37a8bffbd388f07ee9",
+    "call": null,
+    "createdAt": "2026-07-20T11:13:12.829Z",
+    "updatedAt": "2026-07-20T11:13:12.829Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e02ff9a34e8821efb133e",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-20T11:14:07.710Z",
+    "updatedAt": "2026-07-20T11:14:07.710Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e034c9a34e8821efb1360",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5e030c9a34e8821efb1345",
+    "metadata": {
+      "call": "6a5e030c9a34e8821efb1345"
+    },
+    "createdAt": "2026-07-20T11:15:24.473Z",
+    "updatedAt": "2026-07-20T11:15:24.473Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e03539a34e8821efb1369",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 2,
+    "type": "debit",
+    "description": "Call charge (prorated)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5e030c9a34e8821efb1345",
+    "metadata": {
+      "call": "6a5e030c9a34e8821efb1345"
+    },
+    "createdAt": "2026-07-20T11:15:31.138Z",
+    "updatedAt": "2026-07-20T11:15:31.138Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e1c9bfb47eb70bcbeacb6",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 3,
+    "type": "debit",
+    "description": "Call charge (prorated)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5e1c78fb47eb70bcbeac9b",
+    "metadata": {
+      "call": "6a5e1c78fb47eb70bcbeac9b"
+    },
+    "createdAt": "2026-07-20T13:03:23.189Z",
+    "updatedAt": "2026-07-20T13:03:23.189Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e1ca7fb47eb70bcbeacbe",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 22,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-20T13:03:35.050Z",
+    "updatedAt": "2026-07-20T13:03:35.050Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e1caefb47eb70bcbeacc2",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 3,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-20T13:03:42.424Z",
+    "updatedAt": "2026-07-20T13:03:42.424Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e1ccdfb47eb70bcbeacf4",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 2,
+    "type": "debit",
+    "description": "Call charge (prorated)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5e1cc6fb47eb70bcbeacde",
+    "metadata": {
+      "call": "6a5e1cc6fb47eb70bcbeacde"
+    },
+    "createdAt": "2026-07-20T13:04:13.403Z",
+    "updatedAt": "2026-07-20T13:04:13.403Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e281643a041cce43364ab",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 2,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-20T13:52:22.927Z",
+    "updatedAt": "2026-07-20T13:52:22.927Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5e285343a041cce4336527",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 6,
+    "type": "debit",
+    "description": "Call charge (prorated)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5e283a43a041cce433650e",
+    "metadata": {
+      "call": "6a5e283a43a041cce433650e"
+    },
+    "createdAt": "2026-07-20T13:53:23.028Z",
+    "updatedAt": "2026-07-20T13:53:23.028Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f2c2fc2274fa7afed6487",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-21T08:22:07.471Z",
+    "updatedAt": "2026-07-21T08:22:07.471Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f4633bdba26bbf2fa865e",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5b4f37a8bffbd388f07ee9",
+    "call": null,
+    "createdAt": "2026-07-21T10:13:07.072Z",
+    "updatedAt": "2026-07-21T10:13:07.072Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f48561ca764a0e1b41eff",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 4,
+    "type": "debit",
+    "description": "Call charge (prorated)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5f48461ca764a0e1b41ee0",
+    "metadata": {
+      "call": "6a5f48461ca764a0e1b41ee0"
+    },
+    "createdAt": "2026-07-21T10:22:14.277Z",
+    "updatedAt": "2026-07-21T10:22:14.277Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f4c004a0933f8a7848d6b",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5f4bbe4a0933f8a7848d4c",
+    "metadata": {
+      "call": "6a5f4bbe4a0933f8a7848d4c"
+    },
+    "createdAt": "2026-07-21T10:37:52.680Z",
+    "updatedAt": "2026-07-21T10:37:52.680Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f4c5e4a0933f8a7848dad",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5f4c1a4a0933f8a7848d8d",
+    "metadata": {
+      "call": "6a5f4c1a4a0933f8a7848d8d"
+    },
+    "createdAt": "2026-07-21T10:39:26.578Z",
+    "updatedAt": "2026-07-21T10:39:26.578Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f4c9a4a0933f8a7848dbe",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5f4c1a4a0933f8a7848d8d",
+    "metadata": {
+      "call": "6a5f4c1a4a0933f8a7848d8d"
+    },
+    "createdAt": "2026-07-21T10:40:26.573Z",
+    "updatedAt": "2026-07-21T10:40:26.573Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f4cd64a0933f8a7848dcf",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5f4c1a4a0933f8a7848d8d",
+    "metadata": {
+      "call": "6a5f4c1a4a0933f8a7848d8d"
+    },
+    "createdAt": "2026-07-21T10:41:26.576Z",
+    "updatedAt": "2026-07-21T10:41:26.576Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f4d124a0933f8a7848deb",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 10,
+    "type": "debit",
+    "description": "Call charge (remaining balance)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a5f4c1a4a0933f8a7848d8d",
+    "metadata": {
+      "call": "6a5f4c1a4a0933f8a7848d8d"
+    },
+    "createdAt": "2026-07-21T10:42:26.702Z",
+    "updatedAt": "2026-07-21T10:42:26.702Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f791faf37c60ac78ebedd",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-21T13:50:23.754Z",
+    "updatedAt": "2026-07-21T13:50:23.754Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f7921af37c60ac78ebee8",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5f47e71ca764a0e1b41dbb",
+    "call": null,
+    "createdAt": "2026-07-21T13:50:25.386Z",
+    "updatedAt": "2026-07-21T13:50:25.386Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f7981af37c60ac78ec020",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-21T13:52:01.477Z",
+    "updatedAt": "2026-07-21T13:52:01.477Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a5f7983af37c60ac78ec02b",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5f47e71ca764a0e1b41dbb",
+    "call": null,
+    "createdAt": "2026-07-21T13:52:03.326Z",
+    "updatedAt": "2026-07-21T13:52:03.326Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a607e27d4daaa9e4cbca7cf",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-22T08:24:07.357Z",
+    "updatedAt": "2026-07-22T08:24:07.357Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a607e3bd4daaa9e4cbca7f5",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 2,
+    "type": "debit",
+    "description": "Call charge (prorated)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a607e30d4daaa9e4cbca7d6",
+    "metadata": {
+      "call": "6a607e30d4daaa9e4cbca7d6"
+    },
+    "createdAt": "2026-07-22T08:24:27.954Z",
+    "updatedAt": "2026-07-22T08:24:27.954Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a607e43d4daaa9e4cbca802",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 2,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-22T08:24:35.092Z",
+    "updatedAt": "2026-07-22T08:24:35.092Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a607e46d4daaa9e4cbca842",
+    "user": "6a54a29f058a31a597dccc03",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a5f47e71ca764a0e1b41dbb",
+    "call": null,
+    "createdAt": "2026-07-22T08:24:38.098Z",
+    "updatedAt": "2026-07-22T08:24:38.098Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a609aaf558e2f8a9ac1fdeb",
+    "user": "6a54a9937802f63046f1a294",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-22T10:25:51.130Z",
+    "updatedAt": "2026-07-22T10:25:51.130Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a609ab0558e2f8a9ac1fdf6",
+    "user": "6a54a9937802f63046f1a294",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a6099aee7133ad231400ffd",
+    "call": null,
+    "createdAt": "2026-07-22T10:25:52.461Z",
+    "updatedAt": "2026-07-22T10:25:52.461Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a609ade558e2f8a9ac1fe1b",
+    "user": "6a54a9937802f63046f1a294",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-22T10:26:38.748Z",
+    "updatedAt": "2026-07-22T10:26:38.748Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a609b23558e2f8a9ac1fe52",
+    "user": "6a54a9937802f63046f1a294",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a609ae2558e2f8a9ac1fe23",
+    "metadata": {
+      "call": "6a609ae2558e2f8a9ac1fe23"
+    },
+    "createdAt": "2026-07-22T10:27:47.596Z",
+    "updatedAt": "2026-07-22T10:27:47.596Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a609b5f558e2f8a9ac1fe70",
+    "user": "6a54a9937802f63046f1a294",
+    "amount": 20,
+    "type": "debit",
+    "description": "Call charge (20/min)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a609ae2558e2f8a9ac1fe23",
+    "metadata": {
+      "call": "6a609ae2558e2f8a9ac1fe23"
+    },
+    "createdAt": "2026-07-22T10:28:47.606Z",
+    "updatedAt": "2026-07-22T10:28:47.606Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a609b63558e2f8a9ac1fe7d",
+    "user": "6a54a9937802f63046f1a294",
+    "amount": 1,
+    "type": "debit",
+    "description": "Call charge (prorated)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a609ae2558e2f8a9ac1fe23",
+    "metadata": {
+      "call": "6a609ae2558e2f8a9ac1fe23"
+    },
+    "createdAt": "2026-07-22T10:28:51.388Z",
+    "updatedAt": "2026-07-22T10:28:51.388Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a609c969007935d874cb9a8",
+    "user": "6a54a9937802f63046f1a294",
+    "amount": 2,
+    "type": "debit",
+    "description": "Call charge (prorated)",
+    "status": "completed",
+    "conversation": null,
+    "call": "6a609c8a9007935d874cb987",
+    "metadata": {
+      "call": "6a609c8a9007935d874cb987"
+    },
+    "createdAt": "2026-07-22T10:33:58.294Z",
+    "updatedAt": "2026-07-22T10:33:58.294Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a60adce5227047747eae7f7",
+    "user": "6a54a9937802f63046f1a294",
+    "amount": 100,
+    "type": "credit",
+    "description": "Wallet recharge",
+    "status": "completed",
+    "conversation": null,
+    "call": null,
+    "createdAt": "2026-07-22T11:47:26.106Z",
+    "updatedAt": "2026-07-22T11:47:26.106Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a61b7815673d7a77c820b01",
+    "user": "6a54a9937802f63046f1a294",
+    "amount": 100,
+    "type": "debit",
+    "description": "Consultation payment",
+    "status": "completed",
+    "conversation": "6a6099aee7133ad231400ffd",
+    "call": null,
+    "createdAt": "2026-07-23T06:41:05.519Z",
+    "updatedAt": "2026-07-23T06:41:05.519Z",
+    "__v": 0
+  }
+]
