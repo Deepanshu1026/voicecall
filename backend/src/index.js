@@ -27,7 +27,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: config.nodeEnv === 'development' ? true : config.socketCorsOrigin,
+    origin: config.nodeEnv === 'development' ? true : [config.clientUrl, config.socketCorsOrigin].filter(Boolean),
     methods: ['GET', 'POST'],
     credentials: true,
   },

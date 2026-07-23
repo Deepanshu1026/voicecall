@@ -17,7 +17,7 @@ module.exports = {
     expire: process.env.JWT_EXPIRE || '7d',
     refreshExpire: process.env.JWT_REFRESH_EXPIRE || '30d',
   },
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  clientUrl: (process.env.CLIENT_URL || 'http://localhost:5173').replace(/\/+$/, ''),
   mysql: {
     host: process.env.MYSQL_HOST || 'localhost',
     port: parseInt(process.env.MYSQL_PORT) || 3306,
@@ -43,5 +43,5 @@ module.exports = {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 900000,
     max: parseInt(process.env.RATE_LIMIT_MAX) || 100000,
   },
-  socketCorsOrigin: process.env.SOCKET_CORS_ORIGIN || 'http://localhost:5173',
+  socketCorsOrigin: (process.env.SOCKET_CORS_ORIGIN || 'http://localhost:5173').replace(/\/+$/, ''),
 };
