@@ -76,6 +76,7 @@ const limiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.path.includes('/login') || req.path.includes('/register'),
 });
 app.use('/api/', limiter);
 
