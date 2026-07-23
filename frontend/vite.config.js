@@ -6,20 +6,11 @@ export default defineConfig({
   server: {
     host: process.env.VITE_HOST || '0.0.0.0',
     port: 5173,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:5002',
-        changeOrigin: true,
-      },
-      '/socket.io': {
-        target: 'http://localhost:5002',
-        ws: true,
-      },
-      '/uploads': {
-        target: 'http://localhost:5002',
-        changeOrigin: true,
-      },
-    },
+    proxy: process.env.NODE_ENV !== 'production' ? {
+      '/api': { target: 'http://localhost:5002', changeOrigin: true },
+      '/socket.io': { target: 'http://localhost:5002', ws: true },
+      '/uploads': { target: 'http://localhost:5002', changeOrigin: true },
+    } : undefined,
   },
   resolve: {
     alias: {
