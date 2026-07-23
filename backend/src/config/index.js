@@ -3,7 +3,14 @@ require('dotenv').config();
 module.exports = {
   port: process.env.PORT || 5002,
   nodeEnv: process.env.NODE_ENV || 'development',
-  mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/voicecall',
+  mongodbUri: (() => {
+    let uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/voicecall';
+    // If no database name is set (e.g. `/?` instead of `/voicecall?`), append /voicecall
+    if (!uri.includes('/voicecall')) {
+      uri = uri.replace(/\/\?/, '/voicecall?');
+    }
+    return uri;
+  })(),
   jwt: {
     secret: process.env.JWT_SECRET || 'fallback_dev_secret',
     refreshSecret: process.env.JWT_REFRESH_SECRET || 'fallback_refresh_secret',
