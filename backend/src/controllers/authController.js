@@ -42,10 +42,12 @@ const login = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = generateTokens(user._id);
-  user.refreshToken = refreshToken;
-  user.status = 'online';
-  user.lastSeen = new Date();
-  await user.save({ validateBeforeSave: false });
+
+  await User.findByIdAndUpdate(user._id, {
+    refreshToken,
+    status: 'online',
+    lastSeen: new Date(),
+  });
 
   const userObj = user.toObject();
   delete userObj.password;
