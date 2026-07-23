@@ -44,10 +44,12 @@ const login = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = generateTokens(employee._id);
-  employee.refreshToken = refreshToken;
-  employee.workStatus = 'active';
-  employee.lastSeen = new Date();
-  await employee.save({ validateBeforeSave: false });
+
+  await Employee.findByIdAndUpdate(employee._id, {
+    refreshToken,
+    workStatus: 'active',
+    lastSeen: new Date(),
+  });
 
   const employeeObj = employee.toObject();
   delete employeeObj.password;
