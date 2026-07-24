@@ -1,7 +1,6 @@
 import { useAuth } from '../../context/AuthContext';
 import { formatMessageTime, formatFileSize } from '../../utils/helpers';
 import { HiOutlineArrowUturnLeft } from 'react-icons/hi2';
-import { HiCheck } from 'react-icons/hi2';
 
 const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
   const { user } = useAuth();
@@ -80,30 +79,30 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
   };
 
   const bubbleBg = isOwn
-    ? 'bg-chat-sent dark:bg-chat-sentDark text-white'
-    : 'bg-chat-received dark:bg-chat-receivedDark text-gray-900 dark:text-gray-100';
+    ? 'bg-[#6138d8] text-white'
+    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100';
 
   const bubbleRound = isOwn
-    ? 'rounded-2xl rounded-br-md'
-    : 'rounded-2xl rounded-bl-md';
+    ? 'rounded-[18px] rounded-br-[6px]'
+    : 'rounded-[18px] rounded-bl-[6px]';
 
   return (
-    <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} items-end gap-1 mb-1.5 group relative`}>
-      <div className={`${isOwn ? 'order-first' : 'order-last'} opacity-0 group-hover:opacity-100 transition-opacity duration-100 flex-shrink-0`}>
+    <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} items-end gap-1.5 mx-1 mb-1 group relative`}>
+      <div className={`${isOwn ? 'order-first' : 'order-last'} opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0`}>
         <button
           onClick={() => onReply()}
-          className="p-1 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          className="p-1 rounded-full text-gray-300 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
           title="Reply"
         >
           <HiOutlineArrowUturnLeft className="w-4 h-4" />
         </button>
       </div>
 
-      <div className={`max-w-[75%] sm:max-w-[65%] ${bubbleBg} ${bubbleRound} px-3 py-1.5 shadow-sm`}>
+      <div className={`max-w-[72%] ${bubbleBg} ${bubbleRound} px-3.5 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.08)]`}>
         {message.replyTo && (
-          <div className={`mb-1 px-2 py-1 text-xs rounded border-l-2 ${isOwn ? 'border-white/40 bg-white/10' : 'border-primary-400 bg-gray-200/60 dark:bg-gray-700/50'}`}>
-            <p className={`font-medium ${isOwn ? 'text-white/80' : 'text-primary-600 dark:text-primary-400'}`}>Replying</p>
-            <p className={`truncate ${isOwn ? 'text-white/60' : 'text-gray-500 dark:text-gray-400'}`}>
+          <div className={`mb-1.5 px-2 py-1 text-xs rounded-md border-l-[3px] ${isOwn ? 'border-white/40 bg-white/10' : 'border-[#6138d8]/50 bg-gray-100 dark:bg-gray-700/60'}`}>
+            <p className={`font-medium text-[11px] leading-tight ${isOwn ? 'text-white/80' : 'text-[#6138d8] dark:text-purple-400'}`}>Replying</p>
+            <p className={`truncate text-[11px] ${isOwn ? 'text-white/50' : 'text-gray-400 dark:text-gray-500'}`}>
               {message.replyTo?.content || 'Original message'}
             </p>
           </div>
@@ -111,9 +110,11 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
 
         {renderFile()}
 
-        <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
-          {message.content}
-        </p>
+        {message.content && (
+          <p className={`text-[15px] leading-[1.35] whitespace-pre-wrap break-words ${isOwn ? '' : ''}`}>
+            {message.content}
+          </p>
+        )}
 
         {message.reactions?.length > 0 && (
           <div className="flex flex-wrap gap-0.5 mt-1">
@@ -123,18 +124,18 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
           </div>
         )}
 
-        <div className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-          <span className={`text-[10px] leading-none ${isOwn ? 'text-white/60' : 'text-gray-400'}`}>
+        <div className={`flex items-center gap-1.5 mt-0.5 ${isOwn ? 'justify-end' : 'justify-end'}`}>
+          <span className={`text-[11px] leading-none ${isOwn ? 'text-white/60' : 'text-gray-400 dark:text-gray-500'}`}>
             {formatMessageTime(message.createdAt)}
           </span>
           {isOwn && (
-            <span className="flex-shrink-0">
+            <span className="flex-shrink-0 -mr-0.5">
               {message.status === 'seen' ? (
-                <svg className="w-3.5 h-3.5 text-blue-400" viewBox="0 0 16 11" fill="currentColor"><path d="M11.071.653a.457.457 0 00-.304-.102.493.493 0 00-.381.178l-6.19 7.636-2.011-2.095a.463.463 0 00-.336-.153.456.456 0 00-.331.154.543.543 0 00-.14.376c0 .145.049.28.14.376l2.426 2.557a.49.49 0 00.348.178.45.45 0 00.344-.178l6.42-7.963a.544.544 0 00.14-.376.5.5 0 00-.145-.331l.02-.031zM7.726 9.005a.496.496 0 00.18-.027l.885-.445a.51.51 0 00.101-.052l2.737-3.38a.45.45 0 00.17-.367.459.459 0 00-.156-.381.492.492 0 00-.385-.113.458.458 0 00-.356.212l-2.437 3.022-1.704-1.775a.456.456 0 00-.331-.153.463.463 0 00-.331.154.543.543 0 00-.14.376c0 .146.049.28.14.376l2.167 2.258a.45.45 0 00.36.178z"/></svg>
+                <svg className="w-[15px] h-[11px] text-white/70" viewBox="0 0 16 11" fill="currentColor"><path d="M11.071.653a.457.457 0 00-.304-.102.493.493 0 00-.381.178l-6.19 7.636-2.011-2.095a.463.463 0 00-.336-.153.456.456 0 00-.331.154.543.543 0 00-.14.376c0 .145.049.28.14.376l2.426 2.557a.49.49 0 00.348.178.45.45 0 00.344-.178l6.42-7.963a.544.544 0 00.14-.376.5.5 0 00-.145-.331l.02-.031zM7.726 9.005a.496.496 0 00.18-.027l.885-.445a.51.51 0 00.101-.052l2.737-3.38a.45.45 0 00.17-.367.459.459 0 00-.156-.381.492.492 0 00-.385-.113.458.458 0 00-.356.212l-2.437 3.022-1.704-1.775a.456.456 0 00-.331-.153.463.463 0 00-.331.154.543.543 0 00-.14.376c0 .146.049.28.14.376l2.167 2.258a.45.45 0 00.36.178z"/></svg>
               ) : message.status === 'delivered' ? (
-                <HiCheck className="w-3.5 h-3.5 text-gray-400" />
+                <svg className="w-[15px] h-[11px] text-white/60" viewBox="0 0 16 11" fill="currentColor"><path d="M11.071.653a.457.457 0 00-.304-.102.493.493 0 00-.381.178l-6.19 7.636-2.011-2.095a.463.463 0 00-.336-.153.456.456 0 00-.331.154.543.543 0 00-.14.376c0 .145.049.28.14.376l2.426 2.557a.49.49 0 00.348.178.45.45 0 00.344-.178l6.42-7.963a.544.544 0 00.14-.376.5.5 0 00-.145-.331l.02-.031z" /></svg>
               ) : (
-                <HiCheck className="w-3.5 h-3.5 text-gray-400" />
+                <svg className="w-[15px] h-[11px] text-white/50" viewBox="0 0 16 11" fill="currentColor"><path d="M11.071.653a.457.457 0 00-.304-.102.493.493 0 00-.381.178l-6.19 7.636-2.011-2.095a.463.463 0 00-.336-.153.456.456 0 00-.331.154.543.543 0 00-.14.376c0 .145.049.28.14.376l2.426 2.557a.49.49 0 00.348.178.45.45 0 00.344-.178l6.42-7.963a.544.544 0 00.14-.376.5.5 0 00-.145-.331l.02-.031z" /></svg>
               )}
             </span>
           )}

@@ -298,7 +298,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
           </div>
         </div>
       ) : (
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 dark:border-gray-700 glass">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 dark:border-gray-700 bg-white/95 backdrop-blur sticky top-0 z-10">
           <div className="flex items-center gap-3 min-w-0">
             <button onClick={onBack} className="md:hidden btn-ghost p-1.5">
               <HiArrowLeft className="w-5 h-5" />
@@ -306,30 +306,29 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
             <div className="flex items-center gap-3 min-w-0 cursor-pointer" onClick={() => setShowInfo(true)}>
               <Avatar user={otherParticipant} showStatus size="md" />
               <div className="min-w-0">
-                <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                <h3 className="font-semibold text-[15px] text-gray-900 dark:text-white truncate leading-tight">
                   {getDisplayName(otherParticipant)}
                 </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {online ? 'Online' : otherParticipant?.lastSeen ? `Last seen ${formatLastSeen(otherParticipant.lastSeen)}` : 'Offline'}
+                <p className="text-[12px] text-gray-500 dark:text-gray-400 truncate">
+                  {online ? (
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>Online</span>
+                  ) : otherParticipant?.lastSeen ? `Last seen ${formatLastSeen(otherParticipant.lastSeen)}` : 'Offline'}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             <button
               onClick={() => startCall(otherParticipant?._id, otherParticipant, 'audio')}
-              className="btn-ghost p-2 text-gray-500 hover:text-primary-600 dark:hover:text-primary-400"
+              className="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-primary-400 transition-colors"
               title="Voice call"
             >
               <HiPhone className="w-5 h-5" />
             </button>
-            <button className="btn-ghost p-2 text-gray-500 hover:text-primary-600 dark:hover:text-primary-400" title="Video call">
-              <HiVideoCamera className="w-5 h-5" />
-            </button>
             <button
               onClick={() => setShowInfo(!showInfo)}
-              className="btn-ghost p-2 text-gray-500"
+              className="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               title="More"
             >
               <HiEllipsisVertical className="w-5 h-5" />

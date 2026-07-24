@@ -189,14 +189,7 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
       )}
 
       {/* Input */}
-      <div className="flex items-end gap-2">
-        <button
-          onClick={() => document.getElementById('file-upload')?.click()}
-          className="p-2 text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 transition-colors rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-          title="Attach file"
-        >
-          <HiPaperClip className="w-5 h-5" />
-        </button>
+      <div className="flex items-center gap-2.5 bg-gray-50 dark:bg-gray-800/50 rounded-3xl px-2 mx-1">
         <input
           type="file"
           id="file-upload"
@@ -205,34 +198,42 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
           accept="image/*,.pdf,.doc,.docx,.zip,.txt"
         />
 
-        <div className="flex-1 relative">
-          <textarea
-            ref={inputRef}
-            value={message}
-            onChange={(e) => { setMessage(e.target.value); if (e.target.value) handleTyping(); }}
-            onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
-            rows={1}
-            className="w-full resize-none border border-gray-200 dark:border-gray-600 rounded-2xl px-4 py-2.5 pr-10 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:border-primary-500 focus:bg-white dark:focus:bg-gray-800 max-h-32 transition-colors"
-            disabled={sending}
-            style={{ lineHeight: '1.4' }}
-            onInput={(e) => {
-              e.target.style.height = 'auto';
-              e.target.style.height = Math.min(e.target.scrollHeight, 128) + 'px';
-            }}
-          />
-          <button
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="absolute right-2.5 bottom-2 btn-ghost p-1 text-gray-400 hover:text-yellow-500 transition-colors"
-          >
-            <HiFaceSmile className="w-5 h-5" />
-          </button>
-        </div>
+        <button
+          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          className="p-2 text-gray-400 hover:text-yellow-500 transition-colors rounded-full flex-shrink-0"
+          title="Emoji"
+        >
+          <HiFaceSmile className="w-5 h-5" />
+        </button>
+
+        <textarea
+          ref={inputRef}
+          value={message}
+          onChange={(e) => { setMessage(e.target.value); if (e.target.value) handleTyping(); }}
+          onKeyDown={handleKeyDown}
+          placeholder="Type a message..."
+          rows={1}
+          className="flex-1 resize-none bg-transparent border-0 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none max-h-32"
+          disabled={sending}
+          style={{ lineHeight: '1.4' }}
+          onInput={(e) => {
+            e.target.style.height = 'auto';
+            e.target.style.height = Math.min(e.target.scrollHeight, 128) + 'px';
+          }}
+        />
+
+        <button
+          onClick={() => document.getElementById('file-upload')?.click()}
+          className="p-2 text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 transition-colors rounded-full flex-shrink-0"
+          title="Attach file"
+        >
+          <HiPaperClip className="w-5 h-5" />
+        </button>
 
         <button
           onClick={() => handleSendMessage(message)}
           disabled={!message.trim() || sending}
-          className="bg-primary-600 hover:bg-primary-700 text-white p-2.5 rounded-full flex-shrink-0 disabled:opacity-30 disabled:cursor-not-allowed shadow-sm hover:shadow-md transition-all"
+          className="bg-[#6138d8] hover:bg-[#5b2fd1] text-white p-2.5 rounded-full flex-shrink-0 disabled:opacity-30 disabled:cursor-not-allowed shadow-sm hover:shadow-md transition-all"
         >
           {sending ? (
             <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
