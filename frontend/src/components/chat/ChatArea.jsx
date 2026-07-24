@@ -395,7 +395,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
         ref={messagesContainerRef}
         onScroll={handleScroll}
         className={`flex-1 overflow-y-auto px-4 py-3 space-y-2 ${
-          isUser ? 'bg-blue-50/50' : 'bg-[#efeae2] dark:bg-[#0a0a1a]'
+          isUser ? 'bg-blue-50/50' : 'bg-[#f0f2f5] dark:bg-[#0a0a1a]'
         }`}
         style={
           isUser

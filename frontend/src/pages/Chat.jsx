@@ -338,6 +338,7 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50 dark:bg-su
               activeConversation={activeConversation}
               onSelectConversation={handleSelectConversation}
               chat={chat}
+              showHeader={false}
             />
           </div>
 

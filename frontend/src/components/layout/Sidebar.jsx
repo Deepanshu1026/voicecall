@@ -1,15 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import ConversationItem from '../chat/ConversationItem';
 import Avatar from '../common/Avatar';
 import SearchBar from '../common/SearchBar';
 import { userAPI, chatAPI } from '../../services/api';
-import { getAvatarUrl, getInitials, getDisplayName, debounce } from '../../utils/helpers';
-import { HiCog6Tooth, HiArrowRightOnRectangle, HiChatBubbleLeftRight, HiPhone, HiMagnifyingGlassPlus, HiUserGroup } from 'react-icons/hi2';
+import { getDisplayName, debounce } from '../../utils/helpers';
+import { HiChatBubbleLeftRight } from 'react-icons/hi2';
 
-const Sidebar = ({ activeConversation, onSelectConversation, chat }) => {
+const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = true }) => {
   const { user, logout } = useAuth();
   const { onlineUsers } = useSocket();
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,46 +61,36 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat }) => {
 
   return (
     <div className="flex flex-col h-full w-full bg-white dark:bg-surface-dark">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-        <button onClick={() => setShowProfile(!showProfile)} className="relative group">
-          <Avatar user={user} size="md" />
-        </button>
-        <h1 className="text-lg font-bold text-gray-900 dark:text-white">VoiceCall</h1>
-        <div className="flex items-center gap-1">
-          <Link to="/profile" className="btn-ghost p-2 text-gray-500" title="Profile">
-            <Avatar user={user} size="xs" />
-          </Link>
-          <Link to="/settings" className="btn-ghost p-2 text-gray-500 hover:text-primary-600 transition-colors" title="Settings">
-            <HiCog6Tooth className="w-5 h-5" />
-          </Link>
-          <button onClick={logout} className="btn-ghost p-2 text-gray-500 hover:text-red-500 transition-colors" title="Logout">
-            <HiArrowRightOnRectangle className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
+      {showHeader && (
+        <>
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+            <button onClick={() => setShowProfile(!showProfile)} className="relative group">
+              <Avatar user={user} size="md" />
+            </button>
+            <h1 className="text-lg font-bold text-gray-900 dark:text-white">VoiceCall</h1>
+            <div className="flex items-center gap-1">
+              <Avatar user={user} size="xs" />
+              <button onClick={logout} className="btn-ghost p-2 text-gray-500 hover:text-red-500 transition-colors" title="Logout">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              </button>
+            </div>
+          </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-gray-100 dark:border-gray-700">
-        <button
-          onClick={() => setSelectedTab('chats')}
-          className={`flex-1 py-2.5 text-sm font-medium text-center transition-colors relative
-            ${selectedTab === 'chats' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
-        >
-          <HiChatBubbleLeftRight className="w-4 h-4 mx-auto mb-0.5" />
-          Chats
-          {selectedTab === 'chats' && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-primary-600 rounded-full" />}
-        </button>
-        <button
-          onClick={() => setSelectedTab('calls')}
-          className={`flex-1 py-2.5 text-sm font-medium text-center transition-colors relative
-            ${selectedTab === 'calls' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
-        >
-          <HiPhone className="w-4 h-4 mx-auto mb-0.5" />
-          Calls
-          {selectedTab === 'calls' && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-primary-600 rounded-full" />}
-        </button>
-      </div>
+          {/* Tabs */}
+          <div className="flex border-b border-gray-100 dark:border-gray-700">
+            <button
+              onClick={() => setSelectedTab('chats')}
+              className={`flex-1 py-2.5 text-sm font-medium text-center transition-colors relative ${
+                selectedTab === 'chats' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+            >
+              <HiChatBubbleLeftRight className="w-4 h-4 mx-auto mb-0.5" />
+              Chats
+              {selectedTab === 'chats' && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-primary-600 rounded-full" />}
+            </button>
+          </div>
+        </>
+      )}
 
       {/* Search */}
       <div className="px-4 py-2.5">
@@ -171,9 +160,9 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat }) => {
             </>
           )}
 
-          {selectedTab === 'calls' && (
+          {!showHeader && selectedTab === 'calls' && (
             <div className="text-center py-12 px-4">
-              <HiPhone className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+              <HiChatBubbleLeftRight className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">No call history</p>
               <p className="text-xs text-gray-400 dark:text-gray-500">Your call history will appear here</p>
             </div>
