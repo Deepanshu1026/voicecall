@@ -51,6 +51,8 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
   const isUser = user?.role === 'user';
   const lockedToAgent = liveConversation?.lockedToAgent?._id || liveConversation?.lockedToAgent;
   const isConsultation = lockedToAgent && otherParticipant?._id?.toString() === lockedToAgent.toString();
+  // Agent is the locked agent: the current user IS the lockedToAgent
+  const isAgentLocked = isConsultation && user?._id?.toString() === lockedToAgent?.toString();
   const freeUntil = liveConversation?.freeUntil ? new Date(liveConversation.freeUntil) : null;
   const isFreeExpired = freeUntil && new Date() > freeUntil;
   const isPaid = liveConversation?.isPaid;
@@ -314,7 +316,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
                     <span className="flex items-center gap-1"><span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>Online</span>
                   ) : otherParticipant?.lastSeen ? `Last seen ${formatLastSeen(otherParticipant.lastSeen)}` : 'Offline'}
                 </p>
-                {isConsultation && !isUser && !isPaid && (
+                {isAgentLocked && !isPaid && (
                   <p className="text-[11px] font-medium truncate mt-0.5">
                     {isFreeExpired ? (
                       <span className="text-red-500">⚠ Free chat expired</span>
@@ -367,7 +369,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
       )}
 
       {/* Consultation status banner - visible to both user and agent */}
-      {isConsultation && (
+      {(isConsultation || isAgentLocked) && (
         <div className="px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-100 dark:border-orange-900/40 text-center">
           {isPaid ? (
             <div className="flex flex-col items-center gap-1">
