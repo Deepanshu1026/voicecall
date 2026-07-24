@@ -1,16 +1,10 @@
-import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { formatMessageTime, formatFileSize } from '../../utils/helpers';
 import Avatar from '../common/Avatar';
-import { HiCheck, HiCheckBadge, HiPencil, HiTrash, HiArrowUturnLeft, HiFaceSmile, HiDocumentText, HiChevronDoubleRight, HiXMark, HiCheckCircle } from 'react-icons/hi2';
+import { HiCheck, HiCheckBadge, HiArrowUturnLeft, HiDocumentText, HiChevronDoubleRight, HiCheckCircle } from 'react-icons/hi2';
 
-const emojis = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
-
-const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply, variant = 'default' }) => {
+const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
   const { user } = useAuth();
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [editContent, setEditContent] = useState('');
 
   const currentUserId = user?._id;
   const sentClass = variant === 'user' ? 'message-bubble-sent-user' : 'message-bubble-sent';
@@ -50,28 +44,6 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply, 
     if (message.status === 'sent') return <HiCheck className="w-3.5 h-3.5 text-gray-400" />;
     return <HiChevronDoubleRight className="w-3.5 h-3.5 text-gray-400" />;
   };
-
-  const handleStartEdit = () => {
-    setEditContent(message.content);
-    setEditing(true);
-  };
-
-  const handleSaveEdit = () => {
-    if (editContent.trim() && editContent !== message.content) {
-      onEdit(editContent);
-    }
-    setEditing(false);
-  };
-
-  const handleEmojiSelect = (emoji) => {
-    onReaction(emoji);
-    setShowEmojiPicker(false);
-  };
-
-  const myReaction = message.reactions?.find((r) => {
-    const rid = typeof r.user === 'object' ? r.user?._id : r.user;
-    return rid === currentUserId;
-  });
 
   return (
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} items-end gap-2 group relative`}>
@@ -185,42 +157,11 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply, 
           </div>
         </div>
 
-        {!editing && (
-          <div className={`flex items-center gap-0.5 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
-            <button onClick={() => onReply()} className={`p-1 rounded-full text-gray-400 hover:text-primary-500 transition-colors ${isOwn ? '' : 'opacity-100'}`} title="Reply">
-              <HiArrowUturnLeft className="w-3.5 h-3.5" />
-            </button>
-            <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="p-1 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500" title="React">
-              <HiFaceSmile className="w-3.5 h-3.5" />
-            </button>
-            {isOwn && (
-              <>
-                <button onClick={handleStartEdit} className="p-1 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500" title="Edit">
-                  <HiPencil className="w-3.5 h-3.5" />
-                </button>
-                <button onClick={() => { if (window.confirm('Delete this message?')) onDelete(false); }} className="p-1 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-50 dark:hover:bg-gray-700 text-red-500" title="Delete">
-                  <HiTrash className="w-3.5 h-3.5" />
-                </button>
-              </>
-            )}
-          </div>
-        )}
-
-        {showEmojiPicker && (
-          <div className={`absolute bottom-full mb-1 ${isOwn ? 'right-0' : 'left-0'} z-10`}>
-            <div className="bg-white dark:bg-gray-800 rounded-full shadow-lg p-1.5 flex gap-1 border dark:border-gray-700">
-              {emojis.map((emoji) => (
-                <button
-                  key={emoji}
-                  onClick={() => handleEmojiSelect(emoji)}
-                  className={`p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-lg transition-colors ${myReaction?.emoji === emoji ? 'bg-gray-100 dark:bg-gray-700 ring-2 ring-primary-500' : ''}`}
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className={`flex items-center gap-0.5 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+          <button onClick={() => onReply()} className="p-1 rounded-full text-gray-400 hover:text-primary-500 transition-colors" title="Reply">
+            <HiArrowUturnLeft className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
       {variant === 'user' && isOwn && <Avatar user={user} size="sm" />}
     </div>
