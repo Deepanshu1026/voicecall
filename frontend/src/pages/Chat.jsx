@@ -95,6 +95,21 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50 dark:bg-su
           message.sender?.displayName || message.sender?.username || 'New message',
           message
         );
+        // Show toast if message is from a different conversation than the active one
+        if (activeConversation && String(message.conversation) !== String(activeConversation._id)) {
+          toast(
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <i className="bi bi-chat-dots" style={{ fontSize: '1.2rem', color: '#3b82f6' }} />
+              <div>
+                <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{message.sender?.displayName || 'New message'}</div>
+                <div style={{ fontSize: '0.8rem', color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px', whiteSpace: 'nowrap' }}>
+                  {message.content || (message.type === 'file' ? '📎 Sent a file' : '')}
+                </div>
+              </div>
+            </div>,
+            { duration: 4000, position: 'top-right', style: { background: '#fff', color: '#0f172a', borderRadius: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', padding: '12px 16px' } }
+          );
+        }
         // Play notification beep for incoming messages while chatting
         try {
           const ctx = new (window.AudioContext || window.webkitAudioContext)();

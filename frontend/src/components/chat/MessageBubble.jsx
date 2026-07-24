@@ -112,10 +112,10 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply, 
             </div>
           ) : (
             <>
-              {message.type === 'file' && message.fileName && (
+              {(message.type === 'file' || message.type === 'image') && message.fileName && (
                 <div className="mb-1">
                   {/\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i.test(message.fileName) ? (
-                    <div className="relative group">
+                    <div className="relative">
                       <img
                         src={message.fileUrl || `/uploads/${message.fileName}`}
                         alt={message.fileName}
@@ -128,11 +128,11 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply, 
                         download={message.fileName}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="Download image"
-                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-blue-500 hover:text-blue-700 transition-colors"
+                        title="Download"
                       >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Download
                       </a>
                     </div>
                   ) : (
@@ -147,10 +147,10 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply, 
                         download={message.fileName}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`p-1.5 rounded-full ${isOwn ? 'text-white/60 hover:text-white' : 'text-gray-500 hover:text-gray-700'} transition-colors`}
-                        title="Download file"
+                        className={`inline-flex items-center gap-1 text-xs font-medium ${isOwn ? 'text-white/70 hover:text-white' : 'text-blue-500 hover:text-blue-700'} transition-colors`}
+                        title="Download"
                       >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                       </a>
                     </div>
                   )}
@@ -186,8 +186,8 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply, 
         </div>
 
         {!editing && (
-          <div className={`absolute top-0 ${isOwn ? 'left-0 -translate-x-full pr-1' : 'right-0 translate-x-full pl-1'} opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5`}>
-            <button onClick={() => onReply()} className="p-1 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500" title="Reply">
+          <div className={`flex items-center gap-0.5 mt-1 ${isOwn ? 'justify-end' : 'justify-start'}`}>
+            <button onClick={() => onReply()} className={`p-1 rounded-full text-gray-400 hover:text-primary-500 transition-colors ${isOwn ? '' : 'opacity-100'}`} title="Reply">
               <HiArrowUturnLeft className="w-3.5 h-3.5" />
             </button>
             <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="p-1 bg-white dark:bg-gray-800 rounded-full shadow hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500" title="React">
