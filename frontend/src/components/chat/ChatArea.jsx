@@ -314,6 +314,15 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
                     <span className="flex items-center gap-1"><span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>Online</span>
                   ) : otherParticipant?.lastSeen ? `Last seen ${formatLastSeen(otherParticipant.lastSeen)}` : 'Offline'}
                 </p>
+                {isConsultation && !isUser && !isPaid && (
+                  <p className="text-[11px] font-medium truncate mt-0.5">
+                    {isFreeExpired ? (
+                      <span className="text-red-500">⚠ Free chat expired</span>
+                    ) : (
+                      <span className="text-orange-500">⏱ Free chat: {formatCountdown(timeLeft)}</span>
+                    )}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -357,8 +366,8 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
         </div>
       )}
 
-      {/* Consultation status banner for user -> agent chats */}
-      {isLockedUser && (
+      {/* Consultation status banner - visible to both user and agent */}
+      {isConsultation && (
         <div className="px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-100 dark:border-orange-900/40 text-center">
           {isPaid ? (
             <div className="flex flex-col items-center gap-1">
@@ -377,9 +386,11 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
               <span className="text-sm font-medium text-red-700 dark:text-red-400">
                 Free chat has ended
               </span>
-              <span className="text-xs text-gray-600 dark:text-gray-300">
-                Pay ₹{paymentAmount} to continue chatting with {getDisplayName(otherParticipant)}
-              </span>
+              {isLockedUser && (
+                <span className="text-xs text-gray-600 dark:text-gray-300">
+                  Pay ₹{paymentAmount} to continue chatting with {getDisplayName(otherParticipant)}
+                </span>
+              )}
             </div>
           ) : (
             <span className="text-sm font-medium text-orange-700 dark:text-orange-400">
