@@ -51,8 +51,8 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
   const isUser = user?.role === 'user';
   const lockedToAgent = liveConversation?.lockedToAgent?._id || liveConversation?.lockedToAgent;
   const isConsultation = lockedToAgent && otherParticipant?._id?.toString() === lockedToAgent.toString();
-  // Agent is the locked agent: the current user IS the lockedToAgent
-  const isAgentLocked = isConsultation && user?._id?.toString() === lockedToAgent?.toString();
+  // Agent is the locked agent: the current user IS the lockedToAgent (conversation is locked to them)
+  const isAgentLocked = lockedToAgent && freeUntil && user?._id?.toString() === lockedToAgent?.toString();
   const freeUntil = liveConversation?.freeUntil ? new Date(liveConversation.freeUntil) : null;
   const isFreeExpired = freeUntil && new Date() > freeUntil;
   const isPaid = liveConversation?.isPaid;
