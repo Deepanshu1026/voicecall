@@ -63,27 +63,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
         <div
           className={`relative ${bubbleClass}`}
         >
-          {editing ? (
-            <div className="min-w-[200px]">
-              <input
-                type="text"
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleSaveEdit(); if (e.key === 'Escape') setEditing(false); }}
-                className={`w-full bg-transparent border-b ${isOwn ? 'border-white/50 text-white placeholder-white/50' : 'border-gray-400 text-gray-900 placeholder-gray-400'} focus:outline-none`}
-                autoFocus
-              />
-              <div className="flex justify-end gap-2 mt-1">
-                <button onClick={() => setEditing(false)} className={isOwn ? 'text-white/60 hover:text-white' : 'text-gray-500 hover:text-gray-700'}>
-                  <HiXMark className="w-3.5 h-3.5" />
-                </button>
-                <button onClick={handleSaveEdit} className={isOwn ? 'text-white/80 hover:text-white' : 'text-primary-600 hover:text-primary-700'}>
-                  <HiCheck className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
+          <>
               {(message.type === 'file' || message.type === 'image') && message.fileName && (
                 <div className="mb-1">
                   {/\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i.test(message.fileName) ? (
