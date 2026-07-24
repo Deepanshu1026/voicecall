@@ -113,12 +113,47 @@ const MessageBubble = ({ message, isOwn, onDelete, onReaction, onEdit, onReply, 
           ) : (
             <>
               {message.type === 'file' && message.fileName && (
-                <div className="flex items-center gap-2 mb-1 p-2 rounded-lg bg-black/10 dark:bg-white/10">
-                  <HiDocumentText className="w-8 h-8 flex-shrink-0" />
-                  <div className="min-w-0">
-                    <p className={`text-sm font-medium truncate ${isOwn ? 'text-white' : 'text-gray-900 dark:text-white'}`}>{message.fileName}</p>
-                    {message.fileSize && <p className={`text-xs ${isOwn ? 'text-white/60' : 'text-gray-500'}`}>{formatFileSize(message.fileSize)}</p>}
-                  </div>
+                <div className="mb-1">
+                  {/\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i.test(message.fileName) ? (
+                    <div className="relative group">
+                      <img
+                        src={message.fileUrl || `/uploads/${message.fileName}`}
+                        alt={message.fileName}
+                        className="max-w-full max-h-64 rounded-lg object-cover cursor-pointer"
+                        onClick={() => window.open(message.fileUrl || `/uploads/${message.fileName}`, '_blank')}
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                      <a
+                        href={message.fileUrl || `/uploads/${message.fileName}`}
+                        download={message.fileName}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-black/70 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Download image"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-black/10 dark:bg-white/10">
+                      <HiDocumentText className="w-8 h-8 flex-shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className={`text-sm font-medium truncate ${isOwn ? 'text-white' : 'text-gray-900 dark:text-white'}`}>{message.fileName}</p>
+                        {message.fileSize && <p className={`text-xs ${isOwn ? 'text-white/60' : 'text-gray-500'}`}>{formatFileSize(message.fileSize)}</p>}
+                      </div>
+                      <a
+                        href={message.fileUrl || `/uploads/${message.fileName}`}
+                        download={message.fileName}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`p-1.5 rounded-full ${isOwn ? 'text-white/60 hover:text-white' : 'text-gray-500 hover:text-gray-700'} transition-colors`}
+                        title="Download file"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
 

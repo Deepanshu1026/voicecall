@@ -54,6 +54,9 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
       e.preventDefault();
       handleSendMessage(message);
     }
+    if (e.key === 'Enter' && e.shiftKey) {
+      // Shift+Enter: let the default newline behavior happen (textarea handles it)
+    }
   };
 
   const handleFileSelect = async (e) => {
@@ -205,15 +208,20 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
         </div>
 
         <div className="flex-1 relative">
-          <input
+          <textarea
             ref={inputRef}
-            type="text"
             value={message}
             onChange={(e) => { setMessage(e.target.value); if (e.target.value) handleTyping(); }}
             onKeyDown={handleKeyDown}
-            placeholder="Type a message..."
-            className="input-field pr-10 py-2.5"
+            placeholder="Type a message... (Shift+Enter for new line)"
+            rows={1}
+            className="input-field pr-10 py-2.5 resize-none max-h-32"
             disabled={sending}
+            style={{ lineHeight: '1.4' }}
+            onInput={(e) => {
+              e.target.style.height = 'auto';
+              e.target.style.height = Math.min(e.target.scrollHeight, 128) + 'px';
+            }}
           />
           <button
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}

@@ -95,6 +95,18 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50 dark:bg-su
           message.sender?.displayName || message.sender?.username || 'New message',
           message
         );
+        // Play notification beep for incoming messages while chatting
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.frequency.value = 600;
+          gain.gain.value = 0.15;
+          osc.start();
+          osc.stop(ctx.currentTime + 0.1);
+        } catch {}
       }
     };
 
