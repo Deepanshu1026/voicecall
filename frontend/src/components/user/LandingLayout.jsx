@@ -63,9 +63,11 @@ const LandingLayout = ({ children }) => {
 
       {/* Header */}
       <header className={`landing-header ${scrolled ? 'scrolled' : ''}`}>
-        <a href="/home" className="landing-logo-link">
-          <img className="landing-logo" src="/images/user/tmlogo 1.webp" alt="Visa Experts" />
-        </a>
+        <div className="landing-header-left">
+          <a href="/home" className="landing-logo-link">
+            <img className="landing-logo" src="/images/user/tmlogo 1.webp" alt="Visa Experts" />
+          </a>
+        </div>
 
         <nav className={`landing-nav-links ${menuOpen ? 'nav-open' : ''}`}>
           {navLinks.map((link) => {
@@ -84,32 +86,28 @@ const LandingLayout = ({ children }) => {
             );
           })}
           {!isAuthenticated && (
-            <a className="landing-login-link" href="/login">
+            <a className="landing-login-link mobile-only" href="/login">
               Login
             </a>
           )}
-          <div className="social-icon">
-            <a href="/home" aria-label="instagram">
-              <img src="/images/user/instagram 1.webp" alt="instagram" />
-            </a>
-            <a href="/home" aria-label="twitter">
-              <img src="/images/user/skill-icons_twitter (1) 1.webp" alt="twitter" />
-            </a>
-            <a href="/home" aria-label="facebook">
-              <img src="/images/user/logos_facebook 1.webp" alt="facebook" />
-            </a>
-          </div>
         </nav>
 
-        <button
-          className={`menu-toggle ${menuOpen ? 'cross' : ''}`}
-          aria-label="Menu Toggle"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <span></span>
-          <span className="second-span"></span>
-          <span className="last-span"></span>
-        </button>
+        <div className="landing-header-right">
+          {!isAuthenticated && (
+            <a className="landing-login-link desktop-only" href="/login">
+              Login
+            </a>
+          )}
+          <button
+            className={`menu-toggle ${menuOpen ? 'cross' : ''}`}
+            aria-label="Menu Toggle"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span></span>
+            <span className="second-span"></span>
+            <span className="last-span"></span>
+          </button>
+        </div>
       </header>
 
       {/* Page content */}
