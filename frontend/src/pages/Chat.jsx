@@ -175,6 +175,26 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50' }) => {
 
     const cleanupRead = on('messages:read', handleRead);
 
+    const handleNewConversation = (conversation) => {
+      chat.setConversations((prev) => {
+        if (prev.some((c) => c._id === conversation._id)) return prev;
+        return [conversation, ...prev].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      });
+    };
+
+    const cleanupNewConversation = on('conversation:new', handleNewConversation);
+
+    const handleConversationUpdated = (data) => {
+      const conversationId = data.conversationId;
+      chat.setConversations((prev) =>
+        prev.map((c) =>
+          c._id === conversationId ? { ...c, ...data } : c
+        )
+      );
+    };
+
+    const cleanupConversationUpdated = on('conversation:updated', handleConversationUpdated);
+
     return () => {
       cleanupMessage();
       cleanupStatus();
@@ -182,6 +202,8 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50' }) => {
       cleanupEdit();
       cleanupDelete();
       cleanupRead();
+      cleanupNewConversation();
+      cleanupConversationUpdated();
     };
   }, [user, on, notifyMessage, chat, activeConversation, socketVersion]);
 

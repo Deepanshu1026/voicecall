@@ -48,21 +48,23 @@ const getOrCreateConversation = asyncHandler(async (req, res) => {
     participants: { $all: [req.userId, participantId], $size: 2 },
   });
 
-    if (!conversation) {
-      const conversationData = {
-        type: 'direct',
-        participants: [req.userId, participantId],
-      };
+  let isNewConversation = false;
+  if (!conversation) {
+    isNewConversation = true;
+    const conversationData = {
+      type: 'direct',
+      participants: [req.userId, participantId],
+    };
 
-      if (isUserToAgent) {
-        conversationData.freeUntil = new Date(Date.now() + config.freeChatDurationSeconds * 1000);
-        conversationData.isPaid = false;
-        conversationData.paymentAmount = config.chatPaymentAmount;
-        conversationData.lockedToAgent = participantId;
-      }
-
-      conversation = await Conversation.create(conversationData);
+    if (isUserToAgent) {
+      conversationData.freeUntil = new Date(Date.now() + config.freeChatDurationSeconds * 1000);
+      conversationData.isPaid = false;
+      conversationData.paymentAmount = config.chatPaymentAmount;
+      conversationData.lockedToAgent = participantId;
     }
+
+    conversation = await Conversation.create(conversationData);
+  }
 
   // If an existing conversation is user-to-agent but not locked, convert it into a consultation
   if (conversation && isUserToAgent && !conversation.lockedToAgent) {
@@ -78,7 +80,16 @@ const getOrCreateConversation = asyncHandler(async (req, res) => {
   const unreadEntry = convObj.unreadCount.find((u) => u.user.toString() === req.userId.toString());
   const unreadCount = unreadEntry ? unreadEntry.count : 0;
 
-  ApiResponse.success(res, { ...convObj, unreadCount }, 'Conversation ready', conversation.isNew ? 201 : 200);
+  ApiResponse.success(res, { ...convObj, unreadCount }, 'Conversation ready', isNewConversation ? 201 : 200);
+
+  // Notify the other participant (e.g., the agent) in real-time when a new conversation is created
+  if (req.io && isNewConversation) {
+    req.io.to(`user:${participantId}`).emit('conversation:new', {
+      ...convObj,
+      otherParticipant: req.user,
+      unreadCount: 0,
+    });
+  }
 });
 
 const getConversations = asyncHandler(async (req, res) => {
@@ -594,6 +605,16 @@ const payForConversation = asyncHandler(async (req, res) => {
     otherParticipant,
     walletBalance: user.walletBalance,
   }, 'Payment successful. You can now continue chatting.');
+
+  // Notify the other participant (agent) in real-time
+  if (req.io && otherParticipant) {
+    req.io.to(`user:${otherParticipant._id.toString()}`).emit('conversation:updated', {
+      conversationId: conversation._id.toString(),
+      isPaid: true,
+      freeUntil: null,
+      walletBalance: user.walletBalance,
+    });
+  }
 });
 
 const resetConversation = asyncHandler(async (req, res) => {
@@ -624,6 +645,15 @@ const resetConversation = asyncHandler(async (req, res) => {
   );
 
   ApiResponse.success(res, { ...convObj, otherParticipant }, 'Consultation reset to free chat');
+
+  // Notify the other participant in real-time
+  if (req.io && otherParticipant) {
+    req.io.to(`user:${otherParticipant._id.toString()}`).emit('conversation:updated', {
+      conversationId: conversation._id.toString(),
+      isPaid: false,
+      freeUntil: conversation.freeUntil,
+    });
+  }
 });
 
 const sendGreeting = asyncHandler(async (req, res) => {
