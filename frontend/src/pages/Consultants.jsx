@@ -617,7 +617,7 @@ const Consultants = () => {
       {/* Chat popup (userchat.php style) */}
       {chatOpen && chatConversation && (
         <div
-          className="fixed inset-0 z-[400] bg-[#f0f2f5] dark:bg-[#0a0a1a] flex items-center justify-center p-0 md:p-6 overflow-hidden"
+          className="fixed inset-0 z-[400] bg-[#f0f2f5] flex items-center justify-center p-0 md:p-6 overflow-hidden"
           onClick={() => setChatOpen(false)}
         >
           <div

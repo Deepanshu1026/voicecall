@@ -47,10 +47,10 @@ const EmojiPicker = ({ onSelect, onClose }) => {
   return (
     <div
       ref={pickerRef}
-      className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-[320px] sm:w-[350px] max-h-[400px] overflow-hidden"
+      className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-[320px] sm:w-[350px] max-h-[400px] overflow-hidden"
     >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Emoji</h3>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <h3 className="text-sm font-semibold text-gray-900">Emoji</h3>
         <button onClick={onClose} className="btn-ghost p-1 text-gray-400 hover:text-gray-600">
           <HiXMark className="w-4 h-4" />
         </button>
@@ -59,7 +59,7 @@ const EmojiPicker = ({ onSelect, onClose }) => {
       <div className="overflow-y-auto max-h-[350px] p-2">
         {EMOJI_CATEGORIES.map((category) => (
           <div key={category.name} className="mb-3">
-            <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider px-2 mb-1.5">
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider px-2 mb-1.5">
               {category.name}
             </p>
             <div className="flex flex-wrap gap-0.5">
@@ -67,7 +67,7 @@ const EmojiPicker = ({ onSelect, onClose }) => {
                 <button
                   key={emoji}
                   onClick={() => onSelect(emoji)}
-                  className="w-9 h-9 flex items-center justify-center text-lg rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="w-9 h-9 flex items-center justify-center text-lg rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   {emoji}
                 </button>

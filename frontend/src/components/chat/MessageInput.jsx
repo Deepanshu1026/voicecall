@@ -171,15 +171,15 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
   }
 
   return (
-    <div className="relative border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-surface-dark px-4 py-3">
+    <div className="relative border-t border-gray-100 bg-white px-4 py-3">
       {/* Reply preview */}
       {replyingTo && (
-        <div className="flex items-center justify-between mb-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-lg">
+        <div className="flex items-center justify-between mb-2 px-3 py-1.5 bg-gray-100 rounded-lg">
           <div className="flex items-center gap-2 min-w-0">
             <HiArrowUturnLeft className="w-4 h-4 text-primary-500 flex-shrink-0" />
             <div className="min-w-0">
-              <p className="text-xs font-medium text-primary-600 dark:text-primary-400">Replying</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{replyingTo.content?.substring(0, 50)}</p>
+              <p className="text-xs font-medium text-primary-600">Replying</p>
+              <p className="text-xs text-gray-500 truncate">{replyingTo.content?.substring(0, 50)}</p>
             </div>
           </div>
           <button onClick={onCancelReply} className="btn-ghost p-1 text-gray-400 hover:text-gray-600">
@@ -189,7 +189,7 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
       )}
 
       {/* Input */}
-      <div className="flex items-center gap-2.5 bg-gray-50 dark:bg-gray-800/50 rounded-3xl px-2 mx-1">
+      <div className="flex items-center gap-2.5 bg-gray-50 rounded-3xl px-2 mx-1">
         <input
           type="file"
           id="file-upload"
@@ -213,7 +213,7 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
           rows={1}
-          className="flex-1 resize-none bg-transparent border-0 py-2.5 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none max-h-32"
+          className="flex-1 resize-none bg-transparent border-0 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none max-h-32"
           disabled={sending}
           style={{ lineHeight: '1.4' }}
           onInput={(e) => {
@@ -224,7 +224,7 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
 
         <button
           onClick={() => document.getElementById('file-upload')?.click()}
-          className="p-2 text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 transition-colors rounded-full flex-shrink-0"
+          className="p-2 text-gray-400 hover:text-primary-500 transition-colors rounded-full flex-shrink-0"
           title="Attach file"
         >
           <HiPaperClip className="w-5 h-5" />

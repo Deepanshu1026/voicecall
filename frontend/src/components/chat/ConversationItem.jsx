@@ -36,8 +36,8 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
       onClick={() => onSelect(conversation)}
       className={`flex items-center gap-3 mx-2 my-0.5 px-3 py-2.5 rounded-xl cursor-pointer transition-all duration-150
         ${isActive
-          ? 'bg-primary-50/80 dark:bg-primary-900/30 shadow-sm'
-          : 'hover:bg-gray-100 dark:hover:bg-gray-800/60'
+          ? 'bg-primary-50/80 shadow-sm'
+          : 'hover:bg-gray-100'
         }`}
     >
       <div className="relative flex-shrink-0">
@@ -46,12 +46,12 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2">
-          <h3 className={`font-semibold text-[14px] truncate ${isActive ? 'text-primary-700 dark:text-primary-200' : 'text-gray-900 dark:text-white'}`}>
+          <h3 className={`font-semibold text-[14px] truncate ${isActive ? 'text-primary-700' : 'text-gray-900'}`}>
             {getDisplayName(otherParticipant)}
           </h3>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {lastMessage && (
-              <span className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">
+              <span className="text-[11px] text-gray-400 font-medium">
                 {formatMessageTime(lastMessage.createdAt)}
               </span>
             )}
@@ -61,7 +61,7 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
         <div className="flex items-center justify-between mt-0.5 gap-2">
           <div className="flex items-center gap-1 min-w-0 flex-1">
             {lastMessage?.sender?._id === user?._id && statusIcon()}
-            <p className={`text-[13px] truncate leading-tight ${unread > 0 ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+            <p className={`text-[13px] truncate leading-tight ${unread > 0 ? 'font-semibold text-gray-900' : 'text-gray-500'}`}>
               {lastMsgText}
             </p>
           </div>
@@ -70,7 +70,7 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
             {online && (
               <button
                 onClick={(e) => { e.stopPropagation(); startCall(otherParticipant?._id, otherParticipant, 'audio'); }}
-                className="p-1 rounded-full text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors"
+                className="p-1 rounded-full text-green-600 hover:bg-green-50 transition-colors"
                 title="Call"
               >
                 <HiPhone className="w-3.5 h-3.5" />

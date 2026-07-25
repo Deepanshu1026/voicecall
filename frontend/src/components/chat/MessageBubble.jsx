@@ -16,7 +16,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
   if (message.isDeleted && !isOwn) {
     return (
       <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-2`}>
-        <div className="text-xs text-gray-400 italic bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg">
+        <div className="text-xs text-gray-400 italic bg-gray-100 px-3 py-1.5 rounded-lg">
           This message was deleted
         </div>
       </div>
@@ -26,7 +26,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
   if (message.isSystemMessage) {
     return (
       <div className="flex justify-center my-2">
-        <div className="text-xs text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full italic">
+        <div className="text-xs text-gray-400 bg-gray-100 px-3 py-1.5 rounded-full italic">
           {message.content}
         </div>
       </div>
@@ -65,7 +65,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
     }
 
     return (
-      <div className="flex items-center gap-2 mb-1 p-2 rounded-lg bg-black/10 dark:bg-white/10">
+      <div className="flex items-center gap-2 mb-1 p-2 rounded-lg bg-black/10">
         <svg className="w-6 h-6 flex-shrink-0 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium truncate">{message.fileName}</p>
@@ -80,7 +80,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
 
   const bubbleBg = isOwn
     ? 'bg-[#6138d8] text-white'
-    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100';
+    : 'bg-white text-gray-900';
 
   const bubbleRound = isOwn
     ? 'rounded-[18px] rounded-br-[6px]'
@@ -91,7 +91,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
       <div className={`${isOwn ? 'order-first' : 'order-last'} opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0`}>
         <button
           onClick={() => onReply()}
-          className="p-1 rounded-full text-gray-300 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+          className="p-1 rounded-full text-gray-300 hover:text-gray-600 transition-colors"
           title="Reply"
         >
           <HiOutlineArrowUturnLeft className="w-4 h-4" />
@@ -100,9 +100,9 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
 
       <div className={`max-w-[72%] ${bubbleBg} ${bubbleRound} px-3.5 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.08)]`}>
         {message.replyTo && (
-          <div className={`mb-1.5 px-2 py-1 text-xs rounded-md border-l-[3px] ${isOwn ? 'border-white/40 bg-white/10' : 'border-[#6138d8]/50 bg-gray-100 dark:bg-gray-700/60'}`}>
-            <p className={`font-medium text-[11px] leading-tight ${isOwn ? 'text-white/80' : 'text-[#6138d8] dark:text-purple-400'}`}>Replying</p>
-            <p className={`truncate text-[11px] ${isOwn ? 'text-white/50' : 'text-gray-400 dark:text-gray-500'}`}>
+          <div className={`mb-1.5 px-2 py-1 text-xs rounded-md border-l-[3px] ${isOwn ? 'border-white/40 bg-white/10' : 'border-[#6138d8]/50 bg-gray-100'}`}>
+            <p className={`font-medium text-[11px] leading-tight ${isOwn ? 'text-white/80' : 'text-[#6138d8]'}`}>Replying</p>
+            <p className={`truncate text-[11px] ${isOwn ? 'text-white/50' : 'text-gray-400'}`}>
               {message.replyTo?.content || 'Original message'}
             </p>
           </div>
@@ -125,7 +125,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
         )}
 
         <div className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-end'}`}>
-          <span className={`text-[11px] leading-tight ${isOwn ? 'text-white/60' : 'text-gray-400 dark:text-gray-500'}`}>
+          <span className={`text-[11px] leading-tight ${isOwn ? 'text-white/60' : 'text-gray-400'}`}>
             {formatMessageTime(message.createdAt)}
           </span>
           {isOwn && (

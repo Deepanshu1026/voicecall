@@ -31,7 +31,7 @@ const SearchBar = ({ value, onChange, placeholder = 'Search...', onClear }) => {
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         placeholder={placeholder}
-        className="w-full pl-9 pr-8 py-2.5 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none transition-colors"
+        className="w-full pl-9 pr-8 py-2.5 bg-gray-100 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none transition-colors"
       />
       {value && (
         <button
@@ -39,7 +39,7 @@ const SearchBar = ({ value, onChange, placeholder = 'Search...', onClear }) => {
             if (onClear) onClear();
             if (onChange) onChange('');
           }}
-          className="absolute right-2 p-0.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className="absolute right-2 p-0.5 rounded-full hover:bg-gray-200 transition-colors"
         >
           <HiXMark className="w-4 h-4 text-gray-400" />
         </button>

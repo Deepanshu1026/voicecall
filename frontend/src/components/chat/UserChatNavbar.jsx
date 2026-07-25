@@ -22,10 +22,10 @@ const UserChatNavbar = ({ user, walletBalance, onAddMoney, onToggleDrawer, searc
   };
 
   return (
-    <div className="bg-white dark:bg-surface-dark border-b border-gray-200 dark:border-gray-700 px-4 py-2.5 flex items-center justify-between gap-3 shadow-sm">
+    <div className="bg-white border-b border-gray-200 px-4 py-2.5 flex items-center justify-between gap-3 shadow-sm">
       <button
         onClick={onToggleDrawer}
-        className="p-2 -ml-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
+        className="p-2 -ml-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
         title="Menu"
       >
         <HiBars3 className="w-6 h-6" />
@@ -38,7 +38,7 @@ const UserChatNavbar = ({ user, walletBalance, onAddMoney, onToggleDrawer, searc
             placeholder="Search consultant"
             value={searchValue}
             onChange={(e) => onSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-orange-500 transition"
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 focus:outline-none focus:border-orange-500 transition"
           />
           <HiMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         </div>
@@ -55,34 +55,34 @@ const UserChatNavbar = ({ user, walletBalance, onAddMoney, onToggleDrawer, searc
 
         <button
           onClick={() => setShowProfileMenu((p) => !p)}
-          className="hidden sm:flex items-center gap-1 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          className="hidden sm:flex items-center gap-1 p-1 rounded-full hover:bg-gray-100 transition"
         >
           <Avatar user={user} size="sm" showStatus />
         </button>
 
         {showProfileMenu && (
-          <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-surface-dark rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1 z-50">
-            <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+          <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-50">
+            <div className="px-4 py-2 border-b border-gray-100">
+              <p className="text-sm font-semibold text-gray-900 truncate">
                 {user?.displayName || user?.username}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email}</p>
+              <p className="text-xs text-gray-500 truncate">{user?.email}</p>
             </div>
             <button
               onClick={() => { setShowProfileMenu(false); navigate('/profile'); }}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
             >
               <HiUser className="w-4 h-4" /> Profile
             </button>
             <button
               onClick={() => { setShowProfileMenu(false); navigate('/settings'); }}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition"
             >
               <HiCog6Tooth className="w-4 h-4" /> Settings
             </button>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+              className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
             >
               <HiArrowRightOnRectangle className="w-4 h-4" /> Logout
             </button>

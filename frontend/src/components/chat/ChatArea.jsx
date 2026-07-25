@@ -243,9 +243,9 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
   };
 
   return (
-    <div className={`flex flex-col h-full bg-white dark:bg-surface-dark overflow-hidden ${
+    <div className={`flex flex-col h-full bg-white overflow-hidden ${
       isUser
-        ? 'rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 md:max-w-5xl md:mx-auto md:w-full'
+        ? 'rounded-xl shadow-lg border border-gray-200 md:max-w-5xl md:mx-auto md:w-full'
         : ''
     }`}>
       {/* Header */}
@@ -311,7 +311,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
           </div>
         </div>
       ) : (
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 dark:border-gray-700 bg-white/95 backdrop-blur sticky top-0 z-10">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100 bg-white/95 backdrop-blur sticky top-0 z-10">
           <div className="flex items-center gap-3 min-w-0">
             <button onClick={onBack} className="md:hidden btn-ghost p-1.5">
               <HiArrowLeft className="w-5 h-5" />
@@ -319,10 +319,10 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
             <div className="flex items-center gap-3 min-w-0 cursor-pointer" onClick={() => setShowInfo(true)}>
               <Avatar user={otherParticipant} showStatus size="md" />
               <div className="min-w-0">
-                <h3 className="font-semibold text-[15px] text-gray-900 dark:text-white truncate leading-tight">
+                <h3 className="font-semibold text-[15px] text-gray-900 truncate leading-tight">
                   {getDisplayName(otherParticipant)}
                 </h3>
-                <p className="text-[12px] text-gray-500 dark:text-gray-400 truncate">
+                <p className="text-[12px] text-gray-500 truncate">
                   {online ? (
                     <span className="flex items-center gap-1"><span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>Online</span>
                   ) : otherParticipant?.lastSeen ? `Last seen ${formatLastSeen(otherParticipant.lastSeen)}` : 'Offline'}
@@ -343,14 +343,14 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
           <div className="flex items-center gap-0.5">
             <button
               onClick={() => startCall(otherParticipant?._id, otherParticipant, 'audio')}
-              className="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-primary-400 transition-colors"
+              className="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-gray-100 transition-colors"
               title="Voice call"
             >
               <HiPhone className="w-5 h-5" />
             </button>
             <button
               onClick={() => setShowInfo(!showInfo)}
-              className="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-2 rounded-full text-gray-500 hover:bg-gray-100 transition-colors"
               title="More"
             >
               <HiEllipsisVertical className="w-5 h-5" />
@@ -361,13 +361,13 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
 
       {/* Info Panel */}
       {showInfo && (
-        <div className="border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4 animate-slide-down">
+        <div className="border-b border-gray-100 bg-gray-50 p-4 animate-slide-down">
           <div className="flex justify-between items-start mb-4">
             <div className="text-center flex-1">
               <Avatar user={otherParticipant} size="xl" showStatus className="mb-2" />
-              <h3 className="font-semibold text-gray-900 dark:text-white">{getDisplayName(otherParticipant)}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">@{otherParticipant?.username}</p>
-              {otherParticipant?.bio && <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{otherParticipant.bio}</p>}
+              <h3 className="font-semibold text-gray-900">{getDisplayName(otherParticipant)}</h3>
+              <p className="text-sm text-gray-500">@{otherParticipant?.username}</p>
+              {otherParticipant?.bio && <p className="text-sm text-gray-600 mt-1">{otherParticipant.bio}</p>}
             </div>
             <button onClick={() => setShowInfo(false)} className="btn-ghost p-1">
               <HiXMark className="w-5 h-5" />
@@ -381,32 +381,32 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
 
       {/* Consultation status banner - visible to both user and agent */}
       {(isConsultation || isAgentLocked) && (
-        <div className="px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-100 dark:border-orange-900/40 text-center">
+        <div className="px-4 py-2 bg-orange-50 border-b border-orange-100 text-center">
           {isPaid ? (
             <div className="flex flex-col items-center gap-1">
-              <span className="text-sm font-medium text-green-700 dark:text-green-400">
+              <span className="text-sm font-medium text-green-700">
                 Paid consultation - unlimited chat
               </span>
               <button
                 onClick={handleReset}
-                className="text-xs text-orange-600 dark:text-orange-400 hover:underline"
+                className="text-xs text-orange-600 hover:underline"
               >
                 Reset to free chat (test)
               </button>
             </div>
           ) : isFreeExpired ? (
             <div className="flex flex-col items-center gap-1">
-              <span className="text-sm font-medium text-red-700 dark:text-red-400">
+              <span className="text-sm font-medium text-red-700">
                 Free chat has ended
               </span>
               {isLockedUser && (
-                <span className="text-xs text-gray-600 dark:text-gray-300">
+                <span className="text-xs text-gray-600">
                   Pay ₹{paymentAmount} to continue chatting with {getDisplayName(otherParticipant)}
                 </span>
               )}
             </div>
           ) : (
-            <span className="text-sm font-medium text-orange-700 dark:text-orange-400">
+            <span className="text-sm font-medium text-orange-700">
               Free chat ends in {formatCountdown(timeLeft)}
             </span>
           )}
@@ -418,7 +418,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
         ref={messagesContainerRef}
         onScroll={handleScroll}
         className={`flex-1 overflow-y-auto px-4 py-3 space-y-2 ${
-          isUser ? 'bg-blue-50/50' : 'bg-[#f0f2f5] dark:bg-[#0a0a1a]'
+          isUser ? 'bg-blue-50/50' : 'bg-[#f0f2f5]'
         }`}
         style={
           isUser
@@ -446,7 +446,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
             <Fragment key={msg._id}>
               {showDateSeparator && (
                 <div className="flex justify-center my-3">
-                  <div className="px-4 py-1 text-xs font-medium text-gray-500 bg-gray-200/60 dark:bg-gray-800/80 dark:text-gray-400 rounded-lg shadow-sm">
+                  <div className="px-4 py-1 text-xs font-medium text-gray-500 bg-gray-200/60 rounded-lg shadow-sm">
                     {formatMessageDate(msg.createdAt)}
                   </div>
                 </div>
@@ -475,12 +475,12 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
 
       {/* Input / Payment */}
       {!canUserReply ? (
-        <div className="p-4 bg-white dark:bg-surface-dark border-t border-gray-100 dark:border-gray-700 text-center">
-          <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">
+        <div className="p-4 bg-white border-t border-gray-100 text-center">
+          <p className="text-sm font-medium text-gray-900 mb-1">
             Free chat has ended
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
-            Wallet balance: <span className="font-semibold text-gray-900 dark:text-white">₹{walletBalance}</span>
+          <p className="text-sm text-gray-600 mb-3">
+            Wallet balance: <span className="font-semibold text-gray-900">₹{walletBalance}</span>
           </p>
 
           {(() => {
@@ -489,7 +489,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
             if (!canExtend && !canCall) {
               return (
                 <>
-                  <p className="text-sm text-red-600 dark:text-red-400 mb-2">
+                  <p className="text-sm text-red-600 mb-2">
                     Insufficient balance. Add money to continue.
                   </p>
                   <button
@@ -530,11 +530,11 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
               onClick={() => setShowAddMoney(false)}
             >
               <div
-                className="bg-white dark:bg-surface-dark rounded-lg p-6 w-80 shadow-xl"
+                className="bg-white rounded-lg p-6 w-80 shadow-xl"
                 onClick={(e) => e.stopPropagation()}
               >
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Recharge Wallet</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Recharge Wallet</h3>
+                <p className="text-sm text-gray-600 mb-3">
                   Current balance: <span className="font-semibold">₹{walletBalance}</span>
                 </p>
                 <input
@@ -554,7 +554,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
                 </button>
                 <button
                   onClick={() => setShowAddMoney(false)}
-                  className="w-full mt-2 py-2 px-4 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                  className="w-full mt-2 py-2 px-4 rounded-lg text-gray-600 hover:bg-gray-100 transition"
                 >
                   Cancel
                 </button>
