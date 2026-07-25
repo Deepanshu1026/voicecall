@@ -4,9 +4,15 @@ import { enUS } from 'date-fns/locale';
 export const formatMessageTime = (date) => {
   if (!date) return '';
   const d = new Date(date);
-  if (isToday(d)) return format(d, 'h:mm a');
-  if (isYesterday(d)) return `Yesterday ${format(d, 'h:mm a')}`;
-  return format(d, 'MMM d, h:mm a');
+  return format(d, 'h:mm a');
+};
+
+export const formatMessageDate = (date) => {
+  if (!date) return '';
+  const d = new Date(date);
+  if (isToday(d)) return 'Today';
+  if (isYesterday(d)) return 'Yesterday';
+  return format(d, 'EEEE');
 };
 
 export const formatLastSeen = (date) => {
