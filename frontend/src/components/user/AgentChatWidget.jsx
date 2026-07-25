@@ -6,9 +6,9 @@ import { userAPI } from '../../services/api';
 import '../../styles/userLanding.css';
 
 const fallbackAgents = [
-  { _id: 'khusi', id: 'khusi', name: 'Khushi', avatar: '/images/user/khusi.webp', status: 'Active' },
+  { _id: 'ekta', id: 'ekta', name: 'Ekta', avatar: '/images/user/ekta.webp', status: 'Active' },
   { _id: 'kajal', id: 'kajal', name: 'Kajal', avatar: '/images/user/Kajal.webp', status: 'Active' },
-  { _id: 'esha', id: 'esha', name: 'Esha', avatar: '/images/user/esha.png', status: 'Active' },
+  { _id: 'saniya', id: 'saniya', name: 'Saniya', avatar: '/images/user/saniya.webp', status: 'Active' },
 ];
 
 const AgentChatWidget = () => {
@@ -71,7 +71,7 @@ const AgentChatWidget = () => {
         aria-label="Open agent chat"
       >
         <span className="agent-widget-fab-emoji">💬</span>
-        <span>Contact experienced agents</span>
+        <span>अनुभवी एजेंटों से संपर्क करें</span>
       </button>
     );
   }
@@ -80,7 +80,7 @@ const AgentChatWidget = () => {
     <div className="agent-chat-widget">
       <div className="agent-chat-loading-overlay" style={{ display: guestLoading ? 'flex' : 'none' }}>
         <div className="agent-chat-spinner"></div>
-        <div className="agent-chat-loading-text">Creating guest session... ⏳</div>
+        <div className="agent-chat-loading-text">अतिथि सत्र बना रहे हैं... ⏳</div>
       </div>
 
       <button className="agent-chat-close" onClick={() => setOpen(false)} aria-label="Close agent chat">
@@ -89,14 +89,14 @@ const AgentChatWidget = () => {
 
       <div className="agent-chat-header">
         <span className="agent-chat-emoji">💬</span>
-        Chat with our agents
+        अनुभवी एजेंटों से संपर्क करें
       </div>
 
       <div className="agent-chat-list">
         {loading ? (
-          <p className="agent-chat-empty">Loading agents...</p>
+          <p className="agent-chat-empty">एजेंट लोड हो रहे हैं...</p>
         ) : agents.length === 0 ? (
-          <p className="agent-chat-empty">No agents available right now.</p>
+          <p className="agent-chat-empty">अभी कोई एजेंट उपलब्ध नहीं हैं।</p>
         ) : (
           agents.map((agent) => {
             const id = agent._id || agent.id;
@@ -117,7 +117,7 @@ const AgentChatWidget = () => {
                   </div>
                   <div className="agent-chat-agent-details">
                     <div className="agent-chat-agent-name">{name}</div>
-                    <div className="agent-chat-agent-status">{isOnline ? 'Online' : 'Offline'}</div>
+                    <div className="agent-chat-agent-status">{isOnline ? 'ऑनलाइन' : 'ऑफलाइन'}</div>
                   </div>
                 </div>
                 <button
@@ -125,7 +125,7 @@ const AgentChatWidget = () => {
                   onClick={() => handleChat(agent)}
                   disabled={guestLoading}
                 >
-                  Chat
+                  चैट
                 </button>
               </div>
             );
@@ -138,9 +138,9 @@ const AgentChatWidget = () => {
           <div className="agent-chat-logged-in">
             <div className="agent-chat-icon">✅</div>
             <p>
-              <strong>You are logged in!</strong>
+              <strong>आप लॉग इन हैं!</strong>
             </p>
-            <p>Choose any agent and start chatting</p>
+            <p>किसी भी एजेंट को चुनें और चैट शुरू करें</p>
           </div>
         ) : (
           <button
@@ -148,7 +148,7 @@ const AgentChatWidget = () => {
             onClick={handleGuestStart}
             disabled={guestLoading}
           >
-            Start as Guest ✨
+            अतिथि के रूप में चैट शुरू करें ✨
           </button>
         )}
       </div>
