@@ -1,21 +1,28 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
+import { useCall } from '../../context/CallContext';
 import ConversationItem from '../chat/ConversationItem';
+import CallLogItem from '../chat/CallLogItem';
 import Avatar from '../common/Avatar';
 import SearchBar from '../common/SearchBar';
-import { userAPI, chatAPI } from '../../services/api';
+import { userAPI, chatAPI, callAPI } from '../../services/api';
 import { getDisplayName, debounce } from '../../utils/helpers';
-import { HiChatBubbleLeftRight } from 'react-icons/hi2';
+import { HiChatBubbleLeftRight, HiPhone } from 'react-icons/hi2';
 
 const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = true }) => {
   const { user, logout } = useAuth();
   const { onlineUsers } = useSocket();
+  const { startCall } = useCall();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [selectedTab, setSelectedTab] = useState('chats');
+  const [calls, setCalls] = useState([]);
+  const [loadingCalls, setLoadingCalls] = useState(false);
+  const [callsPage, setCallsPage] = useState(1);
+  const [hasMoreCalls, setHasMoreCalls] = useState(true);
 
   const debouncedSearch = useCallback(
     debounce(async (query) => {
@@ -45,6 +52,29 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
     chat.loadConversations();
   }, []);
 
+  const loadCalls = useCallback(async (page = 1, reset = false) => {
+    if (loadingCalls) return;
+    setLoadingCalls(true);
+    try {
+      const res = await callAPI.getCallHistory(page, 20);
+      const data = res.data?.data || [];
+      const pagination = res.data?.pagination || {};
+      setCalls((prev) => reset ? data : [...prev, ...data]);
+      setHasMoreCalls(pagination.page < pagination.pages);
+      setCallsPage(page);
+    } catch (error) {
+      console.error('Failed to load call history:', error);
+    } finally {
+      setLoadingCalls(false);
+    }
+  }, [loadingCalls]);
+
+  useEffect(() => {
+    if (selectedTab === 'calls') {
+      loadCalls(1, true);
+    }
+  }, [selectedTab, loadCalls]);
+
   const handleStartConversation = async (participantId) => {
     try {
       const res = await chatAPI.getOrCreateConversation(participantId);
@@ -62,35 +92,41 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
   return (
     <div className="flex flex-col h-full w-full bg-white">
       {showHeader && (
-        <>
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-            <button onClick={() => setShowProfile(!showProfile)} className="relative group">
-              <Avatar user={user} size="md" />
-            </button>
-            <h1 className="text-lg font-bold text-gray-900">VoiceCall</h1>
-            <div className="flex items-center gap-1">
-              <Avatar user={user} size="xs" />
-              <button onClick={logout} className="btn-ghost p-2 text-gray-500 hover:text-red-500 transition-colors" title="Logout">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex border-b border-gray-100">
-            <button
-              onClick={() => setSelectedTab('chats')}
-              className={`flex-1 py-2.5 text-sm font-medium text-center transition-colors relative ${
-                selectedTab === 'chats' ? 'text-primary-600' : 'text-gray-500 hover:text-gray-700'}`}
-            >
-              <HiChatBubbleLeftRight className="w-4 h-4 mx-auto mb-0.5" />
-              Chats
-              {selectedTab === 'chats' && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-primary-600 rounded-full" />}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+          <button onClick={() => setShowProfile(!showProfile)} className="relative group">
+            <Avatar user={user} size="md" />
+          </button>
+          <h1 className="text-lg font-bold text-gray-900">VoiceCall</h1>
+          <div className="flex items-center gap-1">
+            <Avatar user={user} size="xs" />
+            <button onClick={logout} className="btn-ghost p-2 text-gray-500 hover:text-red-500 transition-colors" title="Logout">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
             </button>
           </div>
-        </>
+        </div>
       )}
+
+      {/* Tabs */}
+      <div className="flex border-b border-gray-100">
+        <button
+          onClick={() => setSelectedTab('chats')}
+          className={`flex-1 py-2.5 text-sm font-medium text-center transition-colors relative ${
+            selectedTab === 'chats' ? 'text-primary-600' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          <HiChatBubbleLeftRight className="w-4 h-4 mx-auto mb-0.5" />
+          Chats
+          {selectedTab === 'chats' && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-primary-600 rounded-full" />}
+        </button>
+        <button
+          onClick={() => setSelectedTab('calls')}
+          className={`flex-1 py-2.5 text-sm font-medium text-center transition-colors relative ${
+            selectedTab === 'calls' ? 'text-primary-600' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          <HiPhone className="w-4 h-4 mx-auto mb-0.5" />
+          Calls
+          {selectedTab === 'calls' && <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-primary-600 rounded-full" />}
+        </button>
+      </div>
 
       {/* Search */}
       <div className="px-4 py-2.5">
@@ -160,12 +196,39 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
             </>
           )}
 
-          {!showHeader && selectedTab === 'calls' && (
-            <div className="text-center py-12 px-4">
-              <HiChatBubbleLeftRight className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-500 mb-1">No call history</p>
-              <p className="text-xs text-gray-400">Your call history will appear here</p>
-            </div>
+          {selectedTab === 'calls' && (
+            <>
+              {loadingCalls ? (
+                <div className="flex justify-center py-12">
+                  <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : calls.length > 0 ? (
+                <>
+                  {calls.map((call) => (
+                    <CallLogItem
+                      key={call._id}
+                      call={call}
+                      currentUserId={user?._id}
+                      onCallClick={(otherUser) => startCall(otherUser?._id, otherUser, 'audio')}
+                    />
+                  ))}
+                  {hasMoreCalls && (
+                    <button
+                      onClick={() => loadCalls(callsPage + 1)}
+                      className="w-full py-2 text-xs text-primary-600 hover:bg-primary-50 transition-colors"
+                    >
+                      Load more
+                    </button>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-12 px-4">
+                  <HiPhone className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500 mb-1">No call history</p>
+                  <p className="text-xs text-gray-400">Your calls will appear here</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
