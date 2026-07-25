@@ -17,6 +17,16 @@ const {
 const EMPLOYEE_ROLES = ['case_manager', 'manager', 'senior_manager', 'admin'];
 const isAgentRole = (role) => role === 'agent' || EMPLOYEE_ROLES.includes(role);
 
+const getGreetingByIST = () => {
+  const now = new Date();
+  const istHour = parseInt(now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false }), 10);
+
+  if (istHour >= 5 && istHour < 12) return 'Good morning';
+  if (istHour >= 12 && istHour < 16) return 'Good afternoon';
+  if (istHour >= 16 && istHour < 21) return 'Good evening';
+  return 'Hello';
+};
+
 const getOrCreateConversation = asyncHandler(async (req, res) => {
   const { participantId } = req.body;
 
@@ -616,6 +626,54 @@ const resetConversation = asyncHandler(async (req, res) => {
   ApiResponse.success(res, { ...convObj, otherParticipant }, 'Consultation reset to free chat');
 });
 
+const sendGreeting = asyncHandler(async (req, res) => {
+  const { conversationId } = req.params;
+
+  const conversation = await Conversation.findOne({
+    _id: conversationId,
+    participants: req.userId,
+  });
+
+  if (!conversation) throw new AppError('Conversation not found', 404);
+
+  if (conversation.greetingSent) {
+    return ApiResponse.success(res, { greeting: null }, 'Greeting already sent');
+  }
+
+  const otherParticipant = conversation.participants.find(
+    (p) => p.toString() !== req.userId.toString()
+  );
+  if (!otherParticipant) throw new AppError('No other participant found', 400);
+
+  const greeting = getGreetingByIST();
+  const messageContent = `${greeting}! How can I help you today?`;
+
+  const message = await Message.create({
+    conversation: conversationId,
+    sender: otherParticipant,
+    recipient: req.userId,
+    type: 'text',
+    content: messageContent,
+    status: 'sent',
+    'statusTimestamps.sent': new Date(),
+    isSystemMessage: false,
+  });
+
+  await message.populate('sender');
+  const populatedMessage = await populateMessageSender(message);
+
+  conversation.greetingSent = true;
+  conversation.lastMessage = message._id;
+  await conversation.save();
+
+  // Notify the recipient (the user who opened the chat) via socket
+  if (req.io) {
+    req.io.to(`user:${req.userId}`).emit('message:new', populatedMessage);
+  }
+
+  ApiResponse.success(res, { greeting: populatedMessage }, 'Greeting sent');
+});
+
 module.exports = {
   getOrCreateConversation,
   getConversations,
@@ -630,4 +688,5 @@ module.exports = {
   markConversationRead,
   payForConversation,
   resetConversation,
+  sendGreeting,
 };

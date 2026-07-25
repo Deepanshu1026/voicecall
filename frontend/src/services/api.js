@@ -133,6 +133,7 @@ export const employeeAPI = {
 export const chatAPI = {
   getOrCreateConversation: (participantId) => api.post('/chat/conversation', { participantId }),
   getConversations: (page, limit) => api.get('/chat', { params: { page, limit } }),
+  sendGreeting: (conversationId) => api.post(`/chat/${conversationId}/greet`),
   getMessages: (conversationId, page, limit, before) =>
     api.get(`/chat/${conversationId}/messages`, { params: { page, limit, before } }),
   sendMessage: (conversationId, formData) =>

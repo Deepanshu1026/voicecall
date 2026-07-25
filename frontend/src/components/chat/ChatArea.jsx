@@ -198,6 +198,27 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
     }
   }, [conversation?._id, emit]);
 
+  // Send time-based greeting when the user opens a chat with no messages
+  const greetingRequestedRef = useRef(false);
+  useEffect(() => {
+    if (!conversation?._id || !isUser) return;
+    const messages = chat.messages[conversation._id] || [];
+    if (chat.loadingMessages || greetingRequestedRef.current) return;
+    if (messages.length > 0) return;
+
+    greetingRequestedRef.current = true;
+    chatAPI.sendGreeting(conversation._id)
+      .then((res) => {
+        const greeting = res.data?.data?.greeting;
+        if (greeting) {
+          chat.addMessage(conversation._id, greeting);
+        }
+      })
+      .catch(() => {
+        greetingRequestedRef.current = false;
+      });
+  }, [conversation?._id, isUser, chat.messages, chat.loadingMessages, chat.addMessage]);
+
   const handleDeleteMessage = async (messageId, deleteForEveryone) => {
     try {
       await chatAPI.deleteMessage(messageId, deleteForEveryone);

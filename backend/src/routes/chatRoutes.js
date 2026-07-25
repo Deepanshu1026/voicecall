@@ -9,6 +9,7 @@ router.use(unifiedAuth);
 router.get('/', chatController.getConversations);
 router.post('/conversation', chatController.getOrCreateConversation);
 router.get('/:conversationId/messages', chatController.getMessages);
+router.post('/:conversationId/greet', chatController.sendGreeting);
 router.post('/:conversationId/messages', uploadFile, chatController.sendMessage);
 router.put('/messages/:messageId', chatController.editMessage);
 router.delete('/messages/:messageId', chatController.deleteMessage);

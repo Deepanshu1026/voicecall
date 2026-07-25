@@ -43,6 +43,7 @@ const conversationSchema = new mongoose.Schema(
     isPaid: { type: Boolean, default: false },
     paymentAmount: { type: Number, default: 0 },
     lockedToAgent: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    greetingSent: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
