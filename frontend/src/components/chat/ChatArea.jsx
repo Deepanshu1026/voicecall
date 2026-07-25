@@ -219,6 +219,50 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
       });
   }, [conversation?._id, isUser, chat.messages, chat.loadingMessages, chat.addMessage]);
 
+  // Auto mark incoming messages as delivered/seen in real-time
+  const deliveredRef = useRef(new Set());
+  useEffect(() => {
+    deliveredRef.current.clear();
+  }, [conversation?._id]);
+
+  useEffect(() => {
+    if (!conversation?._id || !messages.length || !user?._id) return;
+
+    const unreadFromOther = messages.filter(
+      (msg) =>
+        String(msg.sender?._id || msg.sender) !== String(user._id) &&
+        msg.status === 'sent' &&
+        !deliveredRef.current.has(msg._id)
+    );
+
+    if (unreadFromOther.length === 0) return;
+
+    const messageIds = unreadFromOther.map((msg) => msg._id);
+    messageIds.forEach((id) => deliveredRef.current.add(id));
+
+    // Mark as delivered
+    emit('message:delivered', { messageIds });
+
+    // If the chat is active and visible, also mark as seen
+    if (document.visibilityState === 'visible') {
+      emit('message:seen', { conversationId: conversation._id });
+      chatAPI.markConversationRead(conversation._id).catch(() => {});
+    }
+  }, [conversation?._id, messages, user?._id, emit]);
+
+  // Mark messages as seen when the tab becomes visible
+  useEffect(() => {
+    if (!conversation?._id) return;
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        emit('message:seen', { conversationId: conversation._id });
+        chatAPI.markConversationRead(conversation._id).catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [conversation?._id, emit]);
+
   const handleDeleteMessage = async (messageId, deleteForEveryone) => {
     try {
       await chatAPI.deleteMessage(messageId, deleteForEveryone);
