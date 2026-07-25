@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Avatar from '../common/Avatar';
 import { getDisplayName, formatMessageTime } from '../../utils/helpers';
 import { useAuth } from '../../context/AuthContext';
@@ -42,15 +43,24 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
           : 'hover:bg-gray-100'
         }`}
     >
-      <div className="relative flex-shrink-0">
+      <Link
+        to={`/user/${otherParticipant?._id}`}
+        onClick={(e) => e.stopPropagation()}
+        className="relative flex-shrink-0"
+        title="View profile"
+      >
         <Avatar user={otherParticipant} showStatus size="md" />
-      </div>
+      </Link>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2">
-          <h3 className={`font-semibold text-[14px] truncate ${isActive ? 'text-primary-700' : 'text-gray-900'}`}>
+          <Link
+            to={`/user/${otherParticipant?._id}`}
+            onClick={(e) => e.stopPropagation()}
+            className={`font-semibold text-[14px] truncate hover:underline ${isActive ? 'text-primary-700' : 'text-gray-900'}`}
+          >
             {getDisplayName(otherParticipant)}
-          </h3>
+          </Link>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             {lastMessage && (
               <span className="text-[11px] text-gray-400 font-medium">

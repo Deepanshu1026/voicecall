@@ -32,25 +32,25 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-surface-dark">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto p-4">
         <div className="flex items-center gap-4 mb-6">
           <Link to="/consultants" className="btn-ghost p-2">
             <HiArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
         </div>
 
         <div className="space-y-6">
           {/* Appearance */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Appearance</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Appearance</h2>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {theme === 'dark' ? <HiMoon className="w-5 h-5 text-gray-400" /> : <HiSun className="w-5 h-5 text-yellow-500" />}
                 <div>
-                  <p className="text-gray-900 dark:text-white font-medium">Theme</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{theme === 'dark' ? 'Dark' : 'Light'} mode</p>
+                  <p className="text-gray-900 font-medium">Theme</p>
+                  <p className="text-sm text-gray-500">{theme === 'dark' ? 'Dark' : 'Light'} mode</p>
                 </div>
               </div>
               <button
@@ -64,14 +64,14 @@ const SettingsPage = () => {
 
           {/* Notifications */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Notifications</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Notifications</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <HiBell className="w-5 h-5 text-gray-400" />
                   <div>
-                    <p className="text-gray-900 dark:text-white font-medium">Push Notifications</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Receive notifications for new messages and calls</p>
+                    <p className="text-gray-900 font-medium">Push Notifications</p>
+                    <p className="text-sm text-gray-500">Receive notifications for new messages and calls</p>
                   </div>
                 </div>
                 <button
@@ -85,8 +85,8 @@ const SettingsPage = () => {
                 <div className="flex items-center gap-3">
                   <HiMegaphone className="w-5 h-5 text-gray-400" />
                   <div>
-                    <p className="text-gray-900 dark:text-white font-medium">Sounds</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Play sounds for notifications</p>
+                    <p className="text-gray-900 font-medium">Sounds</p>
+                    <p className="text-sm text-gray-500">Play sounds for notifications</p>
                   </div>
                 </div>
                 <button
@@ -101,14 +101,14 @@ const SettingsPage = () => {
 
           {/* Privacy */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Privacy</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Privacy</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <HiEye className="w-5 h-5 text-gray-400" />
                   <div>
-                    <p className="text-gray-900 dark:text-white font-medium">Last Seen</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Who can see your last seen</p>
+                    <p className="text-gray-900 font-medium">Last Seen</p>
+                    <p className="text-sm text-gray-500">Who can see your last seen</p>
                   </div>
                 </div>
                 <select
@@ -125,8 +125,8 @@ const SettingsPage = () => {
                 <div className="flex items-center gap-3">
                   <HiEye className="w-5 h-5 text-gray-400" />
                   <div>
-                    <p className="text-gray-900 dark:text-white font-medium">Profile Photo</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Who can see your profile photo</p>
+                    <p className="text-gray-900 font-medium">Profile Photo</p>
+                    <p className="text-sm text-gray-500">Who can see your profile photo</p>
                   </div>
                 </div>
                 <select
@@ -144,15 +144,15 @@ const SettingsPage = () => {
 
           {/* Security */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Security</h2>
-            <Link to="/profile" className="flex items-center gap-3 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded-lg transition-colors">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Security</h2>
+            <Link to="/profile" className="flex items-center gap-3 text-gray-900 hover:bg-gray-50 p-2 rounded-lg transition-colors">
               <HiLockClosed className="w-5 h-5 text-gray-400" />
               <span>Change Password</span>
             </Link>
           </div>
 
           {/* Danger Zone */}
-          <div className="card border-red-200 dark:border-red-900/30">
+          <div className="card border-red-200">
             <h2 className="text-lg font-semibold text-red-600 mb-4">Danger Zone</h2>
             <button
               onClick={() => {

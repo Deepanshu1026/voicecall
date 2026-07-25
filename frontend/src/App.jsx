@@ -25,6 +25,7 @@ import Blogs from './pages/Blogs';
 import BlogDetail from './pages/BlogDetail';
 import Consultants from './pages/Consultants';
 import Appointment from './pages/Appointment';
+import UserProfile from './pages/UserProfile';
 
 const EMPLOYEE_ROLES = ['case_manager', 'manager', 'senior_manager', 'admin'];
 
@@ -87,6 +88,7 @@ function App() {
       <Route path="/blog/:id/:slug?" element={<BlogDetail />} />
       <Route path="/consultants" element={<Consultants />} />
       <Route path="/appointment" element={<Appointment />} />
+      <Route path="/user/:id" element={<UserProfile />} />
 
       {/* Protected app routes */}
       <Route

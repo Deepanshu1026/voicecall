@@ -76,13 +76,13 @@ const ProfilePage = () => {
   const avatarUrl = getAvatarUrl(user);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-surface-dark">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-2xl mx-auto p-4">
         <div className="flex items-center gap-4 mb-6">
           <Link to="/consultants" className="btn-ghost p-2">
             <HiArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
         </div>
 
         <div className="card mb-6 text-center">
@@ -99,35 +99,35 @@ const ProfilePage = () => {
               <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
             </label>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mt-3">{getDisplayName(user)}</h2>
-          <p className="text-gray-500 dark:text-gray-400">@{user?.username}</p>
+          <h2 className="text-xl font-semibold text-gray-900 mt-3">{getDisplayName(user)}</h2>
+          <p className="text-gray-500">@{user?.username}</p>
         </div>
 
         {!editMode && !showPasswordForm && (
           <div className="card space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Username</span>
-              <span className="font-medium text-gray-900 dark:text-white">{user?.username}</span>
+              <span className="text-sm text-gray-500">Username</span>
+              <span className="font-medium text-gray-900">{user?.username}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Display Name</span>
-              <span className="font-medium text-gray-900 dark:text-white">{user?.displayName || '-'}</span>
+              <span className="text-sm text-gray-500">Display Name</span>
+              <span className="font-medium text-gray-900">{user?.displayName || '-'}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Bio</span>
-              <span className="font-medium text-gray-900 dark:text-white">{user?.bio || '-'}</span>
+              <span className="text-sm text-gray-500">Bio</span>
+              <span className="font-medium text-gray-900">{user?.bio || '-'}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-500 dark:text-gray-400">Email</span>
-              <span className="font-medium text-gray-900 dark:text-white">{user?.email}</span>
+              <span className="text-sm text-gray-500">Email</span>
+              <span className="font-medium text-gray-900">{user?.email}</span>
             </div>
             {isAgent && (
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-500 dark:text-gray-400">Call Rate</span>
-                <span className="font-medium text-gray-900 dark:text-white">₹{user?.callRate ?? 20}/min</span>
+                <span className="text-sm text-gray-500">Call Rate</span>
+                <span className="font-medium text-gray-900">₹{user?.callRate ?? 20}/min</span>
               </div>
             )}
-            <div className="flex gap-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex gap-3 pt-3 border-t border-gray-100">
               <button onClick={() => setEditMode(true)} className="btn-primary flex-1">Edit Profile</button>
               <button onClick={() => setShowPasswordForm(true)} className="btn-secondary flex-1">Change Password</button>
             </div>
@@ -137,24 +137,24 @@ const ProfilePage = () => {
         {editMode && (
           <div className="card space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
               <input type="text" className="input-field" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Display Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
               <input type="text" className="input-field" value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bio</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
               <textarea className="input-field" rows="3" value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} maxLength={200} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
               <input type="email" className="input-field" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             </div>
             {isAgent && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Call Rate (₹/min)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Call Rate (₹/min)</label>
                 <input
                   type="number"
                   min="0"
@@ -175,15 +175,15 @@ const ProfilePage = () => {
         {showPasswordForm && (
           <div className="card space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Current Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
               <input type="password" className="input-field" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">New Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
               <input type="password" className="input-field" value={passwordForm.newPassword} onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Confirm New Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
               <input type="password" className="input-field" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })} />
             </div>
             <div className="flex gap-3">

@@ -101,6 +101,7 @@ export const authAPI = {
   getMe: () => api.get('/auth/me'),
   refreshToken: (data) => axios.post(`${API_BASE_URL}/auth/refresh-token`, data),
   updateProfile: (data) => api.put('/auth/profile', data),
+  getProfileById: (id) => api.get(`/auth/profile/${id}`),
   updatePassword: (data) => api.put('/auth/password', data),
   updateSettings: (data) => api.put('/auth/settings', data),
   deleteAccount: () => api.delete('/auth/account'),

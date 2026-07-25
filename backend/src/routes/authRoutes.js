@@ -12,6 +12,7 @@ router.post('/refresh-token', authController.refreshTokenHandler);
 router.post('/logout', auth, authController.logout);
 
 router.get('/me', auth, authController.getMe);
+router.get('/profile/:id', authController.getProfileById);
 router.put('/profile', auth, uploadAvatar, updateProfileValidator, validate, authController.updateProfile);
 router.put('/password', auth, authController.updatePassword);
 router.put('/settings', auth, authController.updateSettings);

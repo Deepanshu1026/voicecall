@@ -204,6 +204,36 @@ const deleteAccount = asyncHandler(async (req, res) => {
   ApiResponse.success(res, null, 'Account deleted');
 });
 
+const getProfileById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const select = 'username displayName bio avatar callRate role status lastSeen createdAt';
+  const account = await getAccountById(id, select);
+  if (!account) {
+    throw new AppError('Profile not found', 404);
+  }
+
+  // Remove sensitive fields from the public profile
+  const profile = {
+    _id: account._id,
+    username: account.username,
+    displayName: account.displayName,
+    bio: account.bio,
+    avatar: account.avatar,
+    role: account.role || account.accountType,
+    accountType: account.accountType,
+    status: account.status,
+    lastSeen: account.lastSeen,
+    createdAt: account.createdAt,
+  };
+
+  // Only expose callRate for agents/employees
+  if (account.accountType === 'employee' || account.role === 'agent') {
+    profile.callRate = account.callRate ?? 20;
+  }
+
+  ApiResponse.success(res, { profile }, 'Profile retrieved');
+});
+
 module.exports = {
   register,
   login,
@@ -214,4 +244,5 @@ module.exports = {
   updatePassword,
   updateSettings,
   deleteAccount,
+  getProfileById,
 };

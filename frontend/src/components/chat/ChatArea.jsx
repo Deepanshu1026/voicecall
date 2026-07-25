@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { useCall } from '../../context/CallContext';
@@ -324,11 +325,13 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
             >
               <HiArrowLeft className="w-5 h-5" />
             </button>
-            <Avatar user={otherParticipant} showStatus size="md" className="ring-2 ring-white/80 rounded-full" />
+            <Link to={`/user/${otherParticipant?._id}`} title="View profile" className="cursor-pointer">
+              <Avatar user={otherParticipant} showStatus size="md" className="ring-2 ring-white/80 rounded-full" />
+            </Link>
             <div className="min-w-0">
-              <h3 className="font-semibold text-white truncate">
+              <Link to={`/user/${otherParticipant?._id}`} title="View profile" className="font-semibold text-white truncate hover:underline block">
                 {getDisplayName(otherParticipant)}
-              </h3>
+              </Link>
               <span className="text-xs text-white/80">
                 {isUserConsultation
                   ? isPaid
@@ -382,11 +385,18 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
               <HiArrowLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-3 min-w-0 cursor-pointer" onClick={() => setShowInfo(true)}>
-              <Avatar user={otherParticipant} showStatus size="md" />
+              <Link to={`/user/${otherParticipant?._id}`} title="View profile" onClick={(e) => e.stopPropagation()}>
+                <Avatar user={otherParticipant} showStatus size="md" />
+              </Link>
               <div className="min-w-0">
-                <h3 className="font-semibold text-[15px] text-gray-900 truncate leading-tight">
+                <Link
+                  to={`/user/${otherParticipant?._id}`}
+                  title="View profile"
+                  onClick={(e) => e.stopPropagation()}
+                  className="font-semibold text-[15px] text-gray-900 truncate leading-tight hover:underline block"
+                >
                   {getDisplayName(otherParticipant)}
-                </h3>
+                </Link>
                 <p className="text-[12px] text-gray-500 truncate">
                   {online ? (
                     <span className="flex items-center gap-1"><span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>Online</span>

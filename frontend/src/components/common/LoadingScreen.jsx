@@ -1,6 +1,6 @@
 const LoadingScreen = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-surface-dark">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-2xl mb-4 animate-pulse">
           <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">

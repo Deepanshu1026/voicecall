@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const callController = require('../controllers/callController');
-const { auth } = require('../middleware/auth');
+const { unifiedAuth } = require('../middleware/unifiedAuth');
 
-router.use(auth);
+router.use(unifiedAuth);
 
 router.post('/initiate', callController.initiateCall);
 router.get('/history', callController.getCallHistory);

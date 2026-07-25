@@ -803,6 +803,10 @@ const setupSocket = (io) => {
               : `${callLabel} ended`;
             await createCallSystemMessage(updatedCall, content);
           }
+
+          // Notify both participants to refresh call history
+          io.to(`user:${updatedCall.caller._id.toString()}`).emit('call:updated', { call: updatedCall });
+          io.to(`user:${updatedCall.receiver._id.toString()}`).emit('call:updated', { call: updatedCall });
         }
       } catch (err) {
         console.error('End call room error:', err);
@@ -890,6 +894,10 @@ const setupSocket = (io) => {
         });
 
         socket.emit('call:ringing', { call: populatedCall, roomId });
+
+        // Notify both participants to refresh call history
+        io.to(`user:${userId}`).emit('call:updated', { call: populatedCall });
+        io.to(`user:${receiverId}`).emit('call:updated', { call: populatedCall });
       } catch (error) {
         console.error('Call initiate error:', error);
         socket.emit('call:error', { message: 'Failed to initiate call' });
@@ -935,6 +943,10 @@ const setupSocket = (io) => {
         const updatedCall = await getCall(callId);
         io.to(roomId).emit('call:accepted', { call: updatedCall, roomId });
 
+        // Notify both participants to refresh call history
+        io.to(`user:${call.caller._id.toString()}`).emit('call:updated', { call: updatedCall });
+        io.to(`user:${call.receiver._id.toString()}`).emit('call:updated', { call: updatedCall });
+
         // Send the caller's offer to the receiver so they can create an answer
         if (call.signalData?.offer) {
           console.log(`[Call] Sending stored offer to receiver ${userId}`);
@@ -961,12 +973,13 @@ const setupSocket = (io) => {
         await callBilling.stopBilling(callId);
 
         await Call.findByIdAndUpdate(callId, { status: 'rejected', endedAt: new Date() });
+        const updatedCall = await getCall(callId);
 
         const otherUserId = call.caller._id.toString() === userId
           ? call.receiver._id.toString()
           : call.caller._id.toString();
 
-        io.to(`user:${otherUserId}`).emit('call:rejected', { call: call });
+        io.to(`user:${otherUserId}`).emit('call:rejected', { call: updatedCall });
         clearCallSignalBuffer(callId);
         clearCallParticipants(callId);
         userCallRooms.delete(userId);
@@ -974,6 +987,10 @@ const setupSocket = (io) => {
 
         const callLabel = call.type === 'video' ? 'Call' : 'Voice call';
         await createCallSystemMessage(call, `${callLabel} rejected`);
+
+        // Notify both participants to refresh call history
+        io.to(`user:${call.caller._id.toString()}`).emit('call:updated', { call: updatedCall });
+        io.to(`user:${call.receiver._id.toString()}`).emit('call:updated', { call: updatedCall });
       } catch (error) {
         console.error('Call reject error:', error);
       }
@@ -1073,6 +1090,10 @@ const setupSocket = (io) => {
 
         const callLabel = call.type === 'video' ? 'Missed video call' : 'Missed voice call';
         await createCallSystemMessage(call, callLabel);
+
+        // Notify both participants to refresh call history
+        io.to(`user:${call.caller._id.toString()}`).emit('call:updated', { call: updatedCall });
+        io.to(`user:${call.receiver._id.toString()}`).emit('call:updated', { call: updatedCall });
 
         userCallRooms.delete(call.caller._id.toString());
         userCallRooms.delete(call.receiver._id.toString());

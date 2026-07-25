@@ -9,10 +9,11 @@ import SearchBar from '../common/SearchBar';
 import { userAPI, chatAPI, callAPI } from '../../services/api';
 import { getDisplayName, debounce } from '../../utils/helpers';
 import { HiChatBubbleLeftRight, HiPhone } from 'react-icons/hi2';
+import toast from 'react-hot-toast';
 
 const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = true }) => {
   const { user, logout } = useAuth();
-  const { onlineUsers } = useSocket();
+  const { onlineUsers, on } = useSocket();
   const { startCall } = useCall();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -64,6 +65,11 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
       setCallsPage(page);
     } catch (error) {
       console.error('Failed to load call history:', error);
+      if (error?.response?.status === 401) {
+        toast.error('Session expired. Please login again.');
+      } else {
+        toast.error('Failed to load call history');
+      }
     } finally {
       setLoadingCalls(false);
     }
@@ -74,6 +80,16 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
       loadCalls(1, true);
     }
   }, [selectedTab, loadCalls]);
+
+  // Refresh call history in real-time when a call is created/updated
+  useEffect(() => {
+    const cleanup = on('call:updated', () => {
+      if (selectedTab === 'calls') {
+        loadCalls(1, true);
+      }
+    });
+    return cleanup;
+  }, [on, selectedTab, loadCalls]);
 
   const handleStartConversation = async (participantId) => {
     try {

@@ -46,7 +46,7 @@ const Avatar = ({ user, size = 'md', showStatus = false, className = '' }) => {
       )}
       {showStatus && (
         <span
-          className={`absolute bottom-0 right-0 ${statusDotSizes[size]} rounded-full border-2 border-white dark:border-surface-dark ${getStatusColor()}`}
+          className={`absolute bottom-0 right-0 ${statusDotSizes[size]} rounded-full border-2 border-white ${getStatusColor()}`}
         />
       )}
     </div>

@@ -32,7 +32,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-indigo-100 dark:from-surface-dark dark:to-surface-darker p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-indigo-100 p-4">
       <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-600 rounded-2xl mb-4">
@@ -40,26 +40,26 @@ const Register = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create Account</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-2">Join VoiceCall today</p>
+          <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
+          <p className="text-gray-500 mt-2">Join VoiceCall today</p>
         </div>
 
         <div className="card shadow-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Username *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Username *</label>
               <input type="text" name="username" className="input-field" placeholder="johndoe" value={form.username} onChange={handleChange} required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Display Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Display Name</label>
               <input type="text" name="displayName" className="input-field" placeholder="John Doe" value={form.displayName} onChange={handleChange} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email *</label>
               <input type="email" name="email" className="input-field" placeholder="you@example.com" value={form.email} onChange={handleChange} required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Password *</label>
               <input type="password" name="password" className="input-field" placeholder="Min. 6 characters" value={form.password} onChange={handleChange} required minLength={6} />
             </div>
 
@@ -70,7 +70,7 @@ const Register = () => {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600">
               Already have an account?{' '}
               <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">Sign in</Link>
             </p>
