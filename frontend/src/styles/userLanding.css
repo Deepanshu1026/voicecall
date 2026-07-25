@@ -10,6 +10,106 @@
   text-decoration: none;
 }
 
+/* Top contact bar */
+.landing-top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 42px;
+  background: #001e74;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 199;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(0, 30, 116, 0.2);
+}
+
+.landing-top-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 24px;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.landing-top-bar-label {
+  font-weight: 600;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.landing-top-bar-label::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #f58634;
+  border-radius: 50%;
+  animation: pulse-dot 1.8s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 rgba(245, 134, 52, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(245, 134, 52, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 134, 52, 0); }
+}
+
+.landing-top-bar-phone {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.landing-top-bar-phone:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #f58634;
+  transform: translateY(-1px);
+}
+
+.landing-top-bar-phone svg {
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .landing-top-bar {
+    height: auto;
+    padding: 8px 0;
+  }
+
+  .landing-top-bar-inner {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    justify-content: center;
+    padding: 0 16px;
+  }
+
+  .landing-top-bar-label {
+    width: 100%;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  .landing-top-bar-phone {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+}
+
 /* Navbar */
 .landing-header {
   width: 100%;
@@ -18,7 +118,7 @@
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  top: 0;
+  top: 42px;
   left: 0;
   padding: 6px 20px;
   box-shadow: 0 4px 10px rgba(68, 68, 68, 0.1);
@@ -63,6 +163,24 @@
   cursor: pointer;
   background-color: #001e74;
   color: white;
+}
+
+.landing-nav-links a.activelink {
+  background-color: #001e74;
+  color: white;
+  position: relative;
+}
+
+.landing-nav-links a.activelink::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 3px;
+  background: #f58634;
+  border-radius: 2px;
 }
 
 .landing-nav-links .social-icon {
