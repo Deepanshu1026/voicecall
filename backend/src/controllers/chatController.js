@@ -5,6 +5,7 @@ const config = require('../config');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
+const { uploadToCloudinary } = require('../services/cloudinaryService');
 const { getAccountById, getAccountDocumentById } = require('../utils/account');
 const {
   populateConversationParticipants,
@@ -210,13 +211,32 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   let fileData = {};
   if (req.file) {
-    fileData = {
-      fileName: req.file.originalname || fileName,
-      fileSize: req.file.size || fileSize,
-      fileUrl: `/uploads/files/${req.file.filename}`,
-      filePublicId: req.file.filename,
-      mimeType: req.file.mimetype || mimeType,
-    };
+    const originalName = req.file.originalname || fileName;
+    const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i.test(originalName);
+
+    if (config.cloudinary.cloudName) {
+      // Upload to Cloudinary for persistence
+      const cloudResult = await uploadToCloudinary(req.file.path, {
+        folder: 'voicecall/chat',
+        resourceType: isImage ? 'image' : 'auto',
+      });
+      fileData = {
+        fileName: originalName,
+        fileSize: cloudResult.size || req.file.size || fileSize,
+        fileUrl: cloudResult.url,
+        filePublicId: cloudResult.publicId,
+        mimeType: req.file.mimetype || mimeType,
+      };
+    } else {
+      // Fallback to local storage
+      fileData = {
+        fileName: originalName,
+        fileSize: req.file.size || fileSize,
+        fileUrl: `/uploads/files/${req.file.filename}`,
+        filePublicId: req.file.filename,
+        mimeType: req.file.mimetype || mimeType,
+      };
+    }
   }
 
   const message = await Message.create({

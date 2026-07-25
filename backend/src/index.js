@@ -108,6 +108,9 @@ app.use((req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'Route not found' });
   }
+  if (req.path.startsWith('/uploads')) {
+    return res.status(404).json({ error: 'File not found' });
+  }
   if (config.nodeEnv === 'production' && fs.existsSync(frontendDistPath)) {
     return res.sendFile(path.join(frontendDistPath, 'index.html'));
   }

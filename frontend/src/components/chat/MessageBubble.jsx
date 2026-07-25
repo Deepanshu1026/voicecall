@@ -37,8 +37,19 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
     if (message.type !== 'file' && message.type !== 'image') return null;
     if (!message.fileName) return null;
 
+    const fileUrl = message.fileUrl || '';
+    const isFileAvailable = fileUrl.startsWith('http') || fileUrl.startsWith('/uploads/');
     const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i.test(message.fileName);
-    const fileUrl = message.fileUrl || `/uploads/${message.fileName}`;
+    const openFile = () => { if (isFileAvailable) window.open(fileUrl, '_blank'); };
+
+    if (!isFileAvailable) {
+      return (
+        <div className="flex items-center gap-2 mb-1 p-2 rounded-lg bg-gray-100 dark:bg-gray-700/50">
+          <svg className="w-5 h-5 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+          <p className="text-xs text-gray-500">File unavailable</p>
+        </div>
+      );
+    }
 
     if (isImage) {
       return (
@@ -47,33 +58,30 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
             src={fileUrl}
             alt={message.fileName}
             className="max-w-full max-h-64 rounded-lg object-cover cursor-pointer"
-            onClick={() => window.open(fileUrl, '_blank')}
+            onClick={openFile}
             onError={(e) => { e.target.style.display = 'none'; }}
           />
-          <a
-            href={fileUrl}
-            download={message.fileName}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={openFile}
             className="inline-flex items-center gap-1 mt-1 text-xs font-medium text-blue-500 hover:text-blue-700"
           >
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            Download
-          </a>
+            Open image
+          </button>
         </div>
       );
     }
 
     return (
-      <div className="flex items-center gap-2 mb-1 p-2 rounded-lg bg-black/10">
+      <div className="flex items-center gap-2 mb-1 p-2 rounded-lg bg-black/10 dark:bg-white/10">
         <svg className="w-6 h-6 flex-shrink-0 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium truncate">{message.fileName}</p>
           {message.fileSize && <p className="text-xs text-gray-500">{formatFileSize(message.fileSize)}</p>}
         </div>
-        <a href={fileUrl} download={message.fileName} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
+        <button onClick={openFile} className="text-blue-500 hover:text-blue-700">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-        </a>
+        </button>
       </div>
     );
   };

@@ -3,6 +3,8 @@ const asyncHandler = require('../utils/asyncHandler');
 const { generateTokens, verifyRefreshToken } = require('../utils/generateToken');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
+const config = require('../config');
+const { uploadToCloudinary } = require('../services/cloudinaryService');
 const { getAccountById } = require('../utils/account');
 
 const register = asyncHandler(async (req, res) => {
@@ -136,10 +138,21 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 
   if (req.file) {
-    updates.avatar = {
-      url: `/uploads/avatars/${req.file.filename}`,
-      publicId: req.file.filename,
-    };
+    if (config.cloudinary.cloudName) {
+      const cloudResult = await uploadToCloudinary(req.file.path, {
+        folder: 'voicecall/avatars',
+        resourceType: 'image',
+      });
+      updates.avatar = {
+        url: cloudResult.url,
+        publicId: cloudResult.publicId,
+      };
+    } else {
+      updates.avatar = {
+        url: `/uploads/avatars/${req.file.filename}`,
+        publicId: req.file.filename,
+      };
+    }
   }
 
   const user = await User.findByIdAndUpdate(req.userId, updates, {
