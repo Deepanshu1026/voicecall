@@ -1,17 +1,11 @@
 import { useEffect, useCallback } from 'react';
 import { HiXMark, HiArrowDownTray } from 'react-icons/hi2';
+import { downloadFile } from '../../utils/helpers';
 
 const ImageLightbox = ({ src, alt, isOpen, onClose }) => {
   const handleDownload = useCallback(() => {
     if (!src) return;
-    const link = document.createElement('a');
-    link.href = src;
-    link.download = alt || 'image';
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    downloadFile(src, alt || 'image');
   }, [src, alt]);
 
   useEffect(() => {

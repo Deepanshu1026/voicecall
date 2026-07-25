@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { formatMessageTime, formatFileSize } from '../../utils/helpers';
+import { formatMessageTime, formatFileSize, downloadFile } from '../../utils/helpers';
 import { HiOutlineArrowUturnLeft } from 'react-icons/hi2';
 import ImageLightbox from '../common/ImageLightbox';
 
@@ -82,7 +82,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
           <p className="text-sm font-medium truncate">{message.fileName}</p>
           {message.fileSize && <p className="text-xs text-gray-500">{formatFileSize(message.fileSize)}</p>}
         </div>
-        <button onClick={openFile} className="text-blue-500 hover:text-blue-700">
+        <button onClick={() => downloadFile(fileUrl, message.fileName)} className="text-blue-500 hover:text-blue-700">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
         </button>
       </div>
