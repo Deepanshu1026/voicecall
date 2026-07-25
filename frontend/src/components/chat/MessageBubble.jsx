@@ -124,25 +124,25 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
           </div>
         )}
 
-        <div className={`flex items-center gap-1.5 mt-0.5 ${isOwn ? 'justify-end' : 'justify-end'}`}>
-          <span className={`text-[11px] leading-none ${isOwn ? 'text-white/60' : 'text-gray-400 dark:text-gray-500'}`}>
+        <div className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-end'}`}>
+          <span className={`text-[11px] leading-tight ${isOwn ? 'text-white/60' : 'text-gray-400 dark:text-gray-500'}`}>
             {formatMessageTime(message.createdAt)}
           </span>
           {isOwn && (
-            <span className="flex-shrink-0">
+            <span className="flex-shrink-0 flex items-center leading-none">
               {message.status === 'seen' ? (
-                <svg className="w-4 h-4 text-white/80" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2.5 8.5L5.5 11.5L11.5 4.5" />
-                  <path d="M8.5 8.5L11.5 11.5L13.5 4.5" />
+                <svg className="w-3.5 h-3 text-white/80" viewBox="0 0 18 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 8 L6 12 L13 4" />
+                  <path d="M6 8 L10 12 L17 4" />
                 </svg>
               ) : message.status === 'delivered' ? (
-                <svg className="w-4 h-4 text-white/70" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2.5 8.5L5.5 11.5L11.5 4.5" />
-                  <path d="M8.5 8.5L11.5 11.5L13.5 4.5" />
+                <svg className="w-3.5 h-3 text-white/70" viewBox="0 0 18 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 8 L6 12 L13 4" />
+                  <path d="M6 8 L10 12 L17 4" />
                 </svg>
               ) : (
-                <svg className="w-4 h-4 text-white/60" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 8.5L6.5 12L13 4" />
+                <svg className="w-3.5 h-3 text-white/60" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 8 L6.5 12 L13 4" />
                 </svg>
               )}
             </span>
