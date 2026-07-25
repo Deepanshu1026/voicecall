@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { HelmetProvider } from 'react-helmet-async';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -19,9 +20,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <SocketProvider>
             <CallManager>
               <WalletSync />
-              <ErrorBoundary>
-                <App />
-              </ErrorBoundary>
+              <HelmetProvider>
+                <ErrorBoundary>
+                  <App />
+                </ErrorBoundary>
+              </HelmetProvider>
               <Toaster
               position="top-center"
               toastOptions={{

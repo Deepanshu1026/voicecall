@@ -4,9 +4,9 @@ import '../../styles/userLanding.css';
 
 const navLinks = [
   { label: 'Home', href: '/home' },
-  { label: 'Services', href: '/home' },
-  { label: 'About us', href: '/home' },
-  { label: 'Blogs', href: '/home' },
+  { label: 'Services', href: '/services' },
+  { label: 'About us', href: '/about' },
+  { label: 'Blogs', href: '/blogs' },
   { label: 'Our Advisor', href: '/consultants' },
 ];
 
@@ -97,7 +97,7 @@ const LandingLayout = ({ children }) => {
           <div className="footer-section footer-second-clm">
             <h3>About</h3>
             <ul>
-              <li><a href="/home">About Us</a></li>
+              <li><a href="/about">About Us</a></li>
               <li><a href="/home">Contact Us</a></li>
               <li><a href="/home">AVE Partners</a></li>
             </ul>
