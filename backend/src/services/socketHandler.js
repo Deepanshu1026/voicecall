@@ -720,6 +720,52 @@ const setupSocket = (io) => {
       return Date.now() - new Date(account.lastSeen).getTime() < HEARTBEAT_TIMEOUT_MS;
     };
 
+    const formatDuration = (seconds) => {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      return `${m}:${String(s).padStart(2, '0')}`;
+    };
+
+    const createCallSystemMessage = async (call, content) => {
+      try {
+        const callerId = call.caller._id?.toString() || call.caller.toString();
+        const receiverId = call.receiver._id?.toString() || call.receiver.toString();
+
+        let conversation = await Conversation.findOne({
+          type: 'direct',
+          participants: { $all: [callerId, receiverId], $size: 2 },
+        });
+
+        if (!conversation) {
+          conversation = await Conversation.create({
+            type: 'direct',
+            participants: [callerId, receiverId],
+          });
+        }
+
+        const systemMsg = await Message.create({
+          conversation: conversation._id,
+          sender: callerId,
+          recipient: receiverId,
+          type: 'system',
+          isSystemMessage: true,
+          content,
+          callReference: call._id,
+          status: 'delivered',
+        });
+
+        conversation.lastMessage = systemMsg._id;
+        await conversation.save();
+
+        io.to(`user:${callerId}`).emit('message:new', systemMsg);
+        io.to(`user:${receiverId}`).emit('message:new', systemMsg);
+      } catch (err) {
+        console.error('Failed to create call system message:', err);
+      }
+    };
+
     const endCallRoom = async (roomId, status, duration = 0) => {
       const callId = roomId.replace('call:', '');
       await callBilling.stopBilling(callId);
@@ -749,6 +795,14 @@ const setupSocket = (io) => {
           socketsInRoom.forEach((s) => s.leave(roomId));
           userCallRooms.delete(updatedCall.caller._id.toString());
           userCallRooms.delete(updatedCall.receiver._id.toString());
+
+          if (status === 'ended') {
+            const callLabel = updatedCall.type === 'video' ? 'Video call' : 'Voice call';
+            const content = finalDuration > 0
+              ? `${callLabel} ended · ${formatDuration(finalDuration)}`
+              : `${callLabel} ended`;
+            await createCallSystemMessage(updatedCall, content);
+          }
         }
       } catch (err) {
         console.error('End call room error:', err);
@@ -917,6 +971,9 @@ const setupSocket = (io) => {
         clearCallParticipants(callId);
         userCallRooms.delete(userId);
         userCallRooms.delete(otherUserId);
+
+        const callLabel = call.type === 'video' ? 'Call' : 'Voice call';
+        await createCallSystemMessage(call, `${callLabel} rejected`);
       } catch (error) {
         console.error('Call reject error:', error);
       }
@@ -1014,34 +1071,8 @@ const setupSocket = (io) => {
         clearCallSignalBuffer(callId);
         clearCallParticipants(callId);
 
-        let conversation = await Conversation.findOne({
-          type: 'direct',
-          participants: { $all: [call.caller._id, call.receiver._id], $size: 2 },
-        });
-
-        if (!conversation) {
-          conversation = await Conversation.create({
-            type: 'direct',
-            participants: [call.caller._id, call.receiver._id],
-          });
-        }
-
-        const systemMsg = await Message.create({
-          conversation: conversation._id,
-          sender: call.caller._id,
-          recipient: call.receiver._id,
-          type: 'system',
-          isSystemMessage: true,
-          content: 'Missed voice call',
-          callReference: call._id,
-          status: 'delivered',
-        });
-
-        conversation.lastMessage = systemMsg._id;
-        await conversation.save();
-
-        io.to(`user:${call.receiver._id}`).emit('message:new', systemMsg);
-        io.to(`user:${call.caller._id}`).emit('message:new', systemMsg);
+        const callLabel = call.type === 'video' ? 'Missed video call' : 'Missed voice call';
+        await createCallSystemMessage(call, callLabel);
 
         userCallRooms.delete(call.caller._id.toString());
         userCallRooms.delete(call.receiver._id.toString());

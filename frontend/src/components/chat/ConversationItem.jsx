@@ -3,7 +3,7 @@ import { getDisplayName, formatMessageTime } from '../../utils/helpers';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { useCall } from '../../context/CallContext';
-import { HiPhone, HiCheckBadge, HiCheck } from 'react-icons/hi2';
+import { HiPhone, HiPhoneMissedCall, HiVideoCamera, HiCheckBadge, HiCheck } from 'react-icons/hi2';
 
 const ConversationItem = ({ conversation, isActive, onSelect }) => {
   const { user } = useAuth();
@@ -17,6 +17,7 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
   const online = otherParticipant && isUserOnline(otherParticipant._id);
   const unread = conversation.unreadCount || 0;
   const lastMessage = conversation.lastMessage;
+  const isCallMessage = lastMessage?.isSystemMessage && lastMessage?.callReference;
   const lastMsgText = lastMessage?.isDeleted
     ? 'Message deleted'
     : lastMessage?.isSystemMessage
@@ -24,6 +25,7 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
     : lastMessage?.type === 'file'
     ? `📎 ${lastMessage?.fileName || 'File'}`
     : lastMessage?.content || '';
+  const isMissedCall = isCallMessage && lastMessage?.content?.toLowerCase().includes('missed');
 
   const statusIcon = () => {
     if (lastMessage?.status === 'seen') return <HiCheckBadge className="w-3.5 h-3.5 text-blue-400" />;
@@ -61,6 +63,17 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
         <div className="flex items-center justify-between mt-0.5 gap-2">
           <div className="flex items-center gap-1 min-w-0 flex-1">
             {lastMessage?.sender?._id === user?._id && statusIcon()}
+            {isCallMessage && (
+              <span className="flex-shrink-0">
+                {isMissedCall ? (
+                  <HiPhoneMissedCall className="w-3.5 h-3.5 text-red-500" />
+                ) : lastMessage?.content?.toLowerCase().includes('video') ? (
+                  <HiVideoCamera className="w-3.5 h-3.5 text-gray-500" />
+                ) : (
+                  <HiPhone className="w-3.5 h-3.5 text-green-600" />
+                )}
+              </span>
+            )}
             <p className={`text-[13px] truncate leading-tight ${unread > 0 ? 'font-semibold text-gray-900' : 'text-gray-500'}`}>
               {lastMsgText}
             </p>
