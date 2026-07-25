@@ -156,7 +156,11 @@ export const chatAPI = {
 
 export const callAPI = {
   initiateCall: (receiverId, type) => api.post('/calls/initiate', { receiverId, type }),
-  getCallHistory: (page, limit, userId) => api.get('/calls/history', { params: { page, limit, userId } }),
+  getCallHistory: (page, limit, userId, options = {}) => {
+    const params = { page, limit };
+    if (userId) params.userId = userId;
+    return api.get('/calls/history', { params, ...options });
+  },
   getCallById: (callId) => api.get(`/calls/${callId}`),
   updateCallStatus: (callId, data) => api.put(`/calls/${callId}`, data),
   getMissedCalls: () => api.get('/calls/missed'),

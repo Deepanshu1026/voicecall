@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { useCall } from '../../context/CallContext';
@@ -22,8 +22,10 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
   const [selectedTab, setSelectedTab] = useState('chats');
   const [calls, setCalls] = useState([]);
   const [loadingCalls, setLoadingCalls] = useState(false);
+  const [callsError, setCallsError] = useState(false);
   const [callsPage, setCallsPage] = useState(1);
   const [hasMoreCalls, setHasMoreCalls] = useState(true);
+  const loadingCallsRef = useRef(false);
 
   const debouncedSearch = useCallback(
     debounce(async (query) => {
@@ -54,26 +56,37 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
   }, []);
 
   const loadCalls = useCallback(async (page = 1, reset = false) => {
-    if (loadingCalls) return;
+    if (loadingCallsRef.current) return;
+    loadingCallsRef.current = true;
     setLoadingCalls(true);
+    setCallsError(false);
     try {
-      const res = await callAPI.getCallHistory(page, 20);
+      console.log('[Sidebar] loading call history...');
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const res = await callAPI.getCallHistory(page, 20, null, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      console.log('[Sidebar] call history response:', res.data);
       const data = res.data?.data || [];
       const pagination = res.data?.pagination || {};
       setCalls((prev) => reset ? data : [...prev, ...data]);
       setHasMoreCalls(pagination.page < pagination.pages);
       setCallsPage(page);
     } catch (error) {
-      console.error('Failed to load call history:', error);
-      if (error?.response?.status === 401) {
+      setCallsError(true);
+      if (error.name === 'AbortError' || error.code === 'ECONNABORTED' || error.code === 'ERR_CANCELED') {
+        toast.error('Call history is taking too long. Tap to retry.');
+      } else if (error?.response?.status === 401) {
         toast.error('Session expired. Please login again.');
       } else {
         toast.error('Failed to load call history');
       }
+      console.error('Failed to load call history:', error);
     } finally {
+      loadingCallsRef.current = false;
       setLoadingCalls(false);
     }
-  }, [loadingCalls]);
+  }, []);
 
   useEffect(() => {
     if (selectedTab === 'calls') {
@@ -240,8 +253,20 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
               ) : (
                 <div className="text-center py-12 px-4">
                   <HiPhone className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-sm text-gray-500 mb-1">No call history</p>
-                  <p className="text-xs text-gray-400">Your calls will appear here</p>
+                  <p className="text-sm text-gray-500 mb-1">
+                    {callsError ? 'Could not load calls' : 'No call history'}
+                  </p>
+                  <p className="text-xs text-gray-400 mb-3">
+                    {callsError ? 'Check your connection and try again' : 'Your calls will appear here'}
+                  </p>
+                  {callsError && (
+                    <button
+                      onClick={() => loadCalls(1, true)}
+                      className="btn-primary text-sm px-4 py-2"
+                    >
+                      Retry
+                    </button>
+                  )}
                 </div>
               )}
             </>

@@ -35,7 +35,10 @@ const initiateCall = asyncHandler(async (req, res) => {
 });
 
 const getCallHistory = asyncHandler(async (req, res) => {
-  const { page = 1, limit = 20, userId } = req.query;
+  const { page: pageRaw = 1, limit: limitRaw = 20, userId } = req.query;
+  const page = parseInt(pageRaw, 10) || 1;
+  const limit = parseInt(limitRaw, 10) || 20;
+  console.log(`[CallHistory] user=${req.userId} page=${page} limit=${limit}`);
 
   const query = {
     $or: [{ caller: req.userId }, { receiver: req.userId }],
@@ -51,14 +54,17 @@ const getCallHistory = asyncHandler(async (req, res) => {
   const calls = await Call.find(query)
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
-    .limit(parseInt(limit));
+    .limit(limit)
+    .lean();
 
   const populatedCalls = await populateCalls(calls, 'username displayName avatar');
   const total = await Call.countDocuments(query);
 
+  console.log(`[CallHistory] user=${req.userId} returned=${populatedCalls.length} total=${total}`);
+
   ApiResponse.paginated(res, populatedCalls, {
-    page: parseInt(page),
-    limit: parseInt(limit),
+    page,
+    limit,
     total,
     pages: Math.ceil(total / limit),
   });

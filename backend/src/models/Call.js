@@ -83,6 +83,8 @@ const callSchema = new mongoose.Schema(
 );
 
 callSchema.index({ caller: 1, receiver: 1 });
+callSchema.index({ caller: 1, createdAt: -1 });
+callSchema.index({ receiver: 1, createdAt: -1 });
 callSchema.index({ status: 1 });
 callSchema.index({ createdAt: -1 });
 
