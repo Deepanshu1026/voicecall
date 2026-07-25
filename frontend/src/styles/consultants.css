@@ -11,15 +11,15 @@ html {
 }
 
 .consultants-page .margin-from-bottom {
-  padding-top: 126px;
+  padding-top: 170px;
   padding-bottom: 40px;
 }
 
-/* Navbar */
+/* Navbar - positioned below the fixed landing header */
 .consultants-page #navbar {
   position: fixed;
   width: 100%;
-  top: 70px;
+  top: 100px;
   z-index: 20;
   padding: 9px 60px;
   display: flex;
@@ -788,11 +788,11 @@ html {
 @media (max-width: 768px) {
   .consultants-page #navbar {
     padding: 9px 16px;
-    top: 73px;
+    top: 95px;
   }
 
   .consultants-page .margin-from-bottom {
-    padding-top: 184px;
+    padding-top: 165px;
   }
 
   .consultants-page #main-nav {
