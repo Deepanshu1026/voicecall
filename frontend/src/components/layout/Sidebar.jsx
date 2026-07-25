@@ -94,15 +94,25 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
     }
   }, [selectedTab, loadCalls]);
 
-  // Refresh call history in real-time when a call is created/updated
+  // Update call history in real-time via socket
   useEffect(() => {
-    const cleanup = on('call:updated', () => {
-      if (selectedTab === 'calls') {
-        loadCalls(1, true);
-      }
-    });
-    return cleanup;
-  }, [on, selectedTab, loadCalls]);
+    const handleCallUpdate = (data) => {
+      if (!data?.call) return;
+      // Add or update the call in the list without fetching from REST API
+      setCalls((prev) => {
+        const idx = prev.findIndex((c) => c._id === data.call._id);
+        if (idx >= 0) {
+          const updated = [...prev];
+          updated[idx] = data.call;
+          return updated;
+        }
+        return [data.call, ...prev];
+      });
+    };
+    const cleanup = on('call:updated', handleCallUpdate);
+    const cleanupEnded = on('call:ended', handleCallUpdate);
+    return () => { cleanup(); cleanupEnded(); };
+  }, [on]);
 
   const handleStartConversation = async (participantId) => {
     try {
