@@ -16,6 +16,13 @@ import Chat from './pages/Chat';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
 import UserHome from './pages/user/UserHome';
+import About from './pages/About';
+import Services from './pages/Services';
+import TouristVisa from './pages/TouristVisa';
+import WorkVisa from './pages/WorkVisa';
+import TransitVisa from './pages/TransitVisa';
+import Blogs from './pages/Blogs';
+import BlogDetail from './pages/BlogDetail';
 import Consultants from './pages/Consultants';
 import Appointment from './pages/Appointment';
 
@@ -71,6 +78,13 @@ function App() {
 
       {/* Public landing pages */}
       <Route path="/home" element={<UserHome />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/tourist-visa" element={<TouristVisa />} />
+      <Route path="/work-visa" element={<WorkVisa />} />
+      <Route path="/transit-visa" element={<TransitVisa />} />
+      <Route path="/blogs" element={<Blogs />} />
+      <Route path="/blog/:id/:slug?" element={<BlogDetail />} />
       <Route path="/consultants" element={<Consultants />} />
       <Route path="/appointment" element={<Appointment />} />
 
