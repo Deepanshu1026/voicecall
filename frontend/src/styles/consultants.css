@@ -19,7 +19,7 @@ html {
 .consultants-page #navbar {
   position: fixed;
   width: 100%;
-  top: 100px;
+  top: 94px;
   z-index: 20;
   padding: 9px 60px;
   display: flex;
@@ -476,9 +476,11 @@ html {
   0% {
     box-shadow: 0 0 0 0 rgba(2, 140, 76, 0.4);
   }
+
   70% {
     box-shadow: 0 0 0 5px rgba(2, 140, 76, 0);
   }
+
   100% {
     box-shadow: 0 0 0 0 rgba(2, 140, 76, 0);
   }
@@ -779,6 +781,7 @@ html {
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
