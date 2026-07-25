@@ -3,7 +3,7 @@ import { getDisplayName, formatMessageTime } from '../../utils/helpers';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { useCall } from '../../context/CallContext';
-import { HiPhone, HiPhoneMissedCall, HiVideoCamera, HiCheckBadge, HiCheck } from 'react-icons/hi2';
+import { HiPhone, HiVideoCamera, HiCheckBadge, HiCheck } from 'react-icons/hi2';
 
 const ConversationItem = ({ conversation, isActive, onSelect }) => {
   const { user } = useAuth();
@@ -65,12 +65,10 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
             {lastMessage?.sender?._id === user?._id && statusIcon()}
             {isCallMessage && (
               <span className="flex-shrink-0">
-                {isMissedCall ? (
-                  <HiPhoneMissedCall className="w-3.5 h-3.5 text-red-500" />
-                ) : lastMessage?.content?.toLowerCase().includes('video') ? (
+                {lastMessage?.content?.toLowerCase().includes('video') ? (
                   <HiVideoCamera className="w-3.5 h-3.5 text-gray-500" />
                 ) : (
-                  <HiPhone className="w-3.5 h-3.5 text-green-600" />
+                  <HiPhone className={`w-3.5 h-3.5 ${isMissedCall ? 'text-red-500' : 'text-green-600'}`} />
                 )}
               </span>
             )}

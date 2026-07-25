@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { formatMessageTime, formatFileSize, downloadFile } from '../../utils/helpers';
-import { HiOutlineArrowUturnLeft, HiPhone, HiPhoneMissedCall, HiVideoCamera } from 'react-icons/hi2';
+import { HiOutlineArrowUturnLeft, HiPhone, HiVideoCamera } from 'react-icons/hi2';
 import ImageLightbox from '../common/ImageLightbox';
 
 const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
@@ -35,12 +35,10 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
         <div className="flex items-center gap-1.5 text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full italic">
           {isCallMessage && (
             <>
-              {isMissedCall ? (
-                <HiPhoneMissedCall className="w-3.5 h-3.5 text-red-500" />
-              ) : isVideoCall ? (
+              {isVideoCall ? (
                 <HiVideoCamera className="w-3.5 h-3.5 text-gray-500" />
               ) : (
-                <HiPhone className="w-3.5 h-3.5 text-green-600" />
+                <HiPhone className={`w-3.5 h-3.5 ${isMissedCall ? 'text-red-500' : 'text-green-600'}`} />
               )}
             </>
           )}
