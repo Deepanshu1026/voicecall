@@ -46,9 +46,12 @@ const AgentChatWidget = () => {
     };
   }, []);
 
-  const handleChat = (agent) => {
+  const handleChat = (agent, isOnline) => {
     if (!isAuthenticated) {
       navigate('/login');
+      return;
+    }
+    if (!isOnline) {
       return;
     }
     const targetId = agent._id || agent.id;
@@ -122,8 +125,9 @@ const AgentChatWidget = () => {
                 </div>
                 <button
                   className="agent-chat-btn"
-                  onClick={() => handleChat(agent)}
-                  disabled={guestLoading}
+                  onClick={() => handleChat(agent, isOnline)}
+                  disabled={guestLoading || !isOnline}
+                  title={isOnline ? 'चैट शुरू करें' : 'यह एजेंट अभी ऑफलाइन है'}
                 >
                   चैट
                 </button>
