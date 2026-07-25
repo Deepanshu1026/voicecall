@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, Fragment } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { useCall } from '../../context/CallContext';
@@ -7,7 +7,7 @@ import MessageInput from './MessageInput';
 import TypingIndicator from './TypingIndicator';
 import Avatar from '../common/Avatar';
 import { HiArrowLeft, HiPhone, HiVideoCamera, HiEllipsisVertical, HiXMark } from 'react-icons/hi2';
-import { getDisplayName, formatLastSeen } from '../../utils/helpers';
+import { getDisplayName, formatLastSeen, formatMessageDate } from '../../utils/helpers';
 import { chatAPI, userAPI } from '../../services/api';
 import toast from 'react-hot-toast';
 
@@ -16,6 +16,17 @@ const formatCountdown = (ms) => {
   const minutes = Math.floor(ms / 60000);
   const seconds = Math.floor((ms % 60000) / 1000);
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const isDifferentDay = (date1, date2) => {
+  if (!date1 || !date2) return false;
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  return (
+    d1.getFullYear() !== d2.getFullYear() ||
+    d1.getMonth() !== d2.getMonth() ||
+    d1.getDate() !== d2.getDate()
+  );
 };
 
 const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
@@ -429,18 +440,29 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
           </div>
         )}
 
-        {messages.map((msg) => (
-          <MessageBubble
-            key={msg._id}
-            message={msg}
-            isOwn={msg.sender?._id === user?._id || msg.sender === user?._id}
-            variant={isUser ? 'user' : 'default'}
-            onDelete={(deleteForEveryone) => handleDeleteMessage(msg._id, deleteForEveryone)}
-            onReaction={(emoji) => handleReaction(msg._id, emoji)}
-            onEdit={(newContent) => handleEditMessage(msg._id, newContent)}
-            onReply={() => setReplyingTo(msg)}
-          />
-        ))}
+        {messages.map((msg, index) => {
+          const showDateSeparator = index === 0 || isDifferentDay(messages[index - 1].createdAt, msg.createdAt);
+          return (
+            <Fragment key={msg._id}>
+              {showDateSeparator && (
+                <div className="flex justify-center my-3">
+                  <div className="px-4 py-1 text-xs font-medium text-gray-500 bg-gray-200/60 dark:bg-gray-800/80 dark:text-gray-400 rounded-lg shadow-sm">
+                    {formatMessageDate(msg.createdAt)}
+                  </div>
+                </div>
+              )}
+              <MessageBubble
+                message={msg}
+                isOwn={msg.sender?._id === user?._id || msg.sender === user?._id}
+                variant={isUser ? 'user' : 'default'}
+                onDelete={(deleteForEveryone) => handleDeleteMessage(msg._id, deleteForEveryone)}
+                onReaction={(emoji) => handleReaction(msg._id, emoji)}
+                onEdit={(newContent) => handleEditMessage(msg._id, newContent)}
+                onReply={() => setReplyingTo(msg)}
+              />
+            </Fragment>
+          );
+        })}
 
         {isTyping && (
           <div className="flex justify-start">
