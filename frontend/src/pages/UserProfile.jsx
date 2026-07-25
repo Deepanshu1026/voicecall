@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCall } from '../context/CallContext';
-import { authAPI, chatAPI } from '../services/api';
+import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { HiArrowLeft, HiChatBubbleLeftRight, HiPhone, HiVideoCamera, HiCalendar, HiMapPin, HiCurrencyRupee } from 'react-icons/hi2';
 import { getAvatarUrl, getDisplayName, getInitials, formatLastSeen } from '../utils/helpers';
@@ -39,23 +39,12 @@ const UserProfile = () => {
     }
   }, [id, user]);
 
-  const handleStartChat = async () => {
+  const handleStartChat = () => {
     if (isCurrentUser) {
       navigate('/profile');
       return;
     }
-    try {
-      const res = await chatAPI.getOrCreateConversation(id);
-      const conversation = res.data?.data?.conversation;
-      if (conversation) {
-        navigate('/chat', { state: { conversationId: conversation._id } });
-      } else {
-        toast.error('Could not start conversation');
-      }
-    } catch (error) {
-      console.error('Start chat error:', error);
-      toast.error('Failed to start chat');
-    }
+    navigate(`/chat?userId=${id}`);
   };
 
   const handleCall = (type) => {
@@ -63,7 +52,7 @@ const UserProfile = () => {
       toast('You cannot call yourself');
       return;
     }
-    startCall(id, type);
+    startCall(id, null, type);
   };
 
   if (loading) {

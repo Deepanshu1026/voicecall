@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, memo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
 import { useCall } from '../context/CallContext';
@@ -9,7 +9,7 @@ import ChatArea from '../components/chat/ChatArea';
 import { userAPI, chatAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import '../styles/consultants.css';
-import { FiMessageCircle, FiPhone, FiStar, FiBriefcase, FiUsers, FiGlobe, FiX, FiAward } from 'react-icons/fi';
+import { FiMessageCircle, FiPhone, FiStar, FiBriefcase, FiUsers, FiGlobe, FiX, FiAward, FiUser } from 'react-icons/fi';
 
 const staticConsultants = [
   {
@@ -206,6 +206,14 @@ const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall })
           )}
         </div>
         <div className="btn-container">
+          <Link
+            to={`/user/${consultant._id || consultant.id}`}
+            className="btn btn-profile"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <FiUser className="btn-icon" />
+            Profile
+          </Link>
           <button
             className={`btn btn-chat ${isOnline ? 'online-btn' : 'offline-btn'}`}
             disabled={!isOnline}

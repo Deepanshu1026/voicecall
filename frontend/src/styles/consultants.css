@@ -359,20 +359,6 @@ html {
   align-items: stretch;
 }
 
-/* Keep consultant cards light even in dark mode */
-.dark .consultants-page .card,
-.dark .consultants-page .skeleton-card,
-.dark .consultants-page .consultants-empty,
-.dark .consultants-page .peragraph-section {
-  background: #ffffff;
-  color: #222;
-}
-
-.dark .consultants-page .consultant-name,
-.dark .consultants-page .expertise-title {
-  color: #1a1a1a;
-}
-
 .consultants-page .card {
   background: #ffffff;
   border-radius: 18px;
@@ -656,6 +642,16 @@ html {
 .consultants-page .btn-icon {
   width: 14px;
   height: 14px;
+}
+
+.consultants-page .btn-profile {
+  color: #fff;
+  background: #4f46e5;
+  text-decoration: none;
+}
+
+.consultants-page .btn-profile:hover {
+  background: #4338ca;
 }
 
 .consultants-page .online-btn {

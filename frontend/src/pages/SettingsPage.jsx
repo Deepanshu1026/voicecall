@@ -1,14 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
-import { HiArrowLeft, HiSun, HiMoon, HiBell, HiMegaphone, HiEye, HiLockClosed, HiTrash } from 'react-icons/hi2';
+import { HiArrowLeft, HiBell, HiMegaphone, HiEye, HiLockClosed, HiTrash } from 'react-icons/hi2';
 
 const SettingsPage = () => {
   const { user, updateUser } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const [settings, setSettings] = useState({
     notifications: user?.settings?.notifications ?? true,
     soundEnabled: user?.settings?.soundEnabled ?? true,
@@ -42,26 +40,6 @@ const SettingsPage = () => {
         </div>
 
         <div className="space-y-6">
-          {/* Appearance */}
-          <div className="card">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Appearance</h2>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {theme === 'dark' ? <HiMoon className="w-5 h-5 text-gray-400" /> : <HiSun className="w-5 h-5 text-yellow-500" />}
-                <div>
-                  <p className="text-gray-900 font-medium">Theme</p>
-                  <p className="text-sm text-gray-500">{theme === 'dark' ? 'Dark' : 'Light'} mode</p>
-                </div>
-              </div>
-              <button
-                onClick={toggleTheme}
-                className={`relative w-12 h-6 rounded-full transition-colors ${theme === 'dark' ? 'bg-primary-600' : 'bg-gray-300'}`}
-              >
-                <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${theme === 'dark' ? 'translate-x-6' : 'translate-x-0.5'}`} />
-              </button>
-            </div>
-          </div>
-
           {/* Notifications */}
           <div className="card">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Notifications</h2>

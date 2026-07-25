@@ -142,15 +142,12 @@
 
 /* Override Tailwind text classes inside agent portal chat */
 .agent-portal-main .chat-agent-wrapper .text-gray-900,
-.agent-portal-main .chat-agent-wrapper .dark\:text-white,
 .agent-portal-main .chat-agent-wrapper .text-gray-500,
-.agent-portal-main .chat-agent-wrapper .dark\:text-gray-400,
 .agent-portal-main .chat-agent-wrapper .text-gray-400,
 .agent-portal-main .chat-agent-wrapper .text-gray-700 {
   color: var(--text) !important;
 }
 
-.agent-portal-main .chat-agent-wrapper .dark\:bg-surface-dark,
 .agent-portal-main .chat-agent-wrapper .bg-white {
   background: var(--surface) !important;
 }
@@ -160,12 +157,13 @@
 }
 
 .agent-portal-main .chat-agent-wrapper .border-gray-200,
-.agent-portal-main .chat-agent-wrapper .dark\:border-gray-700 {
+.agent-portal-main .chat-agent-wrapper .border-gray-100,
+.agent-portal-main .chat-agent-wrapper .border-gray-300 {
   border-color: var(--border) !important;
 }
 
 .agent-portal-main .chat-agent-wrapper .hover\:bg-gray-50:hover,
-.agent-portal-main .chat-agent-wrapper .dark\:hover\:bg-gray-800:hover {
+.agent-portal-main .chat-agent-wrapper .hover\:bg-gray-100:hover {
   background: var(--surface-hover) !important;
 }
 

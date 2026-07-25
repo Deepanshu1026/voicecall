@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '../services/api';
 
 const ThemeContext = createContext(null);
 
@@ -10,35 +9,18 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme');
-      if (saved) return saved;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'light';
-  });
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     const root = document.documentElement;
     if (root) {
-      if (theme === 'dark') {
-        root.classList.add('dark');
-      } else {
-        root.classList.remove('dark');
-      }
+      root.classList.remove('dark');
     }
-    localStorage.setItem('theme', theme);
+    localStorage.setItem('theme', 'light');
   }, [theme]);
 
-  const toggleTheme = async () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    try {
-      await authAPI.updateSettings({ theme: newTheme });
-    } catch (error) {
-      console.error('Failed to save theme preference:', error);
-    }
+  const toggleTheme = () => {
+    // App is light mode only; toggle is disabled.
   };
 
   return (
