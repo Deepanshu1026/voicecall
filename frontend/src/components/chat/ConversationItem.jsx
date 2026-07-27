@@ -27,7 +27,7 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
     : lastMessage?.type === 'file' || lastMessage?.type === 'image'
     ? (isFileUrlValid(lastMessage?.fileUrl)
       ? `📎 ${lastMessage?.fileName && lastMessage.fileName !== 'NULL' && lastMessage.fileName !== 'null' ? lastMessage.fileName : 'File'}`
-      : 'File unavailable')
+      : lastMessage?.content || 'File unavailable')
     : lastMessage?.content || 'No messages';
   const isMissedCall = isCallMessage && lastMessage?.content?.toLowerCase().includes('missed');
 
