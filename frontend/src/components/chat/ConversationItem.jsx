@@ -17,14 +17,17 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
 
   const online = otherParticipant && isUserOnline(otherParticipant._id);
   const unread = conversation.unreadCount || 0;
+  const isFileUrlValid = (url) => typeof url === 'string' && (url.startsWith('http') || url.startsWith('/uploads/'));
   const lastMessage = conversation.lastMessage;
   const isCallMessage = lastMessage?.isSystemMessage && lastMessage?.callReference;
   const lastMsgText = lastMessage?.isDeleted
     ? 'Message deleted'
     : lastMessage?.isSystemMessage
     ? lastMessage?.content || 'System message'
-    : lastMessage?.type === 'file'
-    ? `📎 ${lastMessage?.fileName || 'File'}`
+    : lastMessage?.type === 'file' || lastMessage?.type === 'image'
+    ? (isFileUrlValid(lastMessage?.fileUrl)
+      ? `📎 ${lastMessage?.fileName && lastMessage.fileName !== 'NULL' && lastMessage.fileName !== 'null' ? lastMessage.fileName : 'File'}`
+      : 'File unavailable')
     : lastMessage?.content || 'No messages';
   const isMissedCall = isCallMessage && lastMessage?.content?.toLowerCase().includes('missed');
 
