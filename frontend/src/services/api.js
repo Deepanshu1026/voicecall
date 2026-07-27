@@ -155,7 +155,7 @@ export const chatAPI = {
   markAsDelivered: (messageIds) => api.put('/chat/messages/delivered', { messageIds }),
   markConversationRead: (conversationId) => api.put(`/chat/${conversationId}/read`),
   payForConversation: (conversationId) => api.post(`/chat/${conversationId}/pay`),
-  resetConversation: (conversationId) => api.post(`/chat/${conversationId}/reset`),
+  resetConversation: (conversationId, duration) => api.post(`/chat/${conversationId}/reset`, { duration }),
 };
 
 export const callAPI = {

@@ -162,9 +162,23 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
       chat.setConversations((prev) =>
         prev.map((c) => (c._id === conversation._id ? { ...c, ...updated } : c))
       );
-      toast.success('Chat reset to free mode. You can test the 30-second limit again.');
+      toast.success('Chat reset to free mode (10 min).');
     } catch (error) {
       toast.error(error?.response?.data?.message || 'Failed to reset chat');
+    }
+  }, [conversation?._id, chat.setConversations]);
+
+  const handleSetTimer = useCallback(async (seconds) => {
+    if (!conversation?._id) return;
+    try {
+      const res = await chatAPI.resetConversation(conversation._id, seconds);
+      const updated = res.data?.data || { isPaid: false };
+      chat.setConversations((prev) =>
+        prev.map((c) => (c._id === conversation._id ? { ...c, ...updated } : c))
+      );
+      toast.success(seconds === 0 ? 'Free chat ended.' : `Timer set to ${seconds}s.`);
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Failed to set timer');
     }
   }, [conversation?._id, chat.setConversations]);
 
@@ -475,15 +489,43 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
                 Free chat has ended
               </span>
               {isLockedUser && (
-                <span className="text-xs text-gray-600">
-                  Pay ₹{paymentAmount} to continue chatting with {getDisplayName(otherParticipant)}
-                </span>
+                <>
+                  <span className="text-xs text-gray-600">
+                    Pay ₹{paymentAmount} to continue chatting with {getDisplayName(otherParticipant)}
+                  </span>
+                  <div className="flex gap-2 mt-1 justify-center">
+                    <button onClick={() => handleSetTimer(90)} className="text-xs px-2 py-1 bg-orange-200 text-orange-800 rounded hover:bg-orange-300">
+                      Set 1:30
+                    </button>
+                    <button onClick={() => handleSetTimer(0)} className="text-xs px-2 py-1 bg-red-200 text-red-800 rounded hover:bg-red-300">
+                      End Free Chat
+                    </button>
+                  </div>
+                </>
+              )}
+              {!isLockedUser && (
+                <span className="text-xs text-gray-500">Wait for the user to continue.</span>
               )}
             </div>
           ) : (
-            <span className="text-sm font-medium text-orange-700">
-              Free chat ends in {formatCountdown(timeLeft)}
-            </span>
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-sm font-medium text-orange-700">
+                Free chat ends in {formatCountdown(timeLeft)}
+              </span>
+              {isLockedUser && (
+                <div className="flex gap-2 mt-1 justify-center">
+                  <button onClick={() => handleSetTimer(90)} className="text-xs px-2 py-1 bg-orange-200 text-orange-800 rounded hover:bg-orange-300">
+                    Set 1:30
+                  </button>
+                  <button onClick={() => handleSetTimer(0)} className="text-xs px-2 py-1 bg-red-200 text-red-800 rounded hover:bg-red-300">
+                    End Free Chat
+                  </button>
+                  <button onClick={handleReset} className="text-xs px-2 py-1 bg-green-200 text-green-800 rounded hover:bg-green-300">
+                    Reset 10 min
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       )}

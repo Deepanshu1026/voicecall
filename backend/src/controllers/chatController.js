@@ -621,6 +621,7 @@ const payForConversation = asyncHandler(async (req, res) => {
 
 const resetConversation = asyncHandler(async (req, res) => {
   const { conversationId } = req.params;
+  const { duration } = req.body; // optional custom duration in seconds
 
   const conversation = await Conversation.findOne({
     _id: conversationId,
@@ -637,7 +638,14 @@ const resetConversation = asyncHandler(async (req, res) => {
   if (!isCaller) throw new AppError('Only the caller can reset this consultation', 403);
 
   conversation.isPaid = false;
-  conversation.freeUntil = new Date(Date.now() + config.freeChatDurationSeconds * 1000);
+
+  if (duration === 0) {
+    // End free chat immediately
+    conversation.freeUntil = new Date(Date.now() - 1000);
+  } else {
+    conversation.freeUntil = new Date(Date.now() + (duration || config.freeChatDurationSeconds) * 1000);
+  }
+
   await conversation.save();
 
   const convObj = await populateConversationParticipants(conversation);
