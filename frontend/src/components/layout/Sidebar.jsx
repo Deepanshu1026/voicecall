@@ -209,7 +209,7 @@ const Sidebar = ({ activeConversation, onSelectConversation, chat, showHeader = 
 
       {/* Conversations list */}
       {searchQuery.trim().length === 0 && (
-        <div className="flex-1 overflow-y-auto no-scrollbar">
+        <div className="flex-1 overflow-y-auto scrollbar-visible">
           {selectedTab === 'chats' && (
             <>
               {chat.loadingConversations ? (

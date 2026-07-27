@@ -133,7 +133,7 @@ const TemplatePicker = ({ onSelect, isOpen, onClose }) => {
       </div>
 
       {manageMode ? (
-        <div className="p-4 space-y-3 max-h-80 overflow-y-auto">
+        <div className="p-4 space-y-3 max-h-80 overflow-y-auto scrollbar-visible">
           <div className="space-y-2">
             <input
               type="text"
@@ -202,7 +202,7 @@ const TemplatePicker = ({ onSelect, isOpen, onClose }) => {
           </div>
         </div>
       ) : (
-        <div className="p-2 max-h-80 overflow-y-auto">
+        <div className="p-2 max-h-80 overflow-y-auto scrollbar-visible">
           {loading ? (
             <div className="flex justify-center py-6">
               <div className="w-5 h-5 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
