@@ -460,7 +460,9 @@ const setupSocket = (io) => {
           userId.toString() !== conversation.lockedToAgent.toString()
         ) {
           const now = new Date();
-          if (conversation.freeUntil && now > conversation.freeUntil && !conversation.isPaid) {
+          const freeExpired = conversation.freeUntil && now > conversation.freeUntil;
+          const noFreeTrial = !conversation.freeUntil && !conversation.isPaid;
+          if ((freeExpired || noFreeTrial) && !conversation.isPaid) {
             if (callback) {
               callback({
                 error: 'Free chat has ended. Please pay to continue chatting.',
