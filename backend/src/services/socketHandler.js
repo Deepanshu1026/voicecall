@@ -506,6 +506,45 @@ const setupSocket = (io) => {
         io.to(`user:${recipient}`).emit('message:new', messageObj);
         io.to(`user:${userId}`).emit('message:new', messageObj);
 
+        // Check free chat timer thresholds and send system alerts
+        const totalDuration = conversation.freeUntil
+          ? (conversation.freeUntil.getTime() - conversation.createdAt.getTime())
+          : 0;
+        if (
+          conversation.lockedToAgent &&
+          conversation.freeUntil &&
+          totalDuration > 0 &&
+          !conversation.isPaid
+        ) {
+          const elapsed = Date.now() - conversation.createdAt.getTime();
+          const pct = (elapsed / totalDuration) * 100;
+
+          const sendSystemMessage = async (msgContent) => {
+            const sysMsg = await Message.create({
+              conversation: conversationId,
+              sender: userId,
+              recipient,
+              type: 'text',
+              content: msgContent,
+              isSystemMessage: true,
+              status: 'sent',
+              'statusTimestamps.sent': new Date(),
+            });
+            io.to(`user:${recipient}`).emit('message:new', sysMsg.toObject());
+            io.to(`user:${userId}`).emit('message:new', sysMsg.toObject());
+          };
+
+          if (pct >= 90 && !conversation.notified90) {
+            conversation.notified90 = true;
+            await conversation.save();
+            await sendSystemMessage('⚠️ Only 10% of your free chat time remains.');
+          } else if (pct >= 50 && !conversation.notified50) {
+            conversation.notified50 = true;
+            await conversation.save();
+            await sendSystemMessage('ℹ️ 50% of your free chat time has been used.');
+          }
+        }
+
         if (callback) callback({ success: true, message: messageObj });
       } catch (error) {
         console.error('Socket message send error:', error);

@@ -638,6 +638,8 @@ const resetConversation = asyncHandler(async (req, res) => {
   if (!isCaller) throw new AppError('Only the caller can reset this consultation', 403);
 
   conversation.isPaid = false;
+  conversation.notified50 = false;
+  conversation.notified90 = false;
 
   if (duration === 0) {
     // End free chat immediately
