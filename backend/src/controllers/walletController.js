@@ -45,6 +45,11 @@ const addMoney = asyncHandler(async (req, res) => {
     status: 'completed',
   });
 
+  // Notify the user via socket in real-time
+  if (req.io) {
+    req.io.to(`user:${req.userId}`).emit('wallet:updated', { balance: user.walletBalance });
+  }
+
   ApiResponse.success(res, {
     balance: user.walletBalance,
     transaction,

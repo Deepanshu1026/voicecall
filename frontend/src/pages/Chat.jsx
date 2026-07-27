@@ -51,6 +51,14 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50' }) => {
     return () => { cancelled = true; };
   }, [isUser, user?.walletBalance]);
 
+  // Update wallet in real-time via socket
+  useEffect(() => {
+    const cleanup = on('wallet:updated', (data) => {
+      if (data?.balance !== undefined) setWallet((prev) => ({ ...prev, balance: data.balance }));
+    });
+    return cleanup;
+  }, [on]);
+
   const handleAddMoney = async () => {
     if (!addAmount || addAmount <= 0) {
       toast.error('Please enter a valid amount');

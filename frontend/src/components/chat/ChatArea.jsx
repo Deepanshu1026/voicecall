@@ -48,6 +48,14 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
   useEffect(() => {
     setWalletBalance(user?.walletBalance || 0);
   }, [user?.walletBalance]);
+
+  // Update wallet balance in real-time via socket
+  useEffect(() => {
+    const cleanup = on('wallet:updated', (data) => {
+      if (data?.balance !== undefined) setWalletBalance(data.balance);
+    });
+    return cleanup;
+  }, [on]);
   const [addAmount, setAddAmount] = useState(100);
   const [addingMoney, setAddingMoney] = useState(false);
 
