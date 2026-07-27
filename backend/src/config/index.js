@@ -25,7 +25,7 @@ module.exports = {
     password: process.env.MYSQL_PASSWORD || 'root',
     database: process.env.MYSQL_DATABASE || 'my',
   },
-  freeChatDurationSeconds: parseInt(process.env.FREE_CHAT_DURATION_SECONDS) || 30,
+  freeChatDurationSeconds: parseInt(process.env.FREE_CHAT_DURATION_SECONDS) || 600,
   chatPaymentAmount: parseInt(process.env.CHAT_PAYMENT_AMOUNT) || 100,
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
