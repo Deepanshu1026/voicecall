@@ -163,14 +163,15 @@ function parseMessages(sql) {
     const senderMongoId = sqlIdToMongoId.get(m.sender_id);
     const receiverMongoId = sqlIdToMongoId.get(m.receiver_id);
 
+    const hasFilePath = m.file_path && m.file_path !== 'NULL' && m.file_path !== 'null' && m.file_path !== 'N/A';
     const msg = {
       conversation: convId, sender: senderMongoId, recipient: receiverMongoId,
-      content: m.message || '', type: m.file_path ? 'file' : 'text',
+      content: m.message || '', type: hasFilePath ? 'file' : 'text',
       status: m.is_read === 'Yes' ? 'seen' : (m.status === 'Read' ? 'delivered' : 'sent'),
       createdAt: m.created_at ? new Date(m.created_at) : new Date(),
       updatedAt: m.created_at ? new Date(m.created_at) : new Date(),
     };
-    if (m.file_path) {
+    if (hasFilePath) {
       msg.fileUrl = '/' + m.file_path.replace(/\\/g, '/');
       msg.fileName = m.file_path.split(/[/\\]/).pop();
       msg.mimeType = m.file_type || undefined;
