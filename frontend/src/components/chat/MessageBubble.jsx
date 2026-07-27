@@ -30,6 +30,21 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
     const isCallMessage = !!message.callReference;
     const isMissedCall = isCallMessage && message.content?.toLowerCase().includes('missed');
     const isVideoCall = isCallMessage && message.content?.toLowerCase().includes('video');
+    const isFreeAlert = !isCallMessage && (message.content?.includes('⚠️') || message.content?.includes('ℹ️'));
+    if (isFreeAlert) {
+      const isWarning = message.content.includes('⚠️');
+      return (
+        <div className="flex justify-center my-3">
+          <div className={`text-xs font-semibold px-4 py-2.5 rounded-lg shadow-sm border ${
+            isWarning
+              ? 'bg-red-50 text-red-700 border-red-200'
+              : 'bg-amber-50 text-amber-700 border-amber-200'
+          }`}>
+            {message.content}
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="flex justify-center my-2">
         <div className="flex items-center gap-1.5 text-xs text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full italic">
