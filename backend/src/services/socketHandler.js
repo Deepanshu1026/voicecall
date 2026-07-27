@@ -151,6 +151,61 @@ const startStaleCleanup = (io) => {
   }, STALE_CLEANUP_INTERVAL_MS);
 };
 
+// Monitor active free chat timers and send alerts when thresholds are crossed
+const startFreeChatMonitor = (io) => {
+  return setInterval(async () => {
+    try {
+      const now = new Date();
+      const conversations = await Conversation.find({
+        lockedToAgent: { $ne: null },
+        isPaid: false,
+        freeUntil: { $gt: now },
+      }).lean();
+
+      for (const conv of conversations) {
+        const createdAt = conv.createdAt ? new Date(conv.createdAt) : conv._id.getTimestamp();
+        const totalDuration = conv.freeUntil.getTime() - createdAt.getTime();
+        if (totalDuration <= 0) continue;
+
+        const elapsed = Date.now() - createdAt.getTime();
+        const pct = (elapsed / totalDuration) * 100;
+
+        const sendAlert = async (messageContent, field) => {
+          if (conv[field]) return; // already notified
+          const recipient = conv.participants.find((p) => p.toString() !== conv.lockedToAgent.toString());
+          if (!recipient) return;
+
+          // Find a socket in both rooms to emit
+          const sysMsg = await Message.create({
+            conversation: conv._id,
+            sender: conv.lockedToAgent,
+            recipient,
+            type: 'text',
+            content: messageContent,
+            isSystemMessage: true,
+            status: 'sent',
+            'statusTimestamps.sent': new Date(),
+          });
+          const sysObj = sysMsg.toObject();
+          io.to(`user:${recipient}`).emit('message:new', sysObj);
+          io.to(`user:${conv.lockedToAgent}`).emit('message:new', sysObj);
+          await Conversation.updateOne({ _id: conv._id }, { [field]: true });
+        };
+
+        // Check 50% first, then 90%
+        if (pct >= 50 && !conv.notified50) {
+          await sendAlert('ℹ️ 50% of your free chat time has been used.', 'notified50');
+        }
+        if (pct >= 90 && !conv.notified90) {
+          await sendAlert('⚠️ Only 10% of your free chat time remains.', 'notified90');
+        }
+      }
+    } catch (err) {
+      console.error('Free chat monitor error:', err);
+    }
+  }, 10000); // check every 10 seconds
+};
+
 // ==================== Call Signal Buffer ====================
 // Ensures WebRTC signals are not lost when the other peer has not yet joined the room.
 
@@ -225,6 +280,7 @@ const setupSocket = (io) => {
   // Mark users that were online before a server restart as offline
   markStaleUsersOffline();
   const staleCleanupInterval = startStaleCleanup(io);
+  const freeChatMonitorInterval = startFreeChatMonitor(io);
 
   io.use(async (socket, next) => {
     try {
@@ -1227,6 +1283,7 @@ const setupSocket = (io) => {
   // Clean up the stale-user interval when the process shuts down
   const cleanup = () => {
     clearInterval(staleCleanupInterval);
+    clearInterval(freeChatMonitorInterval);
     process.exit(0);
   };
   process.once('SIGINT', cleanup);
