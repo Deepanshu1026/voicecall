@@ -32,7 +32,7 @@ const isDifferentDay = (date1, date2) => {
 
 const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
   const { user } = useAuth();
-  const { isUserOnline, typingUsers, emit } = useSocket();
+  const { isUserOnline, typingUsers, emit, on } = useSocket();
   const { startCall } = useCall();
   const [showInfo, setShowInfo] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
