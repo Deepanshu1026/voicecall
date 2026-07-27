@@ -22,10 +22,10 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
   const lastMsgText = lastMessage?.isDeleted
     ? 'Message deleted'
     : lastMessage?.isSystemMessage
-    ? lastMessage?.content
+    ? lastMessage?.content || 'System message'
     : lastMessage?.type === 'file'
     ? `📎 ${lastMessage?.fileName || 'File'}`
-    : lastMessage?.content || '';
+    : lastMessage?.content || 'No messages';
   const isMissedCall = isCallMessage && lastMessage?.content?.toLowerCase().includes('missed');
 
   const statusIcon = () => {
