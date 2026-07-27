@@ -507,41 +507,50 @@ const setupSocket = (io) => {
         io.to(`user:${userId}`).emit('message:new', messageObj);
 
         // Check free chat timer thresholds and send system alerts
-        const totalDuration = conversation.freeUntil
-          ? (conversation.freeUntil.getTime() - conversation.createdAt.getTime())
-          : 0;
         if (
           conversation.lockedToAgent &&
           conversation.freeUntil &&
-          totalDuration > 0 &&
           !conversation.isPaid
         ) {
-          const elapsed = Date.now() - conversation.createdAt.getTime();
-          const pct = (elapsed / totalDuration) * 100;
+          // createdAt might be missing for imported conversations — use _id timestamp as fallback
+          const createdAt = conversation.createdAt
+            ? new Date(conversation.createdAt)
+            : conversation._id.getTimestamp();
+          const totalDuration = conversation.freeUntil.getTime() - createdAt.getTime();
 
-          const sendSystemMessage = async (msgContent) => {
-            const sysMsg = await Message.create({
-              conversation: conversationId,
-              sender: userId,
-              recipient,
-              type: 'text',
-              content: msgContent,
-              isSystemMessage: true,
-              status: 'sent',
-              'statusTimestamps.sent': new Date(),
-            });
-            io.to(`user:${recipient}`).emit('message:new', sysMsg.toObject());
-            io.to(`user:${userId}`).emit('message:new', sysMsg.toObject());
-          };
+          if (totalDuration > 0) {
+            const elapsed = Date.now() - createdAt.getTime();
+            const pct = (elapsed / totalDuration) * 100;
 
-          if (pct >= 90 && !conversation.notified90) {
-            conversation.notified90 = true;
-            await conversation.save();
-            await sendSystemMessage('⚠️ Only 10% of your free chat time remains.');
-          } else if (pct >= 50 && !conversation.notified50) {
-            conversation.notified50 = true;
-            await conversation.save();
-            await sendSystemMessage('ℹ️ 50% of your free chat time has been used.');
+            const sendSystemMessage = async (msgContent) => {
+              const sysMsg = await Message.create({
+                conversation: conversationId,
+                sender: userId,
+                recipient,
+                type: 'text',
+                content: msgContent,
+                isSystemMessage: true,
+                status: 'sent',
+                'statusTimestamps.sent': new Date(),
+              });
+              const sysObj = sysMsg.toObject();
+              io.to(`user:${recipient}`).emit('message:new', sysObj);
+              io.to(`user:${userId}`).emit('message:new', sysObj);
+            };
+
+            // Check each threshold independently (no else-if so both can fire if needed)
+            let saved = false;
+            if (pct >= 90 && !conversation.notified90) {
+              conversation.notified90 = true;
+              saved = true;
+              await sendSystemMessage('⚠️ Only 10% of your free chat time remains.');
+            }
+            if (pct >= 50 && !conversation.notified50) {
+              conversation.notified50 = true;
+              saved = true;
+              await sendSystemMessage('ℹ️ 50% of your free chat time has been used.');
+            }
+            if (saved) await conversation.save();
           }
         }
 
