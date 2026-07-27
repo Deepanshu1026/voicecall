@@ -260,11 +260,13 @@ const sendMessage = asyncHandler(async (req, res) => {
     }
   }
 
+  const messageType = req.file ? 'file' : (type === 'file' || type === 'image') ? 'text' : type;
+
   const message = await Message.create({
     conversation: conversationId,
     sender: req.userId,
     recipient,
-    type: req.file ? 'file' : type,
+    type: messageType,
     content: content || '',
     replyTo: replyTo || null,
     status: 'sent',

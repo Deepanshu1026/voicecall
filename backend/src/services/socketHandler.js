@@ -432,6 +432,8 @@ const setupSocket = (io) => {
     socket.on('message:send', async (data, callback) => {
       try {
         const { conversationId, content, type = 'text', replyTo, fileName, fileSize, fileUrl, mimeType } = data;
+        // Prevent file/image messages that don't actually have a file
+        const effectiveType = (fileUrl || fileName) && (type === 'file' || type === 'image') ? type : 'text';
 
         const conversation = await Conversation.findOne({
           _id: conversationId,
@@ -474,7 +476,7 @@ const setupSocket = (io) => {
           conversation: conversationId,
           sender: userId,
           recipient,
-          type: fileUrl ? 'file' : type,
+          type: fileUrl ? 'file' : effectiveType,
           content: content || '',
           replyTo: replyTo || null,
           fileName,
