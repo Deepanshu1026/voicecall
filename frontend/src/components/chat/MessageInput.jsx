@@ -1,14 +1,19 @@
 import { useState, useRef, useCallback } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { chatAPI } from '../../services/api';
 import EmojiPicker from '../emoji/EmojiPicker';
-import { HiPaperAirplane, HiPaperClip, HiFaceSmile, HiXMark, HiArrowUturnLeft } from 'react-icons/hi2';
+import TemplatePicker from './TemplatePicker';
+import { HiPaperAirplane, HiPaperClip, HiFaceSmile, HiXMark, HiArrowUturnLeft, HiDocumentText } from 'react-icons/hi2';
 import toast from 'react-hot-toast';
 
 const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipientId, variant = 'default' }) => {
   const { emit } = useSocket();
+  const { authType } = useAuth();
+  const isEmployee = authType === 'employee';
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [sending, setSending] = useState(false);
   const [showFilePicker, setShowFilePicker] = useState(false);
   const inputRef = useRef(null);
@@ -87,6 +92,12 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
     setMessage((prev) => prev + emoji);
     inputRef.current?.focus();
     setShowEmojiPicker(false);
+  };
+
+  const handleTemplateSelect = (content) => {
+    setMessage(content);
+    inputRef.current?.focus();
+    setShowTemplatePicker(false);
   };
 
   // User chat style (avisaexperts reference)
@@ -199,12 +210,22 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
         />
 
         <button
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          onClick={() => { setShowEmojiPicker((p) => !p); setShowTemplatePicker(false); }}
           className="p-2 text-gray-400 hover:text-yellow-500 transition-colors rounded-full flex-shrink-0"
           title="Emoji"
         >
           <HiFaceSmile className="w-5 h-5" />
         </button>
+
+        {isEmployee && (
+          <button
+            onClick={() => { setShowTemplatePicker((p) => !p); setShowEmojiPicker(false); }}
+            className="p-2 text-gray-400 hover:text-primary-600 transition-colors rounded-full flex-shrink-0"
+            title="Templates"
+          >
+            <HiDocumentText className="w-5 h-5" />
+          </button>
+        )}
 
         <textarea
           ref={inputRef}
@@ -250,6 +271,15 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
             <EmojiPicker onSelect={handleEmojiSelect} onClose={() => setShowEmojiPicker(false)} />
           </div>
         </div>
+      )}
+
+      {/* Template picker */}
+      {isEmployee && (
+        <TemplatePicker
+          isOpen={showTemplatePicker}
+          onClose={() => setShowTemplatePicker(false)}
+          onSelect={handleTemplateSelect}
+        />
       )}
     </div>
   );

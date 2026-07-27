@@ -129,6 +129,10 @@ export const employeeAPI = {
   logout: () => api.post('/employees/logout'),
   refreshToken: (token) => api.post('/employees/refresh-token', { refreshToken: token }),
   updateProfile: (data) => api.patch('/employees/profile', data),
+  getTemplates: () => api.get('/employees/me/templates'),
+  createTemplate: (data) => api.post('/employees/me/templates', data),
+  updateTemplate: (id, data) => api.put(`/employees/me/templates/${id}`, data),
+  deleteTemplate: (id) => api.delete(`/employees/me/templates/${id}`),
 };
 
 export const chatAPI = {
