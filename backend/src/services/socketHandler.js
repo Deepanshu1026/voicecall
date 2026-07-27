@@ -538,17 +538,17 @@ const setupSocket = (io) => {
               io.to(`user:${userId}`).emit('message:new', sysObj);
             };
 
-            // Check each threshold independently (no else-if so both can fire if needed)
+            // Check each threshold independently — 50% first, then 90%, so messages appear in order
             let saved = false;
-            if (pct >= 90 && !conversation.notified90) {
-              conversation.notified90 = true;
-              saved = true;
-              await sendSystemMessage('⚠️ Only 10% of your free chat time remains.');
-            }
             if (pct >= 50 && !conversation.notified50) {
               conversation.notified50 = true;
               saved = true;
               await sendSystemMessage('ℹ️ 50% of your free chat time has been used.');
+            }
+            if (pct >= 90 && !conversation.notified90) {
+              conversation.notified90 = true;
+              saved = true;
+              await sendSystemMessage('⚠️ Only 10% of your free chat time remains.');
             }
             if (saved) await conversation.save();
           }
