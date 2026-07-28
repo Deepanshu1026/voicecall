@@ -1,0 +1,2 @@
+D:/Hello-World (1)/android/app/.cxx/RelWithDebInfo/4s2x6g2d/x86_64/CMakeFiles/edit_cache.dir
+D:/Hello-World (1)/android/app/.cxx/RelWithDebInfo/4s2x6g2d/x86_64/CMakeFiles/rebuild_cache.dir

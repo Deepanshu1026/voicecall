@@ -21,6 +21,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const callRoutes = require('./routes/callRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
 const agentPortalRoutes = require('./routes/agentPortalRoutes');
+const flutterAppRoutes = require('./routes/flutterAppRoutes');
 
 const app = express();
 const server = http.createServer(app);

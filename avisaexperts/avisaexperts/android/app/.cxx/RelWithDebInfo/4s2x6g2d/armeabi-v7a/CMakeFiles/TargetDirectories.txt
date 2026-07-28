@@ -1,0 +1,2 @@
+D:/Hello-World (1)/android/app/.cxx/RelWithDebInfo/4s2x6g2d/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/Hello-World (1)/android/app/.cxx/RelWithDebInfo/4s2x6g2d/armeabi-v7a/CMakeFiles/rebuild_cache.dir
