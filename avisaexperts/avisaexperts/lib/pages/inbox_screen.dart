@@ -207,7 +207,7 @@ class _InboxScreenState extends State<InboxScreen>
     try {
       final response = await http.get(
         Uri.parse(
-            'https://avisaexperts.com/allMessages.php?receiver_id=$currentUserId'),
+            '/inbox?receiver_id=$currentUserId'),
         headers: {'Content-Type': 'application/json'},
       ).timeout(const Duration(seconds: 30));
 

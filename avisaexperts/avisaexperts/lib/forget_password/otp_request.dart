@@ -344,7 +344,7 @@ class _EmailScreenState extends State<EmailScreen>
 
     try {
       final response = await http.post(
-        Uri.parse('https://avisaexperts.com/forgot_password.php'),
+        Uri.parse('/forgot-password'),
         body: {'email': emailController.text.trim()},
       );
 
@@ -602,7 +602,7 @@ class _OTPScreenState extends State<OTPScreen>
 
     try {
       final response = await http.post(
-        Uri.parse('https://avisaexperts.com/verify_otp.php'),
+        Uri.parse('/verify-otp'),
         body: {
           'user_id': widget.userId.toString(),
           'otp': otp,
@@ -926,7 +926,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>
 
     try {
       final response = await http.post(
-        Uri.parse('https://avisaexperts.com/reset_password.php'),
+        Uri.parse('/reset-password'),
         headers: {"Content-Type": "application/x-www-form-urlencoded"},
         body: {
           'user_id': widget.userId.toString(),

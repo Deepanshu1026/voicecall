@@ -243,7 +243,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     try {
       final response = await http.get(
         Uri.parse(
-            "https://avisaexperts.com/Dev_acess/price_api.php"), // replace with your domain
+            "/pricing"), // replace with your domain
       );
 
       if (response.statusCode == 200) {
@@ -267,7 +267,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
   Future<void> _fetchMeetingModes() async {
     try {
       final response = await http.get(
-        Uri.parse("https://avisaexperts.com/appApis/meetings_api.php"),
+        Uri.parse("/meetings/status"),
       );
 
       if (response.statusCode == 200) {
@@ -367,7 +367,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
         break;
     }
     final dateString = DateFormat('yyyy-MM-dd').format(_selectedDate!);
-    final url = Uri.parse('https://avisaexperts.com/time_slots.php')
+    final url = Uri.parse('/time-slots')
         .replace(queryParameters: {'plan': planString, 'date': dateString});
     print("Fetching time slots from: $url");
     try {
@@ -423,7 +423,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
       _isFetchingUnavailableDates = true;
       _fetchUnavailableDatesError = null;
     });
-    final url = Uri.parse('https://avisaexperts.com/getDates.php');
+    final url = Uri.parse('/cancelled-dates');
     print("Fetching unavailable premium dates from: $url");
     try {
       final response = await http.get(url).timeout(const Duration(seconds: 15));
@@ -1180,7 +1180,7 @@ class _AppointmentBookingScreenState extends State<AppointmentBookingScreen> {
     };
     print("Submitting booking data: $requestBody");
 
-    final url = Uri.parse('https://avisaexperts.com/book_appointment.php');
+    final url = Uri.parse('/appointments');
     String? successMessage;
     String? errorMessage;
     try {

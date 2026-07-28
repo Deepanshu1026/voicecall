@@ -219,7 +219,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       if (_selectedImageFile != null) {
         var request = http.MultipartRequest(
-            'POST', Uri.parse('https://avisaexperts.com/appEditProfile.php'));
+            'POST', Uri.parse('/edit-profile'));
         request.fields['userid'] = _userId!;
         request.fields['name'] = _nameController.text.trim();
         request.fields['contact'] = _phoneController.text.trim();
@@ -235,7 +235,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         response = await http.Response.fromStream(streamedResponse);
       } else {
         final url =
-            Uri.parse('https://avisaexperts.com/appEditProfile.php').replace(
+            Uri.parse('/edit-profile').replace(
           queryParameters: {
             'userid': _userId,
             'name': _nameController.text.trim(),
@@ -602,4 +602,4 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 }
 
-const String BASE_IMAGE_URL = "https://avisaexperts.com/";
+const String BASE_IMAGE_URL = "/";

@@ -16,7 +16,7 @@ import 'my_tickets_screen.dart'; // <-- IMPORT HelpSupportScreen
 import 'dart:async'; // Only needed if using Future.delayed, not strictly for Hero or basic Futures
 
 // Base URL for constructing image URLs (ensure this is correct)
-const String baseImageUrl = 'https://avisaexperts.com/';
+const String baseImageUrl = '/';
 
 // Initialize logger
 final logger = Logger();

@@ -19,7 +19,7 @@ const String USER_ID_PREFS_KEY = 'userId';
 // Helper function to fetch ticket count directly from API
 Future<int> fetchTicketCountFromApi(int userId) async {
   final url = Uri.parse(
-      'https://avisaexperts.com/getMyTickets.php'); // Your API endpoint
+      '/tickets'); // Your API endpoint
   log("fetchTicketCountFromApi: Fetching for User ID: $userId from $url");
 
   try {
@@ -72,7 +72,7 @@ Future<int> fetchUnreadMessageCountFromApi(String userId) async {
   }
 
   final url =
-      Uri.parse('https://avisaexperts.com/allMessages.php?receiver_id=$userId');
+      Uri.parse('/inbox?receiver_id=$userId');
   log(
       "fetchUnreadMessageCountFromApi: Fetching for User ID: $userId from $url");
 

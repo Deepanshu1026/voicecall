@@ -231,7 +231,7 @@ class MyTicketsScreenState extends State<MyTicketsScreen> {
       });
     }
 
-    final url = Uri.parse('https://avisaexperts.com/getMyTickets.php');
+    final url = Uri.parse('/tickets');
 
     try {
       final response = await http.post(
@@ -573,7 +573,7 @@ class _TicketCardState extends State<_TicketCard> {
       });
 
       final response = await http
-          .get(Uri.parse('https://avisaexperts.com/Dev_Acess/price_api.php'))
+          .get(Uri.parse('/pricing'))
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {

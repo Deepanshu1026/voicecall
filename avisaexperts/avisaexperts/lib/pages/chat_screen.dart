@@ -39,7 +39,7 @@ String fixImageUrl(String? url) {
 
   // Convert relative path to absolute URL
   const String baseUrl =
-      'https://avisaexperts.com'; // Replace with your actual domain
+      'https://voicecall-6ylg.onrender.com/api/app'; // Replace with your actual domain
 
   // Handle both '/img/swati.webp' and 'img/swati.webp' formats
   if (url.startsWith('/')) {
@@ -611,7 +611,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       final dio = Dio();
       final response = await dio
           .get(
-            'https://avisaexperts.com/getMessages.php?sender_id=$_currentUserId&receiver_id=${widget.advisorId}',
+            '/chat/messages?sender_id=$_currentUserId&receiver_id=${widget.advisorId}',
             options: Options(headers: {'Content-Type': 'application/json'}),
           )
           .timeout(const Duration(seconds: 60));
@@ -643,7 +643,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               if (filePath != null && filePath.isNotEmpty) {
                 filePath = filePath.replaceAll('\\', '/');
                 filePath = filePath.replaceFirst(RegExp(r'^/+'), '');
-                imageUrl = "https://avisaexperts.com/$filePath";
+                imageUrl = "/$filePath";
               }
 
               MessageType messageType =
@@ -869,7 +869,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   void _previewFile(ChatMessage message) {
     if (message.filePath == null) return;
 
-    final String fileUrl = "https://avisaexperts.com/${message.filePath!}";
+    final String fileUrl = "/${message.filePath!}";
     final String fileName = message.fileName ?? 'Document';
     final String extension = fileName.split('.').last.toLowerCase();
 
@@ -1048,7 +1048,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       String messageToSend = type == MessageType.text
           ? messageText
           : (caption ?? fileName ?? 'Media file');
-      final String url = 'https://avisaexperts.com/sendMessage.php';
+      final String url = '/chat/send';
 
       Response response;
 
@@ -1561,7 +1561,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               child: Opacity(
                 opacity: 0.5,
                 child: Image.network(
-                  'https://avisaexperts.com/img/blackbg%201.webp',
+                  '/img/blackbg%201.webp',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) =>
                       Container(color: _chatBackground),

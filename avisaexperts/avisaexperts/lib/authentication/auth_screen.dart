@@ -165,7 +165,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _performLogin() async {
-    final url = Uri.parse('https://avisaexperts.com/applogin1.php');
+    final url = Uri.parse('/login');
     final identifier = _identifierController.text.trim();
     final countryCode =
         _isEmailLogin ? '' : _selectedCountryCode.replaceAll('+', '');
@@ -263,7 +263,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<void> _performRegister() async {
-    final url = Uri.parse('https://avisaexperts.com/appsignup1.php');
+    final url = Uri.parse('/register');
     final phoneNumber = _registerPhoneController.text.trim();
     final countryCode = _selectedCountryCode.replaceAll('+', '');
     debugPrint(
@@ -299,7 +299,7 @@ class _AuthScreenState extends State<AuthScreen> {
     debugPrint("✅ FCM Token after login: $fcmToken");
 
     final response = await http.post(
-      Uri.parse("https://avisaexperts.com/save_tokencheck.php"),
+      Uri.parse("/fcm-token"),
       body: {
         'token': fcmToken,
         'device': 'android',

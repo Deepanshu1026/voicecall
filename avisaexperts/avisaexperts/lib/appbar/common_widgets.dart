@@ -19,7 +19,7 @@ const Color errorColor = Color(0xFFD32F2F); // A specific, strong red for errors
 final ValueNotifier<bool> hasNewNotificationsNotifier =
     ValueNotifier<bool>(false);
 
-const String baseImageUrl = 'https://avisaexperts.com/';
+const String baseImageUrl = '/';
 
 class GlobalAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String userName;

@@ -133,8 +133,8 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
 
   Future<List<ConsultantUserItem>> _fetchUsersFromApi() async {
     final String url = _currentUserId != null
-        ? 'https://avisaexperts.com/getusersAllData.php?id=$_currentUserId'
-        : 'https://avisaexperts.com/getusersAllData.php';
+        ? '/users-all-data?id=$_currentUserId'
+        : '/users-all-data';
     final response = await http.get(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},

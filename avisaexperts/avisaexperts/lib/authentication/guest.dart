@@ -7,7 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 class GuestService {
   static const String endpoint = 'https://avisaexperts.com/insert_guest.php';
   static const String saveTokenEndpoint =
-      'https://avisaexperts.com/save_tokencheck.php';
+      '/fcm-token';
 
   static Future<Map<String, dynamic>> createGuestUser() async {
     try {

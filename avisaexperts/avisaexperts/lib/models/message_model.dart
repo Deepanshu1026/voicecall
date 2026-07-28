@@ -41,7 +41,7 @@ class InboxEntry {
     if (imageUrl.startsWith('http')) {
       return imageUrl;
     } else {
-      return 'https://avisaexperts.com/$imageUrl';
+      return '/$imageUrl';
     }
   }
 

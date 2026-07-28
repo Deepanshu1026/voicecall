@@ -371,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     try {
       final response = await http
-          .get(Uri.parse('https://avisaexperts.com/getAppAllConsultant.php'));
+          .get(Uri.parse('/consultants'));
       if (!mounted) return;
 
       if (response.statusCode == 200) {

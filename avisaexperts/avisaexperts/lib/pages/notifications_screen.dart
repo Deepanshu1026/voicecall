@@ -37,7 +37,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     });
 
     // Your API endpoint for fetching notifications
-    final url = Uri.parse('https://avisaexperts.com/getNotification.php');
+    final url = Uri.parse('/notifications');
     print("NotificationsScreen: Fetching notifications from $url");
 
     try {

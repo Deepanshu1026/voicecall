@@ -46,7 +46,7 @@ class ConsultantData {
     if (imageUrl.startsWith('http')) {
       return imageUrl;
     } else {
-      return 'https://avisaexperts.com/$imageUrl';
+      return '/$imageUrl';
     }
   }
 
@@ -139,7 +139,7 @@ class ConsultantUserItem {
     if (imageUrl.startsWith('http')) {
       return imageUrl;
     } else {
-      return 'https://avisaexperts.com/$imageUrl';
+      return '/$imageUrl';
     }
   }
 

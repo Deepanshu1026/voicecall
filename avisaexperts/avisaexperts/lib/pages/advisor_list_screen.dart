@@ -77,7 +77,7 @@ class Advisor {
 // --- End Data Model ---
 
 // Base URL for images (from your paste-2.txt)
-const String BASE_IMAGE_URL = 'https://avisaexperts.com/';
+const String BASE_IMAGE_URL = '/';
 
 // --- Main Screen Widget (from your paste-2.txt) ---
 class AdvisorListScreen extends StatefulWidget {
@@ -196,7 +196,7 @@ class _AdvisorListScreenState extends State<AdvisorListScreen>
     // ... (Your existing _fetchAdvisors method from paste-2.txt - unchanged) ...
     if (!mounted) return;
     final Uri url =
-        Uri.parse('https://avisaexperts.com/getAppAllConsultant.php');
+        Uri.parse('/consultants');
     log("Fetching advisors from: $url");
     try {
       final response = await http.get(url).timeout(const Duration(seconds: 20));

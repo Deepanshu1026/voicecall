@@ -466,4 +466,116 @@ router.get('/insta-api-key', asyncHandler(async (req, res) => {
   res.json({ status: true, data: key ? [key] : [] });
 }));
 
+// ==================== CHAT ENDPOINTS (Flutter app compat) ====================
+
+// Get messages between two users (like PHP getMessages.php)
+router.get('/chat/messages', asyncHandler(async (req, res) => {
+  const { sender_id, receiver_id } = req.query;
+  if (!sender_id || !receiver_id) {
+    return res.json({ success: false, message: 'sender_id and receiver_id required', data: [] });
+  }
+
+  const Message = require('../models/Message');
+  const Conversation = require('../models/Conversation');
+  const mongoose = require('mongoose');
+
+  const sId = new mongoose.Types.ObjectId(sender_id);
+  const rId = new mongoose.Types.ObjectId(receiver_id);
+
+  // Find the conversation between these two users
+  const conv = await Conversation.findOne({
+    type: 'direct',
+    participants: { $all: [sId, rId], $size: 2 },
+  });
+
+  if (!conv) return res.json({ success: true, data: [] });
+
+  const messages = await Message.find({ conversation: conv._id })
+    .sort({ createdAt: -1 })
+    .limit(100)
+    .lean();
+
+  const data = messages.map((m) => ({
+    id: m._id,
+    sender_id: m.sender?.toString(),
+    receiver_id: m.recipient?.toString(),
+    message: m.content,
+    type: m.type,
+    file_path: m.fileUrl || '',
+    file_type: m.mimeType || '',
+    status: m.status,
+    is_read: m.status === 'seen' ? 'Yes' : 'No',
+    created_at: m.createdAt,
+    reply_to_id: m.replyTo?.toString() || null,
+  }));
+
+  res.json({ success: true, data });
+}));
+
+// Send a message (like PHP sendMessage.php)
+router.post('/chat/send', asyncHandler(async (req, res) => {
+  const { sender_id, receiver_id, message, file_path, file_type } = req.body;
+  if (!sender_id || !receiver_id || !message) {
+    return res.json({ success: false, message: 'sender_id, receiver_id, message required' });
+  }
+
+  const Message = require('../models/Message');
+  const Conversation = require('../models/Conversation');
+  const mongoose = require('mongoose');
+
+  const sId = new mongoose.Types.ObjectId(sender_id);
+  const rId = new mongoose.Types.ObjectId(receiver_id);
+
+  // Find or create conversation
+  let conv = await Conversation.findOne({
+    type: 'direct',
+    participants: { $all: [sId, rId], $size: 2 },
+  });
+
+  if (!conv) {
+    conv = await Conversation.create({
+      type: 'direct',
+      participants: [sId, rId],
+      isActive: true,
+    });
+  }
+
+  const msg = await Message.create({
+    conversation: conv._id,
+    sender: sId,
+    recipient: rId,
+    type: file_path ? 'file' : 'text',
+    content: message || '',
+    fileUrl: file_path || undefined,
+    mimeType: file_type || undefined,
+    status: 'sent',
+    'statusTimestamps.sent': new Date(),
+  });
+
+  // Update conversation
+  conv.lastMessage = msg._id;
+  const unreadEntry = conv.unreadCount.find((u) => u.user.toString() === rId.toString());
+  if (unreadEntry) unreadEntry.count += 1;
+  else conv.unreadCount.push({ user: rId, count: 1 });
+  await conv.save();
+
+  // Emit socket event for real-time
+  if (req.io) {
+    const msgObj = msg.toObject();
+    msgObj.sender = { _id: sId };
+    req.io.to(`user:${rId}`).emit('message:new', msgObj);
+    req.io.to(`user:${sId}`).emit('message:new', msgObj);
+  }
+
+  res.json({ success: true, message_id: msg._id, created_at: msg.createdAt });
+}));
+
+// Get users data (like PHP getusersAllData.php)
+router.get('/users-all-data', asyncHandler(async (req, res) => {
+  const { id } = req.query;
+  const filter = id ? { _id: id } : {};
+  const users = await User.find(filter).select('-password -refreshToken').lean();
+  res.json({ success: true, data: users });
+}));
+
 module.exports = router;
