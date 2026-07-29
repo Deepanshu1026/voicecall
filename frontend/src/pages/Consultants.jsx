@@ -7,6 +7,7 @@ import { useChat } from '../hooks/useChat';
 import LandingLayout from '../components/user/LandingLayout';
 import ChatArea from '../components/chat/ChatArea';
 import { userAPI, chatAPI } from '../services/api';
+import { initiateWalletRecharge } from '../utils/razorpay';
 import toast from 'react-hot-toast';
 import '../styles/consultants.css';
 import { FiMessageCircle, FiPhone, FiStar, FiBriefcase, FiUsers, FiGlobe, FiX, FiAward, FiUser } from 'react-icons/fi';
@@ -281,16 +282,25 @@ const Consultants = () => {
       return;
     }
     setAddingMoney(true);
-    try {
-      const res = await userAPI.addMoney(addAmount);
-      setWallet(res.data?.data || { balance: 0 });
-      toast.success(`₹${addAmount} added to your wallet`);
-      setShowAddMoney(false);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || error.message || 'Failed to add money');
-    } finally {
-      setAddingMoney(false);
-    }
+    initiateWalletRecharge({
+      amount: addAmount,
+      name: user?.displayName || user?.username || '',
+      email: user?.email || '',
+      contact: user?.mobile || '',
+      onSuccess: (balance) => {
+        setWallet({ balance });
+        toast.success(`₹${addAmount} added to your wallet`);
+        setShowAddMoney(false);
+        setAddingMoney(false);
+      },
+      onError: (msg) => {
+        toast.error(msg);
+        setAddingMoney(false);
+      },
+      onDismiss: () => {
+        setAddingMoney(false);
+      },
+    });
   };
 
   useEffect(() => {
@@ -476,7 +486,7 @@ const Consultants = () => {
                     disabled={addingMoney || addAmount <= 0}
                     className="add-money-confirm"
                   >
-                    {addingMoney ? 'Adding...' : `Add ₹${addAmount}`}
+                    {addingMoney ? 'Processing...' : `Pay ₹${addAmount}`}
                   </button>
                   <button onClick={() => setShowAddMoney(false)} className="add-money-cancel">
                     Cancel

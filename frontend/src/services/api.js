@@ -119,6 +119,8 @@ export const userAPI = {
   getBlockedUsers: () => api.get('/users/blocked'),
   getWallet: () => api.get('/users/wallet'),
   addMoney: (amount) => api.post('/users/wallet/add-money', { amount }),
+  createOrder: (amount) => api.post('/users/wallet/create-order', { amount }),
+  verifyPayment: (data) => api.post('/users/wallet/verify-payment', data),
   getTransactions: (page, limit) => api.get('/users/wallet/transactions', { params: { page, limit } }),
 };
 

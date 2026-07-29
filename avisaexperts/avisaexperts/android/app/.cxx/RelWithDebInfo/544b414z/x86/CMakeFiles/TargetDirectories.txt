@@ -1,2 +1,0 @@
-D:/Hello-World (1)/android/app/.cxx/RelWithDebInfo/544b414z/x86/CMakeFiles/edit_cache.dir
-D:/Hello-World (1)/android/app/.cxx/RelWithDebInfo/544b414z/x86/CMakeFiles/rebuild_cache.dir

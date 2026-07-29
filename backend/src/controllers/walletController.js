@@ -1,11 +1,19 @@
+const crypto = require('crypto');
+const Razorpay = require('razorpay');
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
+const config = require('../config');
+
+const razorpay = new Razorpay({
+  key_id: config.razorpay.keyId,
+  key_secret: config.razorpay.keySecret,
+});
 
 const getWallet = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.userId).select('walletBalance username displayName');
+  const user = await User.findById(req.userId).select('walletBalance username displayName email');
   if (!user) throw new AppError('User not found', 404);
 
   const transactions = await Transaction.find({ user: req.userId })
@@ -17,11 +25,97 @@ const getWallet = asyncHandler(async (req, res) => {
     user: {
       username: user.username,
       displayName: user.displayName,
+      email: user.email,
     },
     transactions,
   }, 'Wallet retrieved');
 });
 
+const createOrder = asyncHandler(async (req, res) => {
+  const { amount } = req.body;
+
+  if (!amount || typeof amount !== 'number' || amount <= 0) {
+    throw new AppError('Valid positive amount is required', 400);
+  }
+
+  const user = await User.findById(req.userId).select('email displayName');
+  if (!user) throw new AppError('User not found', 404);
+
+  const options = {
+    amount: Math.round(amount * 100), // Razorpay expects amount in paise
+    currency: 'INR',
+    receipt: `wallet_${req.userId}_${Date.now()}`,
+    notes: {
+      userId: String(req.userId),
+      email: user.email,
+      description: 'Wallet recharge',
+    },
+  };
+
+  const order = await razorpay.orders.create(options);
+
+  ApiResponse.success(res, {
+    orderId: order.id,
+    amount: order.amount,
+    currency: order.currency,
+    keyId: config.razorpay.keyId,
+  }, 'Order created');
+});
+
+const verifyPayment = asyncHandler(async (req, res) => {
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = req.body;
+
+  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    throw new AppError('Payment details are required', 400);
+  }
+
+  const body = razorpay_order_id + '|' + razorpay_payment_id;
+  const expectedSignature = crypto
+    .createHmac('sha256', config.razorpay.keySecret)
+    .update(body)
+    .digest('hex');
+
+  const isAuthentic = expectedSignature === razorpay_signature;
+
+  if (!isAuthentic) {
+    throw new AppError('Invalid payment signature', 400);
+  }
+
+  const creditAmount = amount && typeof amount === 'number' && amount > 0 ? amount : 0;
+  if (creditAmount <= 0) {
+    throw new AppError('Invalid amount', 400);
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.userId,
+    { $inc: { walletBalance: creditAmount } },
+    { new: true }
+  );
+  if (!user) throw new AppError('User not found', 404);
+
+  const transaction = await Transaction.create({
+    user: req.userId,
+    amount: creditAmount,
+    type: 'credit',
+    description: 'Wallet recharge via Razorpay',
+    status: 'completed',
+    metadata: {
+      razorpayOrderId: razorpay_order_id,
+      razorpayPaymentId: razorpay_payment_id,
+    },
+  });
+
+  if (req.io) {
+    req.io.to(`user:${req.userId}`).emit('wallet:updated', { balance: user.walletBalance });
+  }
+
+  ApiResponse.success(res, {
+    balance: user.walletBalance,
+    transaction,
+  }, 'Payment verified and wallet credited');
+});
+
+// Legacy direct add-money (kept for admin/internal use if needed)
 const addMoney = asyncHandler(async (req, res) => {
   const { amount } = req.body;
 
@@ -36,7 +130,6 @@ const addMoney = asyncHandler(async (req, res) => {
   );
   if (!user) throw new AppError('User not found', 404);
 
-  // TODO: integrate real payment gateway (Razorpay/Stripe) here before crediting wallet
   const transaction = await Transaction.create({
     user: req.userId,
     amount,
@@ -45,7 +138,6 @@ const addMoney = asyncHandler(async (req, res) => {
     status: 'completed',
   });
 
-  // Notify the user via socket in real-time
   if (req.io) {
     req.io.to(`user:${req.userId}`).emit('wallet:updated', { balance: user.walletBalance });
   }
@@ -76,6 +168,8 @@ const getTransactions = asyncHandler(async (req, res) => {
 
 module.exports = {
   getWallet,
+  createOrder,
+  verifyPayment,
   addMoney,
   getTransactions,
 };

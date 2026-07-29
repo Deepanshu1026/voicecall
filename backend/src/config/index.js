@@ -44,4 +44,8 @@ module.exports = {
     max: parseInt(process.env.RATE_LIMIT_MAX) || 100000,
   },
   socketCorsOrigin: (process.env.SOCKET_CORS_ORIGIN || 'http://localhost:5173').replace(/\/+$/, ''),
+  razorpay: {
+    keyId: process.env.RAZORPAY_KEY_ID || '',
+    keySecret: process.env.RAZORPAY_KEY_SECRET || '',
+  },
 };

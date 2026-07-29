@@ -9,7 +9,8 @@ import ChatArea from '../components/chat/ChatArea';
 import UserChatNavbar from '../components/chat/UserChatNavbar';
 import UserChatDrawer from '../components/chat/UserChatDrawer';
 import toast from 'react-hot-toast';
-import { chatAPI } from '../services/api';
+import { chatAPI, userAPI } from '../services/api';
+import { initiateWalletRecharge } from '../utils/razorpay';
 
 const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50' }) => {
   const { user } = useAuth();
@@ -65,16 +66,25 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50' }) => {
       return;
     }
     setAddingMoney(true);
-    try {
-      const res = await userAPI.addMoney(addAmount);
-      setWallet(res.data?.data || { balance: 0 });
-      toast.success('Money added to wallet');
-      setShowAddMoney(false);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || 'Failed to add money');
-    } finally {
-      setAddingMoney(false);
-    }
+    initiateWalletRecharge({
+      amount: addAmount,
+      name: user?.displayName || user?.username || '',
+      email: user?.email || '',
+      contact: user?.mobile || '',
+      onSuccess: (balance) => {
+        setWallet({ balance });
+        toast.success('Money added to wallet');
+        setShowAddMoney(false);
+        setAddingMoney(false);
+      },
+      onError: (msg) => {
+        toast.error(msg);
+        setAddingMoney(false);
+      },
+      onDismiss: () => {
+        setAddingMoney(false);
+      },
+    });
   };
 
   // Message listeners
@@ -348,7 +358,7 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50' }) => {
                   disabled={addingMoney || addAmount <= 0}
                   className="w-full py-2.5 px-4 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-semibold disabled:opacity-60 disabled:cursor-not-allowed transition"
                 >
-                  {addingMoney ? 'Adding...' : `Add ₹${addAmount}`}
+                  {addingMoney ? 'Processing...' : `Pay ₹${addAmount}`}
                 </button>
                 <button
                   onClick={() => setShowAddMoney(false)}

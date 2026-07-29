@@ -1,2 +1,0 @@
-C:/Users/hp/Downloads/Hello-World (1)/android/app/.cxx/Debug/6281cw5s/armeabi-v7a/CMakeFiles/edit_cache.dir
-C:/Users/hp/Downloads/Hello-World (1)/android/app/.cxx/Debug/6281cw5s/armeabi-v7a/CMakeFiles/rebuild_cache.dir

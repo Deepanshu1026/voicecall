@@ -18,6 +18,8 @@ router.delete('/block/:userId', auth, userController.unblockUser);
 // Wallet routes
 router.get('/wallet', auth, walletController.getWallet);
 router.post('/wallet/add-money', auth, walletController.addMoney);
+router.post('/wallet/create-order', auth, walletController.createOrder);
+router.post('/wallet/verify-payment', auth, walletController.verifyPayment);
 router.get('/wallet/transactions', auth, walletController.getTransactions);
 
 router.get('/:userId', auth, userController.getUserById);

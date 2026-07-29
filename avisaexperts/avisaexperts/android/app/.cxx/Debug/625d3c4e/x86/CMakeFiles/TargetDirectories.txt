@@ -1,2 +1,0 @@
-D:/Hello-World (1)/android/app/.cxx/Debug/625d3c4e/x86/CMakeFiles/edit_cache.dir
-D:/Hello-World (1)/android/app/.cxx/Debug/625d3c4e/x86/CMakeFiles/rebuild_cache.dir
