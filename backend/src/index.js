@@ -96,6 +96,7 @@ app.use('/api/employees', employeeRoutes);
 app.use('/api/agent-portal', agentPortalRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/calls', callRoutes);
+app.use('/api/app', flutterAppRoutes);
 
 // Serve built frontend in production and fall back to index.html for SPA routes
 const frontendDistPath = path.join(__dirname, '..', '..', 'frontend', 'dist');
