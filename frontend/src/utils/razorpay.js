@@ -77,7 +77,7 @@ export async function initiateWalletRecharge({ amount, name, email, contact, onS
     const rzp = new Razorpay(options);
     rzp.open();
   } catch (err) {
-    const msg = err?.response?.data?.message || err.message || 'Failed to initiate payment';
+    const msg = err?.response?.data?.message || err?.response?.data?.error || err.message || 'Failed to initiate payment';
     if (onError) onError(msg);
   }
 }

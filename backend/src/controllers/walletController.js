@@ -7,10 +7,19 @@ const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
 const config = require('../config');
 
-const razorpay = new Razorpay({
-  key_id: config.razorpay.keyId,
-  key_secret: config.razorpay.keySecret,
-});
+let razorpayInstance = null;
+function getRazorpay() {
+  if (!razorpayInstance) {
+    const keyId = config.razorpay.keyId;
+    const keySecret = config.razorpay.keySecret;
+    if (!keyId || !keySecret) {
+      console.error('[Razorpay] Missing RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET environment variables');
+      throw new AppError('Payment gateway is not configured on the server. Please contact support.', 503);
+    }
+    razorpayInstance = new Razorpay({ key_id: keyId, key_secret: keySecret });
+  }
+  return razorpayInstance;
+}
 
 const getWallet = asyncHandler(async (req, res) => {
   const user = await User.findById(req.userId).select('walletBalance username displayName email');
@@ -41,10 +50,13 @@ const createOrder = asyncHandler(async (req, res) => {
   const user = await User.findById(req.userId).select('email displayName');
   if (!user) throw new AppError('User not found', 404);
 
+  const receipt = (`wlt_${req.userId.toString().slice(-8)}_${Date.now()}`).slice(0, 40);
+  console.log('[Razorpay] Creating order. Receipt:', receipt, 'Length:', receipt.length);
+
   const options = {
     amount: Math.round(amount * 100), // Razorpay expects amount in paise
     currency: 'INR',
-    receipt: `wallet_${req.userId}_${Date.now()}`,
+    receipt,
     notes: {
       userId: String(req.userId),
       email: user.email,
@@ -52,7 +64,7 @@ const createOrder = asyncHandler(async (req, res) => {
     },
   };
 
-  const order = await razorpay.orders.create(options);
+  const order = await getRazorpay().orders.create(options);
 
   ApiResponse.success(res, {
     orderId: order.id,
@@ -69,9 +81,14 @@ const verifyPayment = asyncHandler(async (req, res) => {
     throw new AppError('Payment details are required', 400);
   }
 
+  const keySecret = config.razorpay.keySecret;
+  if (!keySecret) {
+    console.error('[Razorpay] Missing RAZORPAY_KEY_SECRET environment variable');
+    throw new AppError('Payment gateway is not configured on the server. Please contact support.', 503);
+  }
   const body = razorpay_order_id + '|' + razorpay_payment_id;
   const expectedSignature = crypto
-    .createHmac('sha256', config.razorpay.keySecret)
+    .createHmac('sha256', keySecret)
     .update(body)
     .digest('hex');
 
