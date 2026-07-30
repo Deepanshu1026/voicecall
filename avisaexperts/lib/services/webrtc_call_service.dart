@@ -398,7 +398,14 @@ class WebRTCCallService extends ChangeNotifier {
   List<Map<String, dynamic>> _getIceServers() {
     final servers = List<Map<String, dynamic>>.from(_stunServers);
     if (_fetchedTurnServers.isNotEmpty) {
-      servers.addAll(_fetchedTurnServers);
+      // Only include TURN servers that have valid urls
+      final validTurnServers = _fetchedTurnServers.where((server) {
+        final urls = server['urls'];
+        if (urls is String) return urls.isNotEmpty;
+        if (urls is List) return urls.isNotEmpty;
+        return false;
+      }).toList();
+      servers.addAll(validTurnServers);
     } else {
       // Fallback to public relay only if the backend credentials aren't available.
       servers.addAll(_fallbackTurnServers);
@@ -426,7 +433,17 @@ class WebRTCCallService extends ChangeNotifier {
     final iceServers = _getIceServers();
     _logCallEvent('[PC] Creating with ${iceServers.length} ICE servers');
     for (var i = 0; i < iceServers.length; i++) {
-      _logCallEvent('[PC] ICE[$i]: ${iceServers[i]['urls'] ?? iceServers[i]}');
+      try {
+        final server = iceServers[i];
+        final urls = server['urls'];
+        if (urls is List) {
+          _logCallEvent('[PC] ICE[$i]: ${urls.join(', ')}');
+        } else {
+          _logCallEvent('[PC] ICE[$i]: $urls');
+        }
+      } catch (e) {
+        _logCallEvent('[PC] ICE[$i]: <error logging: $e>');
+      }
     }
 
     debugPrint('[WebRTC] Creating RTCPeerConnection');
