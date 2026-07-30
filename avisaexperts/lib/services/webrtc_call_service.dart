@@ -423,16 +423,35 @@ class WebRTCCallService extends ChangeNotifier {
       _peerConnection = null;
     }
 
+    final iceServers = _getIceServers();
+    _logCallEvent('[PC] Creating with ${iceServers.length} ICE servers');
+    for (var i = 0; i < iceServers.length; i++) {
+      _logCallEvent('[PC] ICE[$i]: ${iceServers[i]['urls'] ?? iceServers[i]}');
+    }
+
     debugPrint('[WebRTC] Creating RTCPeerConnection');
-    final pc = await createPeerConnection(
-      {
-        'iceServers': _getIceServers(),
-        'iceCandidatePoolSize': 10,
-        'bundlePolicy': 'max-bundle',
-        'rtcpMuxPolicy': 'require',
-      },
-      {},
-    );
+    RTCPeerConnection pc;
+    try {
+      pc = await createPeerConnection(
+        {
+          'iceServers': iceServers,
+          'iceCandidatePoolSize': 10,
+          'bundlePolicy': 'max-bundle',
+          'rtcpMuxPolicy': 'require',
+        },
+        {},
+      ).timeout(
+        const Duration(seconds: 20),
+        onTimeout: () {
+          throw Exception('createPeerConnection timed out after 20 seconds');
+        },
+      );
+      _logCallEvent('[PC] Peer connection created successfully');
+    } catch (e) {
+      _logCallEvent('[PC] FAILED to create peer connection: $e');
+      debugPrint('[WebRTC] Peer connection creation error: $e');
+      rethrow;
+    }
 
     pc.onIceCandidate = (event) {
       if (event.candidate != null && event.candidate!.isNotEmpty) {
@@ -771,13 +790,35 @@ class WebRTCCallService extends ChangeNotifier {
     _startCallTimeout(_callRingingTimeoutMs, 'Call timed out: no answer');
 
     _logCallEvent('[STEP 9] Creating peer connection...');
-    final pc = await _createPeerConnection();
-    await _addLocalTracks(stream);
-    _logCallEvent('[STEP 10] Peer connection created');
+
+    RTCPeerConnection? pc;
+    try {
+      pc = await _createPeerConnection().timeout(
+        const Duration(seconds: 20),
+        onTimeout: () {
+          throw Exception('Peer connection timed out after 20 seconds');
+        },
+      );
+      await _addLocalTracks(stream);
+      _logCallEvent('[STEP 10] Peer connection created');
+    } catch (e) {
+      _logCallEvent('[FAIL] Peer connection failed: $e');
+      debugPrint('[WebRTC] Peer connection failed: $e');
+      _callError = 'Failed to create peer connection: $e';
+      _callState = CallState.error;
+      notifyListeners();
+      _reset();
+      return false;
+    }
 
     try {
       _logCallEvent('[STEP 11] Creating offer...');
-      final offer = await pc.createOffer();
+      final offer = await pc.createOffer().timeout(
+        const Duration(seconds: 15),
+        onTimeout: () {
+          throw Exception('Create offer timed out after 15 seconds');
+        },
+      );
       await pc.setLocalDescription(offer);
       final localDesc = await pc.getLocalDescription();
       _logCallEvent('[STEP 12] Offer created, emitting call:initiate...');
