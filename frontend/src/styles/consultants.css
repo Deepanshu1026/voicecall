@@ -838,15 +838,20 @@ html {
 
   .consultants-page .profile-card {
     right: 12px;
-    top: 145px;
+    top: 152px;
     width: 260px;
     margin: 0;
     padding: 16px 0;
   }
 
+  .consultants-page .profile-image {
+    display: flex;
+    justify-content: center;
+  }
+
   .consultants-page .profile-image img {
-    width: 80px;
-    height: 80px;
+    width: 72px;
+    height: 72px;
   }
 
   .consultants-page .profile-name {
@@ -857,6 +862,22 @@ html {
   .consultants-page .profile-phone {
     font-size: 14px;
     margin-bottom: 12px;
+  }
+
+  .consultants-page .profile-card > a {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    margin-bottom: 6px;
+  }
+
+  .consultants-page .info-section-consultant {
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  .consultants-page .info-section-consultant .profile-btn {
+    width: auto !important;
   }
 
   .consultants-page .consultant-section {
@@ -961,11 +982,16 @@ html {
 
   .consultants-page .profile-card {
     right: 8px;
-    top: 142px;
+    top: 158px;
     width: calc(100% - 16px);
     max-width: 280px;
     padding: 14px 0;
     border-radius: 12px;
+  }
+
+  .consultants-page .profile-image {
+    display: flex;
+    justify-content: center;
   }
 
   .consultants-page .profile-image img {
@@ -986,6 +1012,22 @@ html {
   .consultants-page .profile-btn {
     font-size: 13px;
     padding: 7px 14px;
+  }
+
+  .consultants-page .profile-card > a {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    margin-bottom: 4px;
+  }
+
+  .consultants-page .info-section-consultant {
+    text-align: center;
+    padding: 0 14px;
+  }
+
+  .consultants-page .info-section-consultant .profile-btn {
+    width: auto !important;
   }
 }
 
