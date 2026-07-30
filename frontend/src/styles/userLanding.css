@@ -87,26 +87,35 @@
 
 @media (max-width: 640px) {
   .landing-top-bar {
-    height: auto;
-    padding: 8px 0;
+    height: 42px;
+    padding: 0 10px;
   }
 
   .landing-top-bar-inner {
-    flex-wrap: wrap;
-    gap: 8px 12px;
+    flex-wrap: nowrap;
+    gap: 6px 10px;
     justify-content: center;
-    padding: 0 16px;
+    padding: 0;
+    max-width: 100%;
   }
 
   .landing-top-bar-label {
-    width: 100%;
+    width: auto;
     justify-content: center;
-    font-size: 12px;
+    font-size: 11px;
+    white-space: nowrap;
   }
 
   .landing-top-bar-phone {
-    font-size: 12px;
-    padding: 4px 10px;
+    font-size: 11px;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 380px) {
+  .landing-top-bar-inner a:last-of-type {
+    display: none;
   }
 }
 
@@ -262,6 +271,7 @@
 @media (max-width: 1008px) {
   .landing-header {
     justify-content: space-between;
+    padding: 10px 16px;
   }
 
   .landing-header-left {
@@ -275,38 +285,57 @@
   }
 
   .landing-logo {
-    margin-left: 16px;
+    margin-left: 0;
+    width: 75px;
   }
 
   .landing-nav-links {
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
-    height: 0;
-    width: 50%;
+    height: 100vh;
+    width: 85%;
+    max-width: 320px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: flex-start;
+    justify-content: flex-start;
     background-color: white;
     overflow: hidden;
-    transition: height 0.3s ease;
+    transition: transform 0.3s ease;
+    transform: translateX(100%);
     margin-right: 0;
     gap: 0;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
     z-index: 250;
+    padding: 80px 0 0 0;
+    pointer-events: none;
   }
 
   .landing-nav-links.nav-open {
-    height: 100vh;
-    padding: 80px 0;
+    transform: translateX(0);
+    pointer-events: auto;
   }
 
   .landing-nav-links a {
     width: 100%;
-    text-align: center;
-    color: black;
-    padding: 15px;
+    text-align: left;
+    color: #333;
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    border-radius: 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .landing-nav-links a.activelink {
+    background-color: #001e74;
+    color: white;
+    border-radius: 0;
+  }
+
+  .landing-nav-links a.activelink::after {
+    display: none;
   }
 
   .landing-login-link.desktop-only {
@@ -316,9 +345,14 @@
   .landing-login-link.mobile-only {
     display: flex;
     width: auto;
-    margin: 10px 20px;
+    margin: 16px 24px;
     background: #001e74;
     color: white;
+    border-radius: 8px;
+    text-align: center;
+    justify-content: center;
+    font-size: 14px;
+    padding: 12px 20px;
   }
 
   .menu-toggle {
