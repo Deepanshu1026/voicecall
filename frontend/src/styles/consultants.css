@@ -895,7 +895,7 @@ html {
 @media (max-width: 480px) {
   .consultants-page #navbar {
     padding: 6px 10px;
-    top: 98px;
+    top: 110px;
   }
 
   .consultants-page .margin-from-bottom {
