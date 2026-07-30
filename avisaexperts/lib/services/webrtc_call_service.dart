@@ -132,12 +132,20 @@ class WebRTCCallService extends ChangeNotifier {
   }
 
   bool _emit(String event, dynamic data) {
-    if (!ChatSocketService().isConnected) {
+    final isConnected = ChatSocketService().isConnected;
+    final socket = ChatSocketService().socket;
+    final socketState = socket?.connected ?? false;
+
+    _logCallEvent('[EMIT] $event, isConnected=$isConnected, socketConnected=$socketState');
+
+    if (!isConnected) {
       debugPrint('[WebRTC] Socket not connected, cannot emit $event');
       _logCallEvent('ERROR: Socket not connected, cannot emit $event');
       return false;
     }
+
     ChatSocketService().emitEvent(event, data);
+    _logCallEvent('[EMIT] $event sent to server');
     return true;
   }
 
@@ -699,63 +707,101 @@ class WebRTCCallService extends ChangeNotifier {
   }
 
   Future<bool> startCall(String receiverId, {Map<String, dynamic>? receiver, String type = 'audio'}) async {
+    _callEventLog.clear();
+    _logCallEvent('[STEP 1] startCall to $receiverId');
+
     if (_callState != CallState.idle) {
+      _logCallEvent('[FAIL] Already in a call (state: $_callState)');
       _callError = 'Already in a call';
       notifyListeners();
       return false;
     }
 
     if (!ChatSocketService().isConnected) {
+      _logCallEvent('[FAIL] Socket NOT connected');
       _callError = 'Not connected to server. Please check your internet and try again.';
       notifyListeners();
       return false;
     }
 
+    final socket = ChatSocketService().socket;
+    if (socket == null || !socket.connected) {
+      _logCallEvent('[FAIL] Socket object is null or disconnected');
+      _callError = 'Socket connection lost. Please try again.';
+      notifyListeners();
+      return false;
+    }
+    _logCallEvent('[STEP 2] Socket connected: true, id=${socket.id}');
+
     final currentUserId = await _currentUserIdAsync();
+    _logCallEvent('[STEP 3] currentUserId=$currentUserId, receiverId=$receiverId');
     if (currentUserId.isNotEmpty && receiverId == currentUserId) {
+      _logCallEvent('[FAIL] Cannot call yourself');
       _callError = 'Cannot call yourself';
       notifyListeners();
       return false;
     }
 
     final bool isVideo = type == 'video';
+    _logCallEvent('[STEP 4] Requesting permissions...');
     final granted = await _requestPermissions(video: isVideo);
-    if (!granted) return false;
+    if (!granted) {
+      _logCallEvent('[FAIL] Permission denied');
+      return false;
+    }
+    _logCallEvent('[STEP 5] Permissions granted');
 
+    _logCallEvent('[STEP 6] Getting media stream...');
     final stream = await _getMediaStream(video: isVideo);
     if (stream == null) {
+      _logCallEvent('[FAIL] Media stream failed');
       _callState = CallState.idle;
       notifyListeners();
       return false;
     }
+    _logCallEvent('[STEP 7] Media stream OK');
 
     _callState = CallState.calling;
     _isInitiator = true;
     _callError = null;
     _otherUser = receiver;
-    _callEventLog.clear();
-    _logCallEvent('Starting call to $receiverId (type: $type)');
-    _logCallEvent('Socket connected: ${ChatSocketService().isConnected}');
-    _logCallEvent('TURN servers loaded: ${_fetchedTurnServers.isNotEmpty}');
+    _logCallEvent('[STEP 8] State=calling, TURN loaded=${_fetchedTurnServers.isNotEmpty}');
     notifyListeners();
 
     _startCallTimeout(_callRingingTimeoutMs, 'Call timed out: no answer');
 
+    _logCallEvent('[STEP 9] Creating peer connection...');
     final pc = await _createPeerConnection();
     await _addLocalTracks(stream);
+    _logCallEvent('[STEP 10] Peer connection created');
 
     try {
+      _logCallEvent('[STEP 11] Creating offer...');
       final offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
       final localDesc = await pc.getLocalDescription();
+      _logCallEvent('[STEP 12] Offer created, emitting call:initiate...');
 
-      _emit('call:initiate', {
+      final emitted = _emit('call:initiate', {
         'receiverId': receiverId,
         'type': type,
         'offer': {'type': localDesc?.type ?? offer.type, 'sdp': localDesc?.sdp ?? offer.sdp},
       });
+      _logCallEvent('[STEP 13] call:initiate emitted=$emitted');
+
+      if (!emitted) {
+        _logCallEvent('[FAIL] Could not emit call:initiate - socket disconnected');
+        _callError = 'Socket disconnected while sending call';
+        _callState = CallState.error;
+        notifyListeners();
+        _reset();
+        return false;
+      }
+
+      _logCallEvent('[SUCCESS] Call initiated, waiting for ringing...');
       return true;
     } catch (e) {
+      _logCallEvent('[FAIL] Start call error: $e');
       debugPrint('[WebRTC] Failed to start call: $e');
       _callError = 'Failed to start call: $e';
       _callState = CallState.error;
