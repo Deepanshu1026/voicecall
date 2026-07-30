@@ -481,7 +481,7 @@ router.get('/banners', asyncHandler(async (req, res) => {
   res.json({
     success: true,
     banners: banners.map((b) => ({
-      file_path: b.file_path || b.image || b.imageUrl || b.url || b.photo || b.path || '',
+      file_path: b.file_path || b.filePath || b.image || b.imageUrl || b.url || b.photo || b.path || b.driveUrl || '',
     })),
   });
 }));
