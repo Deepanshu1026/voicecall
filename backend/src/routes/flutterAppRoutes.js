@@ -347,6 +347,17 @@ router.post('/appointments', asyncHandler(async (req, res) => {
 
   const refId = reference_number || `AVE${Date.now().toString(36).toUpperCase()}`;
 
+  // Calculate end time (add 30 minutes to start)
+  const timeParts = time_slot.split(':');
+  let endTime = time_slot;
+  if (timeParts.length >= 2) {
+    const h = parseInt(timeParts[0], 10);
+    const m = parseInt(timeParts[1], 10) + 30;
+    const endH = m >= 60 ? h + 1 : h;
+    const endM = m % 60;
+    endTime = `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}:00`;
+  }
+
   const appointment = await Appointment.create({
     userId: user_id || null,
     name: name.trim(),
@@ -356,12 +367,16 @@ router.post('/appointments', asyncHandler(async (req, res) => {
     query: querry || '',
     mode,
     date: datetime.split(' ')[0] || '',
-    selectedPlan: selected_plan,
+    selectedPlan: selected_plan.toLowerCase(),
     timeSlot: time_slot,
     referenceId: refId,
     datetime,
     meetingConfirm: 'pending',
   });
+
+  // Live prices from MeetingSettings
+  const MeetingSettings = require('../models/MeetingSettings');
+  const settings = await MeetingSettings.getSingleton();
 
   res.json({
     status: 'success',
@@ -373,40 +388,39 @@ router.post('/appointments', asyncHandler(async (req, res) => {
       datetime,
       time: time_slot,
       mode,
-      start_time: time_slot.split('-')[0]?.trim() || time_slot,
-      end_time: time_slot.split('-')[1]?.trim() || time_slot,
+      start_time: time_slot,
+      end_time: endTime,
       address: address || '',
       meeting_confirm: 'pending',
       user_id: user_id || null,
     },
-    current_prices: { advance: '1180', premium: '1770' },
+    current_prices: {
+      advance: String(settings.advancePrice),
+      premium: String(settings.premiumPrice),
+    },
   });
 }));
 
 // ==================== TIME SLOTS ====================
 
 router.get('/time-slots', asyncHandler(async (req, res) => {
-  const { date, plan, time_slot, all_available } = req.query;
+  const { date, plan, time_slot } = req.query;
 
+  // Generate time slots in HH:MM:SS format (no end times needed)
   const baseSlots = [];
   for (let h = 11; h <= 18; h++) {
     for (let m = 0; m < 60; m += 30) {
-      if (h === 18 && m === 30) break;
-      const start = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-      const endM = m + 30 >= 60 ? 0 : m + 30;
-      const endH = m + 30 >= 60 ? h + 1 : h;
-      if (endH > 18) break;
-      const end = `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}`;
-      baseSlots.push(`${start}-${end}`);
+      if (h === 18 && m >= 30) break;
+      baseSlots.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00`);
     }
   }
 
   const advanceSlots = baseSlots.slice(0, 13);
-  const premiumSlots = ['14:00-14:30', '17:00-17:30', '18:00-18:30', '19:00-19:30'];
+  const premiumSlots = ['14:00:00', '17:00:00', '18:00:00', '19:00:00'];
   const maxBookings = { basic: 10, advance: 2, premium: 1 };
 
   const targetDate = date || new Date().toISOString().split('T')[0];
-  const targetPlan = plan || 'basic';
+  const targetPlan = (plan || 'Basic').toLowerCase();
   const theSlots = targetPlan === 'premium' ? premiumSlots : targetPlan === 'advance' ? advanceSlots : baseSlots;
 
   // Count existing bookings per slot
@@ -417,28 +431,27 @@ router.get('/time-slots', asyncHandler(async (req, res) => {
   const bookingCount = {};
   bookings.forEach((b) => { bookingCount[b._id] = b.count; });
 
-  if (time_slot) {
-    // Check single slot
-    const count = bookingCount[time_slot] || 0;
-    const max = maxBookings[targetPlan] || 10;
-    return res.json({
-      status: 'success',
-      data: { available: count < max, booked: count, max },
-    });
-  }
+  const max = maxBookings[targetPlan] || 10;
 
-  const slotData = {};
-  for (const slot of theSlots) {
-    const count = bookingCount[slot] || 0;
-    const max = maxBookings[targetPlan] || 10;
-    slotData[slot] = { available: count < max, booked: count, max };
-  }
-
-  res.json({
-    status: 'success',
-    timestamp: new Date().toISOString(),
-    data: all_available ? slotData : { slots: theSlots, availability: slotData },
+  // Return as a flat array of time slot objects (Flutter expects data as List)
+  const data = theSlots.map((slot) => {
+    const booked = bookingCount[slot] || 0;
+    return {
+      time: slot,
+      available: booked < max ? 1 : 0,
+      total: max,
+      booked,
+      remaining: max - booked,
+    };
   });
+
+  // If checking a specific slot
+  if (time_slot) {
+    const slotData = data.find((s) => s.time === time_slot) || { time: time_slot, available: 1, total: max, booked: 0, remaining: max };
+    return res.json({ status: 'success', data: [slotData] });
+  }
+
+  res.json({ status: 'success', data });
 }));
 
 // ==================== CANCELLED DATES ====================
@@ -461,9 +474,14 @@ router.get('/meetings/status', asyncHandler(async (req, res) => {
 
 // ==================== PRICING ====================
 
-router.get('/pricing', asyncHandler(async (req, res) => {
-  res.json({ advance: '1180', premium: '1770' });
-}));
+const sendPrices = async (res) => {
+  const MeetingSettings = require('../models/MeetingSettings');
+  const settings = await MeetingSettings.getSingleton();
+  res.json({ status: 'success', advance: String(settings.advancePrice), premium: String(settings.premiumPrice) });
+};
+
+router.get('/pricing', asyncHandler(async (req, res) => sendPrices(res)));
+router.get('/prices', asyncHandler(async (req, res) => sendPrices(res)));
 
 // ==================== INSTAGRAM API KEY ====================
 
