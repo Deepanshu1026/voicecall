@@ -825,4 +825,35 @@ router.get('/agent-status', asyncHandler(async (req, res) => {
   });
 }));
 
+// ==================== ONLINE AGENTS ====================
+
+router.get('/online-agents', asyncHandler(async (req, res) => {
+  const io = req.io;
+  if (!io) return res.json({ success: false, message: 'Socket not initialized' });
+
+  const Employee = require('../models/Employee');
+  const rooms = io.sockets.adapter.rooms;
+  const onlineIds = [];
+
+  for (const [roomName, sockets] of rooms.entries()) {
+    if (roomName.startsWith('user:') && sockets.size > 0) {
+      onlineIds.push(roomName.replace('user:', ''));
+    }
+  }
+
+  const employees = await Employee.find({
+    _id: { $in: onlineIds },
+  }).select('displayName username avatar callRate').lean();
+
+  res.json({
+    success: true,
+    agents: employees.map((e) => ({
+      id: e._id.toString(),
+      name: e.displayName || e.username,
+      avatar: avatarUrl(e.avatar),
+      callRate: e.callRate || 0,
+    })),
+  });
+}));
+
 module.exports = router;
