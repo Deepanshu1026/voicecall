@@ -478,7 +478,12 @@ router.get('/insta-api-key', asyncHandler(async (req, res) => {
 router.get('/banners', asyncHandler(async (req, res) => {
   const Banner = require('../models/Banner');
   const banners = await Banner.find().sort({ createdAt: -1 }).lean();
-  res.json({ success: true, banners: banners.map((b) => ({ file_path: b.file_path })) });
+  res.json({
+    success: true,
+    banners: banners.map((b) => ({
+      file_path: b.file_path || b.image || b.imageUrl || b.url || b.photo || b.path || '',
+    })),
+  });
 }));
 
 // ==================== REVIEWS (SUCCESS STORIES) ====================
@@ -486,7 +491,16 @@ router.get('/banners', asyncHandler(async (req, res) => {
 router.get('/reviews', asyncHandler(async (req, res) => {
   const Review = require('../models/Review');
   const reviews = await Review.find().sort({ createdAt: -1 }).lean();
-  res.json({ success: true, data: reviews });
+  res.json({
+    success: true,
+    data: reviews.map((r) => ({
+      user_name: r.user_name || r.title || r.name || 'Anonymous',
+      visa_type: r.visa_type || r.subtitle || r.visa || 'Visa',
+      rating: String(r.rating ?? r.stars ?? 5.0),
+      story: r.story || r.description || r.desc || r.content || '',
+      user_image: r.user_image || r.imageUrl || r.image || r.photo || '',
+    })),
+  });
 }));
 
 // ==================== WEBRTC TURN CREDENTIALS ====================
