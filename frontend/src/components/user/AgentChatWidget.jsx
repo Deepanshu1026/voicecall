@@ -17,7 +17,7 @@ const AgentChatWidget = () => {
   const { isUserOnline } = useSocket();
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [guestLoading, setGuestLoading] = useState(false);
 
   useEffect(() => {

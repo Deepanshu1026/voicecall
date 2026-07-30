@@ -786,29 +786,54 @@ html {
 /* Responsive */
 @media (max-width: 768px) {
   .consultants-page #navbar {
-    padding: 9px 16px;
-    top: 95px;
+    padding: 8px 12px;
+    top: 100px;
   }
 
   .consultants-page .margin-from-bottom {
-    padding-top: 165px;
+    padding-top: 170px;
   }
 
   .consultants-page #main-nav {
-    gap: 8px;
+    gap: 6px;
     width: 100%;
     justify-content: flex-end;
+    flex-wrap: nowrap;
   }
 
   .consultants-page #search-container {
-    width: 100%;
-    max-width: 260px;
-    margin-right: 0;
-    gap: 0;
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+    margin-right: 4px;
+    height: 40px;
+    padding: 0 4px 0 10px;
+  }
+
+  .consultants-page #search-container input {
+    font-size: 13px;
+  }
+
+  .consultants-page #search-button {
+    font-size: 18px;
+    padding: 4px;
   }
 
   .consultants-page #balance {
-    margin-right: 0;
+    margin-right: 2px;
+    height: 40px;
+    padding: 0 8px;
+    font-size: 13px;
+    gap: 4px;
+  }
+
+  .consultants-page #balance a {
+    padding: 6px;
+  }
+
+  .consultants-page #thisprofile {
+    width: 36px;
+    height: 36px;
   }
 
   .consultants-page .consultant-section {
@@ -864,6 +889,51 @@ html {
 
   .consultants-page .peragraph-section p {
     font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .consultants-page #navbar {
+    padding: 6px 10px;
+    top: 98px;
+  }
+
+  .consultants-page .margin-from-bottom {
+    padding-top: 160px;
+  }
+
+  .consultants-page #main-nav {
+    gap: 4px;
+  }
+
+  .consultants-page #search-container {
+    height: 36px;
+    padding: 0 2px 0 8px;
+  }
+
+  .consultants-page #search-container input {
+    font-size: 12px;
+  }
+
+  .consultants-page #search-button {
+    font-size: 16px;
+  }
+
+  .consultants-page #balance {
+    height: 36px;
+    padding: 0 6px;
+    font-size: 12px;
+  }
+
+  .consultants-page .add-money-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+  }
+
+  .consultants-page #thisprofile {
+    width: 32px;
+    height: 32px;
   }
 }
 
