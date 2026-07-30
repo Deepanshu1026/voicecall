@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import LandingLayout from '../components/user/LandingLayout';
+import { blogAPI } from '../services/api';
 import '../styles/blogs.css';
 
 const fallbackImage = '/images/user/touristvisa_full 1.webp';
@@ -39,14 +40,30 @@ const Blogs = () => {
   const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
-    fetch('/data/blog_posts.json')
-      .then((res) => res.json())
-      .then((data) => {
-        const enriched = data.map((post) => ({ ...post, derivedCategory: deriveCategory(post.title) }));
-        setPosts(enriched);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    let cancelled = false;
+    const loadPosts = async () => {
+      try {
+        const res = await blogAPI.getPosts({ limit: 100 });
+        const data = res.data?.data || [];
+        const enriched = data.map((post) => ({
+          ...post,
+          id: post._id || post.legacyId,
+          featured_image: post.featuredImage || '',
+          image_alt: post.imageAlt || '',
+          created_at: post.createdAt,
+          derivedCategory: post.category || deriveCategory(post.title),
+        }));
+        if (!cancelled) {
+          setPosts(enriched);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error('Failed to load posts:', err);
+        if (!cancelled) setLoading(false);
+      }
+    };
+    loadPosts();
+    return () => { cancelled = true; };
   }, []);
 
   const categories = useMemo(() => {

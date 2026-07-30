@@ -8,6 +8,7 @@ const Appointment = require('../models/Appointment');
 const Notification = require('../models/Notification');
 const OtpVerification = require('../models/OtpVerification');
 const CancelledDate = require('../models/CancelledDate');
+const Post = require('../models/Post');
 const { generateTokens } = require('../utils/generateToken');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
@@ -576,6 +577,67 @@ router.get('/users-all-data', asyncHandler(async (req, res) => {
   const filter = id ? { _id: id } : {};
   const users = await User.find(filter).select('-password -refreshToken').lean();
   res.json({ success: true, data: users });
+}));
+
+// ==================== BLOG POSTS ====================
+
+router.get('/posts', asyncHandler(async (req, res) => {
+  const { category, search, page = 1, limit = 20 } = req.query;
+  const filter = { status: 'published' };
+  if (category && category !== 'All') {
+    filter.category = category;
+  }
+  if (search) {
+    filter.$text = { $search: search };
+  }
+  const skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
+  const posts = await Post.find(filter)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(parseInt(limit, 10))
+    .lean();
+  const total = await Post.countDocuments(filter);
+  res.json({
+    success: true,
+    data: posts,
+    total,
+    page: parseInt(page, 10),
+    pages: Math.ceil(total / parseInt(limit, 10)),
+  });
+}));
+
+router.get('/posts/:id', asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  let post;
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    post = await Post.findById(id).lean();
+  }
+  if (!post) {
+    post = await Post.findOne({ legacyId: parseInt(id, 10) }).lean();
+  }
+  if (!post) {
+    throw new AppError('Post not found', 404);
+  }
+  // Increment clicks
+  await Post.findByIdAndUpdate(post._id, { $inc: { clicks: 1 } });
+  res.json({ success: true, data: post });
+}));
+
+router.get('/posts/:id/related', asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const current = await Post.findById(id).lean() || await Post.findOne({ legacyId: parseInt(id, 10) }).lean();
+  if (!current) {
+    throw new AppError('Post not found', 404);
+  }
+  const related = await Post.find({
+    _id: { $ne: current._id },
+    status: 'published',
+    category: current.category,
+  })
+    .sort({ createdAt: -1 })
+    .limit(3)
+    .lean();
+  res.json({ success: true, data: related });
 }));
 
 module.exports = router;
