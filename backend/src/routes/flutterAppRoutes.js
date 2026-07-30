@@ -881,4 +881,33 @@ router.post('/socket-test', asyncHandler(async (req, res) => {
   });
 }));
 
+// ==================== CALL DEBUG ====================
+
+router.post('/call-debug', asyncHandler(async (req, res) => {
+  const { agent_id } = req.body;
+  if (!agent_id) throw new AppError('agent_id is required', 400);
+
+  const io = req.io;
+  if (!io) throw new AppError('Socket not initialized', 500);
+
+  const roomName = `user:${agent_id}`;
+  const room = io.sockets.adapter.rooms.get(roomName);
+  const socketCount = room ? room.size : 0;
+
+  // Emit a test call:incoming event to the agent's room
+  io.to(roomName).emit('call:incoming', {
+    call: { _id: 'test-call-123', type: 'audio', status: 'ringing' },
+    caller: { displayName: 'Test Caller', username: 'test' },
+    roomId: `call:test-call-123`,
+  });
+
+  res.json({
+    success: true,
+    message: 'Test call:incoming emitted',
+    roomName,
+    socketCount,
+    agentId: agent_id,
+  });
+}));
+
 module.exports = router;
