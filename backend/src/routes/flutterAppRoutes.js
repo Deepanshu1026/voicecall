@@ -24,10 +24,10 @@ router.post('/login', asyncHandler(async (req, res) => {
 
   let user;
   if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login_input)) {
-    user = await User.findOne({ email: login_input.toLowerCase().trim(), role: 'user' });
+    user = await User.findOne({ email: login_input.toLowerCase().trim(), role: 'user' }).select('+password');
   } else if (/^\d+$/.test(login_input)) {
     if (!country_code) throw new AppError('Country code is required for phone login', 400);
-    user = await User.findOne({ mobile: login_input.trim(), role: 'user' });
+    user = await User.findOne({ mobile: login_input.trim(), role: 'user' }).select('+password');
   } else {
     throw new AppError('Please provide a valid email or phone number', 400);
   }
