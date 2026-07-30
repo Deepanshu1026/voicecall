@@ -762,15 +762,35 @@ router.post('/chat/conversation', asyncHandler(async (req, res) => {
   if (!sender || !receiver) throw new AppError('User not found', 404);
   const isUserToAgent = sender.role === 'user' && isAgentRole(receiver.role);
   let conv = await Conversation.findOne({ type: 'direct', participants: { $all: [sId, rId], $size: 2 } });
+
+  // Check if the user has already used their one free trial with ANY agent
+  const hasUsedFreeTrial = isUserToAgent ? await Conversation.findOne({
+    participants: sId,
+    lockedToAgent: { $exists: true, $ne: null },
+  }) : null;
+
   if (!conv) {
     const d = { type: 'direct', participants: [sId, rId] };
-    if (isUserToAgent) { d.freeUntil = new Date(Date.now() + (config.freeChatDurationSeconds || 600) * 1000); d.isPaid = false; d.paymentAmount = config.chatPaymentAmount || 100; d.lockedToAgent = rId; }
+    // Only give free trial if user hasn't already had one with any agent
+    if (isUserToAgent && !hasUsedFreeTrial) {
+      d.freeUntil = new Date(Date.now() + (config.freeChatDurationSeconds || 600) * 1000);
+      d.isPaid = false;
+      d.paymentAmount = config.chatPaymentAmount || 100;
+      d.lockedToAgent = rId;
+    }
     conv = await Conversation.create(d);
   }
-  if (conv && isUserToAgent && !conv.lockedToAgent) {
-    conv.lockedToAgent = rId; conv.notified50 = false; conv.notified90 = false;
+
+  // If this is an existing conversation that never got a free trial
+  // (e.g., old chat before free trial logic was added), check global usage
+  if (conv && isUserToAgent && !conv.lockedToAgent && !hasUsedFreeTrial) {
+    conv.lockedToAgent = rId;
+    conv.notified50 = false;
+    conv.notified90 = false;
     conv.freeUntil = new Date(Date.now() + (config.freeChatDurationSeconds || 600) * 1000);
-    conv.isPaid = false; conv.paymentAmount = config.chatPaymentAmount || 100; await conv.save();
+    conv.isPaid = false;
+    conv.paymentAmount = config.chatPaymentAmount || 100;
+    await conv.save();
   }
   res.json({ success: true, conversation: { id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: conv.participants.map((p) => p.toString()), isActive: conv.isActive } });
 }));
