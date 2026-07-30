@@ -57,21 +57,14 @@ const getOrCreateConversation = asyncHandler(async (req, res) => {
     };
 
     if (isUserToAgent) {
-      // One free trial per user: check if the user has already used their free chat
-      const expiredFreeChat = await Conversation.findOne({
+      // One free trial per user globally — only the first agent ever gets a free trial.
+      const hasUsedFreeTrial = await Conversation.findOne({
         participants: req.userId,
         lockedToAgent: { $ne: null },
-        $or: [
-          { freeUntil: { $lt: new Date() } },
-          { freeUntil: null, isPaid: false },
-        ],
       });
-      if (expiredFreeChat) {
-        // Free trial already used — no free chat, require payment
-        conversationData.freeUntil = null;
-      } else {
-        conversationData.freeUntil = new Date(Date.now() + config.freeChatDurationSeconds * 1000);
-      }
+      conversationData.freeUntil = hasUsedFreeTrial
+        ? null
+        : new Date(Date.now() + config.freeChatDurationSeconds * 1000);
       conversationData.isPaid = false;
       conversationData.paymentAmount = config.chatPaymentAmount;
       conversationData.lockedToAgent = participantId;
@@ -86,16 +79,12 @@ const getOrCreateConversation = asyncHandler(async (req, res) => {
     conversation.notified50 = false;
     conversation.notified90 = false;
 
-    // One free trial check
-    const expiredFreeChat = await Conversation.findOne({
+    // One free trial per user globally
+    const hasUsedFreeTrial = await Conversation.findOne({
       participants: req.userId,
       lockedToAgent: { $ne: null },
-      $or: [
-        { freeUntil: { $lt: new Date() } },
-        { freeUntil: null, isPaid: false },
-      ],
     });
-    conversation.freeUntil = expiredFreeChat
+    conversation.freeUntil = hasUsedFreeTrial
       ? null
       : new Date(Date.now() + config.freeChatDurationSeconds * 1000);
     conversation.isPaid = false;
