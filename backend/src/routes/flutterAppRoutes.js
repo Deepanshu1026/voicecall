@@ -789,4 +789,40 @@ router.post('/chat/pay', asyncHandler(async (req, res) => {
   res.json({ success: true, conversation: { id: conv._id, isPaid: true, freeUntil: null, paymentAmount: amount }, newBalance: user.walletBalance });
 }));
 
+// ==================== DIAGNOSTICS ====================
+
+router.get('/agent-status', asyncHandler(async (req, res) => {
+  const { agent_id } = req.query;
+  if (!agent_id) throw new AppError('agent_id is required', 400);
+
+  const { getAccountById } = require('../utils/account');
+  const account = await getAccountById(agent_id, 'status workStatus lastSeen');
+  if (!account) return res.json({ success: false, message: 'Agent not found' });
+
+  // Check if the agent has an active socket connection
+  const io = req.io;
+  if (!io) return res.json({ success: false, message: 'Socket not initialized' });
+
+  const userId = account._id.toString();
+  const agentInRoom = io.sockets.adapter.rooms.has(`user:${userId}`);
+  const socketCount = io.sockets.adapter.rooms.get(`user:${userId}`)?.size || 0;
+
+  res.json({
+    success: true,
+    agent: {
+      id: userId,
+      accountType: account.accountType,
+      status: account.status,
+      workStatus: account.workStatus,
+      lastSeen: account.lastSeen,
+    },
+    online: {
+      inSocketRoom: agentInRoom,
+      socketCount,
+      hasActiveSocket: socketCount > 0,
+    },
+    timestamp: new Date(),
+  });
+}));
+
 module.exports = router;
