@@ -856,4 +856,29 @@ router.get('/online-agents', asyncHandler(async (req, res) => {
   });
 }));
 
+// ==================== SOCKET TEST ====================
+
+router.post('/socket-test', asyncHandler(async (req, res) => {
+  const { user_id } = req.body;
+  if (!user_id) throw new AppError('user_id is required', 400);
+
+  const io = req.io;
+  if (!io) throw new AppError('Socket not initialized', 500);
+
+  const roomName = `user:${user_id}`;
+  const room = io.sockets.adapter.rooms.get(roomName);
+  const socketCount = room ? room.size : 0;
+
+  // Emit a test event to the user's room
+  io.to(roomName).emit('socket:test', { message: 'Socket test from server', timestamp: new Date() });
+
+  res.json({
+    success: true,
+    message: 'Test event emitted',
+    roomName,
+    socketCount,
+    userId: user_id,
+  });
+}));
+
 module.exports = router;
