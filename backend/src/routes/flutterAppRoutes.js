@@ -554,7 +554,7 @@ router.get('/chat/messages', asyncHandler(async (req, res) => {
     reply_to_id: m.replyTo?.toString() || null,
   }));
 
-  res.json({ success: true, data });
+  res.json({ success: true, data, messages: data, conversation: { id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: conv.participants.map((p) => p.toString()), isActive: conv.isActive } });
 }));
 
 // Send a message (like PHP sendMessage.php)
