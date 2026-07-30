@@ -473,6 +473,22 @@ router.get('/insta-api-key', asyncHandler(async (req, res) => {
   res.json({ status: true, data: key ? [key] : [] });
 }));
 
+// ==================== BANNERS ====================
+
+router.get('/banners', asyncHandler(async (req, res) => {
+  const Banner = require('../models/Banner');
+  const banners = await Banner.find().sort({ createdAt: -1 }).lean();
+  res.json({ success: true, banners: banners.map((b) => ({ file_path: b.file_path })) });
+}));
+
+// ==================== REVIEWS (SUCCESS STORIES) ====================
+
+router.get('/reviews', asyncHandler(async (req, res) => {
+  const Review = require('../models/Review');
+  const reviews = await Review.find().sort({ createdAt: -1 }).lean();
+  res.json({ success: true, data: reviews });
+}));
+
 // ==================== WEBRTC TURN CREDENTIALS ====================
 
 let cachedTurnServers = null;
