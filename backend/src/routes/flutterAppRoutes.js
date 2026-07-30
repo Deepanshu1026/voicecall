@@ -614,12 +614,171 @@ router.post('/chat/send', asyncHandler(async (req, res) => {
   res.json({ success: true, message_id: msg._id, created_at: msg.createdAt });
 }));
 
+// ==================== CHAT CONVERSATION / GREET / PAY ====================
+
+const getGreetingByIST = () => {
+  const now = new Date();
+  const istHour = parseInt(now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false }), 10);
+  if (istHour >= 5 && istHour < 12) return 'Good morning';
+  if (istHour >= 12 && istHour < 16) return 'Good afternoon';
+  if (istHour >= 16 && istHour < 21) return 'Good evening';
+  return 'Hello';
+};
+
+const isAgentRole = (role) => ['agent', 'case_manager', 'manager', 'senior_manager', 'admin'].includes(role);
+
+router.post('/chat/conversation', asyncHandler(async (req, res) => {
+  const { sender_id, receiver_id } = req.body;
+  if (!sender_id || !receiver_id) throw new AppError('sender_id and receiver_id are required', 400);
+
+  const Conversation = require('../models/Conversation');
+  const { getAccountById } = require('../utils/account');
+  const mongoose = require('mongoose');
+  const sId = new mongoose.Types.ObjectId(sender_id);
+  const rId = new mongoose.Types.ObjectId(receiver_id);
+
+  const sender = await getAccountById(sId, 'role blockedUsers');
+  const receiver = await getAccountById(rId, 'role blockedUsers');
+  if (!sender || !receiver) throw new AppError('User not found', 404);
+
+  const isUserToAgent = sender.role === 'user' && isAgentRole(receiver.role);
+  let conv = await Conversation.findOne({ type: 'direct', participants: { $all: [sId, rId], $size: 2 } });
+
+  if (!conv) {
+    const conversationData = { type: 'direct', participants: [sId, rId] };
+    if (isUserToAgent) {
+      conversationData.freeUntil = new Date(Date.now() + (config.freeChatDurationSeconds || 600) * 1000);
+      conversationData.isPaid = false;
+      conversationData.paymentAmount = config.chatPaymentAmount || 100;
+      conversationData.lockedToAgent = rId;
+    }
+    conv = await Conversation.create(conversationData);
+  }
+
+  if (conv && isUserToAgent && !conv.lockedToAgent) {
+    conv.lockedToAgent = rId;
+    conv.notified50 = false;
+    conv.notified90 = false;
+    conv.freeUntil = new Date(Date.now() + (config.freeChatDurationSeconds || 600) * 1000);
+    conv.isPaid = false;
+    conv.paymentAmount = config.chatPaymentAmount || 100;
+    await conv.save();
+  }
+
+  res.json({ success: true, conversation: { id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: conv.participants.map((p) => p.toString()), isActive: conv.isActive } });
+}));
+
+router.post('/chat/greet', asyncHandler(async (req, res) => {
+  const { sender_id, receiver_id } = req.body;
+  if (!sender_id || !receiver_id) return res.json({ success: false, message: 'sender_id and receiver_id are required' });
+
+  const Conversation = require('../models/Conversation');
+  const Message = require('../models/Message');
+  const mongoose = require('mongoose');
+  const sId = new mongoose.Types.ObjectId(sender_id);
+  const rId = new mongoose.Types.ObjectId(receiver_id);
+
+  const conv = await Conversation.findOne({ type: 'direct', participants: { $all: [sId, rId], $size: 2 } });
+  if (!conv) return res.json({ success: false, message: 'Conversation not found' });
+  if (conv.greetingSent) return res.json({ success: true, greeting: null, message: 'Greeting already sent' });
+
+  const otherParticipant = conv.participants.find((p) => p.toString() !== sId.toString());
+  if (!otherParticipant) return res.json({ success: false, message: 'No other participant found' });
+
+  const greeting = getGreetingByIST();
+  const message = await Message.create({
+    conversation: conv._id, sender: otherParticipant, recipient: sId,
+    type: 'text', content: `${greeting}! How can I help you today?`,
+    status: 'sent', 'statusTimestamps.sent': new Date(), isSystemMessage: false,
+  });
+
+  conv.greetingSent = true;
+  conv.lastMessage = message._id;
+  await conv.save();
+
+  if (req.io) {
+    req.io.to(`user:${sId.toString()}`).emit('message:new', { ...message.toObject(), sender: { _id: otherParticipant } });
+  }
+
+  res.json({ success: true, greeting: { id: message._id, sender_id: otherParticipant.toString(), receiver_id: sId.toString(), message: message.content, type: 'text', file_path: '', file_type: '', status: 'sent', is_read: 'No', created_at: message.createdAt } });
+}));
+
+router.post('/chat/pay', asyncHandler(async (req, res) => {
+  const { sender_id, receiver_id } = req.body;
+  if (!sender_id || !receiver_id) throw new AppError('sender_id and receiver_id are required', 400);
+
+  const Conversation = require('../models/Conversation');
+  const mongoose = require('mongoose');
+  const sId = new mongoose.Types.ObjectId(sender_id);
+  const rId = new mongoose.Types.ObjectId(receiver_id);
+
+  const user = await User.findById(sId);
+  if (!user) throw new AppError('User not found', 404);
+
+  const conv = await Conversation.findOne({ type: 'direct', participants: { $all: [sId, rId], $size: 2 } });
+  if (!conv) throw new AppError('Conversation not found', 404);
+
+  const amount = conv.paymentAmount || config.chatPaymentAmount || 100;
+  if ((user.walletBalance || 0) < amount) throw new AppError('Insufficient wallet balance', 402);
+
+  user.walletBalance -= amount;
+  await user.save();
+
+  conv.isPaid = true;
+  conv.freeUntil = null;
+  await conv.save();
+
+  res.json({ success: true, conversation: { id: conv._id, isPaid: true, freeUntil: null, paymentAmount: amount }, newBalance: user.walletBalance });
+}));
+
 // Get users data (like PHP getusersAllData.php)
 router.get('/users-all-data', asyncHandler(async (req, res) => {
   const { id } = req.query;
   const filter = id ? { _id: id } : {};
   const users = await User.find(filter).select('-password -refreshToken').lean();
   res.json({ success: true, data: users });
+}));
+
+// ==================== WALLET ====================
+
+router.get('/wallet', asyncHandler(async (req, res) => {
+  const { user_id } = req.query;
+  if (!user_id) throw new AppError('user_id is required', 400);
+
+  const user = await User.findById(user_id).select('walletBalance username displayName email');
+  if (!user) throw new AppError('User not found', 404);
+
+  const Transaction = require('../models/Transaction');
+  const transactions = await Transaction.find({ user: user_id })
+    .sort({ createdAt: -1 })
+    .limit(50);
+
+  res.json({
+    success: true,
+    balance: user.walletBalance,
+    user: {
+      username: user.username,
+      displayName: user.displayName,
+      email: user.email,
+    },
+    transactions,
+  });
+}));
+
+router.post('/wallet/add-money', asyncHandler(async (req, res) => {
+  const { user_id, amount } = req.body;
+  if (!user_id) throw new AppError('user_id is required', 400);
+  const amt = parseInt(amount);
+  if (!amt || amt <= 0) throw new AppError('Valid amount is required', 400);
+
+  const User = require('../models/User');
+  const user = await User.findById(user_id);
+  if (!user) throw new AppError('User not found', 404);
+
+  user.walletBalance = (user.walletBalance || 0) + amt;
+  await user.save();
+
+  res.json({ success: true, balance: user.walletBalance });
 }));
 
 module.exports = router;
