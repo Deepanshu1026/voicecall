@@ -44,19 +44,17 @@ router.post('/login', asyncHandler(async (req, res) => {
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw new AppError('Invalid credentials', 401);
   }
-  if (user.status === 'offline' || user.status === 'away') {
-    throw new AppError('Account is disabled', 403);
-  }
 
   const tokens = generateTokens(user._id);
-  await User.findByIdAndUpdate(user._id, { refreshToken: tokens.refreshToken, lastSeen: new Date() });
+  // Mark user online and update lastSeen on successful login
+  await User.findByIdAndUpdate(user._id, { refreshToken: tokens.refreshToken, status: 'online', lastSeen: new Date() });
 
   ApiResponse.success(res, {
     user_id: user._id,
     name: user.displayName || user.username,
     email: user.email,
     phone: user.mobile,
-    user_profile: user.avatar?.url || user.avatar || '',
+    user_profile: avatarUrl(user.avatar),
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
   }, 'Login successful');
@@ -162,7 +160,7 @@ router.get('/consultants', asyncHandler(async (req, res) => {
     experience: a.experience || 0,
     user_current_status: a.workStatus || 'Unavailable',
     user_role: 'Agent',
-    user_profile: a.avatar || '',
+    user_profile: avatarUrl(a.avatar),
     call_rate: a.callRate || 0,
   }));
 
