@@ -1612,7 +1612,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   String _formatMessageTime(DateTime dateTime) {
-    return DateFormat('HH:mm').format(dateTime);
+    return DateFormat('hh:mm a').format(dateTime);
   }
 
   // Media handling methods
