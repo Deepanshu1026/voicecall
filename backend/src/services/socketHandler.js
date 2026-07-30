@@ -1076,6 +1076,9 @@ const setupSocket = (io) => {
 
         const updatedCall = await getCall(callId);
         io.to(roomId).emit('call:accepted', { call: updatedCall, roomId });
+        // Also emit to individual rooms in case a participant hasn't joined the call room yet
+        io.to(`user:${call.caller._id.toString()}`).emit('call:accepted', { call: updatedCall, roomId });
+        io.to(`user:${call.receiver._id.toString()}`).emit('call:accepted', { call: updatedCall, roomId });
 
         // Notify both participants to refresh call history
         io.to(`user:${call.caller._id.toString()}`).emit('call:updated', { call: updatedCall });
@@ -1203,6 +1206,19 @@ const setupSocket = (io) => {
         console.log(`[Call] Signal ${delivered ? 'delivered' : 'buffered'} for call ${callId}`);
       } catch (error) {
         console.error('Call signal error:', error);
+      }
+    });
+
+    socket.on('call:join-room', async ({ roomId }) => {
+      try {
+        if (!roomId) return;
+        console.log(`[Call] ${userId} joining room ${roomId}`);
+        socket.join(roomId);
+        userCallRooms.set(userId, roomId);
+        // Flush any buffered signals
+        await flushCallSignalBuffer(io, roomId);
+      } catch (err) {
+        console.error('[Call] join-room error:', err);
       }
     });
 

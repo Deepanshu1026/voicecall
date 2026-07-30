@@ -226,6 +226,11 @@ class WebRTCCallService extends ChangeNotifier {
         _roomId = data is Map<String, dynamic> ? data['roomId']?.toString() : null;
         _ratePerMinute = (_callData?['ratePerMinute'] ?? 0).toInt();
         _amountCharged = (_callData?['amountCharged'] ?? 0).toInt();
+        // Join the call room so we receive call:accepted and signal messages
+        if (_roomId != null) {
+          _emit('call:join-room', {'roomId': _roomId});
+          _logCallEvent('Joining call room: $_roomId');
+        }
         // Call ID is now known; send any ICE candidates gathered before this event.
         _flushPendingSignals();
         notifyListeners();
