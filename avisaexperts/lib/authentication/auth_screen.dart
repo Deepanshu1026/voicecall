@@ -343,8 +343,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 await prefs.setString('userEmail', userData['email'] ?? '');
                 await prefs.setString(
                     'userPhone', (userData['phone'] ?? '').toString());
-                await prefs.setString(
-                    'userProfile', userData['user_profile'] ?? '');
+                final profileVal = userData['user_profile'];
+                final profileStr = profileVal is String
+                    ? profileVal
+                    : (profileVal is Map ? (profileVal['url']?.toString() ?? '') : '');
+                await prefs.setString('userProfile', profileStr);
                 await prefs.setString(
                     'accessToken', userData['accessToken']?.toString() ?? '');
                 // This is a real login, so clear any leftover guest session
@@ -352,7 +355,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 await GuestService.clearGuestSession();
 
                 debugPrint(
-                    "Login Successful! User ID: $userId saved. Profile Path: ${userData['user_profile']}");
+                    "Login Successful! User ID: $userId saved. Profile: $profileStr");
 
                 // --- CALL FCM TOKEN SAVE FUNCTION HERE ---
                 if (mounted) await handleLoginSuccessFCM(userId);
