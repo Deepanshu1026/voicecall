@@ -196,6 +196,20 @@ class WebRTCCallService extends ChangeNotifier {
     if (_listenersBound) return;
     _listenersBound = true;
 
+    // Diagnostic: check if socket is authenticated
+    _socketUnsubscribers.add(
+      ChatSocketService().onEvent('connected', (data) {
+        _logCallEvent('[DIAG] Socket authenticated: $data');
+      }),
+    );
+
+    // Diagnostic: check if backend can reach this socket
+    _socketUnsubscribers.add(
+      ChatSocketService().onEvent('socket:test', (data) {
+        _logCallEvent('[DIAG] Backend reached socket: $data');
+      }),
+    );
+
     _socketUnsubscribers.add(
       ChatSocketService().onEvent('call:incoming', (data) {
         _logCallEvent('Incoming call: $data');
@@ -745,6 +759,14 @@ class WebRTCCallService extends ChangeNotifier {
   Future<bool> startCall(String receiverId, {Map<String, dynamic>? receiver, String type = 'audio'}) async {
     _callEventLog.clear();
     _logCallEvent('[STEP 1] startCall to $receiverId');
+
+    // Diagnostic: test if socket can emit events by sending a test ping
+    try {
+      ChatSocketService().emitEvent('socket:ping', {'test': true});
+      _logCallEvent('[DIAG] Test ping emitted to check socket auth');
+    } catch (e) {
+      _logCallEvent('[DIAG] Test ping failed: $e');
+    }
 
     if (_callState != CallState.idle) {
       _logCallEvent('[FAIL] Already in a call (state: $_callState)');
