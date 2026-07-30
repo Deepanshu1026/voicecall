@@ -908,4 +908,107 @@ router.post('/call-debug', asyncHandler(async (req, res) => {
   });
 }));
 
+// ==================== CALL INITIATE (REST) ====================
+
+router.post('/call/initiate', asyncHandler(async (req, res) => {
+  const { sender_id, receiver_id, type = 'audio', offer } = req.body;
+  if (!sender_id || !receiver_id) {
+    throw new AppError('sender_id and receiver_id are required', 400);
+  }
+
+  const Call = require('../models/Call');
+  const { getAccountById } = require('../utils/account');
+  const callBilling = require('../services/callBillingService');
+  const mongoose = require('mongoose');
+  const io = req.io;
+  if (!io) throw new AppError('Socket not initialized', 500);
+
+  console.log(`[Call:REST] ${sender_id} initiating call to ${receiver_id}`);
+
+  const [receiverAccount, callerAccount] = await Promise.all([
+    getAccountById(receiver_id, 'blockedUsers callRate username displayName avatar'),
+    getAccountById(sender_id, 'username displayName avatar blockedUsers walletBalance'),
+  ]);
+
+  if (!receiverAccount) throw new AppError('Receiver not found', 404);
+  if (!callerAccount) throw new AppError('Sender not found', 404);
+
+  // Check if receiver is blocked
+  const receiverBlocked = (receiverAccount.blockedUsers || []).map((id) => id.toString());
+  const callerBlocked = (callerAccount.blockedUsers || []).map((id) => id.toString());
+  if (receiverBlocked.includes(sender_id) || callerBlocked.includes(receiver_id)) {
+    throw new AppError('Cannot call this user', 403);
+  }
+
+  // Check wallet balance
+  const ratePerMinute = callBilling.getEffectiveRate(receiverAccount, receiverAccount.callRate);
+  if (ratePerMinute > 0 && !(await callBilling.hasSufficientBalance(sender_id, ratePerMinute))) {
+    throw new AppError('Insufficient balance to start this call', 402);
+  }
+
+  const callData = {
+    caller: new mongoose.Types.ObjectId(sender_id),
+    receiver: new mongoose.Types.ObjectId(receiver_id),
+    type: type || 'audio',
+    status: 'ringing',
+    ratePerMinute,
+  };
+  if (offer) {
+    callData.signalData = { offer: { type: offer.type, sdp: offer.sdp } };
+  }
+  const call = await Call.create(callData);
+
+  console.log(`[Call:REST] Call created: ${call._id}`);
+
+  const roomId = `call:${call._id}`;
+
+  // Emit call:incoming to receiver
+  const callerInfo = {
+    _id: callerAccount._id.toString(),
+    displayName: callerAccount.displayName || callerAccount.username,
+    username: callerAccount.username,
+    avatar: callerAccount.avatar,
+  };
+
+  io.to(`user:${receiver_id}`).emit('call:incoming', {
+    call: {
+      _id: call._id.toString(),
+      caller: { _id: sender_id },
+      receiver: { _id: receiver_id },
+      type: type || 'audio',
+      status: 'ringing',
+      ratePerMinute,
+      signalData: call.signalData,
+      createdAt: call.createdAt,
+    },
+    caller: callerInfo,
+    roomId,
+  });
+
+  console.log(`[Call:REST] call:incoming emitted to user:${receiver_id}`);
+
+  // Emit call:ringing to caller
+  io.to(`user:${sender_id}`).emit('call:ringing', {
+    call: {
+      _id: call._id.toString(),
+      caller: { _id: sender_id },
+      receiver: { _id: receiver_id },
+      type: type || 'audio',
+      status: 'ringing',
+      ratePerMinute,
+      createdAt: call.createdAt,
+    },
+    roomId,
+  });
+
+  console.log(`[Call:REST] call:ringing emitted to user:${sender_id}`);
+
+  res.json({
+    success: true,
+    callId: call._id.toString(),
+    roomId,
+    ratePerMinute,
+  });
+}));
+
 module.exports = router;

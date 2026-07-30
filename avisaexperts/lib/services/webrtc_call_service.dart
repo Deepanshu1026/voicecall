@@ -860,26 +860,45 @@ class WebRTCCallService extends ChangeNotifier {
       );
       await pc.setLocalDescription(offer);
       final localDesc = await pc.getLocalDescription();
-      _logCallEvent('[STEP 12] Offer created, emitting call:initiate...');
+      _logCallEvent('[STEP 12] Offer created, sending REST call initiate...');
 
-      final emitted = _emit('call:initiate', {
-        'receiverId': receiverId,
-        'type': type,
-        'offer': {'type': localDesc?.type ?? offer.type, 'sdp': localDesc?.sdp ?? offer.sdp},
-      });
-      _logCallEvent('[STEP 13] call:initiate emitted=$emitted');
+      // Use REST instead of socket for call initiation - more reliable
+      final currentUserId = await _currentUserIdAsync();
+      final dio = Dio();
+      final response = await dio.post(
+        AppConfig.callInitiate,
+        data: {
+          'sender_id': currentUserId,
+          'receiver_id': receiverId,
+          'type': type,
+          'offer': {
+            'type': localDesc?.type ?? offer.type,
+            'sdp': localDesc?.sdp ?? offer.sdp,
+          },
+        },
+        options: Options(
+          contentType: 'application/x-www-form-urlencoded',
+          responseType: ResponseType.json,
+        ),
+      ).timeout(const Duration(seconds: 30));
 
-      if (!emitted) {
-        _logCallEvent('[FAIL] Could not emit call:initiate - socket disconnected');
-        _callError = 'Socket disconnected while sending call';
-        _callState = CallState.error;
-        notifyListeners();
-        _reset();
-        return false;
+      if (response.statusCode == 200 && response.data is Map<String, dynamic>) {
+        final data = response.data as Map<String, dynamic>;
+        if (data['success'] == true) {
+          _callId = data['callId']?.toString();
+          _roomId = data['roomId']?.toString();
+          _logCallEvent('[STEP 13] REST call initiated: callId=$_callId roomId=$_roomId');
+          _logCallEvent('[SUCCESS] Call initiated via REST, waiting for ringing...');
+          return true;
+        }
       }
 
-      _logCallEvent('[SUCCESS] Call initiated, waiting for ringing...');
-      return true;
+      _logCallEvent('[FAIL] REST call initiate failed: ${response.statusCode} ${response.data}');
+      _callError = 'Failed to initiate call. Server error.';
+      _callState = CallState.error;
+      notifyListeners();
+      _reset();
+      return false;
     } catch (e) {
       _logCallEvent('[FAIL] Start call error: $e');
       debugPrint('[WebRTC] Failed to start call: $e');

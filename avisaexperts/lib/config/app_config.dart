@@ -42,6 +42,7 @@ class AppConfig {
   static String get chatGreet => '$flutterApiBase/chat/greet';                  // React chat parity
   static String get chatPay => '$flutterApiBase/chat/pay';                    // React chat parity
   static String get turnCredentials => '$flutterApiBase/turn-credentials';    // WebRTC TURN servers
+  static String get callInitiate => '$flutterApiBase/call/initiate';           // REST call initiation
   static String get wallet => '$flutterApiBase/wallet';                       // React wallet parity
   static String get walletAddMoney => '$flutterApiBase/wallet/add-money';     // React wallet parity
   static String get tickets => '$flutterApiBase/tickets';                    // was getMyTickets.php
