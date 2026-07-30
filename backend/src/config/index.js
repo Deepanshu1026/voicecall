@@ -48,4 +48,8 @@ module.exports = {
     keyId: process.env.RAZORPAY_KEY_ID || '',
     keySecret: process.env.RAZORPAY_KEY_SECRET || '',
   },
+  metered: {
+    appName: process.env.METERED_APP_NAME || 'avisaexperts',
+    apiKey: process.env.METERED_API_KEY || 'fe597f61bedf9e53c0ca99747d0f5f0d8ecd',
+  },
 };
