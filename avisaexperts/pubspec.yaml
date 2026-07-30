@@ -1,0 +1,109 @@
+name: avisa_experts
+description: A new Flutter project.
+publish_to: 'none'
+
+version: 2.0.2+31
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.20.2
+  http: ^1.2.1
+  email_validator: ^3.0.0
+  url_launcher: ^6.3.1
+  image_picker: ^1.2.0
+  shared_preferences: ^2.3.2
+  permission_handler: ^12.0.0+1
+  cached_network_image: ^3.4.1
+  # Firebase - Use correct versions
+  firebase_core: ^4.10.0
+  firebase_auth: ^6.5.2
+  firebase_messaging: ^16.3.0
+  firebase_analytics: ^12.4.2
+  flutter_local_notifications: ^19.4.1
+  logger: ^2.4.0
+  flutter_image_slideshow: ^0.1.6
+  carousel_slider: ^5.0.0
+  lottie: ^3.3.1
+  custom_refresh_indicator: ^4.0.1
+  file_picker: ^10.3.2
+  qr_flutter: ^4.1.0
+  photo_view: ^0.15.0
+  flutter_svg: ^2.0.14
+  path: ^1.9.0
+  font_awesome_flutter: ^10.7.0
+  socket_io_client: ^2.0.0
+  google_generative_ai: ^0.4.6
+  video_player: ^2.9.1
+  chewie: ^1.8.5
+  in_app_update: ^4.2.3
+  dio: ^5.7.0
+  open_filex: ^4.5.0
+  share_plus: ^12.0.0
+  audioplayers: ^6.5.0
+  intl_phone_field: ^3.2.0
+  pdfx: ^2.9.2
+  in_app_review: ^2.0.8
+  mime: ^1.0.4
+  http_parser: ^4.0.2
+  flutter_image_compress: ^2.1.0
+  path_provider: ^2.1.1
+  crypto: ^3.0.6
+  flutter_webrtc: ^0.12.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  flutter_native_splash: ^2.4.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/profile.webp
+    - assets/service.jpg
+    - assets/via.webp
+    - assets/tourist.webp
+    - assets/work.webp
+    - assets/workvisa.png
+    - assets/touristvisa.png
+    - assets/transitvisa.png
+    - assets/First02.png
+    - assets/First01.png
+    - assets/london.webp
+    - assets/travel.gif
+    - assets/lottieflow-ecommerce-14-11-000000-easey.json
+    - assets/Animation - 1746866563253.json
+    - assets/lottieflow-ecommerce-14-12-000000-easey.json
+    - assets/workvisa.json
+    - assets/transitvisa.json
+    - assets/touristvisa.json
+    - assets/Coming-Soon.json
+    - assets/Welcome.json
+    - assets/support.json
+    - assets/background.json
+    - assets/loading.json
+    - assets/booking.json
+    - assets/Error.json
+    - assets/Exit.json
+    - assets/ai.json
+    - assets/ic_launcher.png
+    - assets/free_icon.png
+    - assets/icons/gpay.png
+    - assets/icons/gpay.svg
+    - assets/icons/paytm.png
+    - assets/icons/paytm.svg
+    - assets/icons/phonepe.png
+    - assets/icons/phonepe.svg
+    - assets/sounds/receive_message.mp3
+    - assets/sounds/send_message.mp3
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/service.jpg
+  android: true
+  ios: true

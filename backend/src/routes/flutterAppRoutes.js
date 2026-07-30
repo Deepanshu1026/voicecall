@@ -13,6 +13,14 @@ const { generateTokens } = require('../utils/generateToken');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const ApiResponse = require('../utils/ApiResponse');
+const config = require('../config');
+
+// Normalize avatar to a string URL
+const avatarUrl = (avatar) => {
+  if (!avatar) return '';
+  if (typeof avatar === 'string') return avatar;
+  return avatar.url || '';
+};
 
 // ==================== AUTH ====================
 
@@ -25,10 +33,10 @@ router.post('/login', asyncHandler(async (req, res) => {
 
   let user;
   if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login_input)) {
-    user = await User.findOne({ email: login_input.toLowerCase().trim(), role: 'user' });
+    user = await User.findOne({ email: login_input.toLowerCase().trim(), role: 'user' }).select('+password');
   } else if (/^\d+$/.test(login_input)) {
     if (!country_code) throw new AppError('Country code is required for phone login', 400);
-    user = await User.findOne({ mobile: login_input.trim(), role: 'user' });
+    user = await User.findOne({ mobile: login_input.trim(), role: 'user' }).select('+password');
   } else {
     throw new AppError('Please provide a valid email or phone number', 400);
   }
@@ -179,7 +187,7 @@ router.get('/users/:id', asyncHandler(async (req, res) => {
       user_name: user.displayName || user.username,
       user_email: user.email,
       user_mobile: user.mobile,
-      user_profile: user.avatar?.url || user.avatar || '',
+    user_profile: avatarUrl(user.avatar),
     },
   });
 }));
@@ -465,6 +473,42 @@ router.get('/insta-api-key', asyncHandler(async (req, res) => {
   const ApiKey = require('../models/ApiKey');
   const key = await ApiKey.findOne().sort({ createdAt: -1 }).lean();
   res.json({ status: true, data: key ? [key] : [] });
+}));
+
+// ==================== WEBRTC TURN CREDENTIALS ====================
+
+let cachedTurnServers = null;
+let cachedTurnExpiresAt = 0;
+
+const fetchTurnServers = async () => {
+  const now = Date.now();
+  if (cachedTurnServers && cachedTurnExpiresAt > now) {
+    return cachedTurnServers;
+  }
+  if (!config.metered || !config.metered.apiKey) {
+    throw new Error('TURN server not configured');
+  }
+  const appName = config.metered.appName || 'avisaexperts';
+  const url = `https://${appName}.metered.live/api/v1/turn/credentials?apiKey=${config.metered.apiKey}`;
+  const response = await fetch(url, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`Failed to fetch TURN credentials: ${response.status}`);
+  const servers = await response.json();
+  if (!Array.isArray(servers) || servers.length === 0) {
+    throw new Error('Invalid TURN credentials response');
+  }
+  cachedTurnServers = servers;
+  cachedTurnExpiresAt = now + 4 * 60 * 1000;
+  return cachedTurnServers;
+};
+
+router.get('/turn-credentials', asyncHandler(async (req, res) => {
+  try {
+    const servers = await fetchTurnServers();
+    res.json({ success: true, servers });
+  } catch (err) {
+    console.error('[TURN] Error fetching credentials:', err.message);
+    res.json({ success: false, message: err.message, servers: [] });
+  }
 }));
 
 // ==================== CHAT ENDPOINTS (Flutter app compat) ====================
