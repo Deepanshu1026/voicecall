@@ -816,16 +816,27 @@ const setupSocket = (io) => {
     };
 
     const isUserOnlineDB = async (uid) => {
+      console.log(`[isUserOnlineDB] Checking uid=${uid} (type: ${typeof uid})`);
+      console.log(`[isUserOnlineDB] onlineUserSockets.has(${uid}): ${onlineUserSockets.has(uid)}`);
+      console.log(`[isUserOnlineDB] onlineEmployeeSockets.has(${uid}): ${onlineEmployeeSockets.has(uid)}`);
+
       const hasActiveSocket =
         (onlineUserSockets.has(uid) && onlineUserSockets.get(uid).size > 0) ||
         (onlineEmployeeSockets.has(uid) && onlineEmployeeSockets.get(uid).size > 0);
+
+      console.log(`[isUserOnlineDB] hasActiveSocket=${hasActiveSocket}`);
       if (hasActiveSocket) return true;
 
       const account = await getAccountById(uid, 'status workStatus lastSeen');
+      console.log(`[isUserOnlineDB] account=${account ? 'found' : 'not found'}, status=${account?.status}, workStatus=${account?.workStatus}`);
       if (!account) return false;
       const isActive = account.status === 'online' || account.workStatus === 'active';
+      console.log(`[isUserOnlineDB] isActive=${isActive}`);
       if (!isActive) return false;
-      return Date.now() - new Date(account.lastSeen).getTime() < HEARTBEAT_TIMEOUT_MS;
+      const lastSeenMs = Date.now() - new Date(account.lastSeen).getTime();
+      const withinTimeout = lastSeenMs < HEARTBEAT_TIMEOUT_MS;
+      console.log(`[isUserOnlineDB] lastSeenMs=${lastSeenMs}, withinTimeout=${withinTimeout}`);
+      return withinTimeout;
     };
 
     const formatDuration = (seconds) => {
@@ -926,23 +937,34 @@ const setupSocket = (io) => {
     socket.on('call:initiate', async ({ receiverId, type = 'audio', offer }) => {
       try {
         console.log(`[Call] ${userId} initiating call to ${receiverId}`);
+        console.log(`[Call] receiverId type: ${typeof receiverId}, value: ${receiverId}`);
+        console.log(`[Call] userId type: ${typeof userId}, value: ${userId}`);
+        console.log(`[Call] offer type: ${typeof offer}, offer: ${offer ? 'present' : 'missing'}`);
+
         if (!receiverId || receiverId === userId) {
+          console.log(`[Call] ERROR: Invalid receiver - receiverId=${receiverId}, userId=${userId}`);
           socket.emit('call:error', { message: 'Invalid receiver' });
           return;
         }
 
         if (!offer || !offer.sdp || !offer.type) {
+          console.log(`[Call] ERROR: Missing offer - offer=${offer}, sdp=${offer?.sdp?.length}, type=${offer?.type}`);
           socket.emit('call:error', { message: 'Missing call offer' });
           return;
         }
 
         if (isUserBusy(userId)) {
+          console.log(`[Call] ERROR: User busy - userId=${userId}`);
           socket.emit('call:error', { message: 'You are already in a call' });
           return;
         }
 
+        console.log(`[Call] Checking if receiver ${receiverId} is online...`);
         const receiverOnline = await isUserOnlineDB(receiverId);
+        console.log(`[Call] receiverOnline=${receiverOnline}`);
+
         if (!receiverOnline) {
+          console.log(`[Call] ERROR: User offline - receiverId=${receiverId}`);
           socket.emit('call:error', { message: 'User is offline', receiverId });
           return;
         }
@@ -995,13 +1017,34 @@ const setupSocket = (io) => {
         userCallRooms.set(userId, roomId);
         setCallParticipants(call._id.toString(), userId, receiverId);
 
+        console.log(`[Call] Creating call document...`);
+        const call = await Call.create({
+          caller: userId,
+          receiver: receiverId,
+          type: type || 'audio',
+          status: 'ringing',
+          ratePerMinute,
+          signalData: { offer: { type: offer.type, sdp: offer.sdp } },
+        });
+        console.log(`[Call] Call created: ${call._id}`);
+
+        const populatedCall = await getCall(call._id);
+
+        const roomId = `call:${call._id}`;
+        socket.join(roomId);
+        userCallRooms.set(userId, roomId);
+        setCallParticipants(call._id.toString(), userId, receiverId);
+
+        console.log(`[Call] Emitting call:incoming to user:${receiverId}`);
         io.to(`user:${receiverId}`).emit('call:incoming', {
           call: populatedCall,
           caller: callerAccount,
           roomId,
         });
+        console.log(`[Call] call:incoming emitted to ${receiverId}`);
 
         socket.emit('call:ringing', { call: populatedCall, roomId });
+        console.log(`[Call] call:ringing emitted to ${userId}`);
 
         // Notify both participants to refresh call history
         io.to(`user:${userId}`).emit('call:updated', { call: populatedCall });
