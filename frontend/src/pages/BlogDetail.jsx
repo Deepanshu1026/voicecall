@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import LandingLayout from '../components/user/LandingLayout';
+import { blogAPI } from '../services/api';
 import '../styles/blogs.css';
 
 const fallbackImage = '/images/user/touristvisa_full 1.webp';
@@ -33,29 +34,52 @@ const BlogDetail = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  const postId = parseInt(id, 10);
+  const postId = id;
 
   useEffect(() => {
-    fetch('/data/blog_posts.json')
-      .then((res) => res.json())
-      .then((data) => {
-        const found = data.find((p) => p.id === postId);
-        if (found) {
-          setPost(found);
-          const others = data
-            .filter((p) => p.id !== postId)
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 3);
-          setRelated(others);
-        } else {
-          setNotFound(true);
+    let cancelled = false;
+    const loadPost = async () => {
+      try {
+        const [postRes, relatedRes] = await Promise.all([
+          blogAPI.getPostById(postId),
+          blogAPI.getRelatedPosts(postId),
+        ]);
+        const found = postRes.data?.data;
+        const others = relatedRes.data?.data || [];
+        if (!cancelled) {
+          if (found) {
+            setPost({
+              ...found,
+              id: found._id || found.legacyId,
+              featured_image: found.featuredImage || '',
+              image_alt: found.imageAlt || '',
+              created_at: found.createdAt,
+              category: found.category || 'General',
+            });
+            setRelated(
+              others.map((p) => ({
+                ...p,
+                id: p._id || p.legacyId,
+                featured_image: p.featuredImage || '',
+                image_alt: p.imageAlt || '',
+                created_at: p.createdAt,
+              }))
+            );
+          } else {
+            setNotFound(true);
+          }
+          setLoading(false);
         }
-        setLoading(false);
-      })
-      .catch(() => {
-        setNotFound(true);
-        setLoading(false);
-      });
+      } catch (err) {
+        console.error('Failed to load post:', err);
+        if (!cancelled) {
+          setNotFound(true);
+          setLoading(false);
+        }
+      }
+    };
+    loadPost();
+    return () => { cancelled = true; };
   }, [postId]);
 
   const pageUrl = useMemo(() => `https://avisaexperts.com/blog/${post?.id}/${slugify(post?.title || '')}`, [post]);

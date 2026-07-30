@@ -208,4 +208,10 @@ export const appointmentAPI = {
   book: (data) => api.post('/app/appointments', data),
 };
 
+export const blogAPI = {
+  getPosts: (params) => api.get('/app/posts', { params }),
+  getPostById: (id) => api.get(`/app/posts/${id}`),
+  getRelatedPosts: (id) => api.get(`/app/posts/${id}/related`),
+};
+
 export default api;
