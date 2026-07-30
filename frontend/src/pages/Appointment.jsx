@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import LandingLayout from '../components/user/LandingLayout';
+import { appointmentAPI } from '../services/api';
 import '../styles/appointment.css';
 
 const timeSlots = {
@@ -74,6 +75,8 @@ const Appointment = () => {
     success: false,
   });
   const [premiumPopup, setPremiumPopup] = useState({ show: false, message: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [referenceId, setReferenceId] = useState('');
   const scheduleRef = useRef(null);
 
   const refreshSlots = useCallback(() => {
@@ -159,7 +162,7 @@ const Appointment = () => {
     if (!formData.name.trim() || !/^[A-Za-z\s]+$/.test(formData.name)) {
       errors.name = 'Please enter a valid name (letters only).';
     }
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       errors.email = 'Please enter a valid email address.';
     }
     if (!/^\d{10}$/.test(formData.contact)) {
@@ -186,7 +189,7 @@ const Appointment = () => {
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validate();
     if (Object.keys(errors).length > 0) {
@@ -196,7 +199,31 @@ const Appointment = () => {
       }
       return;
     }
-    setShowModal(true);
+
+    setSubmitting(true);
+    try {
+      const res = await appointmentAPI.book({
+        selected_plan: selectedPlan.toLowerCase(),
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        contact: formData.contact.trim(),
+        datetime: `${formData.date} ${selectedTime}`,
+        mode: formData.mode,
+        time_slot: selectedTime,
+        querry: formData.query.trim(),
+        address: formData.mode === 'offline' ? formData.address : '',
+      });
+
+      setReferenceId(res.data?.reference_id || '');
+      setShowModal(true);
+      showFloatingAlert('Success', 'Your appointment has been booked successfully!', true);
+    } catch (err) {
+      console.error('Appointment booking failed:', err);
+      const msg = err.response?.data?.message || 'Failed to book appointment. Please try again.';
+      showFloatingAlert('Error', msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const closeModal = () => {
@@ -327,9 +354,7 @@ const Appointment = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">
-                Email Address <span style={{ fontSize: 'x-small', color: 'gray' }}>(Optional*)</span>
-              </label>
+              <label htmlFor="email">Email Address</label>
               <input
                 type="text"
                 id="email"
@@ -337,6 +362,7 @@ const Appointment = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 placeholder="Enter your email"
+                required
               />
               {formErrors.email && <p className="error-text">{formErrors.email}</p>}
             </div>
@@ -541,7 +567,9 @@ const Appointment = () => {
               {formErrors.time && <p className="error-text">{formErrors.time}</p>}
             </div>
 
-            <button type="submit">Schedule Meeting</button>
+            <button type="submit" disabled={submitting}>
+              {submitting ? 'Booking...' : 'Schedule Meeting'}
+            </button>
           </form>
         </div>
 
@@ -551,7 +579,14 @@ const Appointment = () => {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-icon">✓</div>
               <h3 className="modal-title">Success!</h3>
-              <p className="modal-message">Your appointment has been scheduled successfully.</p>
+              <p className="modal-message">
+                Your appointment has been scheduled successfully.
+                {referenceId && (
+                  <span style={{ display: 'block', marginTop: '8px', fontWeight: 600, color: '#4f46e5' }}>
+                    Reference ID: {referenceId}
+                  </span>
+                )}
+              </p>
               <button className="modal-button" onClick={closeModal}>
                 OK
               </button>
