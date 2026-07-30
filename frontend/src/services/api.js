@@ -204,4 +204,8 @@ export const agentPortalAPI = {
   getDailyLogins: (page, date) => api.get('/agent-portal/daily-logins', { params: { page, date } }),
 };
 
+export const appointmentAPI = {
+  book: (data) => api.post('/app/appointments', data),
+};
+
 export default api;
