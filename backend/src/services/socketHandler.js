@@ -1009,23 +1009,6 @@ const setupSocket = (io) => {
           ratePerMinute,
           signalData: { offer: { type: offer.type, sdp: offer.sdp } },
         });
-
-        const populatedCall = await getCall(call._id);
-
-        const roomId = `call:${call._id}`;
-        socket.join(roomId);
-        userCallRooms.set(userId, roomId);
-        setCallParticipants(call._id.toString(), userId, receiverId);
-
-        console.log(`[Call] Creating call document...`);
-        const call = await Call.create({
-          caller: userId,
-          receiver: receiverId,
-          type: type || 'audio',
-          status: 'ringing',
-          ratePerMinute,
-          signalData: { offer: { type: offer.type, sdp: offer.sdp } },
-        });
         console.log(`[Call] Call created: ${call._id}`);
 
         const populatedCall = await getCall(call._id);
