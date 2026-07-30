@@ -927,104 +927,297 @@
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .appointment-page .pricing-container {
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .appointment-page .card {
+    width: calc(50% - 12px);
+    max-width: none;
+  }
+}
+
 @media (max-width: 768px) {
   .appointment-page {
-    padding-top: 100px;
+    padding: 130px 12px 40px;
+  }
+
+  .appointment-page .offer-screen-container {
+    padding: 0;
+    margin-bottom: 16px;
   }
 
   .appointment-page .offer_screen {
     height: auto;
     width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+  }
+
+  .appointment-page .pricing-section {
+    top: 0;
+    margin-bottom: 40px;
+    padding: 0;
   }
 
   .appointment-page .pricing-container {
-    justify-content: start;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    gap: 16px;
   }
 
   .appointment-page .card {
     width: 100%;
-    max-width: 320px;
+    max-width: none;
+    padding: 28px 20px;
+  }
+
+  .appointment-page .badge {
+    top: 20px;
+    right: -50px;
+    padding: 6px 40px;
+    font-size: 11px;
+  }
+
+  .appointment-page .price {
+    font-size: 32px;
+  }
+
+  .appointment-page h3 {
+    font-size: 20px;
+  }
+
+  .appointment-page ul li {
+    font-size: 14px;
+    margin-bottom: 10px;
   }
 
   .appointment-page .form-container {
-    padding: 20px;
+    padding: 20px 16px;
+    margin: 0 auto 20px;
   }
 
   .appointment-page .radio-group {
     flex-direction: column;
   }
 
-  .appointment-page .timing-grid {
-    gap: 16px;
-  }
-
   .appointment-page .mode-selection {
     flex-direction: column;
-    gap: 40px;
+    gap: 24px;
+    margin: 16px 0 24px;
+  }
+
+  .appointment-page .mode-option {
+    padding: 16px;
+  }
+
+  .appointment-page .mode-radio {
+    top: 16px;
+    right: 16px;
+  }
+
+  .appointment-page .mode-header {
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+
+  .appointment-page .mode-title {
+    font-size: 16px;
+  }
+
+  .appointment-page .mode-description {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .appointment-page .mode-features li {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .appointment-page .address-box {
+    padding: 8px 0;
+    gap: 8px;
+  }
+
+  .appointment-page .address-line {
+    font-size: 13px;
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  .appointment-page .passport-badge {
+    font-size: 11px;
+    padding: 6px 14px;
+    bottom: -12px;
+    white-space: normal;
+    text-align: center;
+    max-width: 95%;
+  }
+
+  .appointment-page .timing-grid {
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .appointment-page .label-slot {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .appointment-page .slot-count {
+    top: -14px;
+    right: -14px;
+    width: 36px;
+    height: 36px;
+    font-size: 10px;
+    padding: 4px;
+  }
+
+  .appointment-page button {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .appointment-page .modal-content {
+    padding: 20px;
+    width: 92%;
+  }
+
+  .appointment-page .modal-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+
+  .appointment-page .modal-title {
+    font-size: 20px;
+  }
+
+  .appointment-page .modal-message {
+    font-size: 14px;
+    margin-bottom: 20px;
   }
 
   .appointment-page .floating-alert,
   .appointment-page .validation-alert {
-    left: 15px;
-    right: 15px;
+    top: auto;
+    bottom: 20px;
+    left: 12px;
+    right: 12px;
     min-width: auto;
+    max-width: none;
+    padding: 16px 20px;
+    gap: 12px;
   }
 
   .appointment-page .floating-alert.show {
     transform: translateY(0);
   }
-}
 
-@media (max-width: 600px) {
-  .appointment-page .pricing-container {
-    display: flex;
-    flex-direction: row;
-    overflow-x: scroll;
-    flex-wrap: nowrap;
-    gap: 2px;
-    margin: -16px;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .appointment-page .pricing-container::-webkit-scrollbar {
-    display: none;
-  }
-
-  .appointment-page .card.basic {
-    margin-left: 16px;
-  }
-
-  .appointment-page .card {
-    flex: 0 0 auto;
-    margin-right: 16px;
-    width: 100%;
-  }
-
-  .appointment-page h3 {
-    font-size: 22px;
-  }
-
-  .appointment-page .price {
-    font-size: 36px;
-  }
-
-  .appointment-page ul li {
-    font-size: 16px;
-  }
-
-  .appointment-page button {
+  .appointment-page .floating-alert .icon {
+    width: 36px;
+    height: 36px;
     font-size: 18px;
   }
 
+  .appointment-page .floating-alert .title {
+    font-size: 15px;
+  }
+
+  .appointment-page .floating-alert .message {
+    font-size: 13px;
+  }
+
+  .appointment-page .floating-alert .close {
+    font-size: 22px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .appointment-page .premium-popup {
+    width: 92%;
+    max-width: 92vw;
+    padding: 16px 20px;
+    top: auto;
+    bottom: 20%;
+  }
+
+  .appointment-page .premium-popup-message {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .appointment-page {
+    padding: 125px 10px 30px;
+  }
+
+  .appointment-page .offer_screen {
+    max-height: 140px;
+    border-radius: 12px;
+  }
+
+  .appointment-page .card {
+    padding: 20px 16px;
+  }
+
+  .appointment-page .circle-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-bottom: 12px;
+  }
+
+  .appointment-page .circle-checkbox.checked::after {
+    top: 5px;
+    left: 5px;
+    width: 6px;
+    height: 6px;
+  }
+
+  .appointment-page .price {
+    font-size: 28px;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .appointment-page .price del {
+    font-size: 14px;
+    margin-left: 0;
+  }
+
+  .appointment-page .gst-note {
+    font-size: 11px;
+  }
+
+  .appointment-page h3 {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+
+  .appointment-page ul {
+    margin: 16px 0;
+  }
+
+  .appointment-page ul li {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
   .appointment-page .form-container {
-    padding: 20px;
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+
+  .appointment-page .form-group {
+    margin-bottom: 18px;
   }
 
   .appointment-page .form-group label {
-    font-size: 16px;
+    padding: 6px 0;
+    font-size: 14px;
   }
 
   .appointment-page .form-group input[type='text'],
@@ -1032,41 +1225,107 @@
   .appointment-page .form-group input[type='email'],
   .appointment-page .form-group input[type='date'],
   .appointment-page .form-group textarea {
+    padding: 10px;
     font-size: 16px;
   }
 
-  .appointment-page .modal-content {
-    padding: 20px;
+  .appointment-page .form-group textarea {
+    height: 80px;
   }
 
-  .appointment-page .modal-title {
-    font-size: 22px;
+  .appointment-page .section-divider {
+    margin: 30px 0;
   }
 
-  .appointment-page .modal-message {
-    font-size: 16px;
+  .appointment-page .section-divider span {
+    font-size: 14px;
   }
 
-  .appointment-page .modal-button {
-    font-size: 18px;
+  .appointment-page .mode-option {
+    padding: 14px;
+    border-radius: 12px;
   }
 
-  .appointment-page .pricing-section {
-    padding: 0;
+  .appointment-page .mode-badge {
+    top: -10px;
+    right: 10px;
+    padding: 4px 10px;
+    font-size: 11px;
   }
 
-  .appointment-page .mode-selection {
-    gap: 40px;
+  .appointment-page .mode-radio {
+    width: 20px;
+    height: 20px;
+    top: 14px;
+    right: 14px;
+  }
+
+  .appointment-page .mode-radio::after {
+    width: 10px;
+    height: 10px;
+  }
+
+  .appointment-page .mode-title {
+    font-size: 15px;
+  }
+
+  .appointment-page .mode-description {
+    font-size: 12px;
+  }
+
+  .appointment-page .address-line {
+    font-size: 12px;
   }
 
   .appointment-page .passport-badge {
+    font-size: 10px;
+    padding: 5px 10px;
+    bottom: -10px;
+  }
+
+  .appointment-page .timing-grid {
+    gap: 8px;
+  }
+
+  .appointment-page .time-slot {
+    border-radius: 6px;
+  }
+
+  .appointment-page .label-slot {
+    padding: 8px 10px;
     font-size: 12px;
-    padding: 8px 16px;
-    bottom: -16px;
-    white-space: nowrap;
-    width: auto;
-    max-width: 90%;
-    justify-content: center;
+  }
+
+  .appointment-page .slot-count {
+    top: -10px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
+    font-size: 9px;
+    padding: 2px;
+  }
+
+  .appointment-page button {
+    font-size: 14px;
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .appointment-page .modal-content {
+    padding: 16px;
+  }
+
+  .appointment-page .modal-title {
+    font-size: 18px;
+  }
+
+  .appointment-page .modal-message {
+    font-size: 13px;
+  }
+
+  .appointment-page .modal-button {
+    padding: 10px 24px;
+    font-size: 14px;
   }
 }
 

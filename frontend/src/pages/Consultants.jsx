@@ -260,6 +260,8 @@ const Consultants = () => {
   const [addingMoney, setAddingMoney] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatConversation, setChatConversation] = useState(null);
+  const profileCardRef = useRef(null);
+  const profileTriggerRef = useRef(null);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -395,6 +397,23 @@ const Consultants = () => {
     return cleanup;
   }, [on, chat]);
 
+  // Close profile card when clicking outside
+  useEffect(() => {
+    if (!profileOpen) return;
+    const handleClickOutside = (e) => {
+      if (
+        profileCardRef.current &&
+        !profileCardRef.current.contains(e.target) &&
+        profileTriggerRef.current &&
+        !profileTriggerRef.current.contains(e.target)
+      ) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [profileOpen]);
+
   const filtered = consultants
     .filter((c) => {
       const q = search.toLowerCase();
@@ -456,7 +475,7 @@ const Consultants = () => {
                     <span>₹{wallet.balance}</span>
                     <button className="add-money-btn" title="Add money">+</button>
                   </div>
-                  <div id="profile" onClick={() => setProfileOpen((p) => !p)} style={{ cursor: 'pointer' }}>
+                  <div id="profile" ref={profileTriggerRef} onClick={() => setProfileOpen((p) => !p)} style={{ cursor: 'pointer' }}>
                     <img id="thisprofile" src={activeUser.avatar} alt="Profile Picture" />
                   </div>
                 </>
@@ -497,7 +516,7 @@ const Consultants = () => {
           )}
 
           {activeUser && profileOpen && (
-            <div className="profile-card" style={{ display: 'block' }}>
+            <div className="profile-card" ref={profileCardRef} style={{ display: 'block' }}>
               <div className="profile-image">
                 <img id="profile" src={activeUser.avatar} alt="User Image" />
               </div>

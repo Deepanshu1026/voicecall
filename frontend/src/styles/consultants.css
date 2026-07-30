@@ -836,6 +836,29 @@ html {
     height: 36px;
   }
 
+  .consultants-page .profile-card {
+    right: 12px;
+    top: 145px;
+    width: 260px;
+    margin: 0;
+    padding: 16px 0;
+  }
+
+  .consultants-page .profile-image img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .consultants-page .profile-name {
+    font-size: 16px;
+    margin: 10px 0 4px;
+  }
+
+  .consultants-page .profile-phone {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
   .consultants-page .consultant-section {
     justify-content: center;
     padding: 28px 16px 16px;
@@ -934,6 +957,35 @@ html {
   .consultants-page #thisprofile {
     width: 32px;
     height: 32px;
+  }
+
+  .consultants-page .profile-card {
+    right: 8px;
+    top: 142px;
+    width: calc(100% - 16px);
+    max-width: 280px;
+    padding: 14px 0;
+    border-radius: 12px;
+  }
+
+  .consultants-page .profile-image img {
+    width: 64px;
+    height: 64px;
+  }
+
+  .consultants-page .profile-name {
+    font-size: 15px;
+    margin: 8px 0 3px;
+  }
+
+  .consultants-page .profile-phone {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .consultants-page .profile-btn {
+    font-size: 13px;
+    padding: 7px 14px;
   }
 }
 
