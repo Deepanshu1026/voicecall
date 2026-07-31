@@ -656,6 +656,20 @@ router.post('/chat/send', asyncHandler(async (req, res) => {
     msgObj.sender = { _id: sId };
     req.io.to(`user:${rId}`).emit('message:new', msgObj);
     req.io.to(`user:${sId}`).emit('message:new', msgObj);
+
+    // Also emit conversation update so sidebar refreshes in real-time
+    req.io.to(`user:${rId}`).emit('conversation:updated', {
+      conversationId: conv._id.toString(),
+      lastMessage: message?.substring(0, 100) || '',
+      lastMessageAt: msg.createdAt,
+      senderId: sender_id,
+    });
+    req.io.to(`user:${sId}`).emit('conversation:updated', {
+      conversationId: conv._id.toString(),
+      lastMessage: message?.substring(0, 100) || '',
+      lastMessageAt: msg.createdAt,
+      senderId: sender_id,
+    });
   }
 
   res.json({ success: true, message_id: msg._id, created_at: msg.createdAt });
@@ -780,6 +794,7 @@ router.post('/chat/conversation', asyncHandler(async (req, res) => {
   if (!sender || !receiver) throw new AppError('User not found', 404);
   const isUserToAgent = sender.role === 'user' && isAgentRole(receiver.role);
   let conv = await Conversation.findOne({ type: 'direct', participants: { $all: [sId, rId], $size: 2 } });
+  const isNewConversation = !conv;
 
   // Check if the user has already used their one free trial with ANY agent
   const hasUsedFreeTrial = isUserToAgent ? await Conversation.findOne({
@@ -810,7 +825,23 @@ router.post('/chat/conversation', asyncHandler(async (req, res) => {
     conv.paymentAmount = config.chatPaymentAmount || 100;
     await conv.save();
   }
-  res.json({ success: true, conversation: { id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: conv.participants.map((p) => p.toString()), isActive: conv.isActive } });
+
+  const convData = { id: conv._id, _id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: conv.participants.map((p) => p.toString()), isActive: conv.isActive, updatedAt: conv.updatedAt || new Date() };
+
+  // Emit real-time socket events
+  if (req.io) {
+    if (!isNewConversation) {
+      // Existing conversation – just notify the update
+      req.io.to(`user:${sender_id}`).emit('conversation:updated', { conversationId: conv._id.toString(), ...convData });
+      req.io.to(`user:${receiver_id}`).emit('conversation:updated', { conversationId: conv._id.toString(), ...convData });
+    } else {
+      // New conversation – notify both participants so the sidebar updates in real-time
+      req.io.to(`user:${sender_id}`).emit('conversation:new', convData);
+      req.io.to(`user:${receiver_id}`).emit('conversation:new', convData);
+    }
+  }
+
+  res.json({ success: true, conversation: convData });
 }));
 
 router.post('/chat/greet', asyncHandler(async (req, res) => {
@@ -852,6 +883,22 @@ router.post('/chat/pay', asyncHandler(async (req, res) => {
   if ((user.walletBalance || 0) < amount) throw new AppError('Insufficient wallet balance', 402);
   user.walletBalance -= amount; await user.save();
   conv.isPaid = true; conv.freeUntil = null; await conv.save();
+
+  // Emit real-time updates
+  if (req.io) {
+    // Notify agent that the conversation status changed
+    req.io.to(`user:${receiver_id}`).emit('conversation:updated', {
+      conversationId: conv._id.toString(),
+      isPaid: true,
+      freeUntil: null,
+      paymentAmount: amount,
+    });
+    // Update wallet balance for the client
+    req.io.to(`user:${sender_id}`).emit('wallet:updated', {
+      balance: user.walletBalance,
+    });
+  }
+
   res.json({ success: true, conversation: { id: conv._id, isPaid: true, freeUntil: null, paymentAmount: amount }, newBalance: user.walletBalance });
 }));
 

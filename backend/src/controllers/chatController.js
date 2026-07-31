@@ -626,12 +626,18 @@ const payForConversation = asyncHandler(async (req, res) => {
   }, 'Payment successful. You can now continue chatting.');
 
   // Notify the other participant (agent) in real-time
-  if (req.io && otherParticipant) {
-    req.io.to(`user:${otherParticipant._id.toString()}`).emit('conversation:updated', {
-      conversationId: conversation._id.toString(),
-      isPaid: true,
-      freeUntil: null,
-      walletBalance: user.walletBalance,
+  if (req.io) {
+    if (otherParticipant) {
+      req.io.to(`user:${otherParticipant._id.toString()}`).emit('conversation:updated', {
+        conversationId: conversation._id.toString(),
+        isPaid: true,
+        freeUntil: null,
+        walletBalance: user.walletBalance,
+      });
+    }
+    // Update the payer's wallet balance in real-time
+    req.io.to(`user:${req.userId.toString()}`).emit('wallet:updated', {
+      balance: user.walletBalance,
     });
   }
 });
