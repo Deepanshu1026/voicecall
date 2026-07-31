@@ -190,7 +190,30 @@ router.get('/users/:id', asyncHandler(async (req, res) => {
   });
 }));
 
-router.post('/edit-profile', asyncHandler(async (req, res) => {
+const profileUpload = require('../utils/upload').single('profile');
+
+// GET version for no-image updates
+router.get('/edit-profile', asyncHandler(async (req, res) => {
+  const { userid, name, contact, email } = req.query;
+  if (!userid || !name || !contact || !email) {
+    throw new AppError('userid, name, contact, email are required', 400);
+  }
+
+  const update = { displayName: name.trim(), mobile: contact.trim(), email: email.toLowerCase().trim() };
+  await User.findByIdAndUpdate(userid, update);
+
+  const user = await User.findById(userid).select('displayName username email mobile avatar');
+  ApiResponse.success(res, {
+    userid,
+    name: user.displayName,
+    contact: user.mobile,
+    email: user.email,
+    profile_url: avatarUrl(user.avatar),
+    user_profile: avatarUrl(user.avatar),
+  }, 'Profile updated');
+}));
+
+router.post('/edit-profile', profileUpload, handleMulterError, asyncHandler(async (req, res) => {
   const { userid, name, contact, email } = req.body;
   if (!userid || !name || !contact || !email) {
     throw new AppError('userid, name, contact, email are required', 400);
@@ -198,9 +221,19 @@ router.post('/edit-profile', asyncHandler(async (req, res) => {
 
   const update = { displayName: name.trim(), mobile: contact.trim(), email: email.toLowerCase().trim() };
 
-  // Handle file upload for profile picture (if implemented)
+  // Handle file upload for profile picture
   if (req.file) {
-    // Upload to Cloudinary and set update.avatar
+    if (config.cloudinary && config.cloudinary.cloudName) {
+      const result = await uploadToCloudinary(req.file.path, {
+        folder: 'voicecall/profiles',
+        resourceType: 'image',
+        transformation: { width: 400, height: 400, crop: 'fill', gravity: 'face' },
+      });
+      update.avatar = { url: result.url, publicId: result.public_id };
+    } else {
+      const profilePath = `/uploads/profiles/${req.file.filename}`;
+      update.avatar = { url: profilePath, publicId: '' };
+    }
   }
 
   await User.findByIdAndUpdate(userid, update);
@@ -211,7 +244,8 @@ router.post('/edit-profile', asyncHandler(async (req, res) => {
     name: user.displayName,
     contact: user.mobile,
     email: user.email,
-    profile_url: user.avatar?.url || user.avatar || '',
+    profile_url: avatarUrl(user.avatar),
+    user_profile: avatarUrl(user.avatar),
   }, 'Profile updated');
 }));
 
