@@ -308,15 +308,28 @@ router.post('/tickets', asyncHandler(async (req, res) => {
 // ==================== NOTIFICATIONS ====================
 
 router.get('/notifications', asyncHandler(async (req, res) => {
-  const notifications = await Notification.find().sort({ createdAt: -1 }).lean();
+  const { user_id } = req.query;
+  const filter = user_id ? { $or: [{ userId: user_id }, { userId: { $exists: false } }] } : {};
+  const notifications = await Notification.find(filter).sort({ createdAt: -1 }).lean();
   const data = notifications.map((n) => ({
+    id: n._id,
     title: n.title,
     message: n.message,
+    type: n.type || 'general',
     media_path: n.mediaPath,
+    is_read: n.isRead,
+    link: n.link || '',
     date: n.createdAt ? new Date(n.createdAt).toISOString().split('T')[0] : '',
     time: n.createdAt ? new Date(n.createdAt).toTimeString().split(' ')[0] : '',
+    created_at: n.createdAt,
   }));
   res.json({ success: true, notifications: data });
+}));
+
+// Mark notification as read
+router.patch('/notifications/:id/read', asyncHandler(async (req, res) => {
+  await Notification.findByIdAndUpdate(req.params.id, { isRead: true });
+  res.json({ success: true });
 }));
 
 // ==================== FCM TOKEN ====================

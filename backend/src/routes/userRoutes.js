@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const walletController = require('../controllers/walletController');
+const notificationController = require('../controllers/notificationController');
 const { auth } = require('../middleware/auth');
 
 // Public consultant listing for the user-side landing page
@@ -21,6 +22,12 @@ router.post('/wallet/add-money', auth, walletController.addMoney);
 router.post('/wallet/create-order', auth, walletController.createOrder);
 router.post('/wallet/verify-payment', auth, walletController.verifyPayment);
 router.get('/wallet/transactions', auth, walletController.getTransactions);
+
+// Notification routes (must be before /:userId to avoid route conflict)
+router.get('/notifications', auth, notificationController.getNotifications);
+router.get('/notifications/unread-count', auth, notificationController.getUnreadCount);
+router.patch('/notifications/:id/read', auth, notificationController.markAsRead);
+router.patch('/notifications/read-all', auth, notificationController.markAllAsRead);
 
 router.get('/:userId', auth, userController.getUserById);
 
