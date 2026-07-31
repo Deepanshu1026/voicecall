@@ -15,7 +15,7 @@ const filesDir = path.join(uploadsDir, 'files');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (file.fieldname === 'avatar') {
+    if (file.fieldname === 'avatar' || file.fieldname === 'profile') {
       cb(null, avatarsDir);
     } else {
       cb(null, filesDir);
@@ -47,11 +47,11 @@ const fileFilter = (req, file, cb) => {
     'video/webm',
   ];
 
-  if (file.fieldname === 'avatar') {
+  if (file.fieldname === 'avatar' || file.fieldname === 'profile') {
     if (allowedImageTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed for avatars'), false);
+      cb(new Error('Only image files are allowed for profile pictures'), false);
     }
   } else {
     if (allowedFileTypes.includes(file.mimetype)) {

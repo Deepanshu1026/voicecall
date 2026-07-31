@@ -14,6 +14,9 @@ const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const ApiResponse = require('../utils/ApiResponse');
 const config = require('../config');
+const { handleMulterError } = require('../middleware/upload');
+const { uploadToCloudinary } = require('../services/cloudinaryService');
+const multerUpload = require('../utils/upload');
 
 // Normalize avatar to a string URL
 const avatarUrl = (avatar) => {
@@ -190,7 +193,7 @@ router.get('/users/:id', asyncHandler(async (req, res) => {
   });
 }));
 
-const profileUpload = require('../utils/upload').single('profile');
+const profileUpload = multerUpload.single('profile');
 
 // GET version for no-image updates
 router.get('/edit-profile', asyncHandler(async (req, res) => {
