@@ -48,7 +48,7 @@ const fileFilter = (req, file, cb) => {
   ];
 
   if (file.fieldname === 'avatar' || file.fieldname === 'profile') {
-    if (allowedImageTypes.includes(file.mimetype)) {
+    if (file.mimetype.startsWith('image/') || allowedImageTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
       cb(new Error('Only image files are allowed for profile pictures'), false);
