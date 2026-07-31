@@ -1612,7 +1612,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   String _formatMessageTime(DateTime dateTime) {
-    return DateFormat('hh:mm a').format(dateTime);
+    final localTime = dateTime.isUtc
+        ? dateTime.add(DateTime.now().timeZoneOffset)
+        : dateTime;
+    return DateFormat('hh:mm a').format(localTime);
   }
 
   // Media handling methods
@@ -2234,24 +2237,27 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   String _getDateHeaderText(DateTime date) {
+    final localDate = date.isUtc ? date.add(DateTime.now().timeZoneOffset) : date;
     final now = DateTime.now();
-    final difference = now.difference(date).inDays;
+    final difference = DateTime(now.year, now.month, now.day)
+        .difference(DateTime(localDate.year, localDate.month, localDate.day))
+        .inDays;
 
     if (difference == 0) {
       return 'Today';
     } else if (difference == 1) {
       return 'Yesterday';
     } else if (difference < 7) {
-      return DateFormat('EEEE').format(date);
+      return DateFormat('EEEE').format(localDate);
     } else {
-      return DateFormat('dd/MM/yy').format(date);
+      return DateFormat('dd/MM/yy').format(localDate);
     }
   }
 
   bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
+    final d1 = date1.isUtc ? date1.add(DateTime.now().timeZoneOffset) : date1;
+    final d2 = date2.isUtc ? date2.add(DateTime.now().timeZoneOffset) : date2;
+    return d1.year == d2.year && d1.month == d2.month && d1.day == d2.day;
   }
 
   Widget _buildTypingIndicator() {
