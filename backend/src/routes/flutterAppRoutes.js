@@ -826,7 +826,13 @@ router.post('/chat/conversation', asyncHandler(async (req, res) => {
     await conv.save();
   }
 
-  const convData = { id: conv._id, _id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: conv.participants.map((p) => p.toString()), isActive: conv.isActive, updatedAt: conv.updatedAt || new Date() };
+  // Build participant data with names for the frontend
+  const participantData = [
+    { _id: sender._id?.toString() || sender_id, displayName: sender.displayName || sender.username || null, username: sender.username || 'Unknown', avatar: avatarUrl(sender.avatar) },
+    { _id: receiver._id?.toString() || receiver_id, displayName: receiver.displayName || receiver.username || null, username: receiver.username || 'Unknown', avatar: avatarUrl(receiver.avatar) },
+  ];
+
+  const convData = { id: conv._id, _id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: participantData, isActive: conv.isActive, updatedAt: conv.updatedAt || new Date() };
 
   // Emit real-time socket events
   if (req.io) {
