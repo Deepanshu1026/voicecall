@@ -801,21 +801,22 @@ router.get('/wallet', asyncHandler(async (req, res) => {
   if (!user_id) throw new AppError('user_id is required', 400);
   const user = await User.findById(user_id).select('walletBalance username displayName email');
   if (!user) throw new AppError('User not found', 404);
+
+  // Auto-add ₹40 pre-recharge for users with 0 balance (reversible)
+  if ((user.walletBalance || 0) <= 0) {
+    user.walletBalance = 40;
+    await user.save();
+  }
+
   const Transaction = require('../models/Transaction');
   const transactions = await Transaction.find({ user: user_id }).sort({ createdAt: -1 }).limit(50);
-  res.json({ success: true, balance: user.walletBalance, user: { username: user.username, displayName: user.displayName, email: user.email }, transactions });
+  res.json({ success: true, balance: user.walletBalance, user: { username: user.username, displayName: user.displayName, email: user.email }, transactions, preRechargeNote: '₹40 pre-recharge added' });
 }));
 
-router.post('/wallet/add-money', asyncHandler(async (req, res) => {
-  const { user_id, amount } = req.body;
-  if (!user_id) throw new AppError('user_id is required', 400);
-  const amt = parseInt(amount);
-  if (!amt || amt <= 0) throw new AppError('Valid amount is required', 400);
-  const user = await User.findById(user_id);
-  if (!user) throw new AppError('User not found', 404);
-  user.walletBalance = (user.walletBalance || 0) + amt;
-  await user.save();
-  res.json({ success: true, balance: user.walletBalance });
+router.post('/wallet/reset-balance', asyncHandler(async (req, res) => {
+  // Reset ALL users' wallet balance to 0 (reversible)
+  await User.updateMany({ role: 'user' }, { walletBalance: 0 });
+  res.json({ success: true, message: 'All user wallet balances reset to 0' });
 }));
 
 // ==================== CHAT CONVERSATION / GREET / PAY ====================

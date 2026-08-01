@@ -340,20 +340,39 @@ class _WalletScreenState extends State<WalletScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          SizedBox(
+          Container(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _showAddMoneyDialog,
-              icon: const Icon(Icons.add),
-              label: const Text('Add Money'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF0D47A1),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.white, size: 16),
+                    SizedBox(width: 6),
+                    Text(
+                      'Add Money — Coming Soon',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+                SizedBox(height: 4),
+                Text(
+                  '₹40 pre-recharged to your wallet',
+                  style: TextStyle(
+                    color: Colors.white60,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
