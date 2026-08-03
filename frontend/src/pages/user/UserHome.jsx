@@ -9,21 +9,6 @@ const UserHome = () => {
   const navigate = useNavigate();
   const [reviewIndex, setReviewIndex] = useState(0);
   const [stats, setStats] = useState({ clients: 0, consultants: 0, years: 0 });
-  const [showAgentPopup, setShowAgentPopup] = useState(false);
-
-  // Show "Contact experienced agents" popup on desktop only
-  useEffect(() => {
-    const isDesktop = window.innerWidth > 1008;
-    if (isDesktop) {
-      const shown = sessionStorage.getItem('agentPopupShown');
-      if (!shown) {
-        const t = setTimeout(() => setShowAgentPopup(true), 1500);
-        return () => clearTimeout(t);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const reviewsWrapperRef = useRef(null);
   const statsRef = useRef(null);
   const animatedStats = useRef(false);
@@ -220,31 +205,6 @@ const UserHome = () => {
 
   return (
     <LandingLayout>
-      {/* Desktop-only contact agents popup */}
-      {showAgentPopup && (
-        <div className="agent-popup-overlay" onClick={() => setShowAgentPopup(false)}>
-          <div className="agent-popup-card" onClick={(e) => e.stopPropagation()}>
-            <button className="agent-popup-close" onClick={() => setShowAgentPopup(false)} aria-label="Close">
-              ×
-            </button>
-            <div className="agent-popup-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 11C17.66 11 19 9.66 19 8C19 6.34 17.66 5 16 5C14.34 5 13 6.34 13 8C13 9.66 14.34 11 16 11ZM8 11C9.66 11 11 9.66 11 8C11 6.34 9.66 5 8 5C6.34 5 5 6.34 5 8C5 9.66 6.34 11 8 11ZM8 13C5.79 13 2 14.08 2 16.25V18H14V16.25C14 14.08 10.21 13 8 13ZM16 13C15.71 13 15.37 13.01 15 13.03C15.97 13.62 17 14.59 17 16.25V18H22V16.25C22 14.08 18.21 13 16 13Z" fill="#f58634"/>
-              </svg>
-            </div>
-            <h3>Anubhavi Agents Se Sampark Kare</h3>
-            <p>Talk to our experienced visa agents for free guidance on your visa journey.</p>
-            <div className="agent-popup-actions">
-              <button className="agent-popup-btn-primary" onClick={() => { setShowAgentPopup(false); navigate('/consultants'); }}>
-                Contact Agents
-              </button>
-              <button className="agent-popup-btn-secondary" onClick={() => setShowAgentPopup(false)}>
-                Later
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       <SEO
         title="A Visa Experts | Trusted Visa & Immigration Consultants"
         description="A Visa Experts helps individuals and families secure tourist, work, transit, and permanent residency visas for the USA, UK, Canada, Australia, and Europe."
