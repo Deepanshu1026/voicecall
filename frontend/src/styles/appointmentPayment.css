@@ -1,0 +1,509 @@
+.appointment-payment-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fb 0%, #eef2ff 100%);
+  padding: 140px 20px 60px;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.appointment-payment-page * {
+  box-sizing: border-box;
+}
+
+.payment-container {
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 980px;
+  display: flex;
+  overflow: hidden;
+  animation: paymentFadeIn 0.5s ease-out;
+}
+
+@keyframes paymentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Receipt section */
+.payment-receipt {
+  flex: 1;
+  padding: 40px;
+  border-right: 2px dashed #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.receipt-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.receipt-header h1 {
+  color: #1f2937;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.receipt-header p {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+}
+
+.receipt-details {
+  margin-bottom: 24px;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+  gap: 16px;
+}
+
+.receipt-row span {
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.receipt-row strong {
+  color: #1f2937;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+}
+
+.receipt-row strong.reference-id {
+  color: #4f46e5;
+  font-family: monospace;
+}
+
+.amount-box {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  padding: 28px;
+  border-radius: 20px;
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: 0 12px 30px rgba(79, 70, 229, 0.25);
+}
+
+.amount-box span {
+  font-size: 14px;
+  opacity: 0.9;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.amount-box .amount {
+  font-size: 42px;
+  font-weight: 800;
+  margin: 8px 0;
+}
+
+.amount-box small {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.payment-note {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.payment-note p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.payment-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.payment-actions button,
+.payment-actions a {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.35);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: white;
+  color: #4f46e5;
+  border: 2px solid #e2e8f0 !important;
+}
+
+.btn-secondary:hover {
+  background: #f8fafc;
+  border-color: #4f46e5 !important;
+}
+
+.btn-whatsapp {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.25);
+}
+
+.btn-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(37, 211, 102, 0.35);
+}
+
+.secure-badge {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 13px;
+  background: #f8fafc;
+  padding: 10px 18px;
+  border-radius: 50px;
+  align-self: center;
+}
+
+/* QR section */
+.payment-qr {
+  width: 400px;
+  padding: 40px;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.qr-card {
+  background: white;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 12px 32px rgba(79, 70, 229, 0.12);
+  text-align: center;
+  width: 100%;
+}
+
+.qr-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.qr-image {
+  width: 260px;
+  height: 260px;
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  padding: 12px;
+  background: white;
+}
+
+.qr-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: white;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.qr-placeholder {
+  width: 260px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 14px;
+  border: 2px dashed #e2e8f0;
+  border-radius: 16px;
+}
+
+.qr-instruction {
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 16px 0 0;
+}
+
+.upi-details {
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.upi-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+  gap: 12px;
+}
+
+.upi-row:last-child {
+  border-bottom: none;
+}
+
+.upi-row span {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.upi-row strong {
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-all;
+}
+
+.whatsapp-help {
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.12);
+  transition: all 0.3s ease;
+}
+
+.whatsapp-help:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.18);
+}
+
+.whatsapp-help span {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.whatsapp-help strong {
+  color: #25d366;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.qr-empty {
+  text-align: center;
+  color: #64748b;
+  padding: 40px 20px;
+}
+
+.qr-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.qr-empty p {
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Loading / error / success states */
+.payment-loading,
+.payment-error,
+.payment-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.payment-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spinner 0.8s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.payment-loading p,
+.payment-error p,
+.payment-success p {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0 0 20px;
+  line-height: 1.6;
+}
+
+.payment-error-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.payment-error p {
+  color: #dc2626;
+}
+
+.payment-success-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.payment-success h2 {
+  color: #1f2937;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.reference-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
+  padding: 16px 24px;
+  margin: 16px 0 24px;
+  text-align: center;
+}
+
+.reference-box span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.reference-box strong {
+  color: #16a34a;
+  font-size: 18px;
+  font-family: monospace;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .payment-container {
+    flex-direction: column;
+  }
+
+  .payment-receipt {
+    border-right: none;
+    border-bottom: 2px dashed #e2e8f0;
+  }
+
+  .payment-qr {
+    width: 100%;
+  }
+
+  .qr-image {
+    width: 220px;
+    height: 220px;
+  }
+
+  .qr-placeholder {
+    width: 220px;
+    height: 220px;
+  }
+}
+
+@media (max-width: 600px) {
+  .appointment-payment-page {
+    padding: 120px 12px 40px;
+  }
+
+  .payment-container {
+    border-radius: 20px;
+  }
+
+  .payment-receipt,
+  .payment-qr {
+    padding: 24px;
+  }
+
+  .receipt-header h1 {
+    font-size: 22px;
+  }
+
+  .amount-box .amount {
+    font-size: 36px;
+  }
+
+  .receipt-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .receipt-row strong {
+    text-align: left;
+  }
+}

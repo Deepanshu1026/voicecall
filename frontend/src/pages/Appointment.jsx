@@ -200,20 +200,27 @@ const Appointment = () => {
       return;
     }
 
+    const appointmentData = {
+      selected_plan: selectedPlan.toLowerCase(),
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      contact: formData.contact.trim(),
+      datetime: `${formData.date} ${selectedTime}`,
+      mode: formData.mode,
+      time_slot: selectedTime,
+      querry: formData.query.trim(),
+      address: formData.mode === 'offline' ? formData.address : '',
+    };
+
+    // Paid plans require UPI payment before confirming the booking
+    if (selectedPlan === 'Advance' || selectedPlan === 'Premium') {
+      navigate('/appointment-payment', { state: { appointmentData } });
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const res = await appointmentAPI.book({
-        selected_plan: selectedPlan.toLowerCase(),
-        name: formData.name.trim(),
-        email: formData.email.trim(),
-        contact: formData.contact.trim(),
-        datetime: `${formData.date} ${selectedTime}`,
-        mode: formData.mode,
-        time_slot: selectedTime,
-        querry: formData.query.trim(),
-        address: formData.mode === 'offline' ? formData.address : '',
-      });
-
+      const res = await appointmentAPI.book(appointmentData);
       setReferenceId(res.data?.reference_id || '');
       setShowModal(true);
       showFloatingAlert('Success', 'Your appointment has been booked successfully!', true);
@@ -303,9 +310,9 @@ const Appointment = () => {
               </div>
             </div>
 
-            {/* Premium Plan */}
+            {/* Premium Plan — Chairman */}
             <div
-              className="card premium"
+              className={`card premium chairman-card ${selectedPlan === 'Premium' ? 'selected' : ''}`}
               onClick={() => handlePlanChange('Premium')}
               role="button"
               tabIndex={0}
@@ -314,18 +321,28 @@ const Appointment = () => {
             >
               <div className={`circle-checkbox ${selectedPlan === 'Premium' ? 'checked' : ''}`} />
               <div className="card-content">
-                <h3>Chairman</h3>
+                <span className="badge premium-ribbon">Premium</span>
+                <div className="chairman-header">
+                  <div className="chairman-avatar">
+                    <img src="/images/user/sirpic 1.webp" alt="Kaveesh Kapoor" />
+                    <span className="chairman-badge">Chairman</span>
+                  </div>
+                  <div className="chairman-title">
+                    <h3>Meet Mr. Kaveesh Kapoor</h3>
+                    <p>Founder & Chairman, A Visa Experts</p>
+                  </div>
+                </div>
                 <div className="price">
                   ₹1770 <span className="gst-note">(GST Included)</span>
                 </div>
                 <ul>
-                  <li>20-minute meeting with Chairman Mr. Kaveesh Kapoor</li>
-                  <li>Customized visa strategy</li>
+                  <li>20-minute personal meeting with Chairman</li>
+                  <li>Customized visa strategy for your profile</li>
                   <li>Case Manager support throughout the process</li>
-                  <li>Bring your passport</li>
-                  <li>Ideal for full visa assistance</li>
+                  <li>Bring your passport & documents</li>
+                  <li>Ideal for complex cases & full assistance</li>
                 </ul>
-                <button type="button">Select Plan</button>
+                <button type="button">Select Premium Plan</button>
               </div>
             </div>
           </div>
