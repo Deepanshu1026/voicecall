@@ -169,18 +169,14 @@ const getBlockedUsers = asyncHandler(async (req, res) => {
 // Public consultant list for the landing page (uses Employee case managers)
 const getConsultants = asyncHandler(async (req, res) => {
   const employees = await Employee.find({
-    role: { $in: ['case_manager', 'manager', 'senior_manager', 'admin'] },
+    role: 'case_manager',
     status: 'active',
   })
     .select('username displayName avatar workStatus languages expertise experience totalOrder callRate createdAt')
     .sort({ workStatus: 1, createdAt: -1 })
     .limit(100);
 
-  const agentUsers = await User.find({ role: 'agent', status: 'active' })
-    .select('username displayName avatar workStatus languages expertise experience totalOrder callRate createdAt')
-    .limit(50);
-
-  const consultants = [...employees, ...agentUsers];
+  const consultants = employees;
 
   ApiResponse.success(res, consultants);
 });
