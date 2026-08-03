@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../../components/user/LandingLayout';
 import AgentChatWidget from '../../components/user/AgentChatWidget';
@@ -144,12 +144,19 @@ const UserHome = () => {
     requestAnimationFrame(step);
   };
 
-  const scrollReviews = (dir) => {
+  const [isPaused, setIsPaused] = useState(false);
+  const autoPlayRef = useRef(null);
+
+  const scrollReviews = useCallback((dir) => {
     setReviewIndex((prev) => {
       if (dir === 'next') return prev >= reviews.length - 1 ? 0 : prev + 1;
       return prev <= 0 ? reviews.length - 1 : prev - 1;
     });
-  };
+  }, []);
+
+  const goToReview = useCallback((idx) => {
+    setReviewIndex(idx);
+  }, []);
 
   useEffect(() => {
     if (reviewsWrapperRef.current) {
@@ -158,6 +165,14 @@ const UserHome = () => {
       reviewsWrapperRef.current.style.transform = `translateX(-${reviewIndex * (cardWidth + gap)}px)`;
     }
   }, [reviewIndex]);
+
+  useEffect(() => {
+    if (isPaused) return;
+    autoPlayRef.current = setInterval(() => {
+      scrollReviews('next');
+    }, 4000);
+    return () => clearInterval(autoPlayRef.current);
+  }, [isPaused, scrollReviews]);
 
   const renderStars = (count) => {
     const stars = [];
@@ -623,9 +638,15 @@ const UserHome = () => {
       {/* Destination gallery */}
       <section className="destination-gallery">
         <div className="gallery-content">
+          <span className="gallery-badge">Popular Destinations</span>
           <h2>Enjoy your dream vacation</h2>
           <p>Discover beautiful countries with our hassle-free tourist visa services.</p>
-          <button className="view-button" aria-label="View All Destinations" onClick={() => navigate('/tourist-visa')}>View All</button>
+          <button className="view-button" aria-label="View All Destinations" onClick={() => navigate('/tourist-visa')}>
+            View All Destinations
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
         </div>
         <div className="image-gallery">
           {destinations.map((dest, idx) => (
@@ -634,9 +655,13 @@ const UserHome = () => {
               className={`destination-card ${idx === 0 ? 'first-card' : ''}`}
               style={{ backgroundImage: `url('${dest.img}')` }}
             >
+              <div className="destination-overlay" />
               <div className="location-info">
-                <h3>{dest.name}</h3>
-                <img className="flag-icon" src={dest.flag} alt="flag" />
+                <div className="location-details">
+                  <img className="flag-icon" src={dest.flag} alt="flag" />
+                  <h3>{dest.name}</h3>
+                </div>
+                <span className="destination-explore">Explore &rarr;</span>
               </div>
             </div>
           ))}
@@ -647,29 +672,59 @@ const UserHome = () => {
       <AgentChatWidget />
 
       {/* Client Reviews */}
-      <section className="reviews-section">
-        <h2>Clients Reviews</h2>
+      <section
+        className="reviews-section"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <div className="reviews-header">
+          <span className="reviews-badge">★★★★★ 4.9 Rating</span>
+          <h2>What Our Clients Say</h2>
+          <p className="reviews-subtitle">Real stories from real people we&apos;ve helped</p>
+        </div>
         <div className="reviews-wrapper">
           <div className="reviews-container" ref={reviewsWrapperRef}>
             {reviews.map((review, idx) => (
-              <div className="review-card" key={idx}>
+              <div className={`review-card ${idx === reviewIndex ? 'review-active' : ''}`} key={idx}>
                 <div className="review-image" style={{ backgroundImage: `url('${review.img}')` }} />
                 <div className="review-content">
+                  <div className="review-quote-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 11H6.414L9.707 7.707L8.293 6.293L3.586 11L8.293 15.707L9.707 14.293L6.414 11H10V11ZM20.414 11H17V11H13.586L16.879 7.707L15.465 6.293L10.758 11L15.465 15.707L16.879 14.293L13.586 11H20.414Z" fill="#f58634" fillOpacity="0.3"/>
+                    </svg>
+                  </div>
                   <h3>{review.title}</h3>
-                  <p className="firstperagraph"></p>
-                  <p className="secondreviewdiv">{review.text}</p>
                   <div className="review-stars">{renderStars(review.stars)}</div>
+                  <p className="secondreviewdiv">{review.text}</p>
                 </div>
                 <div className="review-tag">WHAT OUR CLIENT SAY ABOUT US?</div>
               </div>
             ))}
           </div>
         </div>
-        <div className="quote-background">“</div>
-        <div className="reviews-navigation">
-          <button className="nav-button" aria-label="Previous Review" onClick={() => scrollReviews('prev')}>❮</button>
-          <button className="nav-button" aria-label="Next Review" onClick={() => scrollReviews('next')}>❯</button>
+        <div className="reviews-dots">
+          {reviews.map((_, idx) => (
+            <button
+              key={idx}
+              className={`review-dot ${idx === reviewIndex ? 'review-dot-active' : ''}`}
+              onClick={() => goToReview(idx)}
+              aria-label={`Go to review ${idx + 1}`}
+            />
+          ))}
         </div>
+        <div className="reviews-navigation">
+          <button className="nav-button" aria-label="Previous Review" onClick={() => scrollReviews('prev')}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          <button className="nav-button" aria-label="Next Review" onClick={() => scrollReviews('next')}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div className="quote-background">"</div>
         <div className="background-decor">
           <div className="background-shape"></div>
           <div className="background-shape"></div>
