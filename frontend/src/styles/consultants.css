@@ -19,7 +19,7 @@ html {
 .consultants-page #navbar {
   position: fixed;
   width: 100%;
-  top: 94px;
+  top: 122px;
   z-index: 20;
   padding: 9px 60px;
   display: flex;
@@ -864,7 +864,7 @@ html {
     margin-bottom: 12px;
   }
 
-  .consultants-page .profile-card > a {
+  .consultants-page .profile-card>a {
     display: block;
     text-align: center;
     text-decoration: none;
@@ -1014,7 +1014,7 @@ html {
     padding: 7px 14px;
   }
 
-  .consultants-page .profile-card > a {
+  .consultants-page .profile-card>a {
     display: block;
     text-align: center;
     text-decoration: none;

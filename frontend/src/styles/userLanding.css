@@ -153,7 +153,6 @@
   .landing-header.scrolled {
     background: rgb(255, 255, 255);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-    padding: 6px 20px;
     transition: all 0.3s ease;
   }
 
@@ -2752,6 +2751,7 @@ html {
     bottom: 10px;
   }
 }
+
 /* Agent contact popup (desktop) */
 .agent-popup-overlay {
   position: fixed;
@@ -2763,6 +2763,7 @@ html {
   z-index: 9999;
   backdrop-filter: blur(3px);
 }
+
 .agent-popup-card {
   position: relative;
   width: 420px;
@@ -2774,10 +2775,19 @@ html {
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
   animation: agentPopupIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 @keyframes agentPopupIn {
-  from { opacity: 0; transform: translateY(24px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
+
 .agent-popup-close {
   position: absolute;
   top: 12px;
@@ -2789,7 +2799,11 @@ html {
   cursor: pointer;
   line-height: 1;
 }
-.agent-popup-close:hover { color: #374151; }
+
+.agent-popup-close:hover {
+  color: #374151;
+}
+
 .agent-popup-icon {
   width: 72px;
   height: 72px;
@@ -2800,23 +2814,27 @@ html {
   align-items: center;
   justify-content: center;
 }
+
 .agent-popup-card h3 {
   font-size: 22px;
   font-weight: 700;
   color: #0f172a;
   margin: 0 0 10px;
 }
+
 .agent-popup-card p {
   font-size: 15px;
   color: #64748b;
   line-height: 1.55;
   margin: 0 0 24px;
 }
+
 .agent-popup-actions {
   display: flex;
   gap: 12px;
   justify-content: center;
 }
+
 .agent-popup-btn-primary {
   flex: 1;
   padding: 12px 16px;
@@ -2829,7 +2847,11 @@ html {
   cursor: pointer;
   transition: background 0.2s;
 }
-.agent-popup-btn-primary:hover { background: #e0751f; }
+
+.agent-popup-btn-primary:hover {
+  background: #e0751f;
+}
+
 .agent-popup-btn-secondary {
   flex: 1;
   padding: 12px 16px;
@@ -2842,4 +2864,7 @@ html {
   cursor: pointer;
   transition: background 0.2s;
 }
-.agent-popup-btn-secondary:hover { background: #e2e8f0; }
+
+.agent-popup-btn-secondary:hover {
+  background: #e2e8f0;
+}
