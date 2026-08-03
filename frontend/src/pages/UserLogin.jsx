@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import '../styles/userAuth.css';
 
 const UserLogin = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -34,6 +36,10 @@ const UserLogin = () => {
       setLoading(true);
       await login(email, password);
       toast.success('Welcome back!');
+      const redirect = searchParams.get('redirect');
+      if (redirect) {
+        navigate(redirect, { replace: true });
+      }
     } catch (error) {
       const data = error.response?.data;
       const message = data?.errors?.join('. ') || data?.message || data?.error || error.message || 'Login failed. Please try again.';

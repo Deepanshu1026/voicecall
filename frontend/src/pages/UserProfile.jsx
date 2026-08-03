@@ -44,6 +44,11 @@ const UserProfile = () => {
       navigate('/profile');
       return;
     }
+    if (!user) {
+      // Not logged in — redirect to login with return path
+      navigate(`/login?redirect=/chat?userId=${id}`);
+      return;
+    }
     navigate(`/chat?userId=${id}`);
   };
 
