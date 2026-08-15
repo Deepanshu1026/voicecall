@@ -886,12 +886,103 @@ router.post('/chat/send', asyncHandler(async (req, res) => {
   res.json({ success: true, message_id: msg._id, created_at: msg.createdAt });
 }));
 
-// Get users data (like PHP getusersAllData.php)
+// Get users that have a chat history with the given agent/consultant
+// (like PHP getUsersAllData.php)
 router.get('/users-all-data', asyncHandler(async (req, res) => {
   const { id } = req.query;
-  const filter = id ? { _id: id } : {};
-  const users = await User.find(filter).select('-password -refreshToken').lean();
-  res.json({ success: true, data: users });
+  if (!id) return res.json({ success: true, data: [] });
+
+  const agentOid = await resolveId(id);
+  if (!agentOid) return res.json({ success: true, data: [] });
+
+  const Message = require('../models/Message');
+  const Conversation = require('../models/Conversation');
+
+  // Find all direct conversations where the agent participates
+  const conversations = await Conversation.find({
+    type: 'direct',
+    participants: agentOid,
+  }).lean();
+
+  if (!conversations.length) return res.json({ success: true, data: [] });
+
+  const otherParticipantIds = conversations
+    .map((c) => c.participants.find((p) => p.toString() !== agentOid.toString()))
+    .filter(Boolean);
+
+  if (!otherParticipantIds.length) return res.json({ success: true, data: [] });
+
+  const users = await User.find({ _id: { $in: otherParticipantIds } })
+    .select('displayName username email mobile status avatar sqlId')
+    .lean();
+
+  const userMap = new Map(users.map((u) => [u._id.toString(), u]));
+
+  // Fetch last messages and unread counts in batch
+  const conversationIds = conversations.map((c) => c._id);
+  const lastMessages = await Message.find({ conversation: { $in: conversationIds } })
+    .sort({ createdAt: -1 })
+    .lean();
+  const lastMessageByConv = new Map();
+  lastMessages.forEach((m) => {
+    const key = m.conversation.toString();
+    if (!lastMessageByConv.has(key)) lastMessageByConv.set(key, m);
+  });
+
+  // Batch count unread messages per conversation
+  const unreadByConversation = new Map();
+  const userObjectIds = users.map((u) => u._id);
+  if (conversationIds.length && userObjectIds.length) {
+    const unreadAgg = await Message.aggregate([
+      {
+        $match: {
+          conversation: { $in: conversationIds },
+          sender: { $in: userObjectIds },
+          recipient: agentOid,
+          status: { $nin: ['seen', 'read'] },
+        },
+      },
+      { $group: { _id: '$conversation', count: { $sum: 1 } } },
+    ]);
+    unreadAgg.forEach((item) => unreadByConversation.set(item._id.toString(), item.count));
+  }
+
+  const result = [];
+  for (const conv of conversations) {
+    const otherParticipantId = conv.participants.find((p) => p.toString() !== agentOid.toString());
+    if (!otherParticipantId) continue;
+    const user = userMap.get(otherParticipantId.toString());
+    if (!user) continue;
+
+    const lastMsg = lastMessageByConv.get(conv._id.toString());
+    const lastMessageTime = lastMsg ? lastMsg.createdAt : null;
+    const unreadCount = unreadByConversation.get(conv._id.toString()) || 0;
+
+    const agentProfile = (user.avatar && typeof user.avatar === 'object' ? user.avatar.url : user.avatar) || '';
+
+    result.push({
+      id: user.sqlId ? user.sqlId.toString() : user._id.toString(),
+      user_name: user.displayName || user.username || 'User',
+      user_email: user.email || '',
+      user_mobile: user.mobile?.toString() || '',
+      user_current_status: user.status === 'online' ? 'Active' : 'Unavailable',
+      user_role: 'User',
+      form_submitted: 'No',
+      user_profile: agentProfile,
+      total_order: 0,
+      count_status: unreadCount,
+      last_message_time: lastMessageTime ? new Date(lastMessageTime).toISOString() : '',
+    });
+  }
+
+  // Sort by latest message time descending
+  result.sort((a, b) => {
+    const ta = a.last_message_time ? new Date(a.last_message_time).getTime() : 0;
+    const tb = b.last_message_time ? new Date(b.last_message_time).getTime() : 0;
+    return tb - ta;
+  });
+
+  res.json({ success: true, data: result });
 }));
 
 // ==================== BLOG POSTS ====================
