@@ -420,11 +420,12 @@ router.get('/inbox', asyncHandler(async (req, res) => {
     if (!lastMsg) continue;
 
     const isFromMe = lastMsg.sender?.toString() === effectiveReceiverId;
-    const unreadCount = (conv.unreadCount || []).find((u) => u.user?.toString() === effectiveReceiverId)?.count || 0;
+    const receiverOidString = receiverOid.toString();
+    const unreadCount = (conv.unreadCount || []).find((u) => u.user?.toString() === receiverOidString)?.count || 0;
     totalUnread += unreadCount;
 
     const agentProfile = (other.avatar && typeof other.avatar === 'object' ? other.avatar.url : other.avatar) || '';
-    const isRead = isFromMe ? 'yes' : (lastMsg.status === 'seen' || lastMsg.status === 'read' || (lastMsg.readBy || []).map((id) => id.toString()).includes(effectiveReceiverId) ? 'yes' : 'no');
+    const isRead = isFromMe ? 'yes' : (lastMsg.status === 'seen' || lastMsg.status === 'read' || (lastMsg.readBy || []).map((id) => id.toString()).includes(receiverOidString) ? 'yes' : 'no');
 
     inbox.push({
       agent_id: otherParticipant.toString(),
