@@ -25,6 +25,29 @@ const avatarUrl = (avatar) => {
   return avatar.url || '';
 };
 
+// Resolve a string id to a MongoDB ObjectId. If it's already a valid ObjectId it is used
+// directly; otherwise we look it up as an Employee/User sqlId or numeric id.
+const resolveId = async (id) => {
+  const mongoose = require('mongoose');
+  if (!id) return null;
+  const idStr = id.toString().trim();
+  if (mongoose.Types.ObjectId.isValid(idStr)) {
+    try {
+      return new mongoose.Types.ObjectId(idStr);
+    } catch (e) {
+      // fall through to lookup
+    }
+  }
+  const numericId = parseInt(idStr, 10);
+  if (Number.isNaN(numericId) && !idStr) return null;
+  const query = Number.isNaN(numericId) ? { sqlId: idStr } : { $or: [{ sqlId: numericId }, { sqlId: idStr }] };
+  const emp = await Employee.findOne(query).select('_id').lean();
+  if (emp) return emp._id;
+  const user = await User.findOne(query).select('_id').lean();
+  if (user) return user._id;
+  return null;
+};
+
 // ==================== AUTH ====================
 
 // Mobile app login (email or phone)
@@ -361,23 +384,13 @@ router.get('/inbox', asyncHandler(async (req, res) => {
   if (!receiver_id) throw new AppError('receiver_id is required', 400);
 
   const Message = require('../models/Message');
-  const mongoose = require('mongoose');
   const Conversation = require('../models/Conversation');
 
-  let effectiveReceiverId = receiver_id;
-  let receiverOid;
-  try {
-    receiverOid = new mongoose.Types.ObjectId(receiver_id);
-  } catch (e) {
-    // Not a valid ObjectId; maybe an old sqlId or numeric id. Try to find the Employee.
-    const employeeBySqlId = await Employee.findOne({ $or: [{ sqlId: parseInt(receiver_id) || 0 }, { sqlId: receiver_id }] }).select('_id').lean();
-    if (employeeBySqlId) {
-      effectiveReceiverId = employeeBySqlId._id.toString();
-      receiverOid = employeeBySqlId._id;
-    } else {
-      return res.json({ success: true, user_id: receiver_id, inbox: [], total_contacts: 0, total_unread_count: 0 });
-    }
+  const receiverOid = await resolveId(receiver_id);
+  if (!receiverOid) {
+    return res.json({ success: true, user_id: receiver_id, inbox: [], total_contacts: 0, total_unread_count: 0 });
   }
+  const effectiveReceiverId = receiverOid.toString();
 
   const conversations = await Conversation.find({ participants: receiverOid, type: 'direct' }).lean();
   if (!conversations.length) {
@@ -763,10 +776,12 @@ router.get('/chat/messages', asyncHandler(async (req, res) => {
 
   const Message = require('../models/Message');
   const Conversation = require('../models/Conversation');
-  const mongoose = require('mongoose');
 
-  const sId = new mongoose.Types.ObjectId(sender_id);
-  const rId = new mongoose.Types.ObjectId(receiver_id);
+  const sId = await resolveId(sender_id);
+  const rId = await resolveId(receiver_id);
+  if (!sId || !rId) {
+    return res.json({ success: false, message: 'Invalid sender_id or receiver_id', data: [] });
+  }
 
   // Find the conversation between these two users
   const conv = await Conversation.findOne({
@@ -777,8 +792,7 @@ router.get('/chat/messages', asyncHandler(async (req, res) => {
   if (!conv) return res.json({ success: true, data: [] });
 
   const messages = await Message.find({ conversation: conv._id })
-    .sort({ createdAt: -1 })
-    .limit(100)
+    .sort({ createdAt: 1 })
     .lean();
 
   const data = messages.map((m) => ({
@@ -807,10 +821,12 @@ router.post('/chat/send', asyncHandler(async (req, res) => {
 
   const Message = require('../models/Message');
   const Conversation = require('../models/Conversation');
-  const mongoose = require('mongoose');
 
-  const sId = new mongoose.Types.ObjectId(sender_id);
-  const rId = new mongoose.Types.ObjectId(receiver_id);
+  const sId = await resolveId(sender_id);
+  const rId = await resolveId(receiver_id);
+  if (!sId || !rId) {
+    return res.json({ success: false, message: 'Invalid sender_id or receiver_id' });
+  }
 
   // Find or create conversation
   let conv = await Conversation.findOne({
@@ -857,13 +873,13 @@ router.post('/chat/send', asyncHandler(async (req, res) => {
       conversationId: conv._id.toString(),
       lastMessage: message?.substring(0, 100) || '',
       lastMessageAt: msg.createdAt,
-      senderId: sender_id,
+      senderId: sId.toString(),
     });
     req.io.to(`user:${sId}`).emit('conversation:updated', {
       conversationId: conv._id.toString(),
       lastMessage: message?.substring(0, 100) || '',
       lastMessageAt: msg.createdAt,
-      senderId: sender_id,
+      senderId: sId.toString(),
     });
   }
 
@@ -982,9 +998,9 @@ router.post('/chat/conversation', asyncHandler(async (req, res) => {
   if (!sender_id || !receiver_id) throw new AppError('sender_id and receiver_id are required', 400);
   const Conversation = require('../models/Conversation');
   const { getAccountById } = require('../utils/account');
-  const mongoose = require('mongoose');
-  const sId = new mongoose.Types.ObjectId(sender_id);
-  const rId = new mongoose.Types.ObjectId(receiver_id);
+  const sId = await resolveId(sender_id);
+  const rId = await resolveId(receiver_id);
+  if (!sId || !rId) throw new AppError('Invalid sender_id or receiver_id', 400);
   const sender = await getAccountById(sId, 'role blockedUsers');
   const receiver = await getAccountById(rId, 'role blockedUsers');
   if (!sender || !receiver) throw new AppError('User not found', 404);
@@ -1032,14 +1048,16 @@ router.post('/chat/conversation', asyncHandler(async (req, res) => {
 
   // Emit real-time socket events
   if (req.io) {
+    const sIdStr = sId.toString();
+    const rIdStr = rId.toString();
     if (!isNewConversation) {
       // Existing conversation – just notify the update
-      req.io.to(`user:${sender_id}`).emit('conversation:updated', { conversationId: conv._id.toString(), ...convData });
-      req.io.to(`user:${receiver_id}`).emit('conversation:updated', { conversationId: conv._id.toString(), ...convData });
+      req.io.to(`user:${sIdStr}`).emit('conversation:updated', { conversationId: conv._id.toString(), ...convData });
+      req.io.to(`user:${rIdStr}`).emit('conversation:updated', { conversationId: conv._id.toString(), ...convData });
     } else {
       // New conversation – notify both participants so the sidebar updates in real-time
-      req.io.to(`user:${sender_id}`).emit('conversation:new', convData);
-      req.io.to(`user:${receiver_id}`).emit('conversation:new', convData);
+      req.io.to(`user:${sIdStr}`).emit('conversation:new', convData);
+      req.io.to(`user:${rIdStr}`).emit('conversation:new', convData);
     }
   }
 
@@ -1051,9 +1069,9 @@ router.post('/chat/greet', asyncHandler(async (req, res) => {
   if (!sender_id || !receiver_id) return res.json({ success: false, message: 'sender_id and receiver_id are required' });
   const Conversation = require('../models/Conversation');
   const Message = require('../models/Message');
-  const mongoose = require('mongoose');
-  const sId = new mongoose.Types.ObjectId(sender_id);
-  const rId = new mongoose.Types.ObjectId(receiver_id);
+  const sId = await resolveId(sender_id);
+  const rId = await resolveId(receiver_id);
+  if (!sId || !rId) return res.json({ success: false, message: 'Invalid sender_id or receiver_id' });
   const conv = await Conversation.findOne({ type: 'direct', participants: { $all: [sId, rId], $size: 2 } });
   if (!conv) return res.json({ success: false, message: 'Conversation not found' });
   if (conv.greetingSent) return res.json({ success: true, greeting: null, message: 'Greeting already sent' });
@@ -1074,9 +1092,9 @@ router.post('/chat/pay', asyncHandler(async (req, res) => {
   const { sender_id, receiver_id } = req.body;
   if (!sender_id || !receiver_id) throw new AppError('sender_id and receiver_id are required', 400);
   const Conversation = require('../models/Conversation');
-  const mongoose = require('mongoose');
-  const sId = new mongoose.Types.ObjectId(sender_id);
-  const rId = new mongoose.Types.ObjectId(receiver_id);
+  const sId = await resolveId(sender_id);
+  const rId = await resolveId(receiver_id);
+  if (!sId || !rId) throw new AppError('Invalid sender_id or receiver_id', 400);
   const user = await User.findById(sId);
   if (!user) throw new AppError('User not found', 404);
   const conv = await Conversation.findOne({ type: 'direct', participants: { $all: [sId, rId], $size: 2 } });
@@ -1088,15 +1106,17 @@ router.post('/chat/pay', asyncHandler(async (req, res) => {
 
   // Emit real-time updates
   if (req.io) {
+    const sIdStr = sId.toString();
+    const rIdStr = rId.toString();
     // Notify agent that the conversation status changed
-    req.io.to(`user:${receiver_id}`).emit('conversation:updated', {
+    req.io.to(`user:${rIdStr}`).emit('conversation:updated', {
       conversationId: conv._id.toString(),
       isPaid: true,
       freeUntil: null,
       paymentAmount: amount,
     });
     // Update wallet balance for the client
-    req.io.to(`user:${sender_id}`).emit('wallet:updated', {
+    req.io.to(`user:${sIdStr}`).emit('wallet:updated', {
       balance: user.walletBalance,
     });
   }
