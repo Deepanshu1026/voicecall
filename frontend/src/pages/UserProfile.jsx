@@ -143,6 +143,18 @@ const UserProfile = () => {
         </div>
 
         <div className="card space-y-4">
+          {(profile.mobile || profile.email) && (
+            <div className="flex items-center gap-3">
+              <HiPhone className="w-5 h-5 text-gray-400" />
+              <div>
+                <p className="text-sm text-gray-500">Contact</p>
+                <div className="font-medium text-gray-900">
+                  {profile.mobile && <p>{profile.mobile}</p>}
+                  {profile.email && <p className="text-sm text-gray-600">{profile.email}</p>}
+                </div>
+              </div>
+            </div>
+          )}
           <div className="flex items-center gap-3">
             <HiMapPin className="w-5 h-5 text-gray-400" />
             <div>

@@ -206,7 +206,7 @@ const deleteAccount = asyncHandler(async (req, res) => {
 
 const getProfileById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const select = 'username displayName bio avatar callRate role status lastSeen createdAt';
+  const select = 'username displayName bio avatar callRate role status lastSeen createdAt mobile email';
   const account = await getAccountById(id, select);
   if (!account) {
     throw new AppError('Profile not found', 404);
@@ -224,6 +224,8 @@ const getProfileById = asyncHandler(async (req, res) => {
     status: account.status,
     lastSeen: account.lastSeen,
     createdAt: account.createdAt,
+    mobile: account.mobile || '',
+    email: account.email || '',
   };
 
   // Only expose callRate for agents/employees
