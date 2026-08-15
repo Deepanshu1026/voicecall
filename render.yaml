@@ -22,6 +22,10 @@ services:
         value: https://voicecall-6ylg.onrender.com
       - key: SOCKET_CORS_ORIGIN
         value: https://voicecall-6ylg.onrender.com
+      - key: ALLOWED_ORIGINS
+        value: https://avisaexperts.com,https://www.avisaexperts.com
+      - key: VITE_API_URL
+        value: https://voicecall-6ylg.onrender.com/api
       - key: ENCRYPTION_KEY
         generateValue: true
       - key: VITE_TURN_APP_NAME

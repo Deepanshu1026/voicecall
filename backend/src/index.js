@@ -43,7 +43,13 @@ app.use(helmet());
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || config.nodeEnv === 'development') return callback(null, true);
-    const allowed = [config.clientUrl, 'http://localhost:5173', 'http://127.0.0.1:5173'].filter(Boolean);
+    const allowed = [
+      config.clientUrl,
+      config.socketCorsOrigin,
+      ...config.allowedOrigins,
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+    ].filter(Boolean);
     if (allowed.some((o) => origin.startsWith(o.replace(/\/$/, '')))) {
       callback(null, true);
     } else {
