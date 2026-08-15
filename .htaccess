@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# Make the homepage load the avisaexperts17july index.php
+# (the site uses its own index.php, not the one at the repo root).
+RewriteRule ^$ /avisaexperts17july/index.php [L]
+
+# Route all other traffic to the avisaexperts17july site directory
+# so URLs like https://avisaexperts.com/insert_webguest.php work.
+RewriteCond %{REQUEST_URI} !^/avisaexperts17july/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /avisaexperts17july/$1 [L]
