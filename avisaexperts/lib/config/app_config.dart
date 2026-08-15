@@ -64,6 +64,6 @@ class AppConfig {
   static String get instaApiKey => '$flutterApiBase/insta-api-key';          // was instaapi.php
 
   // Static assets host (kept for non-API image URLs the app may still reference)
-  // If the old PHP site is shut down, point this to the new frontend domain.
-  static const String staticAssetBase = 'https://chatsupport.avisaexperts.com';
+  // Point this to the domain serving the old PHP site assets.
+  static const String staticAssetBase = 'https://avisaexperts.com';
 }

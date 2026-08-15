@@ -95,6 +95,55 @@ router.post('/register', asyncHandler(async (req, res) => {
   ApiResponse.success(res, { user_id: user._id }, 'Registration successful', 201);
 }));
 
+// Guest creation (mobile app)
+router.post('/guest', asyncHandler(async (req, res) => {
+  const baseCount = await User.countDocuments({ role: 'user' });
+  let suffix = baseCount + 1;
+  let user = null;
+  let attempts = 0;
+  const maxAttempts = 10;
+
+  while (attempts < maxAttempts) {
+    const username = `guestapp${suffix}`;
+    const email = `guestapp${suffix}@example.com`;
+    const mobile = `6${Math.floor(Math.random() * 9000000000 + 1000000000)}`;
+    const existing = await User.findOne({ $or: [{ username }, { email }] });
+
+    if (!existing) {
+      user = await User.create({
+        username,
+        email,
+        password: `guest${suffix}`,
+        displayName: username,
+        mobile,
+        role: 'user',
+        status: 'online',
+        loginFrom: 'app',
+      });
+      break;
+    }
+    suffix += 1;
+    attempts += 1;
+  }
+
+  if (!user) {
+    throw new AppError('Failed to create guest user after multiple attempts', 500);
+  }
+
+  const tokens = generateTokens(user._id);
+  user.refreshToken = tokens.refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(201).json({
+    status: 'success',
+    user_name: user.displayName || user.username,
+    user_email: user.email,
+    user_id: user._id.toString(),
+    token: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+  });
+}));
+
 // Forgot password
 router.post('/forgot-password', asyncHandler(async (req, res) => {
   const { email } = req.body;
