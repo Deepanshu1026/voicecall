@@ -180,20 +180,20 @@ router.get('/agent-login', asyncHandler(async (req, res) => {
   res.status(200).json({
     status: 'success',
     message: 'Login successful',
-    data: {
-      user_id: employee.sqlId ? employee.sqlId.toString() : employee._id.toString(),
-      name: employee.displayName || employee.username,
-      email: employee.email,
-      role: employee.role || 'Agent',
-      profile: employee.avatar || '',
-      expertise: employee.expertise || '',
-      language: employee.languages || '',
-      experience: employee.experience || 0,
-      total_order: employee.totalOrder || 0,
-      session_token: sessionToken,
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-    },
+      data: {
+        user_id: employee._id.toString(),
+        name: employee.displayName || employee.username,
+        email: employee.email,
+        role: employee.role || 'Agent',
+        profile: employee.avatar || '',
+        expertise: employee.expertise || '',
+        language: employee.languages || '',
+        experience: employee.experience || 0,
+        total_order: employee.totalOrder || 0,
+        session_token: sessionToken,
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      },
   });
 }));
 
@@ -362,48 +362,90 @@ router.get('/inbox', asyncHandler(async (req, res) => {
 
   const Message = require('../models/Message');
   const mongoose = require('mongoose');
-  const receiverOid = new mongoose.Types.ObjectId(receiver_id);
-
-  // Find all conversations where the user is a participant
   const Conversation = require('../models/Conversation');
+
+  let effectiveReceiverId = receiver_id;
+  let receiverOid;
+  try {
+    receiverOid = new mongoose.Types.ObjectId(receiver_id);
+  } catch (e) {
+    // Not a valid ObjectId; maybe an old sqlId or numeric id. Try to find the Employee.
+    const employeeBySqlId = await Employee.findOne({ $or: [{ sqlId: parseInt(receiver_id) || 0 }, { sqlId: receiver_id }] }).select('_id').lean();
+    if (employeeBySqlId) {
+      effectiveReceiverId = employeeBySqlId._id.toString();
+      receiverOid = employeeBySqlId._id;
+    } else {
+      return res.json({ success: true, user_id: receiver_id, inbox: [], total_contacts: 0, total_unread_count: 0 });
+    }
+  }
+
   const conversations = await Conversation.find({ participants: receiverOid, type: 'direct' }).lean();
+  if (!conversations.length) {
+    return res.json({ success: true, user_id: effectiveReceiverId, inbox: [], total_contacts: 0, total_unread_count: 0 });
+  }
+
+  const conversationIds = conversations.map((c) => c._id);
+  const otherParticipantIds = conversations
+    .map((c) => c.participants.find((p) => p.toString() !== effectiveReceiverId))
+    .filter(Boolean);
+
+  // Batch fetch participants
+  const [users, employees] = await Promise.all([
+    User.find({ _id: { $in: otherParticipantIds } }).select('displayName username avatar workStatus status').lean(),
+    Employee.find({ _id: { $in: otherParticipantIds } }).select('displayName username avatar workStatus status').lean(),
+  ]);
+  const participantMap = new Map();
+  [...users, ...employees].forEach((p) => participantMap.set(p._id.toString(), p));
+
+  // Batch fetch last messages
+  const lastMessages = await Message.find({ conversation: { $in: conversationIds } })
+    .sort({ createdAt: -1 })
+    .lean();
+  const lastMessageByConv = new Map();
+  lastMessages.forEach((m) => {
+    const key = m.conversation.toString();
+    if (!lastMessageByConv.has(key)) lastMessageByConv.set(key, m);
+  });
 
   const inbox = [];
   let totalUnread = 0;
 
   for (const conv of conversations) {
-    const otherParticipant = conv.participants.find((p) => p.toString() !== receiver_id);
+    const otherParticipant = conv.participants.find((p) => p.toString() !== effectiveReceiverId);
     if (!otherParticipant) continue;
-
-    // Get other participant details
-    let other = await User.findById(otherParticipant).select('displayName username avatar workStatus status').lean();
-    if (!other) other = await Employee.findById(otherParticipant).select('displayName username avatar workStatus status').lean();
+    const other = participantMap.get(otherParticipant.toString());
     if (!other) continue;
 
-    // Get last message
-    const lastMsg = await Message.findOne({ conversation: conv._id }).sort({ createdAt: -1 }).lean();
+    const lastMsg = lastMessageByConv.get(conv._id.toString());
     if (!lastMsg) continue;
 
-    const isFromMe = lastMsg.sender?.toString() === receiver_id;
-    const unreadCount = (conv.unreadCount || []).find((u) => u.user?.toString() === receiver_id)?.count || 0;
+    const isFromMe = lastMsg.sender?.toString() === effectiveReceiverId;
+    const unreadCount = (conv.unreadCount || []).find((u) => u.user?.toString() === effectiveReceiverId)?.count || 0;
     totalUnread += unreadCount;
 
+    const agentProfile = (other.avatar && typeof other.avatar === 'object' ? other.avatar.url : other.avatar) || '';
+    const isRead = isFromMe ? 'yes' : (lastMsg.status === 'seen' || lastMsg.status === 'read' || (lastMsg.readBy || []).map((id) => id.toString()).includes(effectiveReceiverId) ? 'yes' : 'no');
+
     inbox.push({
-      agent_id: otherParticipant,
+      agent_id: otherParticipant.toString(),
       agent_name: other.displayName || other.username || 'Unknown',
-      agent_profile: other.avatar?.url || other.avatar || '',
+      agent_profile: agentProfile,
       user_current_status: other.workStatus || other.status || 'Unavailable',
       last_message: lastMsg.content || (lastMsg.type === 'file' ? '📎 File' : ''),
       created_at: lastMsg.createdAt,
       last_message_type: isFromMe ? 'sent' : 'received',
       last_message_read_status: lastMsg.status || 'sent',
+      is_read: isRead,
       unread_count: unreadCount,
       has_unread_messages: unreadCount > 0,
       is_last_message_from_me: isFromMe,
     });
   }
 
-  inbox.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  inbox.sort((a, b) => {
+    if (a.unread_count !== b.unread_count) return b.unread_count - a.unread_count;
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
 
   res.json({
     success: true,
