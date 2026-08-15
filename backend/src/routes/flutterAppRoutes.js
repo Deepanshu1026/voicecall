@@ -144,6 +144,59 @@ router.post('/guest', asyncHandler(async (req, res) => {
   });
 }));
 
+// Consultant/agent login (mobile app)
+router.get('/agent-login', asyncHandler(async (req, res) => {
+  const { useremail, password } = req.query;
+  if (!useremail || !password) {
+    throw new AppError('Email and password are required', 400);
+  }
+
+  const cleanEmail = useremail.toString().trim().toLowerCase();
+  const cleanPassword = password.toString().trim();
+
+  const employee = await Employee.findOne({ email: cleanEmail }).select('+password');
+  if (!employee) {
+    throw new AppError('User not found', 404);
+  }
+
+  if (employee.status === 'inactive') {
+    throw new AppError('Account is disabled', 403);
+  }
+
+  const isValid = await employee.comparePassword(cleanPassword);
+  if (!isValid) {
+    throw new AppError('Invalid password', 401);
+  }
+
+  const sessionToken = crypto.randomBytes(32).toString('hex');
+  const tokens = generateTokens(employee._id);
+
+  employee.sessionToken = sessionToken;
+  employee.refreshToken = tokens.refreshToken;
+  employee.workStatus = 'active';
+  employee.lastSeen = new Date();
+  await employee.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Login successful',
+    data: {
+      user_id: employee.sqlId ? employee.sqlId.toString() : employee._id.toString(),
+      name: employee.displayName || employee.username,
+      email: employee.email,
+      role: employee.role || 'Agent',
+      profile: employee.avatar || '',
+      expertise: employee.expertise || '',
+      language: employee.languages || '',
+      experience: employee.experience || 0,
+      total_order: employee.totalOrder || 0,
+      session_token: sessionToken,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+    },
+  });
+}));
+
 // Forgot password
 router.post('/forgot-password', asyncHandler(async (req, res) => {
   const { email } = req.body;
