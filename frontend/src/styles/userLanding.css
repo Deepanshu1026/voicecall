@@ -2213,6 +2213,26 @@
   font-size: 14px;
 }
 
+.footer-partner-login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  background: #ffffff;
+  color: #003c97;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+  border: 1px solid #ffffff;
+}
+
+.footer-partner-login:hover {
+  background: transparent;
+  color: #ffffff;
+}
+
 @media (max-width: 991px) {
   .footer-wrapper {
     margin: 0 30px;

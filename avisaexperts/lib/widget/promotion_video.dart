@@ -4,8 +4,6 @@ import 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../config/app_config.dart';
-
 class FloatingPromotionVideo extends StatefulWidget {
   const FloatingPromotionVideo({super.key});
 
@@ -28,6 +26,10 @@ class _FloatingPromotionVideoState extends State<FloatingPromotionVideo> {
   final double _expandedHeight = 350.0;
   String? _instagramToken;
 
+  // Long-lived Instagram access token for the connected account.
+  static const String _instagramAccessToken =
+      'IGAAWp7Lk0ae5BZAGFQOGZAUNFhVRzh3WEtRRXdlZAjBHUVBGVE9CQXRwd1YtZA0tDTFFtd1E3cXRDdzJVZA3F4ZAkhyMGd6UEFzSlduYXZAOUEdsdTRoWjNtclBGOTlRM083aHkycU1kbWNyY1NMenNGRWNkNDdzeUNvNXVSZAkhIQ2xCdwZDZD';
+
   @override
   void initState() {
     super.initState();
@@ -37,32 +39,9 @@ class _FloatingPromotionVideoState extends State<FloatingPromotionVideo> {
   }
 
   Future<void> _fetchInstagramToken() async {
-    try {
-      final response = await http.get(
-        Uri.parse(AppConfig.instaApiKey),
-      );
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['status'] == true &&
-            data['data'] != null &&
-            data['data'].isNotEmpty) {
-          _instagramToken = data['data'][0]['api_key'];
-          _fetchInstagramVideoUrl();
-        } else {
-          // If API returns invalid data, use fallback video
-          _initializeVideoPlayer(
-              'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
-        }
-      } else {
-        // If API fails, use fallback video
-        _initializeVideoPlayer(
-            'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
-      }
-    } catch (e) {
-      // If API fails, use fallback video
-      _initializeVideoPlayer(
-          'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4');
-    }
+    // Use the hardcoded token directly.
+    _instagramToken = _instagramAccessToken;
+    _fetchInstagramVideoUrl();
   }
 
   Future<void> _fetchInstagramVideoUrl() async {
@@ -195,7 +174,7 @@ class _FloatingPromotionVideoState extends State<FloatingPromotionVideo> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.25),
+                color: Colors.black.withValues(alpha: 0.25),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),

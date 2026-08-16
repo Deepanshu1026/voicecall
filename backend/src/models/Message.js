@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema(
   {
+    sqlId: {
+      type: Number,
+      unique: true,
+      sparse: true,
+      index: true,
+    },
     conversation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Conversation',

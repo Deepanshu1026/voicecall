@@ -282,6 +282,9 @@ const LandingLayout = ({ children }) => {
 
       <div className="footer-bottom-text">
         <div className="copy-right">&copy; 2025-2026 All Rights Reserved.</div>
+        <a href="/agent/login" className="footer-partner-login">
+          AVE Partners
+        </a>
       </div>
     </div>
   );

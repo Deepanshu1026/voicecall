@@ -327,7 +327,22 @@ router.get('/edit-profile', asyncHandler(async (req, res) => {
     throw new AppError('userid, name, contact, email are required', 400);
   }
 
-  const update = { displayName: name.trim(), mobile: contact.trim(), email: email.toLowerCase().trim() };
+  const mongoose = require('mongoose');
+  const userObjectId = mongoose.Types.ObjectId.isValid(userid) ? new mongoose.Types.ObjectId(userid) : null;
+  if (!userObjectId) throw new AppError('Invalid userid', 400);
+
+  const cleanEmail = email.toLowerCase().trim();
+  const cleanMobile = contact.trim();
+  const duplicate = await User.findOne({
+    _id: { $ne: userObjectId },
+    $or: [{ email: cleanEmail }, { mobile: cleanMobile }],
+  });
+  if (duplicate) {
+    const field = duplicate.email === cleanEmail ? 'email' : 'phone';
+    throw new AppError(`Another account with this ${field} already exists`, 409);
+  }
+
+  const update = { displayName: name.trim(), mobile: cleanMobile, email: cleanEmail };
   await User.findByIdAndUpdate(userid, update);
 
   const user = await User.findById(userid).select('displayName username email mobile avatar');
@@ -347,7 +362,22 @@ router.post('/edit-profile', profileUpload, handleMulterError, asyncHandler(asyn
     throw new AppError('userid, name, contact, email are required', 400);
   }
 
-  const update = { displayName: name.trim(), mobile: contact.trim(), email: email.toLowerCase().trim() };
+  const mongoose = require('mongoose');
+  const userObjectId = mongoose.Types.ObjectId.isValid(userid) ? new mongoose.Types.ObjectId(userid) : null;
+  if (!userObjectId) throw new AppError('Invalid userid', 400);
+
+  const cleanEmail = email.toLowerCase().trim();
+  const cleanMobile = contact.trim();
+  const duplicate = await User.findOne({
+    _id: { $ne: userObjectId },
+    $or: [{ email: cleanEmail }, { mobile: cleanMobile }],
+  });
+  if (duplicate) {
+    const field = duplicate.email === cleanEmail ? 'email' : 'phone';
+    throw new AppError(`Another account with this ${field} already exists`, 409);
+  }
+
+  const update = { displayName: name.trim(), mobile: cleanMobile, email: cleanEmail };
 
   // Handle file upload for profile picture
   if (req.file) {

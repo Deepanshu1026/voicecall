@@ -27,6 +27,10 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+// Attempts to override compileOptions in third-party Android modules are removed
+// because AGP finalizes them before this root script can configure them. The app
+// module itself still uses Java 11 via android/app/build.gradle.kts.
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }

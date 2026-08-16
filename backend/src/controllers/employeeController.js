@@ -5,11 +5,17 @@ const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
 
 const register = asyncHandler(async (req, res) => {
-  const { username, email, password, displayName, role } = req.body;
+  const { username, email, password, displayName, role, mobile } = req.body;
 
-  const existingEmployee = await Employee.findOne({ $or: [{ email }, { username }] });
+  const trimmedMobile = mobile ? mobile.trim() : null;
+  const query = { $or: [{ email }, { username }] };
+  if (trimmedMobile) query.$or.push({ mobile: trimmedMobile });
+
+  const existingEmployee = await Employee.findOne(query);
   if (existingEmployee) {
-    const field = existingEmployee.email === email ? 'email' : 'username';
+    let field = 'username';
+    if (existingEmployee.email === email) field = 'email';
+    else if (trimmedMobile && existingEmployee.mobile === trimmedMobile) field = 'phone';
     throw new AppError(`Employee with that ${field} already exists`, 409);
   }
 
@@ -19,6 +25,7 @@ const register = asyncHandler(async (req, res) => {
     password,
     displayName: displayName || username,
     role: role || 'case_manager',
+    mobile: trimmedMobile,
   });
 
   const { accessToken, refreshToken } = generateTokens(employee._id);

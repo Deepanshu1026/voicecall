@@ -98,3 +98,7 @@ jspm_packages/
 
 # Turbo
 .turbo
+
+# Nested legacy project
+avisaexperts17july/
+

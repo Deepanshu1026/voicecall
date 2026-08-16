@@ -55,7 +55,11 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
     countryCode: { type: String, default: null },
-    mobile: { type: String, default: null },
+    mobile: {
+      type: String,
+      default: null,
+      trim: true,
+    },
     loginFrom: { type: String, enum: ['web', 'app'], default: 'web' },
     settings: {
       theme: { type: String, enum: ['light', 'dark'], default: 'light' },
@@ -106,6 +110,8 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.index({ displayName: 'text', username: 'text' });
+// Partial unique index: only non-empty strings must be unique; nulls/empty strings are allowed to repeat.
+userSchema.index({ mobile: 1 }, { unique: true, partialFilterExpression: { mobile: { $type: 'string', $gt: '' } } });
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();

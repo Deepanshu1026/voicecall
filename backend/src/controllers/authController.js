@@ -8,11 +8,17 @@ const { uploadToCloudinary } = require('../services/cloudinaryService');
 const { getAccountById } = require('../utils/account');
 
 const register = asyncHandler(async (req, res) => {
-  const { username, email, password, displayName, role } = req.body;
+  const { username, email, password, displayName, role, mobile } = req.body;
 
-  const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+  const trimmedMobile = mobile ? mobile.trim() : null;
+  const query = { $or: [{ email }, { username }] };
+  if (trimmedMobile) query.$or.push({ mobile: trimmedMobile });
+
+  const existingUser = await User.findOne(query);
   if (existingUser) {
-    const field = existingUser.email === email ? 'email' : 'username';
+    let field = 'username';
+    if (existingUser.email === email) field = 'email';
+    else if (trimmedMobile && existingUser.mobile === trimmedMobile) field = 'phone';
     throw new AppError(`User with that ${field} already exists`, 409);
   }
 
@@ -22,6 +28,7 @@ const register = asyncHandler(async (req, res) => {
     password,
     displayName: displayName || username,
     role: role || 'user',
+    mobile: trimmedMobile,
   });
 
   const { accessToken, refreshToken } = generateTokens(user._id);

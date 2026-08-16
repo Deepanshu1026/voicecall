@@ -126,6 +126,8 @@ const employeeSchema = new mongoose.Schema(
 
 employeeSchema.index({ displayName: 'text', username: 'text' });
 employeeSchema.index({ role: 1, status: 1 });
+// Partial unique index: only non-empty strings must be unique; nulls/empty strings are allowed to repeat.
+employeeSchema.index({ mobile: 1 }, { unique: true, partialFilterExpression: { mobile: { $type: 'string', $gt: '' } } });
 
 employeeSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();

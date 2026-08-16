@@ -24,6 +24,13 @@ const registerValidator = [
     .optional()
     .isIn(['user', 'agent'])
     .withMessage('Role must be either user or agent'),
+  body('mobile')
+    .optional({ nullable: true, checkFalsy: true })
+    .trim()
+    .isLength({ min: 6, max: 15 })
+    .withMessage('Phone number must be between 6 and 15 characters')
+    .matches(/^\d+$/)
+    .withMessage('Phone number must contain only digits'),
 ];
 
 const loginValidator = [
