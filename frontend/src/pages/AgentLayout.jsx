@@ -12,8 +12,13 @@ const menu = [
   { path: '/agent/dashboard/chat', label: 'Client Chat', icon: 'bi bi-chat' },
 ];
 
+const adminMenu = [
+  { path: '/agent/dashboard/admin', label: 'Admin Settings', icon: 'bi bi-shield-lock' },
+];
+
 const AgentLayout = () => {
   const { user, logout } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const navigate = useNavigate();
   const location = useLocation();
   const isChatPath = location.pathname === '/agent/dashboard/chat';
@@ -43,6 +48,21 @@ const AgentLayout = () => {
               {item.badge === 'pendingRemarks' && <span className="sidebar-badge">27</span>}
             </NavLink>
           ))}
+          {isAdmin && (
+            <>
+              <div className="sidebar-divider" />
+              {adminMenu.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+                >
+                  <i className={item.icon} />
+                  <span>{item.label}</span>
+                </NavLink>
+              ))}
+            </>
+          )}
         </nav>
         <button className="sidebar-logout" onClick={handleLogout}>
           <i className="bi bi-box-arrow-right" />

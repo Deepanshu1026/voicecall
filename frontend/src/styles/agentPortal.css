@@ -111,6 +111,13 @@
   overflow-y: auto;
 }
 
+.sidebar-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 0.75rem 1rem;
+  flex-shrink: 0;
+}
+
 .sidebar-link,
 .sidebar-logout {
   display: flex;

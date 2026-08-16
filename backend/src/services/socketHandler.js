@@ -8,6 +8,9 @@ const callBilling = require('./callBillingService');
 const config = require('../config');
 const { getAccountById } = require('../utils/account');
 const { populateMessage, populateCall } = require('../utils/populate');
+const { getChatSettings } = require('./settingService');
+
+const FAR_FUTURE = new Date('2099-12-31T23:59:59.999Z');
 
 const onlineUserSockets = new Map(); // userId -> Set of socket ids
 const onlineEmployeeSockets = new Map(); // employeeId -> Set of socket ids
@@ -155,11 +158,14 @@ const startStaleCleanup = (io) => {
 const startFreeChatMonitor = (io) => {
   return setInterval(async () => {
     try {
+      const chatSettings = await getChatSettings();
+      if (chatSettings.unlimitedFreeChat) return;
+
       const now = new Date();
       const conversations = await Conversation.find({
         lockedToAgent: { $ne: null },
         isPaid: false,
-        freeUntil: { $gt: now },
+        freeUntil: { $gt: now, $lt: FAR_FUTURE },
       }).lean();
 
       for (const conv of conversations) {
@@ -510,13 +516,15 @@ const setupSocket = (io) => {
         }
 
         // Free/paid consultation check for user -> agent conversations
+        const chatSettings = await getChatSettings();
         if (
+          !chatSettings.unlimitedFreeChat &&
           conversation.lockedToAgent &&
           conversation.lockedToAgent.toString() === recipient.toString() &&
           userId.toString() !== conversation.lockedToAgent.toString()
         ) {
           const now = new Date();
-          const freeExpired = conversation.freeUntil && now > conversation.freeUntil;
+          const freeExpired = conversation.freeUntil && now > conversation.freeUntil && conversation.freeUntil.getTime() !== FAR_FUTURE.getTime();
           const noFreeTrial = !conversation.freeUntil && !conversation.isPaid;
           if ((freeExpired || noFreeTrial) && !conversation.isPaid) {
             if (callback) {

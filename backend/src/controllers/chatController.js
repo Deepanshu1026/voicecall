@@ -13,9 +13,11 @@ const {
   populateMessage,
   populateMessageSender,
 } = require('../utils/populate');
+const { getChatSettings } = require('../services/settingService');
 
 const EMPLOYEE_ROLES = ['case_manager', 'manager', 'senior_manager', 'admin'];
 const isAgentRole = (role) => role === 'agent' || EMPLOYEE_ROLES.includes(role);
+const FAR_FUTURE = new Date('2099-12-31T23:59:59.999Z');
 
 const getGreetingByIST = () => {
   const now = new Date();
@@ -48,6 +50,8 @@ const getOrCreateConversation = asyncHandler(async (req, res) => {
     participants: { $all: [req.userId, participantId], $size: 2 },
   });
 
+  const chatSettings = await getChatSettings();
+
   let isNewConversation = false;
   if (!conversation) {
     isNewConversation = true;
@@ -57,17 +61,25 @@ const getOrCreateConversation = asyncHandler(async (req, res) => {
     };
 
     if (isUserToAgent) {
-      // One free trial per user globally — only the first agent ever gets a free trial.
-      const hasUsedFreeTrial = await Conversation.findOne({
-        participants: req.userId,
-        lockedToAgent: { $ne: null },
-      });
-      conversationData.freeUntil = hasUsedFreeTrial
-        ? null
-        : new Date(Date.now() + config.freeChatDurationSeconds * 1000);
-      conversationData.isPaid = false;
-      conversationData.paymentAmount = config.chatPaymentAmount;
       conversationData.lockedToAgent = participantId;
+      conversationData.isPaid = false;
+      conversationData.paymentAmount = chatSettings.chatPaymentAmount;
+      conversationData.notified50 = false;
+      conversationData.notified90 = false;
+
+      if (chatSettings.unlimitedFreeChat) {
+        // Admin enabled unlimited free chat for everyone
+        conversationData.freeUntil = FAR_FUTURE;
+      } else {
+        // One free trial per user globally — only the first agent ever gets a free trial.
+        const hasUsedFreeTrial = await Conversation.findOne({
+          participants: req.userId,
+          lockedToAgent: { $ne: null },
+        });
+        conversationData.freeUntil = hasUsedFreeTrial
+          ? null
+          : new Date(Date.now() + chatSettings.freeChatDurationSeconds * 1000);
+      }
     }
 
     conversation = await Conversation.create(conversationData);
@@ -78,17 +90,21 @@ const getOrCreateConversation = asyncHandler(async (req, res) => {
     conversation.lockedToAgent = participantId;
     conversation.notified50 = false;
     conversation.notified90 = false;
-
-    // One free trial per user globally
-    const hasUsedFreeTrial = await Conversation.findOne({
-      participants: req.userId,
-      lockedToAgent: { $ne: null },
-    });
-    conversation.freeUntil = hasUsedFreeTrial
-      ? null
-      : new Date(Date.now() + config.freeChatDurationSeconds * 1000);
     conversation.isPaid = false;
-    conversation.paymentAmount = config.chatPaymentAmount;
+    conversation.paymentAmount = chatSettings.chatPaymentAmount;
+
+    if (chatSettings.unlimitedFreeChat) {
+      conversation.freeUntil = FAR_FUTURE;
+    } else {
+      // One free trial per user globally
+      const hasUsedFreeTrial = await Conversation.findOne({
+        participants: req.userId,
+        lockedToAgent: { $ne: null },
+      });
+      conversation.freeUntil = hasUsedFreeTrial
+        ? null
+        : new Date(Date.now() + chatSettings.freeChatDurationSeconds * 1000);
+    }
     await conversation.save();
   }
 
@@ -232,7 +248,9 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 
   // Free/paid consultation check for user -> agent conversations
+  const chatSettings = await getChatSettings();
   if (
+    !chatSettings.unlimitedFreeChat &&
     conversation.lockedToAgent &&
     conversation.lockedToAgent.toString() === recipient.toString() &&
     req.userId.toString() !== conversation.lockedToAgent.toString()

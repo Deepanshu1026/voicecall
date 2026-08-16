@@ -12,6 +12,7 @@ import AgentDashboardHome from './pages/AgentDashboardHome';
 import AgentNewApplication from './pages/AgentNewApplication';
 import AgentDailyLogins from './pages/AgentDailyLogins';
 import AgentPendingRemarks from './pages/AgentPendingRemarks';
+import AdminDashboard from './pages/AdminDashboard';
 import Chat from './pages/Chat';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
@@ -135,6 +136,7 @@ function App() {
           path="chat"
           element={<Chat className="chat-agent-wrapper" />}
         />
+        <Route path="admin" element={<AdminDashboard />} />
       </Route>
 
       {/* Default landing */}

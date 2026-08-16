@@ -17,6 +17,9 @@ const config = require('../config');
 const { handleMulterError } = require('../middleware/upload');
 const { uploadToCloudinary } = require('../services/cloudinaryService');
 const multerUpload = require('../utils/upload');
+const { getChatSettings } = require('../services/settingService');
+
+const FAR_FUTURE = new Date('2099-12-31T23:59:59.999Z');
 
 // Normalize avatar to a string URL
 const avatarUrl = (avatar) => {
@@ -1128,6 +1131,7 @@ router.post('/chat/conversation', asyncHandler(async (req, res) => {
   const isUserToAgent = sender.role === 'user' && isAgentRole(receiver.role);
   let conv = await Conversation.findOne({ type: 'direct', participants: { $all: [sId, rId], $size: 2 } });
   const isNewConversation = !conv;
+  const chatSettings = await getChatSettings();
 
   // Check if the user has already used their one free trial with ANY agent
   const hasUsedFreeTrial = isUserToAgent ? await Conversation.findOne({
@@ -1137,25 +1141,35 @@ router.post('/chat/conversation', asyncHandler(async (req, res) => {
 
   if (!conv) {
     const d = { type: 'direct', participants: [sId, rId] };
-    // Only give free trial if user hasn't already had one with any agent
-    if (isUserToAgent && !hasUsedFreeTrial) {
-      d.freeUntil = new Date(Date.now() + (config.freeChatDurationSeconds || 600) * 1000);
-      d.isPaid = false;
-      d.paymentAmount = config.chatPaymentAmount || 100;
+    // Only give free trial if user hasn't already had one with any agent (unless admin enabled unlimited)
+    if (isUserToAgent) {
       d.lockedToAgent = rId;
+      d.isPaid = false;
+      d.paymentAmount = chatSettings.chatPaymentAmount;
+      d.notified50 = false;
+      d.notified90 = false;
+      if (chatSettings.unlimitedFreeChat) {
+        d.freeUntil = FAR_FUTURE;
+      } else if (!hasUsedFreeTrial) {
+        d.freeUntil = new Date(Date.now() + chatSettings.freeChatDurationSeconds * 1000);
+      }
     }
     conv = await Conversation.create(d);
   }
 
   // If this is an existing conversation that never got a free trial
   // (e.g., old chat before free trial logic was added), check global usage
-  if (conv && isUserToAgent && !conv.lockedToAgent && !hasUsedFreeTrial) {
+  if (conv && isUserToAgent && !conv.lockedToAgent) {
     conv.lockedToAgent = rId;
     conv.notified50 = false;
     conv.notified90 = false;
-    conv.freeUntil = new Date(Date.now() + (config.freeChatDurationSeconds || 600) * 1000);
     conv.isPaid = false;
-    conv.paymentAmount = config.chatPaymentAmount || 100;
+    conv.paymentAmount = chatSettings.chatPaymentAmount;
+    if (chatSettings.unlimitedFreeChat) {
+      conv.freeUntil = FAR_FUTURE;
+    } else if (!hasUsedFreeTrial) {
+      conv.freeUntil = new Date(Date.now() + chatSettings.freeChatDurationSeconds * 1000);
+    }
     await conv.save();
   }
 
