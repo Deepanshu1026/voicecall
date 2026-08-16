@@ -140,7 +140,7 @@ const LandingLayout = ({ children }) => {
             <ul>
               <li><a href="/about">About Us</a></li>
               <li><a href="/home">Contact Us</a></li>
-              <li><a href="/home">AVE Partners</a></li>
+              <li><a href="/agent/login">AVE Partners</a></li>
             </ul>
           </div>
           <div className="footer-section footer-second-clm">
