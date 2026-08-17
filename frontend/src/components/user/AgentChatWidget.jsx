@@ -47,15 +47,25 @@ const AgentChatWidget = () => {
     };
   }, []);
 
-  const handleChat = (agent, isOnline) => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
+  const handleChat = async (agent, isOnline) => {
     if (!isOnline) {
       return;
     }
     const targetId = agent._id || agent.id;
+    if (!isAuthenticated) {
+      setGuestLoading(true);
+      try {
+        await guestLogin('web');
+        toast.success('Continuing as guest');
+        navigate(`/consultants?userId=${targetId}`);
+      } catch (error) {
+        console.error('Guest login failed:', error);
+        toast.error('Guest login failed. Please try again.');
+      } finally {
+        setGuestLoading(false);
+      }
+      return;
+    }
     navigate(`/consultants?userId=${targetId}`);
   };
 
