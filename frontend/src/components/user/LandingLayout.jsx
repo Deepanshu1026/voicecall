@@ -21,7 +21,6 @@ const addressAccordion = [
 ];
 
 const BANNER_IMAGE = 'https://lh3.googleusercontent.com/d/11BM8gGhbKw7lVR61hnk6wd2CJ8mx9f9a';
-const BANNER_STORAGE_KEY = 'avisa_offer_banner_closed';
 
 const LandingLayout = ({ children }) => {
   const location = useLocation();
@@ -58,12 +57,10 @@ const LandingLayout = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const closed = localStorage.getItem(BANNER_STORAGE_KEY);
-    setBannerOpen(!closed);
+    setBannerOpen(true);
   }, []);
 
   const closeBanner = () => {
-    localStorage.setItem(BANNER_STORAGE_KEY, '1');
     setBannerOpen(false);
   };
 
