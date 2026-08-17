@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AgentSlidePanel from '../components/agent/AgentSlidePanel';
+import SEO from '../components/common/SEO';
 import '../styles/agentPortal.css';
 import '../styles/agentSlidePanel.css';
 
@@ -64,6 +65,12 @@ const AgentLayout = () => {
   }, [logout, navigate]);
 
   return (
+    <>
+      <SEO
+        title="Agent Dashboard | A Visa Experts"
+        description="Agent portal for A Visa Experts. Manage applications, client chats, and daily logins."
+        canonicalPath="/agent/dashboard"
+      />
     <div className="agent-portal-layout">
       <aside className="agent-portal-sidebar">
         <div className="sidebar-brand">
@@ -123,6 +130,7 @@ const AgentLayout = () => {
       </main>
 
     </div>
+    </>
   );
 };
 
