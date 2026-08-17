@@ -53,7 +53,7 @@ function parseUsers(sql) {
         user_password: un(parts[3]),
         country_code: nullish(parts[4]) ? null : un(parts[4]),
         user_mobile: nullish(parts[5]) ? null : un(parts[5]),
-        user_profile: un(parts[6]) || 'img/userdemo.webp',
+        user_profile: un(parts[6]) || '/images/user/userdemo.webp',
         user_status: un(parts[7]),
         user_current_status: un(parts[8]),
         user_role: un(parts[10]),
@@ -161,7 +161,7 @@ async function main() {
       status,
       loginFrom,
       avatar: {
-        url: r.user_profile ? r.user_profile.replace(/\\/g, '/') : 'img/userdemo.webp',
+        url: r.user_profile ? r.user_profile.replace(/\\/g, '/') : '/images/user/userdemo.webp',
         publicId: '',
       },
       bio: '',
