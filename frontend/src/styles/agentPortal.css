@@ -118,6 +118,110 @@
   flex-shrink: 0;
 }
 
+/* Leave confirmation modal */
+.agent-leave-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+
+.agent-leave-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: agent-leave-modal-in 0.2s ease;
+}
+
+@keyframes agent-leave-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.agent-leave-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 10px;
+}
+
+.agent-leave-modal-text {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.agent-leave-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.agent-leave-modal-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.agent-leave-modal-btn:hover {
+  transform: translateY(-1px);
+}
+
+.agent-leave-modal-btn-primary {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.agent-leave-modal-btn-primary:hover {
+  background: #1d4ed8;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+.agent-leave-modal-btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.agent-leave-modal-btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+@media (max-width: 480px) {
+  .agent-leave-modal {
+    padding: 22px;
+  }
+
+  .agent-leave-modal-actions {
+    flex-direction: column;
+  }
+
+  .agent-leave-modal-btn {
+    width: 100%;
+  }
+}
+
 .sidebar-link,
 .sidebar-logout {
   display: flex;
