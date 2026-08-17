@@ -1,5 +1,5 @@
-import { NavLink, Outlet, useNavigate, useLocation, useBlocker } from 'react-router-dom';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AgentSlidePanel from '../components/agent/AgentSlidePanel';
 import '../styles/agentPortal.css';
@@ -23,22 +23,8 @@ const AgentLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isChatPath = location.pathname === '/agent/dashboard/chat';
-  const [showLeaveModal, setShowLeaveModal] = useState(false);
-  const [pendingLogout, setPendingLogout] = useState(false);
-  const blocker = useRef(null);
 
-  const navigateBlocker = useBlocker(
-    ({ currentLocation, nextLocation }) => {
-      // Only block navigation that leaves the agent dashboard entirely
-      return (
-        currentLocation.pathname.startsWith('/agent/dashboard') &&
-        !nextLocation.pathname.startsWith('/agent/dashboard')
-      );
-    }
-  );
-  blocker.current = navigateBlocker;
-
-  // Warn when closing the tab/window (browser-native dialog)
+  // Warn when closing the tab/window and send a logout beacon
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       event.preventDefault();
@@ -46,7 +32,7 @@ const AgentLayout = () => {
       return '';
     };
 
-    const handleUnload = async () => {
+    const handleUnload = () => {
       const token = localStorage.getItem('employeeAccessToken');
       if (token) {
         try {
@@ -72,32 +58,10 @@ const AgentLayout = () => {
     };
   }, []);
 
-  // Show custom modal when SPA navigation is blocked
-  useEffect(() => {
-    if (navigateBlocker.state === 'blocked') {
-      setShowLeaveModal(true);
-    }
-  }, [navigateBlocker.state]);
-
   const handleLogout = useCallback(async () => {
-    setPendingLogout(true);
     await logout();
     navigate('/agent/login', { replace: true });
   }, [logout, navigate]);
-
-  const confirmLeave = () => {
-    setShowLeaveModal(false);
-    if (navigateBlocker.state === 'blocked') {
-      navigateBlocker.proceed();
-    }
-  };
-
-  const cancelLeave = () => {
-    setShowLeaveModal(false);
-    if (navigateBlocker.state === 'blocked') {
-      navigateBlocker.reset();
-    }
-  };
 
   return (
     <div className="agent-portal-layout">
@@ -158,33 +122,6 @@ const AgentLayout = () => {
         </div>
       </main>
 
-      {showLeaveModal && (
-        <div className="agent-leave-modal-overlay">
-          <div className="agent-leave-modal">
-            <h3 className="agent-leave-modal-title">Leave Avisa Portal?</h3>
-            <p className="agent-leave-modal-text">
-              If you leave this page you will be logged out and shown as offline.
-            </p>
-            <div className="agent-leave-modal-actions">
-              <button
-                type="button"
-                className="agent-leave-modal-btn agent-leave-modal-btn-primary"
-                onClick={cancelLeave}
-                autoFocus
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="agent-leave-modal-btn agent-leave-modal-btn-secondary"
-                onClick={confirmLeave}
-              >
-                Leave
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
