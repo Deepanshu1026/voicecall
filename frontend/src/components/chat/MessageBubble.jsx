@@ -35,11 +35,10 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
       const isWarning = message.content.includes('⚠️');
       return (
         <div className="flex justify-center my-3">
-          <div className={`text-xs font-semibold px-4 py-2.5 rounded-lg shadow-sm border ${
-            isWarning
-              ? 'bg-red-50 text-red-700 border-red-200'
-              : 'bg-amber-50 text-amber-700 border-amber-200'
-          }`}>
+          <div className={`text-xs font-semibold px-4 py-2.5 rounded-lg shadow-sm border ${isWarning
+            ? 'bg-red-50 text-red-700 border-red-200'
+            : 'bg-amber-50 text-amber-700 border-amber-200'
+            }`}>
             {message.content}
           </div>
         </div>
@@ -128,7 +127,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
 
   return (
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} items-end gap-1.5 mx-1 mb-1 group relative`}>
-      <div className={`${isOwn ? 'order-first' : 'order-last'} opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0`}>
+      <div className={`${isOwn ? 'order-first' : 'order-last'} opacity-100 flex-shrink-0`}>
         <button
           onClick={() => onReply()}
           className="p-1 rounded-full text-gray-300 hover:text-gray-600 transition-colors"
