@@ -219,7 +219,9 @@ const getProfileById = asyncHandler(async (req, res) => {
     throw new AppError('Profile not found', 404);
   }
 
-  // Remove sensitive fields from the public profile
+  const isEmployee = account.accountType === 'employee' || account.role === 'agent';
+
+  // Remove sensitive fields from the public profile; never expose employee contact details.
   const profile = {
     _id: account._id,
     username: account.username,
@@ -231,12 +233,15 @@ const getProfileById = asyncHandler(async (req, res) => {
     status: account.status,
     lastSeen: account.lastSeen,
     createdAt: account.createdAt,
-    mobile: account.mobile || '',
-    email: account.email || '',
   };
 
+  if (!isEmployee) {
+    profile.mobile = account.mobile || '';
+    profile.email = account.email || '';
+  }
+
   // Only expose callRate for agents/employees
-  if (account.accountType === 'employee' || account.role === 'agent') {
+  if (isEmployee) {
     profile.callRate = account.callRate ?? 20;
   }
 
