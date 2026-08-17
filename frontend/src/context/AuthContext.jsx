@@ -106,6 +106,20 @@ export const AuthProvider = ({ children }) => {
     return userData;
   };
 
+  const guestLogin = async (loginFrom = 'web') => {
+    const res = await authAPI.guestLogin({ loginFrom });
+    const { token, refreshToken, user_id } = res.data;
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.removeItem('employeeAccessToken');
+    localStorage.removeItem('employeeRefreshToken');
+    setUser({ _id: user_id, displayName: res.data.user_name, email: res.data.user_email, role: 'user' });
+    setIsAuthenticated(true);
+    setAuthType('user');
+    connectSocket(token);
+    return res.data;
+  };
+
   const employeeRegister = async (data) => {
     const res = await employeeAPI.register(data);
     const { employee: employeeData, accessToken, refreshToken } = res.data.data;
@@ -152,6 +166,7 @@ export const AuthProvider = ({ children }) => {
     login,
     employeeLogin,
     register,
+    guestLogin,
     employeeRegister,
     logout,
     updateUser,

@@ -97,6 +97,7 @@ api.interceptors.response.use(
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
+  guestLogin: (data) => api.post('/app/guest', data),
   logout: () => api.post('/auth/logout'),
   getMe: () => api.get('/auth/me'),
   refreshToken: (data) => axios.post(`${API_BASE_URL}/auth/refresh-token`, data),

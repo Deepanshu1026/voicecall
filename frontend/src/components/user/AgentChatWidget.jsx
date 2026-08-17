@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { userAPI } from '../../services/api';
+import toast from 'react-hot-toast';
 import '../../styles/userLanding.css';
 
 const fallbackAgents = [
@@ -13,7 +14,7 @@ const fallbackAgents = [
 
 const AgentChatWidget = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, guestLogin } = useAuth();
   const { isUserOnline } = useSocket();
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,12 +59,22 @@ const AgentChatWidget = () => {
     navigate(`/consultants?userId=${targetId}`);
   };
 
-  const handleGuestStart = () => {
-    setGuestLoading(true);
-    setTimeout(() => {
-      setGuestLoading(false);
+  const handleGuestStart = async () => {
+    if (isAuthenticated) {
       navigate('/consultants');
-    }, 1200);
+      return;
+    }
+    setGuestLoading(true);
+    try {
+      await guestLogin('web');
+      toast.success('Continuing as guest');
+      navigate('/consultants');
+    } catch (error) {
+      console.error('Guest login failed:', error);
+      toast.error('Guest login failed. Please try again.');
+    } finally {
+      setGuestLoading(false);
+    }
   };
 
   if (!open) {

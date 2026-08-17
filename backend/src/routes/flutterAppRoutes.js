@@ -121,18 +121,17 @@ router.post('/register', asyncHandler(async (req, res) => {
   ApiResponse.success(res, { user_id: user._id }, 'Registration successful', 201);
 }));
 
-// Guest creation (mobile app)
+// Guest creation (mobile app or web widget)
 router.post('/guest', asyncHandler(async (req, res) => {
-  const baseCount = await User.countDocuments({ role: 'user' });
-  let suffix = baseCount + 1;
+  const { loginFrom = 'app' } = req.body;
+  let suffix = 1;
   let user = null;
   let attempts = 0;
-  const maxAttempts = 10;
+  const maxAttempts = 50;
 
   while (attempts < maxAttempts) {
     const username = `guestapp${suffix}`;
     const email = `guestapp${suffix}@example.com`;
-    const mobile = `6${Math.floor(Math.random() * 9000000000 + 1000000000)}`;
     const existing = await User.findOne({ $or: [{ username }, { email }] });
 
     if (!existing) {
@@ -141,10 +140,10 @@ router.post('/guest', asyncHandler(async (req, res) => {
         email,
         password: `guest${suffix}`,
         displayName: username,
-        mobile,
+        mobile: null,
         role: 'user',
         status: 'online',
-        loginFrom: 'app',
+        loginFrom: loginFrom === 'web' ? 'web' : 'app',
       });
       break;
     }
