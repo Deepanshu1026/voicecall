@@ -20,11 +20,15 @@ const addressAccordion = [
   { key: 'london', title: 'London office', span: '(UK)', content: '128 City Rd, London EC1V 2NX, UK', flag: 'uk' },
 ];
 
+const BANNER_IMAGE = 'https://lh3.googleusercontent.com/d/11BM8gGhbKw7lVR61hnk6wd2CJ8mx9f9a';
+const BANNER_STORAGE_KEY = 'avisa_offer_banner_closed';
+
 const LandingLayout = ({ children }) => {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [bannerOpen, setBannerOpen] = useState(false);
   const [accordionOpen, setAccordionOpen] = useState({
     noida: true,
     ahmedabad: false,
@@ -52,6 +56,16 @@ const LandingLayout = ({ children }) => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    const closed = localStorage.getItem(BANNER_STORAGE_KEY);
+    setBannerOpen(!closed);
+  }, []);
+
+  const closeBanner = () => {
+    localStorage.setItem(BANNER_STORAGE_KEY, '1');
+    setBannerOpen(false);
+  };
 
   const toggleAccordion = (key) => {
     setAccordionOpen((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -122,6 +136,20 @@ const LandingLayout = ({ children }) => {
           </button>
         </div>
       </header>
+
+      {/* Offer banner popup */}
+      {bannerOpen && (
+        <div className="offer-banner-popup">
+          <button
+            className="offer-banner-close"
+            onClick={closeBanner}
+            aria-label="Close offer banner"
+          >
+            &times;
+          </button>
+          <img src={BANNER_IMAGE} alt="Special offer" className="offer-banner-image" />
+        </div>
+      )}
 
       {/* Page content */}
       {children}

@@ -2888,3 +2888,76 @@ html {
 .agent-popup-btn-secondary:hover {
   background: #e2e8f0;
 }
+
+/* Offer banner popup */
+.offer-banner-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  background: #fff;
+  animation: banner-fade-in 0.3s ease;
+}
+
+@keyframes banner-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.offer-banner-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 600px;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.offer-banner-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  font-size: 22px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background 0.2s, transform 0.2s;
+  z-index: 2;
+}
+
+.offer-banner-close:hover {
+  background: #fff;
+  transform: scale(1.05);
+}
+
+@media (max-width: 640px) {
+  .offer-banner-popup {
+    max-width: 95vw;
+    border-radius: 12px;
+  }
+
+  .offer-banner-image {
+    max-width: 100%;
+  }
+}
