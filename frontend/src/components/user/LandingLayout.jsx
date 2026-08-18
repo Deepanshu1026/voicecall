@@ -156,21 +156,25 @@ const LandingLayout = ({ children }) => {
 
       {/* Offer banner popup */}
       {!bannerLoading && bannerOpen && banner.enabled && banner.imageUrl && (
-        <div className="offer-banner-popup">
-          <button
-            className="offer-banner-close"
-            onClick={closeBanner}
-            aria-label="Close offer banner"
-          >
-            &times;
-          </button>
-          {banner.link ? (
-            <a href={banner.link} target="_blank" rel="noopener noreferrer">
-              <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
-            </a>
-          ) : (
-            <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
-          )}
+        <div className="offer-banner-overlay" onClick={closeBanner}>
+          <div className="offer-banner-popup" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="offer-banner-close"
+              onClick={closeBanner}
+              aria-label="Close offer banner"
+            >
+              &times;
+            </button>
+            <div className="offer-banner-content">
+              {banner.link ? (
+                <a href={banner.link} target="_blank" rel="noopener noreferrer" className="offer-banner-link">
+                  <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
+                </a>
+              ) : (
+                <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
+              )}
+            </div>
+          </div>
         </div>
       )}
 
