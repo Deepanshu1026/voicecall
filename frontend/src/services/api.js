@@ -204,7 +204,7 @@ export const agentPortalAPI = {
   getPendingRemarks: () => api.get('/agent-portal/pending-remarks'),
   getDailyLogins: (page, date, search) => api.get('/agent-portal/daily-logins', { params: { page, date, search } }),
   getAppointments: (page, date, search) => api.get('/agent-portal/appointments', { params: { page, date, search } }),
-  getApplications: (page, date, search) => api.get('/agent-portal/applications', { params: { page, date, search } }),
+  getApplicationsList: (page, date, search) => api.get('/agent-portal/applications-list', { params: { page, date, search } }),
 };
 
 export const appointmentAPI = {

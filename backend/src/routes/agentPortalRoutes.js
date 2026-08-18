@@ -14,6 +14,6 @@ router.get('/contact-history', agentPortalController.checkContactHistory);
 router.get('/pending-remarks', agentPortalController.getPendingRemarks);
 router.get('/daily-logins', agentPortalController.getDailyLogins);
 router.get('/appointments', agentPortalController.getAppointments);
-router.get('/applications', agentPortalController.getApplications);
+router.get('/applications-list', agentPortalController.getApplicationsList);
 
 module.exports = router;

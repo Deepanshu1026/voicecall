@@ -22,7 +22,7 @@ const ApplicationsPage = () => {
     else setLoadingMore(true);
 
     try {
-      const res = await agentPortalAPI.getApplications(pageNum, date || undefined, search || undefined);
+      const res = await agentPortalAPI.getApplicationsList(pageNum, date || undefined, search || undefined);
       const data = res.data?.data || [];
       const pagination = res.data?.pagination || res.data;
       setItems((prev) => (append ? [...prev, ...data] : data));

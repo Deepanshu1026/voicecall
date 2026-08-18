@@ -29,6 +29,75 @@ exports.getApplications = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, applications });
 });
 
+exports.getApplicationsList = asyncHandler(async (req, res) => {
+  const { sqlId } = await resolveContext(req, { allowAdmin: true });
+  const { date, search = '', page = 1, limit = 50 } = req.query;
+  const searchRegex = buildSearchRegex(search);
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const limitNum = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 200);
+
+  const employees = await Employee.find().select('sqlId displayName username').lean();
+  const employeeMap = {};
+  employees.forEach((e) => {
+    employeeMap[e.sqlId] = e.displayName || e.username || 'Agent';
+  });
+
+  const filter = {};
+  if (sqlId) filter.agentId = sqlId;
+
+  const skip = (pageNum - 1) * limitNum;
+  const [applications, total] = await Promise.all([
+    Application.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
+    Application.countDocuments(filter),
+  ]);
+
+  let items = applications.map((a) => {
+    const details = a.details || {};
+    const itemDate = formatDate(details.submission_date || details.appointment_date || a.createdAt);
+    return {
+      _id: a._id,
+      name: a.clientName || details.client_name || '',
+      contact: a.contactNumber || details.contact_number || '',
+      email: details.email || '',
+      date: itemDate,
+      time: details.appointment_time || details.time_slot || '',
+      plan: details.visa_type || details.visa_category || '',
+      status: a.status || 'pending',
+      query: details.remarks || details.query || '',
+      address: details.address || '',
+      referenceId: a.sqlId ? String(a.sqlId) : '',
+      agentName: employeeMap[a.agentId] || `Agent ${a.agentId}`,
+      createdAt: a.createdAt || null,
+    };
+  });
+
+  if (date) {
+    items = items.filter((a) => a.date === date);
+  }
+
+  if (searchRegex) {
+    items = items.filter((item) =>
+      searchRegex.test(item.name) ||
+      searchRegex.test(item.contact) ||
+      searchRegex.test(item.email) ||
+      searchRegex.test(item.referenceId) ||
+      searchRegex.test(item.query) ||
+      searchRegex.test(item.agentName)
+    );
+  }
+
+  const filteredTotal = searchRegex || date ? items.length : total;
+
+  res.status(200).json({
+    success: true,
+    data: items,
+    total: filteredTotal,
+    page: pageNum,
+    pages: Math.ceil(filteredTotal / limitNum),
+    limit: limitNum,
+  });
+});
+
 exports.getApplication = asyncHandler(async (req, res) => {
   const { sqlId } = await resolveContext(req);
   const id = parseInt(req.params.id, 10);
@@ -146,71 +215,4 @@ exports.getAppointments = asyncHandler(async (req, res) => {
   });
 });
 
-exports.getApplications = asyncHandler(async (req, res) => {
-  const { sqlId } = await resolveContext(req, { allowAdmin: true });
-  const { date, search = '', page = 1, limit = 50 } = req.query;
-  const searchRegex = buildSearchRegex(search);
-  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
-  const limitNum = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 200);
 
-  const employees = await Employee.find().select('sqlId displayName username').lean();
-  const employeeMap = {};
-  employees.forEach((e) => {
-    employeeMap[e.sqlId] = e.displayName || e.username || 'Agent';
-  });
-
-  const filter = {};
-  if (sqlId) filter.agentId = sqlId;
-
-  const skip = (pageNum - 1) * limitNum;
-  const [applications, total] = await Promise.all([
-    Application.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
-    Application.countDocuments(filter),
-  ]);
-
-  let items = applications.map((a) => {
-    const details = a.details || {};
-    const itemDate = formatDate(details.submission_date || details.appointment_date || a.createdAt);
-    return {
-      _id: a._id,
-      name: a.clientName || details.client_name || '',
-      contact: a.contactNumber || details.contact_number || '',
-      email: details.email || '',
-      date: itemDate,
-      time: details.appointment_time || details.time_slot || '',
-      plan: details.visa_type || details.visa_category || '',
-      status: a.status || 'pending',
-      query: details.remarks || details.query || '',
-      address: details.address || '',
-      referenceId: a.sqlId ? String(a.sqlId) : '',
-      agentName: employeeMap[a.agentId] || `Agent ${a.agentId}`,
-      createdAt: a.createdAt || null,
-    };
-  });
-
-  if (date) {
-    items = items.filter((a) => a.date === date);
-  }
-
-  if (searchRegex) {
-    items = items.filter((item) =>
-      searchRegex.test(item.name) ||
-      searchRegex.test(item.contact) ||
-      searchRegex.test(item.email) ||
-      searchRegex.test(item.referenceId) ||
-      searchRegex.test(item.query) ||
-      searchRegex.test(item.agentName)
-    );
-  }
-
-  const filteredTotal = searchRegex || date ? items.length : total;
-
-  res.status(200).json({
-    success: true,
-    data: items,
-    total: filteredTotal,
-    page: pageNum,
-    pages: Math.ceil(filteredTotal / limitNum),
-    limit: limitNum,
-  });
-});
