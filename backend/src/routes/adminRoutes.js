@@ -15,4 +15,7 @@ router.get('/push/tokens', adminController.getFcmTokens);
 router.post('/push/send', adminController.sendManualPush);
 router.post('/push/broadcast', adminController.sendBroadcastPush);
 
+router.get('/insta-api-key', adminController.getInstagramToken);
+router.put('/insta-api-key', adminController.updateInstagramToken);
+
 module.exports = router;

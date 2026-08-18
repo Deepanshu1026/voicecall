@@ -730,7 +730,7 @@ router.get('/prices', asyncHandler(async (req, res) => sendPrices(res)));
 router.get('/insta-api-key', asyncHandler(async (req, res) => {
   const ApiKey = require('../models/ApiKey');
   const key = await ApiKey.findOne().sort({ createdAt: -1 }).lean();
-  res.json({ status: true, data: key ? [key] : [] });
+  ApiResponse.success(res, { token: key?.key || '' });
 }));
 
 // ==================== BANNERS ====================

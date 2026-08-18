@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config/app_config.dart';
 
 class FloatingPromotionVideo extends StatefulWidget {
   const FloatingPromotionVideo({super.key});
@@ -26,10 +27,6 @@ class _FloatingPromotionVideoState extends State<FloatingPromotionVideo> {
   final double _expandedHeight = 350.0;
   String? _instagramToken;
 
-  // Long-lived Instagram access token for the connected account.
-  static const String _instagramAccessToken =
-      'IGAAWp7Lk0ae5BZAGFQOGZAUNFhVRzh3WEtRRXdlZAjBHUVBGVE9CQXRwd1YtZA0tDTFFtd1E3cXRDdzJVZA3F4ZAkhyMGd6UEFzSlduYXZAOUEdsdTRoWjNtclBGOTlRM083aHkycU1kbWNyY1NMenNGRWNkNDdzeUNvNXVSZAkhIQ2xCdwZDZD';
-
   @override
   void initState() {
     super.initState();
@@ -39,8 +36,16 @@ class _FloatingPromotionVideoState extends State<FloatingPromotionVideo> {
   }
 
   Future<void> _fetchInstagramToken() async {
-    // Use the hardcoded token directly.
-    _instagramToken = _instagramAccessToken;
+    try {
+      final response = await http.get(Uri.parse(AppConfig.instaApiKey));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final token = data['data']?['token']?.toString() ?? '';
+        _instagramToken = token;
+      }
+    } catch (e) {
+      debugPrint('Failed to fetch Instagram token from API: $e');
+    }
     _fetchInstagramVideoUrl();
   }
 

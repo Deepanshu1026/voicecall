@@ -20,6 +20,7 @@ const adminMenu = [
   { path: '/agent/dashboard/admin/chats', label: 'Chat Monitor', icon: 'bi bi-chat-dots' },
   { path: '/agent/dashboard/admin/push', label: 'Push Notifications', icon: 'bi bi-bell' },
   { path: '/agent/dashboard/admin/banner', label: 'Offer Banner', icon: 'bi bi-image' },
+  { path: '/agent/dashboard/admin/instagram-token', label: 'Instagram Token', icon: 'bi bi-instagram' },
 ];
 
 const AgentLayout = () => {

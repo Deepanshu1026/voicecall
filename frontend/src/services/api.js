@@ -218,6 +218,8 @@ export const adminAPI = {
   getFcmTokens: (params) => api.get('/admin/push/tokens', { params }),
   sendPush: (data) => api.post('/admin/push/send', data),
   broadcastPush: (data) => api.post('/admin/push/broadcast', data, { timeout: 120000 }),
+  getInstagramToken: () => api.get('/admin/insta-api-key'),
+  updateInstagramToken: (token) => api.put('/admin/insta-api-key', { token }),
 };
 
 export const blogAPI = {

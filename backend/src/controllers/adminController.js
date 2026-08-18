@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
+const ApiKey = require('../models/ApiKey');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const ApiResponse = require('../utils/ApiResponse');
@@ -263,6 +264,26 @@ const sendBroadcastPush = asyncHandler(async (req, res) => {
   ApiResponse.success(res, result, 'Broadcast push notification sent');
 });
 
+const getInstagramToken = asyncHandler(async (req, res) => {
+  const key = await ApiKey.findOne().sort({ createdAt: -1 }).lean();
+  ApiResponse.success(res, { token: key?.key || '' });
+});
+
+const updateInstagramToken = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+  if (typeof token !== 'string') {
+    throw new AppError('Token must be a string', 400);
+  }
+
+  const key = await ApiKey.findOneAndUpdate(
+    {},
+    { key: token, name: 'Instagram Access Token', updatedAt: new Date() },
+    { sort: { createdAt: -1 }, new: true, upsert: true }
+  );
+
+  ApiResponse.success(res, { token: key.key }, 'Instagram token updated');
+});
+
 module.exports = {
   getAllConversations,
   getConversationMessages,
@@ -272,4 +293,6 @@ module.exports = {
   getFcmTokens,
   sendManualPush,
   sendBroadcastPush,
+  getInstagramToken,
+  updateInstagramToken,
 };
