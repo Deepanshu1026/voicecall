@@ -226,4 +226,9 @@ export const blogAPI = {
   getRelatedPosts: (id) => api.get(`/app/posts/${id}/related`),
 };
 
+export const bannerAPI = {
+  getBanner: () => api.get('/banner'),
+  updateBanner: (data) => api.put('/banner', data),
+};
+
 export default api;

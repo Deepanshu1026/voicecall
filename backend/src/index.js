@@ -24,6 +24,7 @@ const agentPortalRoutes = require('./routes/agentPortalRoutes');
 const flutterAppRoutes = require('./routes/flutterAppRoutes');
 const settingRoutes = require('./routes/settingRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const bannerRoutes = require('./routes/bannerRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -107,6 +108,7 @@ app.use('/api/calls', callRoutes);
 app.use('/api/app', flutterAppRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/banner', bannerRoutes);
 
 // Serve built frontend in production and fall back to index.html for SPA routes
 const frontendDistPath = path.join(__dirname, '..', '..', 'frontend', 'dist');

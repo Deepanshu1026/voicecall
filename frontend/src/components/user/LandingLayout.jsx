@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { bannerAPI } from '../../services/api';
 import '../../styles/userLanding.css';
 
 const navLinks = [
@@ -20,14 +21,14 @@ const addressAccordion = [
   { key: 'london', title: 'London office', span: '(UK)', content: '128 City Rd, London EC1V 2NX, UK', flag: 'uk' },
 ];
 
-const BANNER_IMAGE = 'https://lh3.googleusercontent.com/d/11BM8gGhbKw7lVR61hnk6wd2CJ8mx9f9a';
-
 const LandingLayout = ({ children }) => {
   const location = useLocation();
   const { isAuthenticated } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [bannerOpen, setBannerOpen] = useState(false);
+  const [banner, setBanner] = useState({ enabled: true, imageUrl: '', altText: 'Special offer', link: '' });
+  const [bannerLoading, setBannerLoading] = useState(true);
   const [accordionOpen, setAccordionOpen] = useState({
     noida: true,
     ahmedabad: false,
@@ -57,7 +58,26 @@ const LandingLayout = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    setBannerOpen(true);
+    const loadBanner = async () => {
+      try {
+        const res = await bannerAPI.getBanner();
+        const data = res.data?.data || res.data || {};
+        setBanner({
+          enabled: data.enabled !== false,
+          imageUrl: data.imageUrl || '',
+          altText: data.altText || 'Special offer',
+          link: data.link || '',
+        });
+        if (data.enabled !== false && data.imageUrl) {
+          setBannerOpen(true);
+        }
+      } catch (err) {
+        console.error('Failed to load banner', err);
+      } finally {
+        setBannerLoading(false);
+      }
+    };
+    loadBanner();
   }, []);
 
   const closeBanner = () => {
@@ -135,7 +155,7 @@ const LandingLayout = ({ children }) => {
       </header>
 
       {/* Offer banner popup */}
-      {bannerOpen && (
+      {!bannerLoading && bannerOpen && banner.enabled && banner.imageUrl && (
         <div className="offer-banner-popup">
           <button
             className="offer-banner-close"
@@ -144,7 +164,13 @@ const LandingLayout = ({ children }) => {
           >
             &times;
           </button>
-          <img src={BANNER_IMAGE} alt="Special offer" className="offer-banner-image" />
+          {banner.link ? (
+            <a href={banner.link} target="_blank" rel="noopener noreferrer">
+              <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
+            </a>
+          ) : (
+            <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
+          )}
         </div>
       )}
 
