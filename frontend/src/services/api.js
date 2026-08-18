@@ -217,7 +217,7 @@ export const adminAPI = {
   deleteMessage: (messageId) => api.delete(`/admin/chats/messages/${messageId}`),
   getFcmTokens: (params) => api.get('/admin/push/tokens', { params }),
   sendPush: (data) => api.post('/admin/push/send', data),
-  broadcastPush: (data) => api.post('/admin/push/broadcast', data),
+  broadcastPush: (data) => api.post('/admin/push/broadcast', data, { timeout: 120000 }),
 };
 
 export const blogAPI = {

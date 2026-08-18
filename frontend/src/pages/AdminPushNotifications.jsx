@@ -91,7 +91,9 @@ const AdminPushNotifications = () => {
       );
       resetForm();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to send notification');
+      const message = err.response?.data?.message || err.message || 'Failed to send notification';
+      const detail = err.response?.data?.error || err.response?.data?.details;
+      toast.error(detail ? `${message}: ${detail}` : message);
       console.error(err);
     } finally {
       setSending(false);
@@ -121,7 +123,9 @@ const AdminPushNotifications = () => {
       setTotalTokens((prev) => Math.max(0, prev - (data.invalidTokensRemoved || 0)));
       resetForm();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to send broadcast');
+      const message = err.response?.data?.message || err.message || 'Failed to send broadcast';
+      const detail = err.response?.data?.error || err.response?.data?.details;
+      toast.error(detail ? `${message}: ${detail}` : message);
       console.error(err);
     } finally {
       setSending(false);
@@ -368,6 +372,19 @@ const AdminPushNotifications = () => {
                       </div>
                     )}
                   </div>
+                  {(r.failures?.length > 0 || r.batchErrors?.length > 0) && (
+                    <div className="mt-3" style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      <div className="fw-semibold mb-1">Sample errors:</div>
+                      <ul style={{ paddingLeft: '18px', margin: 0 }}>
+                        {r.failures?.slice(0, 3).map((f, i) => (
+                          <li key={`f-${i}`}>{f.error || f}</li>
+                        ))}
+                        {r.batchErrors?.slice(0, 3).map((e, i) => (
+                          <li key={`b-${i}`}>{e}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

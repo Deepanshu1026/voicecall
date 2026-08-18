@@ -33,10 +33,12 @@ function init() {
     app = initializeApp({ credential });
     messaging = getMessaging(app);
     initialized = true;
+    console.log('[FCM] Firebase Cloud Messaging initialized successfully');
     return messaging;
   } catch (err) {
     initError = err.message;
     initialized = false;
+    console.error('[FCM] Initialization failed:', initError);
     return null;
   }
 }
@@ -49,9 +51,24 @@ function buildMessage({ title, body, data = {}, imageUrl }) {
     },
     data,
   };
+
   if (imageUrl) {
     message.notification.imageUrl = imageUrl;
+    // Platform-specific image URLs improve compatibility across Android, iOS, and Web
+    message.android = {
+      notification: { imageUrl },
+    };
+    message.apns = {
+      payload: {
+        aps: { 'mutable-content': 1 },
+      },
+      fcmOptions: { imageUrl },
+    };
+    message.webpush = {
+      notification: { image: imageUrl },
+    };
   }
+
   return message;
 }
 
@@ -86,12 +103,17 @@ async function sendMulticast({ tokens, title, body, data = {}, imageUrl }) {
 
   try {
     const response = await fcm.sendEachForMulticast(message);
-    const tokenIds = [];
     const tokensToDelete = [];
+    const failures = [];
 
     response.responses.forEach((r, idx) => {
-      if (!r.success && isInvalidTokenError(r.error)) {
-        tokensToDelete.push(tokens[idx]);
+      if (!r.success) {
+        const errorInfo = { error: r.error?.message || 'Unknown error' };
+        if (r.error?.code) errorInfo.code = r.error.code;
+        failures.push(errorInfo);
+        if (isInvalidTokenError(r.error)) {
+          tokensToDelete.push(tokens[idx]);
+        }
       }
     });
 
@@ -104,9 +126,11 @@ async function sendMulticast({ tokens, title, body, data = {}, imageUrl }) {
       successCount: response.successCount,
       failureCount: response.failureCount,
       invalidTokensRemoved: tokensToDelete.length,
+      failures: failures.slice(0, 20),
       responses: response.responses?.map((r) => (r.success ? { success: true, messageId: r.messageId } : { success: false, error: r.error?.message })),
     };
   } catch (err) {
+    console.error('[FCM] sendMulticast failed:', err.message);
     return { success: false, error: err.message || 'FCM multicast failed' };
   }
 }
@@ -126,6 +150,9 @@ async function sendBroadcast({ title, body, data = {}, imageUrl, batchSize = 500
   const invalidTokenIds = [];
   let totalSuccess = 0;
   let totalFailure = 0;
+  let batchErrors = [];
+
+  console.log(`[FCM] Starting broadcast to ${tokenList.length} tokens in batches of ${batchSize}`);
 
   for (let i = 0; i < tokenList.length; i += batchSize) {
     const batch = tokenList.slice(i, i + batchSize);
@@ -143,6 +170,8 @@ async function sendBroadcast({ title, body, data = {}, imageUrl, batchSize = 500
         }
       });
     } catch (err) {
+      console.error(`[FCM] Batch ${Math.floor(i / batchSize) + 1} failed:`, err.message);
+      batchErrors.push(err.message);
       totalFailure += batch.length;
     }
   }
@@ -151,12 +180,15 @@ async function sendBroadcast({ title, body, data = {}, imageUrl, batchSize = 500
     await FcmToken.deleteMany({ _id: { $in: invalidTokenIds } });
   }
 
+  console.log(`[FCM] Broadcast complete: ${totalSuccess} delivered, ${totalFailure} failed, ${invalidTokenIds.length} invalid tokens removed`);
+
   return {
     success: true,
     successCount: totalSuccess,
     failureCount: totalFailure,
     totalTokens: tokenList.length,
     invalidTokensRemoved: invalidTokenIds.length,
+    batchErrors: batchErrors.slice(0, 5),
   };
 }
 

@@ -232,7 +232,7 @@ const sendManualPush = asyncHandler(async (req, res) => {
   }
 
   if (!result.success) {
-    throw new AppError(result.error, 500);
+    throw new AppError(result.error, 500, { failures: result.failures || [], batchErrors: result.batchErrors || [] });
   }
 
   ApiResponse.success(res, result, 'Push notification sent');
@@ -257,7 +257,7 @@ const sendBroadcastPush = asyncHandler(async (req, res) => {
   });
 
   if (!result.success) {
-    throw new AppError(result.error, 500);
+    throw new AppError(result.error, 500, { batchErrors: result.batchErrors || [] });
   }
 
   ApiResponse.success(res, result, 'Broadcast push notification sent');
