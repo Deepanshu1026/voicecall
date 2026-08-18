@@ -28,6 +28,10 @@ services:
         value: https://voicecall-6ylg.onrender.com/api
       - key: ENCRYPTION_KEY
         generateValue: true
+      - key: FCM_SERVICE_ACCOUNT_JSON
+        sync: false
+      - key: FCM_SERVICE_ACCOUNT_PATH
+        sync: false
       - key: VITE_TURN_APP_NAME
         sync: false
       - key: VITE_TURN_API_KEY
