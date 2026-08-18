@@ -34,6 +34,14 @@ import UserProfile from './pages/UserProfile';
 
 const EMPLOYEE_ROLES = ['case_manager', 'manager', 'senior_manager', 'admin'];
 
+const AgentDashboardRedirect = () => {
+  const { user } = useAuth();
+  if (user?.role === 'admin') {
+    return <Navigate to="/agent/dashboard/daily-logins" replace />;
+  }
+  return <AgentDashboardHome />;
+};
+
 function App() {
   const { isAuthenticated, loading, user } = useAuth();
   useKeepAlive();
@@ -131,7 +139,7 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<AgentDashboardHome />} />
+        <Route index element={<AgentDashboardRedirect />} />
         <Route path="new-application" element={<AgentNewApplication />} />
         <Route path="daily-logins" element={<AgentDailyLogins />} />
         <Route path="pending-remarks" element={<AgentPendingRemarks />} />
