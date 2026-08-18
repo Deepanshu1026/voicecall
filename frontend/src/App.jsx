@@ -17,6 +17,7 @@ import AdminChatDashboard from './pages/AdminChatDashboard';
 import AdminPushNotifications from './pages/AdminPushNotifications';
 import AdminBannerControl from './pages/AdminBannerControl';
 import AdminInstagramToken from './pages/AdminInstagramToken';
+import BookedAppointments from './pages/BookedAppointments';
 import Chat from './pages/Chat';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
@@ -143,6 +144,7 @@ function App() {
         <Route index element={<AgentDashboardRedirect />} />
         <Route path="new-application" element={<AgentNewApplication />} />
         <Route path="daily-logins" element={<AgentDailyLogins />} />
+        <Route path="booked-appointments" element={<BookedAppointments />} />
         <Route path="pending-remarks" element={<AgentPendingRemarks />} />
         <Route
           path="chat"
