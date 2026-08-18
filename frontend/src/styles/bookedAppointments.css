@@ -104,6 +104,19 @@
   text-overflow: ellipsis;
 }
 
+.simple-load-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  gap: 10px;
+}
+
+.simple-end {
+  color: #888;
+  font-size: 13px;
+}
+
 @media (max-width: 768px) {
   .simple-list-page {
     padding: 12px;

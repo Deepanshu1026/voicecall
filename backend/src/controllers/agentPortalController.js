@@ -96,15 +96,31 @@ const buildSearchRegex = (search) => {
 
 exports.getAppointments = asyncHandler(async (req, res) => {
   await resolveContext(req, { allowAdmin: true });
-  const { date, search = '' } = req.query;
+  const { date, search = '', page = 1, limit = 50 } = req.query;
   const searchRegex = buildSearchRegex(search);
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const limitNum = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 200);
 
   const filter = {};
   if (date) filter.date = date;
 
-  const appointments = await Appointment.find(filter).sort({ date: -1, timeSlot: 1 }).lean();
+  if (searchRegex) {
+    filter.$or = [
+      { name: searchRegex },
+      { contact: searchRegex },
+      { email: searchRegex },
+      { referenceId: searchRegex },
+      { query: searchRegex },
+    ];
+  }
 
-  let items = appointments.map((a) => ({
+  const skip = (pageNum - 1) * limitNum;
+  const [appointments, total] = await Promise.all([
+    Appointment.find(filter).sort({ date: -1, timeSlot: 1 }).skip(skip).limit(limitNum).lean(),
+    Appointment.countDocuments(filter),
+  ]);
+
+  const items = appointments.map((a) => ({
     _id: a._id,
     name: a.name || '',
     contact: a.contact || '',
@@ -120,23 +136,22 @@ exports.getAppointments = asyncHandler(async (req, res) => {
     createdAt: a.submissionTime || a.createdAt || null,
   }));
 
-  if (searchRegex) {
-    items = items.filter((item) =>
-      searchRegex.test(item.name) ||
-      searchRegex.test(item.contact) ||
-      searchRegex.test(item.email) ||
-      searchRegex.test(item.referenceId) ||
-      searchRegex.test(item.query)
-    );
-  }
-
-  res.status(200).json({ success: true, data: items, total: items.length });
+  res.status(200).json({
+    success: true,
+    data: items,
+    total,
+    page: pageNum,
+    pages: Math.ceil(total / limitNum),
+    limit: limitNum,
+  });
 });
 
 exports.getApplications = asyncHandler(async (req, res) => {
   const { sqlId } = await resolveContext(req, { allowAdmin: true });
-  const { date, search = '' } = req.query;
+  const { date, search = '', page = 1, limit = 50 } = req.query;
   const searchRegex = buildSearchRegex(search);
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const limitNum = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 200);
 
   const employees = await Employee.find().select('sqlId displayName username').lean();
   const employeeMap = {};
@@ -147,7 +162,11 @@ exports.getApplications = asyncHandler(async (req, res) => {
   const filter = {};
   if (sqlId) filter.agentId = sqlId;
 
-  const applications = await Application.find(filter).sort({ createdAt: -1 }).lean();
+  const skip = (pageNum - 1) * limitNum;
+  const [applications, total] = await Promise.all([
+    Application.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
+    Application.countDocuments(filter),
+  ]);
 
   let items = applications.map((a) => {
     const details = a.details || {};
@@ -184,5 +203,14 @@ exports.getApplications = asyncHandler(async (req, res) => {
     );
   }
 
-  res.status(200).json({ success: true, data: items, total: items.length });
+  const filteredTotal = searchRegex || date ? items.length : total;
+
+  res.status(200).json({
+    success: true,
+    data: items,
+    total: filteredTotal,
+    page: pageNum,
+    pages: Math.ceil(filteredTotal / limitNum),
+    limit: limitNum,
+  });
 });
