@@ -1,4 +1,6 @@
 require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
 
 module.exports = {
   port: process.env.PORT || 5002,
@@ -57,7 +59,13 @@ module.exports = {
     apiKey: process.env.METERED_API_KEY || 'fe597f61bedf9e53c0ca99747d0f5f0d8ecd',
   },
   fcm: {
-    serviceAccountPath: process.env.FCM_SERVICE_ACCOUNT_PATH || '',
+    serviceAccountPath: (() => {
+      const envPath = process.env.FCM_SERVICE_ACCOUNT_PATH;
+      if (envPath) return envPath;
+      const defaultPath = path.resolve(__dirname, '..', '..', 'config', 'firebase-service-account.json');
+      if (fs.existsSync(defaultPath)) return defaultPath;
+      return '';
+    })(),
     serviceAccountJson: process.env.FCM_SERVICE_ACCOUNT_JSON || '',
   },
 };
