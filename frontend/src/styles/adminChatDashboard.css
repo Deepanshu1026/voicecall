@@ -238,6 +238,23 @@
   text-align: center;
 }
 
+.admin-chat-loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  color: #6b7280;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.admin-chat-loading-more .spinner-border {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
 .admin-chat-message {
   display: flex;
   gap: 12px;

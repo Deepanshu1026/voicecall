@@ -9,6 +9,8 @@ import { HiMagnifyingGlass, HiOutlineTrash, HiPencilSquare, HiCheck, HiXMark, Hi
 import '../styles/adminChatDashboard.css';
 
 const formatName = (account) => account?.displayName || account?.username || 'Unknown';
+const CONV_LIMIT = 30;
+const MSG_LIMIT = 30;
 
 const AdminChatDashboard = () => {
   const { user, isAuthenticated } = useAuth();
@@ -16,15 +18,26 @@ const AdminChatDashboard = () => {
   const navigate = useNavigate();
 
   const [conversations, setConversations] = useState([]);
+  const [convPage, setConvPage] = useState(1);
+  const [convHasMore, setConvHasMore] = useState(true);
+  const [loadingConversations, setLoadingConversations] = useState(false);
+  const [loadingMoreConversations, setLoadingMoreConversations] = useState(false);
+
   const [selectedId, setSelectedId] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [msgPage, setMsgPage] = useState(1);
+  const [msgHasMore, setMsgHasMore] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
+  const [loadingMoreMessages, setLoadingMoreMessages] = useState(false);
+
   const [stats, setStats] = useState(null);
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [loadingMessages, setLoadingMessages] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const conversationsContainerRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -35,44 +48,89 @@ const AdminChatDashboard = () => {
     }
   }, []);
 
-  const fetchConversations = useCallback(async () => {
-    setLoading(true);
+  const fetchConversations = useCallback(async (page = 1, append = false) => {
+    if (page === 1) setLoadingConversations(true);
+    else setLoadingMoreConversations(true);
+
     try {
-      const res = await adminAPI.getConversations({ search, limit: 100 });
+      const res = await adminAPI.getConversations({ search, page, limit: CONV_LIMIT });
       const data = res.data?.data || [];
-      setConversations(data);
-      if (data.length > 0 && !selectedId) {
+      const pagination = res.data?.pagination;
+
+      setConversations((prev) => (append ? [...prev, ...data] : data));
+      setConvPage(page);
+      setConvHasMore(pagination ? pagination.page < pagination.pages : false);
+
+      if (page === 1 && data.length > 0 && !selectedId) {
         setSelectedId(data[0]._id);
       }
     } catch (err) {
       console.error('Failed to load conversations:', err);
       toast.error('Failed to load conversations');
     } finally {
-      setLoading(false);
+      setLoadingConversations(false);
+      setLoadingMoreConversations(false);
     }
   }, [search, selectedId]);
 
-  const fetchMessages = useCallback(async (conversationId) => {
+  const loadMoreConversations = useCallback(() => {
+    if (!loadingMoreConversations && convHasMore) {
+      fetchConversations(convPage + 1, true);
+    }
+  }, [convHasMore, convPage, loadingMoreConversations, fetchConversations]);
+
+  const fetchMessages = useCallback(async (conversationId, page = 1, append = false) => {
     if (!conversationId) return;
-    setLoadingMessages(true);
+    if (page === 1) setLoadingMessages(true);
+    else setLoadingMoreMessages(true);
+
     try {
-      const res = await adminAPI.getMessages(conversationId, { limit: 200 });
-      setMessages(res.data?.data || []);
+      const res = await adminAPI.getMessages(conversationId, { page, limit: MSG_LIMIT });
+      const data = res.data?.data || [];
+      const pagination = res.data?.pagination;
+
+      setMessages((prev) => {
+        if (append) {
+          const existingIds = new Set(prev.map((m) => m._id));
+          const newMessages = data.filter((m) => !existingIds.has(m._id));
+          return [...newMessages, ...prev];
+        }
+        return data;
+      });
+      setMsgPage(page);
+      setMsgHasMore(pagination ? pagination.page < pagination.pages : false);
     } catch (err) {
       console.error('Failed to load messages:', err);
       toast.error('Failed to load messages');
     } finally {
       setLoadingMessages(false);
+      setLoadingMoreMessages(false);
     }
   }, []);
 
-  useEffect(() => {
-    fetchStats();
-    fetchConversations();
-  }, [fetchConversations]);
+  const loadMoreMessages = useCallback(() => {
+    if (!loadingMoreMessages && msgHasMore && selectedId) {
+      fetchMessages(selectedId, msgPage + 1, true);
+    }
+  }, [msgHasMore, msgPage, loadingMoreMessages, selectedId, fetchMessages]);
 
   useEffect(() => {
-    fetchMessages(selectedId);
+    fetchStats();
+  }, [fetchStats]);
+
+  useEffect(() => {
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(() => {
+      fetchConversations(1, false);
+    }, 300);
+    return () => clearTimeout(searchTimeoutRef.current);
+  }, [search, fetchConversations]);
+
+  useEffect(() => {
+    setMessages([]);
+    setMsgPage(1);
+    setMsgHasMore(true);
+    fetchMessages(selectedId, 1, false);
   }, [selectedId, fetchMessages]);
 
   useEffect(() => {
@@ -129,12 +187,21 @@ const AdminChatDashboard = () => {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages.length]);
 
-  const selectedConversation = useMemo(
-    () => conversations.find((c) => c._id === selectedId),
-    [conversations, selectedId]
-  );
+  const handleConversationsScroll = useCallback((e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    if (scrollHeight - scrollTop - clientHeight < 100) {
+      loadMoreConversations();
+    }
+  }, [loadMoreConversations]);
+
+  const handleMessagesScroll = useCallback((e) => {
+    const { scrollTop } = e.target;
+    if (scrollTop < 100) {
+      loadMoreMessages();
+    }
+  }, [loadMoreMessages]);
 
   const handleEdit = (message) => {
     if (message.isDeleted || message.type !== 'text') return;
@@ -254,6 +321,11 @@ const AdminChatDashboard = () => {
     );
   };
 
+  const selectedConversation = useMemo(
+    () => conversations.find((c) => c._id === selectedId),
+    [conversations, selectedId]
+  );
+
   if (isAuthenticated && user?.role !== 'admin') {
     return <Navigate to="/agent/dashboard" replace />;
   }
@@ -292,9 +364,13 @@ const AdminChatDashboard = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          {loading && <div className="admin-chat-empty">Loading conversations...</div>}
-          {!loading && conversations.length === 0 && <div className="admin-chat-empty">No conversations found</div>}
-          <div className="admin-chat-conversation-list">
+          {loadingConversations && <div className="admin-chat-empty">Loading conversations...</div>}
+          {!loadingConversations && conversations.length === 0 && <div className="admin-chat-empty">No conversations found</div>}
+          <div
+            className="admin-chat-conversation-list"
+            ref={conversationsContainerRef}
+            onScroll={handleConversationsScroll}
+          >
             {conversations.map((conv) => {
               const isActive = conv._id === selectedId;
               const lastMessage = conv.lastMessage;
@@ -314,6 +390,11 @@ const AdminChatDashboard = () => {
                 </button>
               );
             })}
+            {loadingMoreConversations && (
+              <div className="admin-chat-loading-more">
+                <span className="spinner-border spinner-border-sm" /> Loading more...
+              </div>
+            )}
           </div>
         </div>
 
@@ -336,7 +417,16 @@ const AdminChatDashboard = () => {
                   ))}
                 </div>
               </div>
-              <div className="admin-chat-messages">
+              <div
+                className="admin-chat-messages"
+                ref={messagesContainerRef}
+                onScroll={handleMessagesScroll}
+              >
+                {loadingMoreMessages && (
+                  <div className="admin-chat-loading-more">
+                    <span className="spinner-border spinner-border-sm" /> Loading older messages...
+                  </div>
+                )}
                 {loadingMessages ? (
                   <div className="admin-chat-empty">Loading messages...</div>
                 ) : messages.length === 0 ? (
