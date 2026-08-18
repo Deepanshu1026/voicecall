@@ -221,8 +221,29 @@ async function getPendingRemarks(sqlId) {
     }));
 }
 
-async function getDailyLogins(page = 1, limit = 10) {
+async function getDailyLogins(page = 1, date = null, search = '', limit = 10) {
   const filter = { role: 'user' };
+
+  if (date) {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+    filter.createdAt = { $gte: start, $lte: end };
+  }
+
+  if (search.trim()) {
+    const q = search.trim();
+    const isNumeric = /^\d+$/.test(q);
+    filter.$or = [
+      { displayName: { $regex: q, $options: 'i' } },
+      { username: { $regex: q, $options: 'i' } },
+      { email: { $regex: q, $options: 'i' } },
+    ];
+    if (isNumeric) {
+      filter.$or.push({ mobile: { $regex: q, $options: 'i' } });
+    }
+  }
 
   const total = await User.countDocuments(filter);
   const totalPages = Math.max(1, Math.ceil(total / limit));

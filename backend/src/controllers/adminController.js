@@ -9,6 +9,8 @@ const {
   populateMessages,
   populateMessage,
 } = require('../utils/populate');
+const { sendToToken, sendMulticast, isConfigured } = require('../services/pushNotificationService');
+const FcmToken = require('../models/FcmToken');
 
 const getAllConversations = asyncHandler(async (req, res) => {
   const { page = 1, limit = 30, search = '' } = req.query;
@@ -178,10 +180,70 @@ const getConversationStats = asyncHandler(async (req, res) => {
   }, 'Conversation stats fetched');
 });
 
+const getFcmTokens = asyncHandler(async (req, res) => {
+  const { userId, page = 1, limit = 50 } = req.query;
+  const filter = {};
+  if (userId) filter.userId = userId;
+
+  const skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
+  const [tokens, total] = await Promise.all([
+    FcmToken.find(filter).sort({ updatedAt: -1 }).skip(skip).limit(parseInt(limit, 10)).lean(),
+    FcmToken.countDocuments(filter),
+  ]);
+
+  ApiResponse.paginated(res, tokens, {
+    page: parseInt(page, 10),
+    limit: parseInt(limit, 10),
+    total,
+    pages: Math.ceil(total / parseInt(limit, 10)),
+  });
+});
+
+const sendManualPush = asyncHandler(async (req, res) => {
+  const { title, body, data, imageUrl, token, userId } = req.body;
+
+  if (!title || !body) {
+    throw new AppError('Title and body are required', 400);
+  }
+
+  if (!token && !userId) {
+    throw new AppError('Either token or userId is required', 400);
+  }
+
+  if (!isConfigured()) {
+    throw new AppError('Firebase Cloud Messaging is not configured. Set FCM_SERVICE_ACCOUNT_PATH or FCM_SERVICE_ACCOUNT_JSON.', 503);
+  }
+
+  let result;
+  if (token) {
+    result = await sendToToken({ token, title, body, data: data || {}, imageUrl });
+  } else {
+    const tokens = await FcmToken.find({ userId }).select('token').lean();
+    if (tokens.length === 0) {
+      throw new AppError('No FCM tokens found for this user', 404);
+    }
+    result = await sendMulticast({
+      tokens: tokens.map((t) => t.token),
+      title,
+      body,
+      data: data || {},
+      imageUrl,
+    });
+  }
+
+  if (!result.success) {
+    throw new AppError(result.error, 500);
+  }
+
+  ApiResponse.success(res, result, 'Push notification sent');
+});
+
 module.exports = {
   getAllConversations,
   getConversationMessages,
   editMessage,
   deleteMessage,
   getConversationStats,
+  getFcmTokens,
+  sendManualPush,
 };

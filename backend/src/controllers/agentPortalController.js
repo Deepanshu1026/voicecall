@@ -1,8 +1,12 @@
 const agentPortalService = require('../services/agentPortalService');
+const { getLoginHistory } = require('../services/loginHistoryService');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
 
-async function resolveContext(req) {
+async function resolveContext(req, { allowAdmin = false } = {}) {
+  if (allowAdmin && req.employee.role === 'admin') {
+    return { sqlId: null };
+  }
   const sqlId = await agentPortalService.resolveSqlId(req.employee);
   if (!sqlId) {
     throw new AppError('Employee is not linked to the agent portal.', 403);
@@ -56,8 +60,10 @@ exports.getPendingRemarks = asyncHandler(async (req, res) => {
 });
 
 exports.getDailyLogins = asyncHandler(async (req, res) => {
-  await resolveContext(req);
+  await resolveContext(req, { allowAdmin: true });
   const page = parseInt(req.query.page, 10) || 1;
-  const data = await agentPortalService.getDailyLogins(page);
+  const date = req.query.date || null;
+  const search = req.query.search || '';
+  const data = await getLoginHistory({ page, date, search });
   res.status(200).json({ success: true, ...data });
 });

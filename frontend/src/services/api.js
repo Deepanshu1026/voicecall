@@ -202,7 +202,7 @@ export const agentPortalAPI = {
   updateApplication: (id, data) => api.put(`/agent-portal/applications/${id}`, data),
   checkContactHistory: (contact) => api.get('/agent-portal/contact-history', { params: { contact } }),
   getPendingRemarks: () => api.get('/agent-portal/pending-remarks'),
-  getDailyLogins: (page, date) => api.get('/agent-portal/daily-logins', { params: { page, date } }),
+  getDailyLogins: (page, date, search) => api.get('/agent-portal/daily-logins', { params: { page, date, search } }),
 };
 
 export const appointmentAPI = {
@@ -215,6 +215,8 @@ export const adminAPI = {
   getMessages: (conversationId, params) => api.get(`/admin/chats/${conversationId}/messages`, { params }),
   editMessage: (messageId, content) => api.put(`/admin/chats/messages/${messageId}`, { content }),
   deleteMessage: (messageId) => api.delete(`/admin/chats/messages/${messageId}`),
+  getFcmTokens: (params) => api.get('/admin/push/tokens', { params }),
+  sendPush: (data) => api.post('/admin/push/send', data),
 };
 
 export const blogAPI = {

@@ -6,7 +6,7 @@ import SEO from '../components/common/SEO';
 import '../styles/agentPortal.css';
 import '../styles/agentSlidePanel.css';
 
-const menu = [
+const agentMenu = [
   { path: '/agent/dashboard', label: 'Dashboard', icon: 'bi bi-grid-1x2' },
   { path: '/agent/dashboard/new-application', label: 'New Application', icon: 'bi bi-plus-circle' },
   { path: '/agent/dashboard/daily-logins', label: 'Daily Logins', icon: 'bi bi-calendar3' },
@@ -15,8 +15,11 @@ const menu = [
 ];
 
 const adminMenu = [
+  { path: '/agent/dashboard', label: 'Dashboard', icon: 'bi bi-grid-1x2' },
+  { path: '/agent/dashboard/daily-logins', label: 'All Logins', icon: 'bi bi-calendar3' },
   { path: '/agent/dashboard/admin', label: 'Admin Settings', icon: 'bi bi-shield-lock' },
   { path: '/agent/dashboard/admin/chats', label: 'Chat Monitor', icon: 'bi bi-chat-dots' },
+  { path: '/agent/dashboard/admin/push', label: 'Push Notifications', icon: 'bi bi-bell' },
 ];
 
 const AgentLayout = () => {
@@ -79,7 +82,7 @@ const AgentLayout = () => {
           Avisa Portal
         </div>
         <nav className="sidebar-nav">
-          {menu.map((item) => (
+          {(isAdmin ? adminMenu : agentMenu).map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
@@ -91,21 +94,6 @@ const AgentLayout = () => {
               {item.badge === 'pendingRemarks' && <span className="sidebar-badge">27</span>}
             </NavLink>
           ))}
-          {isAdmin && (
-            <>
-              <div className="sidebar-divider" />
-              {adminMenu.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-                >
-                  <i className={item.icon} />
-                  <span>{item.label}</span>
-                </NavLink>
-              ))}
-            </>
-          )}
         </nav>
         <button className="sidebar-logout" onClick={handleLogout}>
           <i className="bi bi-box-arrow-right" />
@@ -120,9 +108,11 @@ const AgentLayout = () => {
           </div>
           <div className="d-flex align-items-center gap-2">
             <AgentSlidePanel />
-            <NavLink to="/agent/dashboard/chat" className="agent-btn agent-btn-sm">
-              <i className="bi bi-chat" /> Internal Chat
-            </NavLink>
+            {!isAdmin && (
+              <NavLink to="/agent/dashboard/chat" className="agent-btn agent-btn-sm">
+                <i className="bi bi-chat" /> Internal Chat
+              </NavLink>
+            )}
           </div>
         </div>
         <div className="agent-portal-page" style={isChatPath ? { padding: 0, maxWidth: '100%', height: 'calc(100vh - 57px)' } : {}}>

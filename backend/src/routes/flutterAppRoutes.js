@@ -18,6 +18,7 @@ const { handleMulterError } = require('../middleware/upload');
 const { uploadToCloudinary } = require('../services/cloudinaryService');
 const multerUpload = require('../utils/upload');
 const { getChatSettings } = require('../services/settingService');
+const { recordLogin } = require('../services/loginHistoryService');
 
 const FAR_FUTURE = new Date('2099-12-31T23:59:59.999Z');
 
@@ -158,6 +159,7 @@ router.post('/guest', asyncHandler(async (req, res) => {
   const tokens = generateTokens(user._id);
   user.refreshToken = tokens.refreshToken;
   await user.save({ validateBeforeSave: false });
+  await recordLogin(user, req);
 
   res.status(201).json({
     status: 'success',

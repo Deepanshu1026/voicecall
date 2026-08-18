@@ -11,4 +11,7 @@ router.get('/chats/:conversationId/messages', adminController.getConversationMes
 router.put('/chats/messages/:messageId', adminController.editMessage);
 router.delete('/chats/messages/:messageId', adminController.deleteMessage);
 
+router.get('/push/tokens', adminController.getFcmTokens);
+router.post('/push/send', adminController.sendManualPush);
+
 module.exports = router;

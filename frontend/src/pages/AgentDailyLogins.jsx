@@ -1,27 +1,32 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { agentPortalAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import '../styles/agentPortal.css';
 
 const AgentDailyLogins = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const [logins, setLogins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ current_page: 1, total_pages: 1, total_records: 0 });
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [search, setSearch] = useState('');
 
-  const fetchLogins = async (p, d) => {
+  const fetchLogins = async (p, d, s) => {
     try {
       setLoading(true);
       const pageNum = p || page;
-      const dateStr = d || date;
-      const res = await agentPortalAPI.getDailyLogins(pageNum, dateStr);
+      const dateStr = isAdmin ? null : d || date;
+      const searchStr = isAdmin ? s || search : '';
+      const res = await agentPortalAPI.getDailyLogins(pageNum, dateStr, searchStr);
       setLogins(res.data.data || []);
       setPagination(res.data.pagination || { current_page: pageNum, total_pages: 1, total_records: 0 });
     } catch (err) {
-      toast.error('Failed to load daily logins');
+      toast.error('Failed to load logins');
       console.error(err);
     } finally {
       setLoading(false);
@@ -29,14 +34,21 @@ const AgentDailyLogins = () => {
   };
 
   useEffect(() => {
-    fetchLogins(1, date);
+    fetchLogins(1, date, search);
   }, []);
 
   const handleDateChange = (e) => {
     const d = e.target.value;
     setDate(d);
     setPage(1);
-    fetchLogins(1, d);
+    fetchLogins(1, d, '');
+  };
+
+  const handleSearchChange = (e) => {
+    const s = e.target.value;
+    setSearch(s);
+    setPage(1);
+    fetchLogins(1, date, s);
   };
 
   const logTime = (date) => {
@@ -89,8 +101,12 @@ const AgentDailyLogins = () => {
       {/* Page Header */}
       <div className="page-header d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h3 style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>Daily Logins</h3>
-          <p style={{ color: '#718096', margin: '4px 0 0 0', fontSize: '0.95rem' }}>Agent login history.</p>
+          <h3 style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>
+            {isAdmin ? 'All Logins' : 'Daily Logins'}
+          </h3>
+          <p style={{ color: '#718096', margin: '4px 0 0 0', fontSize: '0.95rem' }}>
+            {isAdmin ? 'All user login records.' : 'Agent login history.'}
+          </p>
         </div>
         <button className="agent-btn agent-btn-outline-dark" onClick={() => navigate('/agent/dashboard')}>
           <i className="bi bi-arrow-left" /> Back to Dashboard
@@ -99,17 +115,36 @@ const AgentDailyLogins = () => {
 
       {/* Filter */}
       <div className="agent-card" style={{ padding: '16px 24px', marginBottom: '24px' }}>
-        <div className="d-flex align-items-center gap-3">
-          <label style={{ fontWeight: 500, fontSize: '0.9rem', color: '#64748b', whiteSpace: 'nowrap' }}>
-            <i className="bi bi-calendar3 me-2" />Date:
-          </label>
-          <input
-            type="date"
-            className="form-control"
-            style={{ maxWidth: '250px', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '0.5rem 1rem' }}
-            value={date}
-            onChange={handleDateChange}
-          />
+        <div className="d-flex align-items-center gap-3 flex-wrap">
+          {!isAdmin && (
+            <>
+              <label style={{ fontWeight: 500, fontSize: '0.9rem', color: '#64748b', whiteSpace: 'nowrap' }}>
+                <i className="bi bi-calendar3 me-2" />Date:
+              </label>
+              <input
+                type="date"
+                className="form-control"
+                style={{ maxWidth: '250px', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '0.5rem 1rem' }}
+                value={date}
+                onChange={handleDateChange}
+              />
+            </>
+          )}
+          {isAdmin && (
+            <>
+              <label style={{ fontWeight: 500, fontSize: '0.9rem', color: '#64748b', whiteSpace: 'nowrap' }}>
+                <i className="bi bi-search me-2" />Search:
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Name, email, or mobile"
+                style={{ maxWidth: '300px', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '0.5rem 1rem' }}
+                value={search}
+                onChange={handleSearchChange}
+              />
+            </>
+          )}
         </div>
       </div>
 

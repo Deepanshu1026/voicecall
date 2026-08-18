@@ -6,6 +6,7 @@ const AppError = require('../utils/AppError');
 const config = require('../config');
 const { uploadToCloudinary } = require('../services/cloudinaryService');
 const { getAccountById } = require('../utils/account');
+const { recordLogin } = require('../services/loginHistoryService');
 
 const register = asyncHandler(async (req, res) => {
   const { username, email, password, displayName, role, mobile } = req.body;
@@ -57,6 +58,8 @@ const login = asyncHandler(async (req, res) => {
     status: 'online',
     lastSeen: new Date(),
   });
+
+  await recordLogin(user, req);
 
   const userObj = user.toObject();
   delete userObj.password;

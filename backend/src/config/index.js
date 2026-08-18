@@ -56,4 +56,8 @@ module.exports = {
     appName: process.env.METERED_APP_NAME || 'avisaexperts',
     apiKey: process.env.METERED_API_KEY || 'fe597f61bedf9e53c0ca99747d0f5f0d8ecd',
   },
+  fcm: {
+    serviceAccountPath: process.env.FCM_SERVICE_ACCOUNT_PATH || '',
+    serviceAccountJson: process.env.FCM_SERVICE_ACCOUNT_JSON || '',
+  },
 };
