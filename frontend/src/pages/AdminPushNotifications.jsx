@@ -1,13 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import '../styles/adminChatDashboard.css';
+import '../styles/pushNotifications.css';
 
 const TABS = [
-  { key: 'single', label: 'Single User', icon: 'bi bi-person' },
-  { key: 'broadcast', label: 'Broadcast All', icon: 'bi bi-broadcast' },
+  { key: 'single', label: 'Single User', icon: 'bi bi-person', desc: 'Send to one user' },
+  { key: 'broadcast', label: 'Broadcast All', icon: 'bi bi-broadcast', desc: 'Send to all users' },
 ];
+
+const TITLE_LIMIT = 60;
+const BODY_LIMIT = 200;
 
 const AdminPushNotifications = () => {
   const navigate = useNavigate();
@@ -15,16 +19,20 @@ const AdminPushNotifications = () => {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
   const [pagination, setPagination] = useState({ current_page: 1, total_pages: 1, total_records: 0 });
   const [activeTab, setActiveTab] = useState('single');
   const [selectedUserId, setSelectedUserId] = useState('');
+  const [selectedUserName, setSelectedUserName] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [dataKey, setDataKey] = useState('');
   const [dataValue, setDataValue] = useState('');
+  const [confirmModal, setConfirmModal] = useState(null);
+  const [results, setResults] = useState([]);
 
-  const fetchTokens = async (p) => {
+  const fetchTokens = async (p, s) => {
     try {
       setLoading(true);
       const res = await adminAPI.getFcmTokens({ page: p || page, limit: 50 });
@@ -42,6 +50,17 @@ const AdminPushNotifications = () => {
     fetchTokens(1);
   }, []);
 
+  const filteredTokens = useMemo(() => {
+    if (!search.trim()) return tokens;
+    const q = search.toLowerCase();
+    return tokens.filter((t) => {
+      const name = (t.userId?.displayName || t.userId?.username || '').toLowerCase();
+      const id = String(t.userId?._id || t.userId).toLowerCase();
+      const token = (t.token || '').toLowerCase();
+      return name.includes(q) || id.includes(q) || token.includes(q);
+    });
+  }, [tokens, search]);
+
   const getDataPayload = () => {
     const data = {};
     if (dataKey.trim() && dataValue.trim()) {
@@ -50,8 +69,30 @@ const AdminPushNotifications = () => {
     return data;
   };
 
-  const handleSingleSubmit = async (e) => {
-    e.preventDefault();
+  const resetForm = () => {
+    setTitle('');
+    setBody('');
+    setImageUrl('');
+    setDataKey('');
+    setDataValue('');
+    setSelectedUserId('');
+    setSelectedUserName('');
+  };
+
+  const addResult = (type, data) => {
+    setResults((prev) => [
+      {
+        type,
+        title: title.trim(),
+        body: body.trim(),
+        time: new Date().toLocaleString(),
+        ...data,
+      },
+      ...prev.slice(0, 9),
+    ]);
+  };
+
+  const handleSingleSend = async () => {
     if (!title.trim() || !body.trim() || !selectedUserId) {
       toast.error('Title, body, and user are required');
       return;
@@ -66,18 +107,22 @@ const AdminPushNotifications = () => {
         imageUrl: imageUrl.trim() || undefined,
         data: getDataPayload(),
       });
-      toast.success(res.data?.message || 'Notification sent');
+      const data = res.data?.data || {};
+      addResult('Single User', data);
+      toast.success(
+        `Single notification sent: ${data.successCount || 0} delivered, ${data.failureCount || 0} failed`
+      );
       resetForm();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to send notification');
       console.error(err);
     } finally {
       setSending(false);
+      setConfirmModal(null);
     }
   };
 
-  const handleBroadcastSubmit = async (e) => {
-    e.preventDefault();
+  const handleBroadcastSend = async () => {
     if (!title.trim() || !body.trim()) {
       toast.error('Title and body are required');
       return;
@@ -91,25 +136,32 @@ const AdminPushNotifications = () => {
         imageUrl: imageUrl.trim() || undefined,
         data: getDataPayload(),
       });
+      const data = res.data?.data || {};
+      addResult('Broadcast', data);
       toast.success(
-        `Broadcast sent: ${res.data?.data?.successCount || 0} delivered, ${res.data?.data?.failureCount || 0} failed`
+        `Broadcast sent: ${data.successCount || 0} delivered, ${data.failureCount || 0} failed, ${data.invalidTokensRemoved || 0} invalid tokens removed`
       );
       resetForm();
+      fetchTokens(1);
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to send broadcast');
       console.error(err);
     } finally {
       setSending(false);
+      setConfirmModal(null);
     }
   };
 
-  const resetForm = () => {
-    setTitle('');
-    setBody('');
-    setImageUrl('');
-    setDataKey('');
-    setDataValue('');
-    setSelectedUserId('');
+  const openConfirm = (type) => {
+    if (!title.trim() || !body.trim()) {
+      toast.error('Title and body are required');
+      return;
+    }
+    if (type === 'single' && !selectedUserId) {
+      toast.error('Please select a user first');
+      return;
+    }
+    setConfirmModal(type);
   };
 
   const renderPagination = () => {
@@ -150,114 +202,72 @@ const AdminPushNotifications = () => {
     );
   };
 
-  const renderFormFields = () => (
-    <>
-      <div className="mb-3">
-        <label className="form-label" style={{ fontWeight: 500 }}>Title</label>
-        <input
-          type="text"
-          className="form-control"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Notification title"
-          required
-        />
-      </div>
-      <div className="mb-3">
-        <label className="form-label" style={{ fontWeight: 500 }}>Body</label>
-        <textarea
-          className="form-control"
-          rows={4}
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          placeholder="Notification body"
-          required
-        />
-      </div>
-      <div className="mb-3">
-        <label className="form-label" style={{ fontWeight: 500 }}>Image URL (optional)</label>
-        <input
-          type="url"
-          className="form-control"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-          placeholder="https://..."
-        />
-      </div>
-      <div className="row g-3 mb-4">
-        <div className="col-md-6">
-          <label className="form-label" style={{ fontWeight: 500 }}>Data Key (optional)</label>
-          <input
-            type="text"
-            className="form-control"
-            value={dataKey}
-            onChange={(e) => setDataKey(e.target.value)}
-            placeholder="screen"
-          />
-        </div>
-        <div className="col-md-6">
-          <label className="form-label" style={{ fontWeight: 500 }}>Data Value (optional)</label>
-          <input
-            type="text"
-            className="form-control"
-            value={dataValue}
-            onChange={(e) => setDataValue(e.target.value)}
-            placeholder="home"
-          />
-        </div>
-      </div>
-    </>
-  );
+  const deviceBadgeClass = (device) => {
+    const d = (device || 'A').toLowerCase();
+    if (d.includes('android')) return 'push-token-badge android';
+    if (d.includes('ios') || d.includes('iphone') || d.includes('ipad')) return 'push-token-badge ios';
+    if (d.includes('web')) return 'push-token-badge web';
+    return 'push-token-badge';
+  };
 
   return (
-    <div className="admin-chat-dashboard">
-      <div className="page-header d-flex justify-content-between align-items-center mb-4">
+    <div className="push-notifications-page">
+      <div className="push-header">
         <div>
-          <h3 style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>Push Notifications</h3>
-          <p style={{ color: '#718096', margin: '4px 0 0 0', fontSize: '0.95rem' }}>Send manual or broadcast FCM notifications.</p>
+          <h3>Push Notifications</h3>
+          <p>Send manual and broadcast notifications to app users.</p>
         </div>
         <button className="agent-btn agent-btn-outline-dark" onClick={() => navigate('/agent/dashboard')}>
           <i className="bi bi-arrow-left" /> Back to Dashboard
         </button>
       </div>
 
-      <div className="admin-layout-row">
-        {/* Left: Tokens list */}
-        <div className="admin-conversations">
-          <div className="admin-panel-header">
-            <h4>FCM Tokens</h4>
-            <span className="text-muted small">Total: {pagination.total_records}</span>
+      <div className="push-layout">
+        {/* Left: Tokens panel */}
+        <div className="push-tokens-panel">
+          <div className="push-tokens-header">
+            <h4><i className="bi bi-phone me-2" />FCM Tokens</h4>
+            <span className="badge bg-primary" style={{ fontSize: '0.75rem' }}>{pagination.total_records}</span>
           </div>
-          <div className="admin-conversations-list">
+          <div className="push-tokens-search">
+            <input
+              type="text"
+              placeholder="Search user, ID, or token..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="push-tokens-list">
             {loading ? (
-              <div className="admin-empty">
+              <div className="push-empty">
                 <div className="spinner-border text-primary" />
-                <p>Loading tokens...</p>
+                <p className="mt-2">Loading tokens...</p>
               </div>
-            ) : tokens.length === 0 ? (
-              <div className="admin-empty">
+            ) : filteredTokens.length === 0 ? (
+              <div className="push-empty">
                 <i className="bi bi-bell-slash" />
-                <p>No FCM tokens found.</p>
+                <div className="push-empty-title">No tokens found</div>
+                <div className="push-empty-subtitle">Try a different search or no tokens exist.</div>
               </div>
             ) : (
-              tokens.map((t) => (
+              filteredTokens.map((t) => (
                 <div
                   key={t._id}
-                  className={`admin-conversation-item ${selectedUserId === String(t.userId?._id || t.userId) ? 'active' : ''}`}
+                  className={`push-token-item ${selectedUserId === String(t.userId?._id || t.userId) ? 'active' : ''}`}
                   onClick={() => {
                     setActiveTab('single');
                     setSelectedUserId(String(t.userId?._id || t.userId));
+                    setSelectedUserName(t.userId?.displayName || t.userId?.username || t.userId || 'Unknown');
                   }}
                 >
-                  <div className="admin-conversation-info">
-                    <div className="admin-conversation-name">User: {t.userId?.displayName || t.userId?.username || t.userId || 'Unknown'}</div>
-                    <div className="admin-conversation-preview" style={{ fontSize: '0.75rem', fontFamily: 'monospace' }}>
-                      {t.token.slice(0, 40)}...
-                    </div>
-                    <div className="admin-conversation-meta">
-                      <span>{t.device || 'A'}</span>
-                      <span>{new Date(t.updatedAt).toLocaleString()}</span>
-                    </div>
+                  <div className="push-token-user">
+                    <span>{t.userId?.displayName || t.userId?.username || 'Unknown'}</span>
+                    <span className={deviceBadgeClass(t.device)}>{t.device || 'A'}</span>
+                  </div>
+                  <div className="push-token-id">{t.token.slice(0, 35)}...</div>
+                  <div className="push-token-meta">
+                    <span>ID: {String(t.userId?._id || t.userId).slice(-6)}</span>
+                    <span>{new Date(t.updatedAt).toLocaleDateString()}</span>
                   </div>
                 </div>
               ))
@@ -272,90 +282,263 @@ const AdminPushNotifications = () => {
         </div>
 
         {/* Right: Compose panel */}
-        <div className="admin-chat-panel">
-          <div className="admin-panel-header">
-            <h4>Compose</h4>
+        <div className="push-compose-panel">
+          <div className="push-compose-header">
+            <h4><i className="bi bi-pencil-square me-2" />Compose Notification</h4>
           </div>
-          <div className="admin-chat-messages" style={{ padding: '24px' }}>
+          <div className="push-compose-body">
             {/* Tabs */}
-            <div className="d-flex gap-2 mb-4" style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
+            <div className="push-tabs">
               {TABS.map((tab) => (
                 <button
                   key={tab.key}
                   type="button"
-                  className={`agent-btn ${activeTab === tab.key ? 'agent-btn-primary' : 'agent-btn-outline-dark'}`}
+                  className={`push-tab ${activeTab === tab.key ? 'active' : ''}`}
                   onClick={() => setActiveTab(tab.key)}
                 >
-                  <i className={`bi ${tab.icon} me-2`} />
-                  {tab.label}
+                  <i className={`bi ${tab.icon}`} />
+                  <span>{tab.label}</span>
                 </button>
               ))}
             </div>
 
-            {activeTab === 'single' ? (
-              <form onSubmit={handleSingleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label" style={{ fontWeight: 500 }}>Selected User</label>
+            <div className="push-form-grid">
+              <div>
+                {activeTab === 'single' && selectedUserId && (
+                  <div className="push-selected-user">
+                    <i className="bi bi-person-check" />
+                    <span>Sending to: <strong>{selectedUserName}</strong> ({selectedUserId})</span>
+                  </div>
+                )}
+
+                {activeTab === 'broadcast' && (
+                  <div className="push-alert push-alert-warning">
+                    <i className="bi bi-exclamation-triangle-fill" />
+                    <div>
+                      <strong>Broadcast will reach all {pagination.total_records} saved tokens.</strong><br />
+                      This includes real users. Double-check your message before sending.
+                    </div>
+                  </div>
+                )}
+
+                <div className="push-form-group">
+                  <label className="push-form-label">
+                    <span>Notification Title</span>
+                    <span className={`push-char-count ${title.length > TITLE_LIMIT ? 'danger' : title.length > TITLE_LIMIT * 0.8 ? 'warning' : ''}`}>
+                      {title.length}/{TITLE_LIMIT}
+                    </span>
+                  </label>
                   <input
                     type="text"
-                    className="form-control"
-                    value={selectedUserId}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
-                    placeholder="Click a token on the left or paste a user ID"
+                    className="push-form-control"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value.slice(0, TITLE_LIMIT))}
+                    placeholder="Enter notification title"
                     required
                   />
                 </div>
-                {renderFormFields()}
-                <button
-                  type="submit"
-                  className="agent-btn agent-btn-primary"
-                  disabled={sending || !selectedUserId}
-                  style={{ minWidth: '140px' }}
-                >
-                  {sending ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <i className="bi bi-send me-2" /> Send to User
-                    </>
-                  )}
-                </button>
-              </form>
-            ) : (
-              <form onSubmit={handleBroadcastSubmit}>
-                <div className="alert alert-info d-flex align-items-start gap-2 mb-3" style={{ fontSize: '0.9rem' }}>
-                  <i className="bi bi-info-circle mt-1" />
-                  <div>
-                    This will send the notification to <strong>all {pagination.total_records}</strong> saved FCM tokens.
-                    Invalid tokens will be removed automatically.
+
+                <div className="push-form-group">
+                  <label className="push-form-label">
+                    <span>Message Body</span>
+                    <span className={`push-char-count ${body.length > BODY_LIMIT ? 'danger' : body.length > BODY_LIMIT * 0.8 ? 'warning' : ''}`}>
+                      {body.length}/{BODY_LIMIT}
+                    </span>
+                  </label>
+                  <textarea
+                    className="push-form-control push-textarea"
+                    value={body}
+                    onChange={(e) => setBody(e.target.value.slice(0, BODY_LIMIT))}
+                    placeholder="Enter notification message"
+                    required
+                  />
+                </div>
+
+                <div className="push-form-group">
+                  <label className="push-form-label">Image URL (optional)</label>
+                  <input
+                    type="url"
+                    className="push-form-control"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <div className="push-helper">Shown as a large image in the notification.</div>
+                </div>
+
+                <div className="push-form-group">
+                  <label className="push-form-label">Custom Data Payload (optional)</label>
+                  <div className="push-data-row">
+                    <input
+                      type="text"
+                      className="push-form-control"
+                      value={dataKey}
+                      onChange={(e) => setDataKey(e.target.value)}
+                      placeholder="Key (e.g. screen)"
+                    />
+                    <input
+                      type="text"
+                      className="push-form-control"
+                      value={dataValue}
+                      onChange={(e) => setDataValue(e.target.value)}
+                      placeholder="Value (e.g. home)"
+                    />
+                  </div>
+                  <div className="push-helper">Used by the app to open a specific screen when tapped.</div>
+                </div>
+
+                <div className="push-actions">
+                  <button
+                    type="button"
+                    className="push-btn push-btn-primary"
+                    disabled={sending}
+                    onClick={() => openConfirm(activeTab)}
+                  >
+                    {sending ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <i className={`bi ${activeTab === 'single' ? 'bi-send' : 'bi-broadcast'} me-2`} />
+                        {activeTab === 'single' ? 'Send to User' : 'Send Broadcast'}
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    className="push-btn push-btn-outline"
+                    onClick={resetForm}
+                    disabled={sending}
+                  >
+                    <i className="bi bi-x-lg me-2" /> Reset
+                  </button>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div className="push-preview-card">
+                <div className="push-preview-title">Live Preview</div>
+                <div className="push-phone">
+                  <div className="push-phone-notch" />
+                  <div className="push-phone-screen">
+                    <div className="push-phone-time">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div className="push-notification-bubble">
+                      <div className="push-notification-icon">
+                        <i className="bi bi-bell" />
+                      </div>
+                      <div className="push-notification-content">
+                        <div className="push-notification-app">A Visa Experts</div>
+                        <div className="push-notification-title">{title.trim() || 'Notification Title'}</div>
+                        <div className="push-notification-body">{body.trim() || 'Notification message will appear here...'}</div>
+                        {imageUrl.trim() && (
+                          <img
+                            src={imageUrl.trim()}
+                            alt=""
+                            className="push-notification-image"
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                            onLoad={(e) => { e.target.style.display = 'block'; }}
+                          />
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                {renderFormFields()}
-                <button
-                  type="submit"
-                  className="agent-btn agent-btn-primary"
-                  disabled={sending}
-                  style={{ minWidth: '160px' }}
-                >
-                  {sending ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" />
-                      Broadcasting...
-                    </>
-                  ) : (
-                    <>
-                      <i className="bi bi-broadcast me-2" /> Send Broadcast
-                    </>
-                  )}
-                </button>
-              </form>
+              </div>
+            </div>
+
+            {/* Results */}
+            {results.length > 0 && (
+              <div className="push-results">
+                <div className="push-results-title"><i className="bi bi-clock-history me-2" />Recent Send Results</div>
+                {results.map((r, idx) => (
+                  <div key={idx} className="push-result-card">
+                    <div className="push-result-header">
+                      <span className="push-result-title">{r.type}: {r.title}</span>
+                      <span className="push-result-time">{r.time}</span>
+                    </div>
+                    <div className="push-result-body" style={{ fontSize: '0.85rem', color: '#4b5563', marginBottom: '10px' }}>
+                      {r.body}
+                    </div>
+                    <div className="push-result-stats">
+                      <div className="push-result-stat">
+                        <div className="push-result-stat-value success">{r.successCount || 0}</div>
+                        <div className="push-result-stat-label">Delivered</div>
+                      </div>
+                      <div className="push-result-stat">
+                        <div className={`push-result-stat-value ${r.failureCount ? 'danger' : ''}`}>{r.failureCount || 0}</div>
+                        <div className="push-result-stat-label">Failed</div>
+                      </div>
+                      {'invalidTokensRemoved' in r && (
+                        <div className="push-result-stat">
+                          <div className="push-result-stat-value">{r.invalidTokensRemoved || 0}</div>
+                          <div className="push-result-stat-label">Invalid Removed</div>
+                        </div>
+                      )}
+                      {'totalTokens' in r && (
+                        <div className="push-result-stat">
+                          <div className="push-result-stat-value">{r.totalTokens || 0}</div>
+                          <div className="push-result-stat-label">Total Tokens</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {confirmModal && (
+        <div className="push-modal-overlay" onClick={() => !sending && setConfirmModal(null)}>
+          <div className="push-modal" onClick={(e) => e.stopPropagation()}>
+            <div className={`push-modal-icon ${confirmModal === 'broadcast' ? 'danger' : ''}`}>
+              <i className={`bi ${confirmModal === 'broadcast' ? 'bi-broadcast' : 'bi-send'}`} />
+            </div>
+            <h4>
+              {confirmModal === 'broadcast'
+                ? 'Send broadcast to all users?'
+                : 'Send notification to this user?'}
+            </h4>
+            <p>
+              {confirmModal === 'broadcast'
+                ? `You are about to send "${title.trim()}" to all ${pagination.total_records} saved FCM tokens. This action cannot be undone.`
+                : `You are about to send "${title.trim()}" to ${selectedUserName || 'the selected user'}.`}
+            </p>
+            <div className="push-modal-actions">
+              <button
+                type="button"
+                className="push-btn push-btn-outline"
+                onClick={() => setConfirmModal(null)}
+                disabled={sending}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={`push-btn ${confirmModal === 'broadcast' ? 'push-btn-danger' : 'push-btn-primary'}`}
+                onClick={confirmModal === 'broadcast' ? handleBroadcastSend : handleSingleSend}
+                disabled={sending}
+              >
+                {sending ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm me-2" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <i className={`bi ${confirmModal === 'broadcast' ? 'bi-broadcast' : 'bi-send'} me-2`} />
+                    {confirmModal === 'broadcast' ? 'Send Broadcast' : 'Send Now'}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
