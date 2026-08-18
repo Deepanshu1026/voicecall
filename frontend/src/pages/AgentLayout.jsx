@@ -10,14 +10,16 @@ const agentMenu = [
   { path: '/agent/dashboard', label: 'Dashboard', icon: 'bi bi-grid-1x2' },
   { path: '/agent/dashboard/new-application', label: 'New Application', icon: 'bi bi-plus-circle' },
   { path: '/agent/dashboard/daily-logins', label: 'Daily Logins', icon: 'bi bi-calendar3' },
-  { path: '/agent/dashboard/booked-appointments', label: 'Booked Appointments', icon: 'bi bi-calendar-check' },
+  { path: '/agent/dashboard/appointments', label: 'Appointments', icon: 'bi bi-calendar-check' },
+  { path: '/agent/dashboard/applications', label: 'Applications', icon: 'bi bi-file-text' },
   { path: '/agent/dashboard/pending-remarks', label: 'Pending Remarks', icon: 'bi bi-chat-dots', badge: 'pendingRemarks' },
   { path: '/agent/dashboard/chat', label: 'Client Chat', icon: 'bi bi-chat' },
 ];
 
 const adminMenu = [
   { path: '/agent/dashboard/daily-logins', label: 'All Logins', icon: 'bi bi-calendar3' },
-  { path: '/agent/dashboard/booked-appointments', label: 'Booked Appointments', icon: 'bi bi-calendar-check' },
+  { path: '/agent/dashboard/appointments', label: 'Appointments', icon: 'bi bi-calendar-check' },
+  { path: '/agent/dashboard/applications', label: 'Applications', icon: 'bi bi-file-text' },
   { path: '/agent/dashboard/admin', label: 'Admin Settings', icon: 'bi bi-shield-lock' },
   { path: '/agent/dashboard/admin/chats', label: 'Chat Monitor', icon: 'bi bi-chat-dots' },
   { path: '/agent/dashboard/admin/push', label: 'Push Notifications', icon: 'bi bi-bell' },

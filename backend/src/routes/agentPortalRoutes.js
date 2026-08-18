@@ -13,6 +13,7 @@ router.put('/applications/:id', agentPortalController.updateApplication);
 router.get('/contact-history', agentPortalController.checkContactHistory);
 router.get('/pending-remarks', agentPortalController.getPendingRemarks);
 router.get('/daily-logins', agentPortalController.getDailyLogins);
-router.get('/booked-appointments', agentPortalController.getBookedAppointments);
+router.get('/appointments', agentPortalController.getAppointments);
+router.get('/applications', agentPortalController.getApplications);
 
 module.exports = router;

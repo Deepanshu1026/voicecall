@@ -4,7 +4,7 @@ import { agentPortalAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import '../styles/bookedAppointments.css';
 
-const AppointmentsPage = () => {
+const ApplicationsPage = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,10 +14,10 @@ const AppointmentsPage = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const res = await agentPortalAPI.getAppointments(date || undefined, search || undefined);
+      const res = await agentPortalAPI.getApplications(date || undefined, search || undefined);
       setItems(res.data?.data || []);
     } catch (err) {
-      toast.error('Failed to load appointments');
+      toast.error('Failed to load applications');
       console.error(err);
     } finally {
       setLoading(false);
@@ -40,7 +40,7 @@ const AppointmentsPage = () => {
   return (
     <div className="simple-list-page">
       <div className="simple-list-header">
-        <h2>Appointments</h2>
+        <h2>Applications</h2>
         <button className="simple-btn" onClick={() => navigate('/agent/dashboard')}>
           Back
         </button>
@@ -49,7 +49,7 @@ const AppointmentsPage = () => {
       <div className="simple-list-filters">
         <input
           type="text"
-          placeholder="Search name, contact, email..."
+          placeholder="Search name, contact, reference, agent..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="simple-input"
@@ -65,7 +65,7 @@ const AppointmentsPage = () => {
       {loading ? (
         <p className="simple-loading">Loading...</p>
       ) : items.length === 0 ? (
-        <p className="simple-empty">No appointments found.</p>
+        <p className="simple-empty">No applications found.</p>
       ) : (
         <table className="simple-table">
           <thead>
@@ -75,8 +75,8 @@ const AppointmentsPage = () => {
               <th>Date</th>
               <th>Time</th>
               <th>Plan</th>
-              <th>Mode</th>
               <th>Status</th>
+              <th>Agent</th>
               <th>Reference</th>
             </tr>
           </thead>
@@ -88,8 +88,8 @@ const AppointmentsPage = () => {
                 <td>{item.date || '-'}</td>
                 <td>{item.time || '-'}</td>
                 <td>{item.plan || '-'}</td>
-                <td>{item.mode || '-'}</td>
                 <td>{item.status || '-'}</td>
+                <td>{item.agentName || '-'}</td>
                 <td>{item.referenceId || '-'}</td>
               </tr>
             ))}
@@ -100,4 +100,4 @@ const AppointmentsPage = () => {
   );
 };
 
-export default AppointmentsPage;
+export default ApplicationsPage;
