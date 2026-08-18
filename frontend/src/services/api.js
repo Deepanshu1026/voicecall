@@ -209,6 +209,14 @@ export const appointmentAPI = {
   book: (data) => api.post('/app/appointments', data),
 };
 
+export const adminAPI = {
+  getChatStats: () => api.get('/admin/chats/stats'),
+  getConversations: (params) => api.get('/admin/chats', { params }),
+  getMessages: (conversationId, params) => api.get(`/admin/chats/${conversationId}/messages`, { params }),
+  editMessage: (messageId, content) => api.put(`/admin/chats/messages/${messageId}`, { content }),
+  deleteMessage: (messageId) => api.delete(`/admin/chats/messages/${messageId}`),
+};
+
 export const blogAPI = {
   getPosts: (params) => api.get('/app/posts', { params }),
   getPostById: (id) => api.get(`/app/posts/${id}`),

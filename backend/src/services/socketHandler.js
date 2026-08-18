@@ -387,6 +387,10 @@ const setupSocket = (io) => {
       socket.join(`user:${userId}`);
       socket.emit('connected', { userId, message: 'Connected to server' });
 
+      if (socket.employee && socket.employee.role === 'admin') {
+        socket.join('admin:room');
+      }
+
       if (!wasOnline) {
         markEmployeeOnline(io, userId);
       } else {
@@ -571,6 +575,7 @@ const setupSocket = (io) => {
 
         io.to(`user:${recipient}`).emit('message:new', messageObj);
         io.to(`user:${userId}`).emit('message:new', messageObj);
+        io.to('admin:room').emit('admin:message:new', messageObj);
 
         // Check free chat timer thresholds and send system alerts
         if (
@@ -602,6 +607,7 @@ const setupSocket = (io) => {
               const sysObj = sysMsg.toObject();
               io.to(`user:${recipient}`).emit('message:new', sysObj);
               io.to(`user:${userId}`).emit('message:new', sysObj);
+              io.to('admin:room').emit('admin:message:new', sysObj);
             };
 
             // Check each threshold independently — 50% first, then 90%, so messages appear in order

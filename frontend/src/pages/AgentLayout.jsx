@@ -16,6 +16,7 @@ const menu = [
 
 const adminMenu = [
   { path: '/agent/dashboard/admin', label: 'Admin Settings', icon: 'bi bi-shield-lock' },
+  { path: '/agent/dashboard/admin/chats', label: 'Chat Monitor', icon: 'bi bi-chat-dots' },
 ];
 
 const AgentLayout = () => {
