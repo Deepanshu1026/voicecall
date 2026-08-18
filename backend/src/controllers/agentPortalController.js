@@ -54,6 +54,32 @@ exports.getApplicationsList = asyncHandler(async (req, res) => {
   let items = applications.map((a) => {
     const details = a.details || {};
     const itemDate = formatDate(details.submission_date || details.appointment_date || a.createdAt);
+    const allDetails = {
+      age: details.age || '',
+      gender: details.gender || '',
+      address: details.address || '',
+      city: details.city || '',
+      state: details.state || '',
+      pincode: details.pincode || '',
+      visaType: details.visa_type || details.visa_category || '',
+      visaCountry: details.visa_country || details.country || '',
+      passportValidity: details.passport_validity || '',
+      education: details.education || '',
+      ieltsScore: details.ielts_score || '',
+      occupation: details.occupation || '',
+      income: details.income || '',
+      bankBalance: details.bank_balance || '',
+      travelHistory: details.travel_history || '',
+      refusalHistory: details.refusal_history || '',
+      leadOutcome: details.lead_outcome || '',
+      spouseName: details.spouse_name || '',
+      spouseAge: details.spouse_age || '',
+      kids: details.kids || '',
+      remarks: details.remarks || '',
+      query: details.query || '',
+      submissionDate: details.submission_date || '',
+      appointmentTime: details.appointment_time || details.time_slot || '',
+    };
     return {
       _id: a._id,
       name: a.clientName || details.client_name || '',
@@ -62,12 +88,19 @@ exports.getApplicationsList = asyncHandler(async (req, res) => {
       date: itemDate,
       time: details.appointment_time || details.time_slot || '',
       plan: details.visa_type || details.visa_category || '',
+      country: details.visa_country || details.country || '',
+      city: details.city || '',
+      occupation: details.occupation || '',
+      education: details.education || '',
+      income: details.income || '',
+      leadOutcome: details.lead_outcome || '',
       status: a.status || 'pending',
       query: details.remarks || details.query || '',
       address: details.address || '',
       referenceId: a.sqlId ? String(a.sqlId) : '',
       agentName: employeeMap[a.agentId] || `Agent ${a.agentId}`,
       createdAt: a.createdAt || null,
+      details: allDetails,
     };
   });
 
@@ -82,7 +115,12 @@ exports.getApplicationsList = asyncHandler(async (req, res) => {
       searchRegex.test(item.email) ||
       searchRegex.test(item.referenceId) ||
       searchRegex.test(item.query) ||
-      searchRegex.test(item.agentName)
+      searchRegex.test(item.agentName) ||
+      searchRegex.test(item.plan) ||
+      searchRegex.test(item.country) ||
+      searchRegex.test(item.city) ||
+      searchRegex.test(item.occupation) ||
+      searchRegex.test(item.leadOutcome)
     );
   }
 

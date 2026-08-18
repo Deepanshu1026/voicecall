@@ -6,6 +6,33 @@ import '../styles/bookedAppointments.css';
 
 const LIMIT = 50;
 
+const detailLabels = {
+  age: 'Age',
+  gender: 'Gender',
+  address: 'Address',
+  city: 'City',
+  state: 'State',
+  pincode: 'Pincode',
+  visaType: 'Visa Type',
+  visaCountry: 'Visa Country',
+  passportValidity: 'Passport Validity',
+  education: 'Education',
+  ieltsScore: 'IELTS Score',
+  occupation: 'Occupation',
+  income: 'Income',
+  bankBalance: 'Bank Balance',
+  travelHistory: 'Travel History',
+  refusalHistory: 'Refusal History',
+  leadOutcome: 'Lead Outcome',
+  spouseName: 'Spouse Name',
+  spouseAge: 'Spouse Age',
+  kids: 'Kids',
+  remarks: 'Remarks',
+  query: 'Query',
+  submissionDate: 'Submission Date',
+  appointmentTime: 'Appointment Time',
+};
+
 const ApplicationsPage = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
@@ -15,6 +42,7 @@ const ApplicationsPage = () => {
   const [date, setDate] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [expandedId, setExpandedId] = useState(null);
 
   const fetchItems = async (pageNum, append = false) => {
     const isInitial = pageNum === 1 && !append;
@@ -41,6 +69,7 @@ const ApplicationsPage = () => {
     setItems([]);
     setPage(1);
     setHasMore(false);
+    setExpandedId(null);
     fetchItems(1, false);
   };
 
@@ -63,6 +92,28 @@ const ApplicationsPage = () => {
     }
   };
 
+  const toggleExpand = (id) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
+
+  const renderDetails = (details) => {
+    if (!details) return null;
+    const entries = Object.entries(detailLabels)
+      .map(([key, label]) => [label, details[key]])
+      .filter(([, value]) => value !== '' && value !== null && value !== undefined);
+    if (entries.length === 0) return <p className="simple-detail-empty">No extra details</p>;
+    return (
+      <div className="simple-detail-grid">
+        {entries.map(([label, value]) => (
+          <div key={label} className="simple-detail-item">
+            <span className="simple-detail-label">{label}</span>
+            <span className="simple-detail-value">{String(value)}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="simple-list-page">
       <div className="simple-list-header">
@@ -75,7 +126,7 @@ const ApplicationsPage = () => {
       <div className="simple-list-filters">
         <input
           type="text"
-          placeholder="Search name, contact, reference, agent..."
+          placeholder="Search name, contact, reference, visa, country, city..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="simple-input"
@@ -100,25 +151,47 @@ const ApplicationsPage = () => {
                 <th>Name</th>
                 <th>Contact</th>
                 <th>Date</th>
-                <th>Time</th>
                 <th>Plan</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>Occupation</th>
                 <th>Status</th>
+                <th>Lead Outcome</th>
                 <th>Agent</th>
-                <th>Reference</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {items.map((item) => (
-                <tr key={item._id}>
-                  <td>{item.name || '-'}</td>
-                  <td>{item.contact || item.email || '-'}</td>
-                  <td>{item.date || '-'}</td>
-                  <td>{item.time || '-'}</td>
-                  <td>{item.plan || '-'}</td>
-                  <td>{item.status || '-'}</td>
-                  <td>{item.agentName || '-'}</td>
-                  <td>{item.referenceId || '-'}</td>
-                </tr>
+                <>
+                  <tr key={item._id} className="simple-row">
+                    <td>{item.name || '-'}</td>
+                    <td>{item.contact || item.email || '-'}</td>
+                    <td>{item.date || '-'}</td>
+                    <td>{item.plan || '-'}</td>
+                    <td>{item.country || '-'}</td>
+                    <td>{item.city || '-'}</td>
+                    <td>{item.occupation || '-'}</td>
+                    <td>{item.status || '-'}</td>
+                    <td>{item.leadOutcome || '-'}</td>
+                    <td>{item.agentName || '-'}</td>
+                    <td>
+                      <button className="simple-btn small" onClick={() => toggleExpand(item._id)}>
+                        {expandedId === item._id ? 'Hide' : 'Details'}
+                      </button>
+                    </td>
+                  </tr>
+                  {expandedId === item._id && (
+                    <tr className="simple-expanded-row">
+                      <td colSpan={11}>
+                        <div className="simple-expanded-content">
+                          <h4>Application Details</h4>
+                          {renderDetails(item.details)}
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
               ))}
             </tbody>
           </table>

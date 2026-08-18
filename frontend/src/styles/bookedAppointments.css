@@ -117,6 +117,62 @@
   font-size: 13px;
 }
 
+.simple-btn.small {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.simple-expanded-row {
+  background: #fafafa;
+}
+
+.simple-expanded-row td {
+  padding: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.simple-expanded-content {
+  padding: 16px;
+}
+
+.simple-expanded-content h4 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.simple-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.simple-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.simple-detail-label {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.simple-detail-value {
+  font-size: 13px;
+  color: #333;
+  word-break: break-word;
+}
+
+.simple-detail-empty {
+  color: #888;
+  font-size: 13px;
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .simple-list-page {
     padding: 12px;
