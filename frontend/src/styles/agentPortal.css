@@ -682,6 +682,61 @@
   border-top: 1px solid var(--border);
 }
 
+/* ===== Application detail modal ===== */
+.agent-detail-layout {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.agent-detail-main {
+  flex: 1 1 60%;
+  min-width: 280px;
+}
+
+.agent-detail-side {
+  flex: 1 1 30%;
+  min-width: 220px;
+}
+
+.agent-detail-section {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.agent-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px 16px;
+  font-size: 0.875rem;
+}
+
+.agent-detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.agent-detail-row .info-label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.agent-detail-row .info-value {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 0;
+  word-break: break-word;
+}
+
 /* ===== Info labels ===== */
 .info-label {
   font-size: 0.7rem;

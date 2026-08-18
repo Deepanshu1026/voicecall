@@ -5,6 +5,51 @@ import '../styles/agentPortal.css';
 
 const statusLabel = (s) => s?.replace(/_/g, ' ') || 'Unknown';
 
+const detailFieldMap = {
+  gender: 'Gender',
+  age: 'Age',
+  address: 'Address',
+  city: 'City',
+  state: 'State',
+  pincode: 'Pincode',
+  visa_type: 'Visa Type',
+  visa_country: 'Visa Country',
+  country: 'Country',
+  passport_validity: 'Passport Validity',
+  education: 'Education',
+  ielts_score: 'IELTS Score',
+  occupation: 'Occupation',
+  income: 'Income',
+  bank_balance: 'Bank Balance',
+  travel_history: 'Travel History',
+  refusal_history: 'Refusal History',
+  spouse_name: 'Spouse Name',
+  spouse_age: 'Spouse Age',
+  kids: 'Kids',
+  remarks: 'Remarks',
+  query: 'Query',
+  notes: 'Notes',
+  appointment_time: 'Appointment Time',
+  time_slot: 'Time Slot',
+};
+
+const renderDetailRows = (details) => {
+  if (!details || typeof details !== 'object') return null;
+  const rows = [];
+  Object.entries(detailFieldMap).forEach(([key, label]) => {
+    const value = details[key];
+    if (value !== undefined && value !== null && value !== '') {
+      rows.push(
+        <div key={key} className="agent-detail-row">
+          <span className="info-label">{label}</span>
+          <span className="info-value">{String(value)}</span>
+        </div>
+      );
+    }
+  });
+  return rows;
+};
+
 const outcomeClass = (outcome) => {
   const o = (outcome || '').toLowerCase().replace(/\s/g, '');
   if (o.includes('interested')) return 'outcome-interested';
@@ -265,28 +310,43 @@ const AgentDashboardHome = () => {
               {modalLoading ? (
                 <div className="agent-loading"><div className="spinner-border spinner-border-sm text-primary" /></div>
               ) : selectedApp ? (
-                <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                  <div style={{ flex: '1 1 55%', minWidth: '280px' }}>
-                    <div style={{ background: '#f8fafc', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px', fontSize: '0.875rem' }}>
-                        <div className="info-label">Name</div>
-                        <div className="info-value" style={{ marginBottom: '0.5rem' }}>{selectedApp.client_name}</div>
-                        <div className="info-label">Contact</div>
-                        <div className="info-value" style={{ marginBottom: '0.5rem' }}>{selectedApp.contact_number}</div>
-                        <div className="info-label">Status</div>
-                        <div style={{ marginBottom: '0.5rem' }}><span className={`status-pill ${selectedApp.status}`}>{statusLabel(selectedApp.status)}</span></div>
-                        <div className="info-label">Submitted</div>
-                        <div style={{ marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>{fmtDate(selectedApp.created_at)}</div>
-                        <div className="info-label">Lead Outcome</div>
-                        <div style={{ marginBottom: '0.5rem' }}>
-                          <span className={`outcome-badge ${outcomeClass(selectedApp.details.lead_outcome)}`}>
-                            {selectedApp.details.lead_outcome || 'Submitted'}
+                <div className="agent-detail-layout">
+                  <div className="agent-detail-main">
+                    <div className="agent-detail-section">
+                      <div className="agent-detail-grid">
+                        <div className="agent-detail-row">
+                          <span className="info-label">Name</span>
+                          <span className="info-value">{selectedApp.client_name || '-'}</span>
+                        </div>
+                        <div className="agent-detail-row">
+                          <span className="info-label">Contact</span>
+                          <span className="info-value">{selectedApp.contact_number || '-'}</span>
+                        </div>
+                        <div className="agent-detail-row">
+                          <span className="info-label">Email</span>
+                          <span className="info-value">{selectedApp.details.email || '-'}</span>
+                        </div>
+                        <div className="agent-detail-row">
+                          <span className="info-label">Status</span>
+                          <span className="info-value"><span className={`status-pill ${selectedApp.status}`}>{statusLabel(selectedApp.status)}</span></span>
+                        </div>
+                        <div className="agent-detail-row">
+                          <span className="info-label">Submitted</span>
+                          <span className="info-value">{fmtDate(selectedApp.created_at)}</span>
+                        </div>
+                        <div className="agent-detail-row">
+                          <span className="info-label">Lead Outcome</span>
+                          <span className="info-value">
+                            <span className={`outcome-badge ${outcomeClass(selectedApp.details.lead_outcome)}`}>
+                              {selectedApp.details.lead_outcome || 'Submitted'}
+                            </span>
                           </span>
                         </div>
+                        {renderDetailRows(selectedApp.details)}
                       </div>
                     </div>
                   </div>
-                  <div style={{ flex: '1 1 35%', minWidth: '220px' }}>
+                  <div className="agent-detail-side">
                     <h6 style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '12px' }}>Activity Timeline</h6>
                     <div className="agent-timeline">
                       {(!selectedApp.logs || selectedApp.logs.length === 0) ? (
