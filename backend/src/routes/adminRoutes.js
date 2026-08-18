@@ -13,5 +13,6 @@ router.delete('/chats/messages/:messageId', adminController.deleteMessage);
 
 router.get('/push/tokens', adminController.getFcmTokens);
 router.post('/push/send', adminController.sendManualPush);
+router.post('/push/broadcast', adminController.sendBroadcastPush);
 
 module.exports = router;

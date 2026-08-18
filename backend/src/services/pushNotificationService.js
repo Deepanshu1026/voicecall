@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const config = require('../config');
+const FcmToken = require('../models/FcmToken');
 
 let messaging = null;
 let initialized = false;
@@ -42,14 +43,8 @@ function init() {
   }
 }
 
-async function sendToToken({ token, title, body, data = {}, imageUrl }) {
-  const fcm = init();
-  if (!fcm) {
-    return { success: false, error: initError || 'FCM not initialized' };
-  }
-
+function buildMessage({ title, body, data = {}, imageUrl }) {
   const message = {
-    token,
     notification: {
       title,
       body,
@@ -59,6 +54,17 @@ async function sendToToken({ token, title, body, data = {}, imageUrl }) {
   if (imageUrl) {
     message.notification.imageUrl = imageUrl;
   }
+  return message;
+}
+
+async function sendToToken({ token, title, body, data = {}, imageUrl }) {
+  const fcm = init();
+  if (!fcm) {
+    return { success: false, error: initError || 'FCM not initialized' };
+  }
+
+  const message = buildMessage({ title, body, data, imageUrl });
+  message.token = token;
 
   try {
     const response = await fcm.send(message);
@@ -74,17 +80,8 @@ async function sendMulticast({ tokens, title, body, data = {}, imageUrl }) {
     return { success: false, error: initError || 'FCM not initialized' };
   }
 
-  const message = {
-    tokens,
-    notification: {
-      title,
-      body,
-    },
-    data,
-  };
-  if (imageUrl) {
-    message.notification.imageUrl = imageUrl;
-  }
+  const message = buildMessage({ title, body, data, imageUrl });
+  message.tokens = tokens;
 
   try {
     const response = await fcm.sendEachForMulticast(message);
@@ -99,6 +96,66 @@ async function sendMulticast({ tokens, title, body, data = {}, imageUrl }) {
   }
 }
 
+async function sendBroadcast({ title, body, data = {}, imageUrl, batchSize = 500 }) {
+  const fcm = init();
+  if (!fcm) {
+    return { success: false, error: initError || 'FCM not initialized' };
+  }
+
+  const tokens = await FcmToken.find().select('token').lean();
+  if (tokens.length === 0) {
+    return { success: false, error: 'No FCM tokens found' };
+  }
+
+  const tokenList = tokens.map((t) => t.token);
+  const invalidTokenIds = [];
+  let totalSuccess = 0;
+  let totalFailure = 0;
+
+  for (let i = 0; i < tokenList.length; i += batchSize) {
+    const batch = tokenList.slice(i, i + batchSize);
+    const message = buildMessage({ title, body, data, imageUrl });
+    message.tokens = batch;
+
+    try {
+      const response = await fcm.sendEachForMulticast(message);
+      totalSuccess += response.successCount;
+      totalFailure += response.failureCount;
+
+      response.responses.forEach((r, idx) => {
+        if (!r.success && isInvalidTokenError(r.error)) {
+          invalidTokenIds.push(tokens[i + idx]._id);
+        }
+      });
+    } catch (err) {
+      totalFailure += batch.length;
+    }
+  }
+
+  if (invalidTokenIds.length > 0) {
+    await FcmToken.deleteMany({ _id: { $in: invalidTokenIds } });
+  }
+
+  return {
+    success: true,
+    successCount: totalSuccess,
+    failureCount: totalFailure,
+    totalTokens: tokenList.length,
+    invalidTokensRemoved: invalidTokenIds.length,
+  };
+}
+
+function isInvalidTokenError(error) {
+  if (!error) return false;
+  const code = error.code || error.message || '';
+  return (
+    code.includes('messaging/invalid-registration-token') ||
+    code.includes('messaging/registration-token-not-registered') ||
+    code.includes('invalid-registration-token') ||
+    code.includes('not-registered')
+  );
+}
+
 function isConfigured() {
   return !!init();
 }
@@ -110,6 +167,7 @@ function getInitError() {
 module.exports = {
   sendToToken,
   sendMulticast,
+  sendBroadcast,
   isConfigured,
   getInitError,
 };

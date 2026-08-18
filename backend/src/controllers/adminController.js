@@ -9,7 +9,7 @@ const {
   populateMessages,
   populateMessage,
 } = require('../utils/populate');
-const { sendToToken, sendMulticast, isConfigured } = require('../services/pushNotificationService');
+const { sendToToken, sendMulticast, sendBroadcast, isConfigured } = require('../services/pushNotificationService');
 const FcmToken = require('../models/FcmToken');
 
 const getAllConversations = asyncHandler(async (req, res) => {
@@ -238,6 +238,31 @@ const sendManualPush = asyncHandler(async (req, res) => {
   ApiResponse.success(res, result, 'Push notification sent');
 });
 
+const sendBroadcastPush = asyncHandler(async (req, res) => {
+  const { title, body, data, imageUrl } = req.body;
+
+  if (!title || !body) {
+    throw new AppError('Title and body are required', 400);
+  }
+
+  if (!isConfigured()) {
+    throw new AppError('Firebase Cloud Messaging is not configured. Set FCM_SERVICE_ACCOUNT_PATH or FCM_SERVICE_ACCOUNT_JSON.', 503);
+  }
+
+  const result = await sendBroadcast({
+    title,
+    body,
+    data: data || {},
+    imageUrl,
+  });
+
+  if (!result.success) {
+    throw new AppError(result.error, 500);
+  }
+
+  ApiResponse.success(res, result, 'Broadcast push notification sent');
+});
+
 module.exports = {
   getAllConversations,
   getConversationMessages,
@@ -246,4 +271,5 @@ module.exports = {
   getConversationStats,
   getFcmTokens,
   sendManualPush,
+  sendBroadcastPush,
 };

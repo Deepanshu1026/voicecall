@@ -4,6 +4,11 @@ import { adminAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import '../styles/adminChatDashboard.css';
 
+const TABS = [
+  { key: 'single', label: 'Single User', icon: 'bi bi-person' },
+  { key: 'broadcast', label: 'Broadcast All', icon: 'bi bi-broadcast' },
+];
+
 const AdminPushNotifications = () => {
   const navigate = useNavigate();
   const [tokens, setTokens] = useState([]);
@@ -11,6 +16,7 @@ const AdminPushNotifications = () => {
   const [sending, setSending] = useState(false);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ current_page: 1, total_pages: 1, total_records: 0 });
+  const [activeTab, setActiveTab] = useState('single');
   const [selectedUserId, setSelectedUserId] = useState('');
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
@@ -36,7 +42,15 @@ const AdminPushNotifications = () => {
     fetchTokens(1);
   }, []);
 
-  const handleSubmit = async (e) => {
+  const getDataPayload = () => {
+    const data = {};
+    if (dataKey.trim() && dataValue.trim()) {
+      data[dataKey.trim()] = dataValue.trim();
+    }
+    return data;
+  };
+
+  const handleSingleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim() || !body.trim() || !selectedUserId) {
       toast.error('Title, body, and user are required');
@@ -45,29 +59,57 @@ const AdminPushNotifications = () => {
 
     setSending(true);
     try {
-      const data = {};
-      if (dataKey.trim() && dataValue.trim()) {
-        data[dataKey.trim()] = dataValue.trim();
-      }
       const res = await adminAPI.sendPush({
         userId: selectedUserId,
         title: title.trim(),
         body: body.trim(),
         imageUrl: imageUrl.trim() || undefined,
-        data,
+        data: getDataPayload(),
       });
       toast.success(res.data?.message || 'Notification sent');
-      setTitle('');
-      setBody('');
-      setImageUrl('');
-      setDataKey('');
-      setDataValue('');
+      resetForm();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to send notification');
       console.error(err);
     } finally {
       setSending(false);
     }
+  };
+
+  const handleBroadcastSubmit = async (e) => {
+    e.preventDefault();
+    if (!title.trim() || !body.trim()) {
+      toast.error('Title and body are required');
+      return;
+    }
+
+    setSending(true);
+    try {
+      const res = await adminAPI.broadcastPush({
+        title: title.trim(),
+        body: body.trim(),
+        imageUrl: imageUrl.trim() || undefined,
+        data: getDataPayload(),
+      });
+      toast.success(
+        `Broadcast sent: ${res.data?.data?.successCount || 0} delivered, ${res.data?.data?.failureCount || 0} failed`
+      );
+      resetForm();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to send broadcast');
+      console.error(err);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const resetForm = () => {
+    setTitle('');
+    setBody('');
+    setImageUrl('');
+    setDataKey('');
+    setDataValue('');
+    setSelectedUserId('');
   };
 
   const renderPagination = () => {
@@ -108,12 +150,71 @@ const AdminPushNotifications = () => {
     );
   };
 
+  const renderFormFields = () => (
+    <>
+      <div className="mb-3">
+        <label className="form-label" style={{ fontWeight: 500 }}>Title</label>
+        <input
+          type="text"
+          className="form-control"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Notification title"
+          required
+        />
+      </div>
+      <div className="mb-3">
+        <label className="form-label" style={{ fontWeight: 500 }}>Body</label>
+        <textarea
+          className="form-control"
+          rows={4}
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder="Notification body"
+          required
+        />
+      </div>
+      <div className="mb-3">
+        <label className="form-label" style={{ fontWeight: 500 }}>Image URL (optional)</label>
+        <input
+          type="url"
+          className="form-control"
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+          placeholder="https://..."
+        />
+      </div>
+      <div className="row g-3 mb-4">
+        <div className="col-md-6">
+          <label className="form-label" style={{ fontWeight: 500 }}>Data Key (optional)</label>
+          <input
+            type="text"
+            className="form-control"
+            value={dataKey}
+            onChange={(e) => setDataKey(e.target.value)}
+            placeholder="screen"
+          />
+        </div>
+        <div className="col-md-6">
+          <label className="form-label" style={{ fontWeight: 500 }}>Data Value (optional)</label>
+          <input
+            type="text"
+            className="form-control"
+            value={dataValue}
+            onChange={(e) => setDataValue(e.target.value)}
+            placeholder="home"
+          />
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <div className="admin-chat-dashboard">
       <div className="page-header d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h3 style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>Manual Push Notifications</h3>
-          <p style={{ color: '#718096', margin: '4px 0 0 0', fontSize: '0.95rem' }}>Send FCM push notifications to users.</p>
+          <h3 style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>Push Notifications</h3>
+          <p style={{ color: '#718096', margin: '4px 0 0 0', fontSize: '0.95rem' }}>Send manual or broadcast FCM notifications.</p>
         </div>
         <button className="agent-btn agent-btn-outline-dark" onClick={() => navigate('/agent/dashboard')}>
           <i className="bi bi-arrow-left" /> Back to Dashboard
@@ -143,7 +244,10 @@ const AdminPushNotifications = () => {
                 <div
                   key={t._id}
                   className={`admin-conversation-item ${selectedUserId === String(t.userId?._id || t.userId) ? 'active' : ''}`}
-                  onClick={() => setSelectedUserId(String(t.userId?._id || t.userId))}
+                  onClick={() => {
+                    setActiveTab('single');
+                    setSelectedUserId(String(t.userId?._id || t.userId));
+                  }}
                 >
                   <div className="admin-conversation-info">
                     <div className="admin-conversation-name">User: {t.userId?.displayName || t.userId?.username || t.userId || 'Unknown'}</div>
@@ -167,96 +271,88 @@ const AdminPushNotifications = () => {
           )}
         </div>
 
-        {/* Right: Compose form */}
+        {/* Right: Compose panel */}
         <div className="admin-chat-panel">
           <div className="admin-panel-header">
-            <h4>Compose Notification</h4>
+            <h4>Compose</h4>
           </div>
           <div className="admin-chat-messages" style={{ padding: '24px' }}>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label" style={{ fontWeight: 500 }}>Selected User</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={selectedUserId}
-                  onChange={(e) => setSelectedUserId(e.target.value)}
-                  placeholder="Click a token on the left or paste a user ID"
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label" style={{ fontWeight: 500 }}>Title</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Notification title"
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label" style={{ fontWeight: 500 }}>Body</label>
-                <textarea
-                  className="form-control"
-                  rows={4}
-                  value={body}
-                  onChange={(e) => setBody(e.target.value)}
-                  placeholder="Notification body"
-                  required
-                />
-              </div>
-              <div className="mb-3">
-                <label className="form-label" style={{ fontWeight: 500 }}>Image URL (optional)</label>
-                <input
-                  type="url"
-                  className="form-control"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://..."
-                />
-              </div>
-              <div className="row g-3 mb-4">
-                <div className="col-md-6">
-                  <label className="form-label" style={{ fontWeight: 500 }}>Data Key (optional)</label>
+            {/* Tabs */}
+            <div className="d-flex gap-2 mb-4" style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '12px' }}>
+              {TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  className={`agent-btn ${activeTab === tab.key ? 'agent-btn-primary' : 'agent-btn-outline-dark'}`}
+                  onClick={() => setActiveTab(tab.key)}
+                >
+                  <i className={`bi ${tab.icon} me-2`} />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'single' ? (
+              <form onSubmit={handleSingleSubmit}>
+                <div className="mb-3">
+                  <label className="form-label" style={{ fontWeight: 500 }}>Selected User</label>
                   <input
                     type="text"
                     className="form-control"
-                    value={dataKey}
-                    onChange={(e) => setDataKey(e.target.value)}
-                    placeholder="screen"
+                    value={selectedUserId}
+                    onChange={(e) => setSelectedUserId(e.target.value)}
+                    placeholder="Click a token on the left or paste a user ID"
+                    required
                   />
                 </div>
-                <div className="col-md-6">
-                  <label className="form-label" style={{ fontWeight: 500 }}>Data Value (optional)</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={dataValue}
-                    onChange={(e) => setDataValue(e.target.value)}
-                    placeholder="home"
-                  />
+                {renderFormFields()}
+                <button
+                  type="submit"
+                  className="agent-btn agent-btn-primary"
+                  disabled={sending || !selectedUserId}
+                  style={{ minWidth: '140px' }}
+                >
+                  {sending ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <i className="bi bi-send me-2" /> Send to User
+                    </>
+                  )}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleBroadcastSubmit}>
+                <div className="alert alert-info d-flex align-items-start gap-2 mb-3" style={{ fontSize: '0.9rem' }}>
+                  <i className="bi bi-info-circle mt-1" />
+                  <div>
+                    This will send the notification to <strong>all {pagination.total_records}</strong> saved FCM tokens.
+                    Invalid tokens will be removed automatically.
+                  </div>
                 </div>
-              </div>
-              <button
-                type="submit"
-                className="agent-btn agent-btn-primary"
-                disabled={sending || !selectedUserId}
-                style={{ minWidth: '140px' }}
-              >
-                {sending ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-send me-2" /> Send
-                  </>
-                )}
-              </button>
-            </form>
+                {renderFormFields()}
+                <button
+                  type="submit"
+                  className="agent-btn agent-btn-primary"
+                  disabled={sending}
+                  style={{ minWidth: '160px' }}
+                >
+                  {sending ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" />
+                      Broadcasting...
+                    </>
+                  ) : (
+                    <>
+                      <i className="bi bi-broadcast me-2" /> Send Broadcast
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       </div>
