@@ -61,10 +61,24 @@ export const getAvatarUrl = (user) => {
   }
   if (!avatar) return DEFAULT_AVATAR;
 
-  // Map old/default placeholder paths to the bundled default avatar
   const lower = avatar.toLowerCase();
-  if (lower === 'img/userdemo.webp' || lower === '/img/userdemo.webp' || lower === '/images/user/userdemo.webp') {
+
+  // Map generic/default placeholder names to the bundled default avatar
+  if (
+    lower === 'img/userdemo.webp' ||
+    lower === '/img/userdemo.webp' ||
+    lower === '/images/user/userdemo.webp' ||
+    lower === 'default_avatar.png' ||
+    lower === '/default_avatar.png'
+  ) {
     return DEFAULT_AVATAR;
+  }
+
+  // Old PHP site stored avatars under `img/`. Remap them to the bundled
+  // `/images/user/` folder so migrated consultants still display photos.
+  if (avatar.startsWith('img/') || avatar.startsWith('/img/')) {
+    const fileName = avatar.replace(/^\/?img\//, '');
+    return `/images/user/${fileName}`;
   }
 
   if (avatar.startsWith('http')) return avatar;
