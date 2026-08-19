@@ -159,9 +159,9 @@ class FCMService {
 
     // 3. Handle background to foreground messages (notification tap)
     _onMessageOpenedAppSubscription =
-        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       debugPrint('📱 App opened from background via notification');
-      _handleMessage(message, source: 'onMessageOpenedApp');
+      await _handleMessage(message, source: 'onMessageOpenedApp');
     });
   }
 
@@ -450,7 +450,7 @@ class FCMService {
     }
   }
 
-  static void _handleChatNotification(Map<String, dynamic> data) async {
+  static Future<void> _handleChatNotification(Map<String, dynamic> data) async {
     final senderId = data['sender_id'] ?? '';
     final senderName = data['sender_name'] ?? 'User';
     if (senderId.isEmpty) {
@@ -490,7 +490,7 @@ class FCMService {
   }
 
   /// ✅ Handle FCM message navigation with duplicate prevention
-  static void _handleMessage(RemoteMessage message, {required String source}) {
+  static Future<void> _handleMessage(RemoteMessage message, {required String source}) async {
     final messageId = _computeDeterministicId(message);
 
     if (_handledMessageIds.contains(messageId)) {
@@ -517,15 +517,15 @@ class FCMService {
     debugPrint('   Type: ${message.data['type']}');
 
     if (message.data['type'] == 'chat') {
-      _handleChatNotification(message.data);
+      await _handleChatNotification(message.data);
       return;
     }
 
     if (route != null && route.isNotEmpty) {
       final decodedRoute = Uri.decodeComponent(route);
-      _navigateFromPayload(decodedRoute);
+      await _navigateFromPayload(decodedRoute);
     } else if (url != null && url.isNotEmpty) {
-      _navigateFromPayload(url);
+      await _navigateFromPayload(url);
     }
   }
 
