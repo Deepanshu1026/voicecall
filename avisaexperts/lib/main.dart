@@ -132,6 +132,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _callService.bindGlobalListeners();
     _callService.addListener(_onCallStateChanged);
 
+    // Process the notification that launched the app after the first frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FCMService.processPendingNotifications();
+    });
+
     // Check for updates
     UpdateService.checkForUpdate();
 

@@ -36,6 +36,10 @@ class FCMService {
   static const String _prefsKeyHandledIds = 'fcm_handled_ids';
   static const String _prefsKeyLastToken = 'fcm_last_token';
 
+  // Stores the notification that launched the app from terminated state.
+  // It is processed after the first frame so the navigator is available.
+  static RemoteMessage? _pendingInitialMessage;
+
   /// ✅ PUBLIC: Entry point for the top-level background handler in main.dart
   static Future<void> handleBackgroundMessage(RemoteMessage message) async {
     // Ensure Firebase is initialized in the background isolate
@@ -63,6 +67,17 @@ class FCMService {
       await _handleCountdownNotification(message);
     } else {
       debugPrint('📱 [BG] Background regular message - system will handle display');
+    }
+  }
+
+  /// ✅ PUBLIC: Process the notification that launched the app from terminated state.
+  /// Call this after the first frame is rendered so the navigator is available.
+  static Future<void> processPendingNotifications() async {
+    final message = _pendingInitialMessage;
+    _pendingInitialMessage = null;
+    if (message != null) {
+      debugPrint('📱 Processing deferred initial notification');
+      await _handleMessage(message, source: 'getInitialMessage');
     }
   }
 
@@ -118,12 +133,12 @@ class FCMService {
   static Future<void> _setupListenersOnce() async {
     debugPrint('🔧 Setting up FCM message listeners (ONE TIME)');
 
-    // 1. Handle app launched from terminated state via notification
-    RemoteMessage? initialMessage =
+    // 1. Store the notification that launched the app from terminated state.
+    // We defer handling until after the first frame so the navigator is ready.
+    _pendingInitialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      debugPrint('📱 App launched from terminated state via notification');
-      _handleMessage(initialMessage, source: 'getInitialMessage');
+    if (_pendingInitialMessage != null) {
+      debugPrint('📱 App launched from terminated state via notification (deferred)');
     }
 
     // 2. Handle foreground messages
@@ -219,9 +234,30 @@ class FCMService {
           // Resume countdown notifications if active
         }
 
-        if (payload != null && payload.isNotEmpty) {
-          _navigateFromPayload(payload);
+        if (payload == null || payload.isEmpty) return;
+
+        // Try to parse the payload as the full FCM data payload.
+        try {
+          final decoded = jsonDecode(payload);
+          if (decoded is Map<String, dynamic>) {
+            if (decoded['type'] == 'chat') {
+              _handleChatNotification(decoded);
+              return;
+            }
+            if (decoded['route']?.isNotEmpty == true) {
+              _navigateFromPayload(Uri.decodeComponent(decoded['route']!));
+              return;
+            }
+            if (decoded['url']?.isNotEmpty == true) {
+              _navigateFromPayload(decoded['url']!);
+              return;
+            }
+          }
+        } catch (_) {
+          // Not JSON: fall back to legacy route/url handling.
         }
+
+        _navigateFromPayload(payload);
       },
     );
     debugPrint('✅ Local notifications initialized');
@@ -309,9 +345,9 @@ class FCMService {
     debugPrint('📱 Regular notification detected - processing...');
 
     // ✅ Regular notification logic - ALSO REMOVABLE
-    final String? payload = message.data['route']?.isNotEmpty == true
-        ? Uri.decodeComponent(message.data['route']!)
-        : message.data['url'];
+    // Encode the full data payload so local notification taps can be handled
+    // consistently with background/terminated notifications.
+    final String? payload = jsonEncode(message.data);
 
     final String? imageUrl =
         message.notification?.android?.imageUrl ?? message.data['image'];
@@ -422,9 +458,9 @@ class FCMService {
       return;
     }
 
-    final context = navigatorKey.currentContext;
-    if (context == null) {
-      debugPrint('❌ No navigator context for chat notification');
+    final nav = navigatorKey.currentState;
+    if (nav == null) {
+      debugPrint('❌ No navigator state for chat notification');
       return;
     }
 
@@ -442,7 +478,7 @@ class FCMService {
       }
     }
 
-    Navigator.of(context).push(
+    nav.push(
       MaterialPageRoute(
         builder: (_) => ChatScreen(
           advisorId: senderId,
