@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../components/user/LandingLayout';
 import { appointmentAPI } from '../services/api';
 import '../styles/appointment.css';
@@ -54,6 +55,7 @@ const getAvailableSlots = (plan, selectedDate) => {
 };
 
 const Appointment = () => {
+  const navigate = useNavigate();
   const [selectedPlan, setSelectedPlan] = useState('Advance');
   const [formData, setFormData] = useState({
     name: '',
