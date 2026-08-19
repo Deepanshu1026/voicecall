@@ -9,6 +9,7 @@ import ChatArea from '../components/chat/ChatArea';
 import { userAPI, chatAPI } from '../services/api';
 import api from '../services/api';
 import { initiateWalletRecharge } from '../utils/razorpay';
+import { getAvatarUrl } from '../utils/helpers';
 import toast from 'react-hot-toast';
 import '../styles/consultants.css';
 import { FiMessageCircle, FiPhone, FiStar, FiBriefcase, FiUsers, FiGlobe, FiX, FiAward, FiUser } from 'react-icons/fi';
@@ -121,7 +122,7 @@ const getTier = (years) => {
 
 const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall, freeChat }) => {
   const name = consultant.name || consultant.displayName || consultant.username;
-  const avatar = consultant.avatar?.url || consultant.avatar || '/images/user/avatar.webp';
+  const avatar = getAvatarUrl(consultant);
   const expertise = consultant.expertise || consultant.bio || 'Visa Consultant';
   const language = consultant.languages || consultant.language || 'English, Hindi';
   const experience = consultant.experience || '5';
@@ -448,11 +449,18 @@ const Consultants = () => {
       );
     })
     .sort((a, b) => {
-      // Real-time online status only; don't rely on the DB workStatus fallback,
-      // which can stay 'active' after the agent has actually disconnected.
+      // Real-time online status first; then fallback to active status from DB.
       const aOnline = isUserOnline(a._id);
       const bOnline = isUserOnline(b._id);
-      return (bOnline ? 1 : 0) - (aOnline ? 1 : 0);
+      if (aOnline !== bOnline) return (bOnline ? 1 : 0) - (aOnline ? 1 : 0);
+
+      const aActive =
+        (a.status === 'Active' || a.workStatus === 'active') ? 1 : 0;
+      const bActive =
+        (b.status === 'Active' || b.workStatus === 'active') ? 1 : 0;
+      if (aActive !== bActive) return bActive - aActive;
+
+      return (b.rating || 4.8) - (a.rating || 4.8);
     });
 
   const activeUser = isAuthenticated
