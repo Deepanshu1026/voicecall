@@ -596,6 +596,26 @@ html {
   width: 100%;
 }
 
+.consultants-page .free-chat-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.consultants-page .free-chat-icon {
+  width: 14px;
+  height: 14px;
+}
+
 .consultants-page .price-tag {
   display: flex;
   align-items: center;

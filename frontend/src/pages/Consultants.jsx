@@ -7,6 +7,7 @@ import { useChat } from '../hooks/useChat';
 import LandingLayout from '../components/user/LandingLayout';
 import ChatArea from '../components/chat/ChatArea';
 import { userAPI, chatAPI } from '../services/api';
+import api from '../services/api';
 import { initiateWalletRecharge } from '../utils/razorpay';
 import toast from 'react-hot-toast';
 import '../styles/consultants.css';
@@ -118,7 +119,7 @@ const getTier = (years) => {
   return { key: 'bronze', label: 'Rising Star', className: 'tier-bronze' };
 };
 
-const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall }) => {
+const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall, freeChat }) => {
   const name = consultant.name || consultant.displayName || consultant.username;
   const avatar = consultant.avatar?.url || consultant.avatar || '/images/user/avatar.webp';
   const expertise = consultant.expertise || consultant.bio || 'Visa Consultant';
@@ -198,6 +199,12 @@ const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall })
       </div>
 
       <div className="card-footer">
+        {freeChat && (
+          <div className="free-chat-banner">
+            <FiMessageCircle className="free-chat-icon" />
+            <span>Chat Free</span>
+          </div>
+        )}
         <div className="price-tag">
           <span className="price">
             {consultant.callRate > 0 ? `₹${consultant.callRate}/min` : (consultant.price || 'Free')}
@@ -250,6 +257,7 @@ const Consultants = () => {
   const [consultants, setConsultants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [useStatic, setUseStatic] = useState(false);
+  const [chatSettings, setChatSettings] = useState({ unlimitedFreeChat: false });
   const [wallet, setWallet] = useState({ balance: user?.walletBalance || 0 });
 
   useEffect(() => {
@@ -333,6 +341,19 @@ const Consultants = () => {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchChatSettings = async () => {
+      try {
+        const res = await api.get('/settings');
+        const s = res.data?.data?.settings || {};
+        setChatSettings({ unlimitedFreeChat: !!s.unlimitedFreeChat });
+      } catch (err) {
+        console.error('Failed to load chat settings:', err);
+      }
+    };
+    fetchChatSettings();
   }, []);
 
   const openChatById = useCallback(async (targetId) => {
@@ -612,13 +633,14 @@ const Consultants = () => {
                 </div>
               ) : (
                 filtered.map((consultant) => (
-                  <ConsultantCard
-                    key={consultant._id || consultant.id}
-                    consultant={consultant}
-                    isOnline={isUserOnline(consultant._id)}
-                    onStartChat={handleStartChat}
-                    onStartCall={handleStartCall}
-                  />
+                <ConsultantCard
+                  key={consultant._id || consultant.id}
+                  consultant={consultant}
+                  isOnline={isUserOnline(consultant._id)}
+                  onStartChat={handleStartChat}
+                  onStartCall={handleStartCall}
+                  freeChat={chatSettings.unlimitedFreeChat}
+                />
                 ))
               )}
             </div>
