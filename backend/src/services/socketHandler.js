@@ -9,6 +9,7 @@ const config = require('../config');
 const { getAccountById } = require('../utils/account');
 const { populateMessage, populateCall } = require('../utils/populate');
 const { getChatSettings } = require('./settingService');
+const { notifyMessageReceived } = require('./messageNotificationService');
 
 const FAR_FUTURE = new Date('2099-12-31T23:59:59.999Z');
 
@@ -576,6 +577,14 @@ const setupSocket = (io) => {
         io.to(`user:${recipient}`).emit('message:new', messageObj);
         io.to(`user:${userId}`).emit('message:new', messageObj);
         io.to('admin:room').emit('admin:message:new', messageObj);
+
+        // Send push notification to the recipient's devices
+        notifyMessageReceived({
+          recipientId: recipient,
+          sender: messageObj.sender,
+          message,
+          conversationId: conversation._id,
+        }).catch((err) => console.error('[MessageNotification] push failed:', err.message));
 
         // Check free chat timer thresholds and send system alerts
         if (

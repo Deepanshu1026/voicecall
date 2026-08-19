@@ -19,6 +19,8 @@ const { uploadToCloudinary } = require('../services/cloudinaryService');
 const multerUpload = require('../utils/upload');
 const { getChatSettings } = require('../services/settingService');
 const { recordLogin } = require('../services/loginHistoryService');
+const { notifyMessageReceived } = require('../services/messageNotificationService');
+const { getAccountById } = require('../utils/account');
 
 const FAR_FUTURE = new Date('2099-12-31T23:59:59.999Z');
 
@@ -916,6 +918,15 @@ router.post('/chat/send', asyncHandler(async (req, res) => {
       senderId: sId.toString(),
     });
   }
+
+  // Send push notification to the recipient's devices
+  const sender = await getAccountById(sId, 'displayName username');
+  notifyMessageReceived({
+    recipientId: rId,
+    sender,
+    message: msg,
+    conversationId: conv._id,
+  }).catch((err) => console.error('[MessageNotification] push failed:', err.message));
 
   res.json({ success: true, message_id: msg._id, created_at: msg.createdAt });
 }));

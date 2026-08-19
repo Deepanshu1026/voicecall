@@ -14,6 +14,7 @@ const {
   populateMessageSender,
 } = require('../utils/populate');
 const { getChatSettings } = require('../services/settingService');
+const { notifyMessageReceived } = require('../services/messageNotificationService');
 
 const EMPLOYEE_ROLES = ['case_manager', 'manager', 'senior_manager', 'admin'];
 const isAgentRole = (role) => role === 'agent' || EMPLOYEE_ROLES.includes(role);
@@ -326,6 +327,14 @@ const sendMessage = asyncHandler(async (req, res) => {
     req.io.to(`user:${recipient}`).emit('message:new', populatedMessage);
     req.io.to(`user:${req.userId}`).emit('message:new', populatedMessage);
   }
+
+  // Send push notification to the recipient's devices
+  notifyMessageReceived({
+    recipientId: recipient,
+    sender: req.user,
+    message: populatedMessage,
+    conversationId: conversation._id,
+  }).catch((err) => console.error('[MessageNotification] push failed:', err.message));
 
   ApiResponse.success(res, populatedMessage, 'Message sent', 201);
 });
