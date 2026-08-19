@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { appointmentAPI } from '../services/api';
 import '../styles/appointmentPayment.css';
@@ -17,6 +17,7 @@ const AppointmentPayment = () => {
   const [appointment, setAppointment] = useState(null);
   const [error, setError] = useState('');
   const [paid, setPaid] = useState(false);
+  const bookedRef = useRef(false);
 
   const planAmount = useMemo(() => {
     if (!appointment) return 0;
@@ -48,6 +49,10 @@ const AppointmentPayment = () => {
       navigate('/appointment', { replace: true });
       return;
     }
+    // Prevent double booking if the component re-renders (e.g. React Strict Mode
+    // or state changes in parent).
+    if (bookedRef.current) return;
+    bookedRef.current = true;
 
     const createAppointment = async () => {
       try {
@@ -73,7 +78,7 @@ const AppointmentPayment = () => {
     };
 
     createAppointment();
-  }, [appointmentData, navigate, planAmount]);
+  }, [appointmentData, navigate]);
 
   const handlePaid = () => {
     setBooking(true);

@@ -193,6 +193,8 @@ const Appointment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+
     const errors = validate();
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -216,6 +218,7 @@ const Appointment = () => {
 
     // Paid plans require UPI payment before confirming the booking
     if (selectedPlan === 'Advance' || selectedPlan === 'Premium') {
+      setSubmitting(true);
       navigate('/appointment-payment', { state: { appointmentData } });
       return;
     }

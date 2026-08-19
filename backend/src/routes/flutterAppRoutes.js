@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 const Appointment = require('../models/Appointment');
+const MeetingSettings = require('../models/MeetingSettings');
 const Notification = require('../models/Notification');
 const OtpVerification = require('../models/OtpVerification');
 const CancelledDate = require('../models/CancelledDate');
@@ -665,6 +666,8 @@ router.post('/appointments', asyncHandler(async (req, res) => {
   }
 
   const refId = reference_number || `AVE${Date.now().toString(36).toUpperCase()}`;
+  const date = datetime.split(' ')[0] || '';
+  const selectedPlanLower = selected_plan.toLowerCase();
 
   // Calculate end time (add 30 minutes to start)
   const timeParts = time_slot.split(':');
@@ -675,6 +678,45 @@ router.post('/appointments', asyncHandler(async (req, res) => {
     const endH = m >= 60 ? h + 1 : h;
     const endM = m % 60;
     endTime = `${endH.toString().padStart(2, '0')}:${endM.toString().padStart(2, '0')}:00`;
+  }
+
+  // Idempotency: avoid duplicate bookings from double clicks / double effects.
+  // If the same contact already has an uncancelled appointment for the same
+  // plan, date, time slot and mode created within the last 2 minutes, return it.
+  const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+  const existing = await Appointment.findOne({
+    contact: contact.trim(),
+    selectedPlan: selectedPlanLower,
+    date,
+    timeSlot: time_slot,
+    mode,
+    meetingConfirm: { $ne: 'cancelled' },
+    createdAt: { $gte: twoMinutesAgo },
+  }).sort({ createdAt: -1 }).lean();
+
+  if (existing) {
+    const settings = await MeetingSettings.getSingleton();
+    return res.json({
+      status: 'success',
+      message: 'Appointment already booked',
+      reference_id: existing.referenceId || refId,
+      appointment: {
+        plan: selected_plan,
+        name: existing.name,
+        datetime,
+        time: existing.timeSlot,
+        mode: existing.mode,
+        start_time: existing.timeSlot,
+        end_time: endTime,
+        address: existing.address || '',
+        meeting_confirm: existing.meetingConfirm,
+        user_id: existing.userId || null,
+      },
+      current_prices: {
+        advance: String(settings.advancePrice),
+        premium: String(settings.premiumPrice),
+      },
+    });
   }
 
   const appointment = await Appointment.create({
@@ -694,7 +736,6 @@ router.post('/appointments', asyncHandler(async (req, res) => {
   });
 
   // Live prices from MeetingSettings
-  const MeetingSettings = require('../models/MeetingSettings');
   const settings = await MeetingSettings.getSingleton();
 
   res.json({
