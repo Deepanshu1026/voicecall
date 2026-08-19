@@ -28,7 +28,7 @@ const staticConsultants = [
   {
     id: 2,
     name: 'Priya Sharma',
-    avatar: '/images/user/userdemo.webp',
+    avatar: '/images/user/avatar.webp',
     expertise: 'Study Visa Expert • UK, Canada, Australia',
     language: 'English, Hindi, Punjabi',
     experience: '8',
@@ -40,7 +40,7 @@ const staticConsultants = [
   {
     id: 3,
     name: 'Rahul Verma',
-    avatar: '/images/user/userdemo.webp',
+    avatar: '/images/user/avatar.webp',
     expertise: 'Work Permit Specialist • Europe & USA',
     language: 'English, Hindi',
     experience: '7',
@@ -52,7 +52,7 @@ const staticConsultants = [
   {
     id: 4,
     name: 'Anjali Gupta',
-    avatar: '/images/user/userdemo.webp',
+    avatar: '/images/user/avatar.webp',
     expertise: 'Tourist Visa Advisor • Schengen & UK',
     language: 'English, Hindi',
     experience: '5',
@@ -64,7 +64,7 @@ const staticConsultants = [
   {
     id: 5,
     name: 'Sandeep Yadav',
-    avatar: '/images/user/userdemo.webp',
+    avatar: '/images/user/avatar.webp',
     expertise: 'Transit Visa & Documentation Expert',
     language: 'English, Hindi',
     experience: '6',
@@ -76,7 +76,7 @@ const staticConsultants = [
   {
     id: 6,
     name: 'Meera Iyer',
-    avatar: '/images/user/userdemo.webp',
+    avatar: '/images/user/avatar.webp',
     expertise: 'Family Visa & Settlement Expert',
     language: 'English, Hindi, Tamil',
     experience: '9',
@@ -88,7 +88,7 @@ const staticConsultants = [
   {
     id: 7,
     name: 'Amit Singh',
-    avatar: '/images/user/userdemo.webp',
+    avatar: '/images/user/avatar.webp',
     expertise: 'USA Visa & Interview Coach',
     language: 'English, Hindi',
     experience: '10',
@@ -100,7 +100,7 @@ const staticConsultants = [
   {
     id: 8,
     name: 'Neha Joshi',
-    avatar: '/images/user/userdemo.webp',
+    avatar: '/images/user/avatar.webp',
     expertise: 'Australia & New Zealand Visa Expert',
     language: 'English, Hindi, Marathi',
     experience: '4',
@@ -120,7 +120,7 @@ const getTier = (years) => {
 
 const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall }) => {
   const name = consultant.name || consultant.displayName || consultant.username;
-  const avatar = consultant.avatar?.url || consultant.avatar || '/images/user/userdemo.webp';
+  const avatar = consultant.avatar?.url || consultant.avatar || '/images/user/avatar.webp';
   const expertise = consultant.expertise || consultant.bio || 'Visa Consultant';
   const language = consultant.languages || consultant.language || 'English, Hindi';
   const experience = consultant.experience || '5';
@@ -148,7 +148,7 @@ const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall })
             alt={name}
             className="profile-img"
             onError={(e) => {
-              e.target.src = '/images/user/userdemo.webp';
+              e.target.src = '/images/user/avatar.webp';
             }}
           />
         </div>
@@ -438,7 +438,7 @@ const Consultants = () => {
     ? {
         name: user?.displayName || user?.username || 'User',
         phone: user?.email || '',
-        avatar: user?.avatar?.url || '/images/user/userdemo.webp',
+        avatar: user?.avatar?.url || '/images/user/avatar.webp',
       }
     : null;
 

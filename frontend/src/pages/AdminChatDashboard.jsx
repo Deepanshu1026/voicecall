@@ -64,6 +64,7 @@ const AdminChatDashboard = () => {
   const [search, setSearch] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState('');
+  const [brokenAvatars, setBrokenAvatars] = useState(new Set());
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const conversationsContainerRef = useRef(null);
@@ -330,8 +331,19 @@ const AdminChatDashboard = () => {
 
   const renderAvatar = (account, size = 36) => {
     const name = formatName(account);
-    if (account?.avatar) {
-      return <img src={getAvatarUrl(account)} alt={name} style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }} />;
+    const avatarUrl = account?.avatar ? getAvatarUrl(account) : null;
+    const avatarKey = account?._id || account?.id || account?.username || avatarUrl || name;
+    const isBroken = brokenAvatars.has(avatarKey);
+
+    if (avatarUrl && !isBroken) {
+      return (
+        <img
+          src={avatarUrl}
+          alt={name}
+          onError={() => setBrokenAvatars((prev) => new Set(prev).add(avatarKey))}
+          style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }}
+        />
+      );
     }
     return (
       <div

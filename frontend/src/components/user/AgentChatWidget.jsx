@@ -125,7 +125,7 @@ const AgentChatWidget = () => {
           agents.map((agent) => {
             const id = agent._id || agent.id;
             const name = agent.name || agent.displayName || agent.username || 'Agent';
-            const avatar = agent.avatar?.url || agent.avatar || '/images/user/userdemo.webp';
+            const avatar = agent.avatar?.url || agent.avatar || '/images/user/avatar.webp';
             const isOnline = isAuthenticated ? (isUserOnline ? isUserOnline(id) : false) : true;
             return (
               <div className="agent-chat-agent" key={id}>
@@ -135,7 +135,7 @@ const AgentChatWidget = () => {
                       src={avatar}
                       alt={name}
                       onError={(e) => {
-                        e.target.src = '/images/user/userdemo.webp';
+                        e.target.src = '/images/user/avatar.webp';
                       }}
                     />
                   </div>

@@ -49,18 +49,26 @@ export const getInitials = (name) => {
     .substring(0, 2);
 };
 
+const DEFAULT_AVATAR = '/images/user/avatar.webp';
+
 export const getAvatarUrl = (user) => {
-  if (!user) return null;
+  if (!user) return DEFAULT_AVATAR;
+  let avatar = null;
   if (user.avatar?.url) {
-    if (user.avatar.url.startsWith('http')) return user.avatar.url;
-    return user.avatar.url;
+    avatar = user.avatar.url;
+  } else if (typeof user.avatar === 'string' && user.avatar.trim()) {
+    avatar = user.avatar.trim();
   }
-  // Handle plain string avatar (used by SQL-imported users/employees)
-  if (typeof user.avatar === 'string' && user.avatar) {
-    if (user.avatar.startsWith('http')) return user.avatar;
-    return user.avatar.startsWith('/') ? user.avatar : '/' + user.avatar;
+  if (!avatar) return DEFAULT_AVATAR;
+
+  // Map old/default placeholder paths to the bundled default avatar
+  const lower = avatar.toLowerCase();
+  if (lower === 'img/userdemo.webp' || lower === '/img/userdemo.webp' || lower === '/images/user/userdemo.webp') {
+    return DEFAULT_AVATAR;
   }
-  return null;
+
+  if (avatar.startsWith('http')) return avatar;
+  return avatar.startsWith('/') ? avatar : '/' + avatar;
 };
 
 export const getDisplayName = (user) => {
