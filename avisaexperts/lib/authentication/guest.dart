@@ -62,12 +62,13 @@ class GuestService {
       if (data['token'] != null && data['token'].toString().trim().isNotEmpty) {
         savedToken = data['token'].toString().trim();
         await prefs.setString('auth_token', savedToken);
-      } else {
-        if (id != null) {
-          savedToken = await _fetchAndSendFcmToken(id);
-          if (savedToken != null && savedToken.isNotEmpty) {
-            await prefs.setString('auth_token', savedToken);
-          }
+      }
+
+      // Always register the FCM token for push notifications
+      if (id != null) {
+        final fcmToken = await _fetchAndSendFcmToken(id);
+        if (fcmToken != null && fcmToken.isNotEmpty) {
+          await prefs.setString('fcm_token', fcmToken);
         }
       }
 
