@@ -54,10 +54,15 @@ const fileFilter = (req, file, cb) => {
       cb(new Error('Only image files are allowed for profile pictures'), false);
     }
   } else {
-    if (allowedFileTypes.includes(file.mimetype)) {
+    // Be more permissive for chat/portal attachments: accept any image/video
+    // and any explicitly allowed type.
+    if (allowedFileTypes.includes(file.mimetype) ||
+        file.mimetype.startsWith('image/') ||
+        file.mimetype.startsWith('video/') ||
+        file.mimetype.startsWith('audio/')) {
       cb(null, true);
     } else {
-      cb(new Error('File type not supported'), false);
+      cb(new Error(`File type not supported: ${file.mimetype}`), false);
     }
   }
 };

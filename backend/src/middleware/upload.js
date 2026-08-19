@@ -14,7 +14,8 @@ const handleMulterError = (err, req, res, next) => {
   if (err.code === 'LIMIT_UNEXPECTED_FILE') {
     return res.status(400).json({ error: 'Invalid file field name.' });
   }
-  next(err);
+  // Handle file filter / other multer errors with a readable message.
+  return res.status(400).json({ error: err.message || 'File upload failed' });
 };
 
 module.exports = { uploadAvatar, uploadFile, uploadMultiple, handleMulterError };

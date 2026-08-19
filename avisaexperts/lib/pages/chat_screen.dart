@@ -20,6 +20,7 @@ import '../config/app_config.dart';
 import '../services/chat_socket_service.dart';
 import '../services/webrtc_call_service.dart';
 import '../models/app_notifiers.dart';
+import '../utils/image_url_resolver.dart';
 
 final logger = Logger(
   printer: PrettyPrinter(
@@ -899,14 +900,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               final isFromCurrentUser =
                   messageData['sender_id'].toString() == _currentUserId;
 
-              String? imageUrl;
-              String? filePath = messageData['file_path'];
-
-              if (filePath != null && filePath.isNotEmpty) {
-                filePath = filePath.replaceAll('\\', '/');
-                filePath = filePath.replaceFirst(RegExp(r'^/+'), '');
-                imageUrl = "${AppConfig.staticAssetBase}/$filePath";
+              String? rawFilePath = messageData['file_path']?.toString();
+              if (rawFilePath != null && rawFilePath.isNotEmpty) {
+                rawFilePath = rawFilePath.replaceAll('\\', '/');
               }
+              final String? imageUrl =
+                  (rawFilePath != null && rawFilePath.isNotEmpty)
+                      ? resolveImageUrl(rawFilePath)
+                      : null;
 
               MessageType messageType =
                   _getMessageTypeFromAPI(messageData['file_type']);
@@ -922,10 +923,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 type: messageType,
                 imageUrl: messageType == MessageType.image ? imageUrl : null,
                 fileName: messageData['file_name'] ??
-                    _extractFileNameFromPath(filePath) ??
+                    _extractFileNameFromPath(rawFilePath) ??
                     'File',
                 fileSize: null,
-                filePath: filePath,
+                filePath: rawFilePath,
                 isDelivered: true,
                 isRead: messageData['is_read'] == 'Yes' ||
                     messageData['status'] == 'Read',
@@ -1131,10 +1132,15 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     if (otherId != widget.advisorId) return;
 
     final isFromCurrentUser = senderId == _currentUserId;
-    final String? fileUrl = data['fileUrl']?.toString() ?? data['file_path']?.toString();
+    String? rawFileUrl = data['fileUrl']?.toString() ?? data['file_path']?.toString();
+    if (rawFileUrl != null && rawFileUrl.isNotEmpty) {
+      rawFileUrl = rawFileUrl.replaceAll('\\', '/');
+    }
     final String? mimeType = data['mimeType']?.toString() ?? data['file_type']?.toString();
     final MessageType messageType = _getMessageTypeFromAPI(mimeType);
-    final String? filePath = fileUrl != null ? fileUrl.replaceFirst('${AppConfig.staticAssetBase}/', '') : null;
+    final String? resolvedImageUrl = rawFileUrl != null && rawFileUrl.isNotEmpty
+        ? resolveImageUrl(rawFileUrl)
+        : null;
 
     final newMessage = ChatMessage(
       id: data['_id']?.toString() ?? data['id']?.toString() ?? 'socket_${DateTime.now().millisecondsSinceEpoch}',
@@ -1144,10 +1150,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       timestamp: DateTime.tryParse(data['createdAt']?.toString() ?? data['created_at']?.toString() ?? '') ?? DateTime.now(),
       isFromCurrentUser: isFromCurrentUser,
       type: messageType,
-      imageUrl: messageType == MessageType.image ? fileUrl : null,
-      fileName: data['fileName']?.toString() ?? data['file_name']?.toString() ?? _extractFileNameFromPath(filePath) ?? 'File',
+      imageUrl: messageType == MessageType.image ? resolvedImageUrl : null,
+      fileName: data['fileName']?.toString() ?? data['file_name']?.toString() ?? _extractFileNameFromPath(rawFileUrl) ?? 'File',
       fileSize: null,
-      filePath: filePath,
+      filePath: rawFileUrl,
       isDelivered: true,
       isRead: data['status']?.toString() == 'seen' || data['is_read']?.toString() == 'Yes',
     );
@@ -1156,10 +1162,16 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       final existingIndex = _messages.indexWhere((m) => m.id == newMessage.id);
       if (existingIndex != -1) {
         // Message already exists (e.g., temp promoted by send response). Update
-        // its delivery/read status instead of creating a duplicate bubble.
+        // its delivery/read status, and if the server now has a real file URL,
+        // replace the local temp path so images/files load after upload.
+        final bool hasServerFile =
+            newMessage.filePath != null && newMessage.filePath!.isNotEmpty;
         _messages[existingIndex] = _messages[existingIndex].copyWith(
           isDelivered: true,
           isRead: newMessage.isRead || _messages[existingIndex].isRead,
+          imageUrl: hasServerFile ? newMessage.imageUrl : _messages[existingIndex].imageUrl,
+          filePath: hasServerFile ? newMessage.filePath : _messages[existingIndex].filePath,
+          fileName: hasServerFile ? newMessage.fileName : _messages[existingIndex].fileName,
         );
         return;
       }
@@ -1175,6 +1187,9 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         if (pendingIndex != -1) {
           _messages[pendingIndex] = _messages[pendingIndex].copyWith(
             id: newMessage.id,
+            imageUrl: newMessage.imageUrl,
+            filePath: newMessage.filePath,
+            fileName: newMessage.fileName,
             isDelivered: true,
             isRead: newMessage.isRead,
             timestamp: newMessage.timestamp,
@@ -1300,7 +1315,11 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   void _previewFile(ChatMessage message) {
     if (message.filePath == null) return;
 
-    final String fileUrl = "${AppConfig.staticAssetBase}/${message.filePath!}";
+    final String rawPath = message.filePath!;
+    final bool isLocalFile = !rawPath.startsWith('http://') &&
+        !rawPath.startsWith('https://') &&
+        File(rawPath).existsSync();
+    final String fileUrl = isLocalFile ? rawPath : resolveImageUrl(rawPath);
     final String fileName = message.fileName ?? 'Document';
     final String extension = fileName.split('.').last.toLowerCase();
 
@@ -1313,7 +1332,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       case 'png':
       case 'gif':
       case 'webp':
-        _viewImageFullscreen(fileUrl, null);
+        _viewImageFullscreen(fileUrl, isLocalFile ? rawPath : null);
         break;
       case 'doc':
       case 'docx':
@@ -1535,8 +1554,20 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           setState(() {
             final index = _messages.indexWhere((m) => m.id == tempMessage.id);
             if (index != -1) {
+              String? resolvedImageUrl;
+              String? serverFilePath;
+              final String? serverFileUrl =
+                  response.data['fileUrl']?.toString();
+              if (serverFileUrl != null && serverFileUrl.isNotEmpty) {
+                serverFilePath = serverFileUrl;
+                if (type == MessageType.image) {
+                  resolvedImageUrl = resolveImageUrl(serverFileUrl);
+                }
+              }
               _messages[index] = _messages[index].copyWith(
                 id: realId,
+                imageUrl: resolvedImageUrl,
+                filePath: serverFilePath,
                 isDelivered: true,
                 timestamp: (createdAtStr != null ? DateTime.tryParse(createdAtStr) : null) ?? _messages[index].timestamp,
               );

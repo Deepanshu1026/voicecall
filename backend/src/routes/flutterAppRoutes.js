@@ -924,8 +924,8 @@ router.get('/chat/messages', asyncHandler(async (req, res) => {
 }));
 
 // Send a message (like PHP sendMessage.php)
-router.post('/chat/send', asyncHandler(async (req, res) => {
-  const { sender_id, receiver_id, message, file_path, file_type } = req.body;
+router.post('/chat/send', multerUpload.single('file'), handleMulterError, asyncHandler(async (req, res) => {
+  const { sender_id, receiver_id, message, file_path, file_type, file_name, file_size } = req.body;
   if (!sender_id || !receiver_id || !message) {
     return res.json({ success: false, message: 'sender_id, receiver_id, message required' });
   }
@@ -953,14 +953,42 @@ router.post('/chat/send', asyncHandler(async (req, res) => {
     });
   }
 
+  // Handle file upload (app sends the binary in the `file` field)
+  let fileUrl = file_path || '';
+  let finalFileName = file_name || '';
+  let finalFileSize = file_size || '';
+  let finalMimeType = file_type || '';
+  let filePublicId = null;
+  if (req.file) {
+    const originalName = req.file.originalname || finalFileName || 'file';
+    const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)$/i.test(originalName);
+    if (config.cloudinary.cloudName) {
+      const cloudResult = await uploadToCloudinary(req.file.path, {
+        folder: 'voicecall/chat',
+        resourceType: isImage ? 'image' : 'auto',
+      });
+      fileUrl = cloudResult.url;
+      filePublicId = cloudResult.publicId;
+    } else {
+      fileUrl = `/uploads/files/${req.file.filename}`;
+      filePublicId = req.file.filename;
+    }
+    finalFileName = originalName;
+    finalFileSize = req.file.size || finalFileSize;
+    finalMimeType = req.file.mimetype || finalMimeType;
+  }
+
   const msg = await Message.create({
     conversation: conv._id,
     sender: sId,
     recipient: rId,
-    type: file_path ? 'file' : 'text',
+    type: fileUrl ? 'file' : 'text',
     content: message || '',
-    fileUrl: file_path || undefined,
-    mimeType: file_type || undefined,
+    fileUrl: fileUrl || undefined,
+    fileName: finalFileName || undefined,
+    fileSize: finalFileSize || undefined,
+    mimeType: finalMimeType || undefined,
+    filePublicId: filePublicId || undefined,
     status: 'sent',
     'statusTimestamps.sent': new Date(),
   });
@@ -1003,7 +1031,7 @@ router.post('/chat/send', asyncHandler(async (req, res) => {
     conversationId: conv._id,
   }).catch((err) => console.error('[MessageNotification] push failed:', err.message));
 
-  res.json({ success: true, message_id: msg._id, created_at: msg.createdAt });
+  res.json({ success: true, message_id: msg._id, created_at: msg.createdAt, fileUrl });
 }));
 
 // Get users that have a chat history with the given agent/consultant
