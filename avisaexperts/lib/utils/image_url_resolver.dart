@@ -21,8 +21,14 @@ String resolveImageUrl(String? path, {String? fallbackUrl}) {
 
   String normalized = path.trim().replaceAll(r'\', '/');
 
-  // Already a valid network URL.
+  // Already a valid network URL. If it points at the old PHP domain, keep the
+  // path but switch to the new static host so the `/img/` alias works.
   if (normalized.startsWith('http://') || normalized.startsWith('https://')) {
+    final oldDomain = RegExp(r'^https?://avisaexperts\.com(\/.*)?$', caseSensitive: false);
+    final match = oldDomain.firstMatch(normalized);
+    if (match != null) {
+      return '${AppConfig.staticAssetBase}${match.group(1) ?? ''}';
+    }
     return normalized;
   }
 

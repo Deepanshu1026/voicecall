@@ -47,7 +47,15 @@ const avatarUrl = (avatar) => {
     return DEFAULT_AVATAR_URL;
   }
 
-  if (value.startsWith('http://') || value.startsWith('https://')) return value;
+  if (value.startsWith('http://') || value.startsWith('https://')) {
+    // If the old PHP domain is still in the stored value, keep the path but
+    // point it at the new static host so the file can be served by the alias.
+    const oldDomainMatch = value.match(/^https?:\/\/avisaexperts\.com(\/.*)?$/i);
+    if (oldDomainMatch) {
+      return `${config.serverUrl}${oldDomainMatch[1] || ''}`;
+    }
+    return value;
+  }
 
   // Old PHP site stored files under `img/`. Serve them from the new `/images/user/`.
   if (value.startsWith('img/') || value.startsWith('/img/')) {
