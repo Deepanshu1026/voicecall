@@ -1,4 +1,4 @@
-import '../config/app_config.dart';
+import '../utils/image_url_resolver.dart';
 
 class InboxEntry {
   final String agentId;
@@ -39,12 +39,7 @@ class InboxEntry {
 
   String? get fullProfileUrl {
     if (agentProfile.isEmpty) return null;
-    String imageUrl = agentProfile.replaceAll('\\', '/');
-      if (imageUrl.startsWith('http')) {
-        return imageUrl;
-      } else {
-        return '${AppConfig.staticAssetBase}/$imageUrl';
-      }
+    return resolveImageUrl(agentProfile);
   }
 
   String get messagePreview {

@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../appbar/common_widgets.dart';
 import '../config/app_config.dart';
+import '../utils/image_url_resolver.dart';
 // --- >>> ADDED: Import for ChatScreen <<< ---
 import 'chat_screen.dart'; // Assuming chat_screen.dart is in the same directory
 // --- <<< END ADDED >>> ---
@@ -39,7 +40,7 @@ class Advisor {
     required this.totalClients,
     required this.isOnline,
   });
-  factory Advisor.fromJson(Map<String, dynamic> json, String baseUrl) {
+  factory Advisor.fromJson(Map<String, dynamic> json) {
     int clients = int.tryParse(json['total_order']?.toString() ?? '0') ?? 0;
     List<String> languageList = (json['language'] as String? ?? '')
         .split(',')
@@ -51,17 +52,7 @@ class Advisor {
             'active';
     String experienceYears = json['experience']?.toString() ?? '0';
     String profilePath = json['user_profile'] as String? ?? '';
-    String fullImageUrl = '';
-    if (profilePath.isNotEmpty) {
-      profilePath = profilePath.replaceAll('\\', '/');
-      if (baseUrl.endsWith('/') && profilePath.startsWith('/')) {
-        fullImageUrl = baseUrl + profilePath.substring(1);
-      } else if (!baseUrl.endsWith('/') && !profilePath.startsWith('/')) {
-        fullImageUrl = '$baseUrl/$profilePath';
-      } else {
-        fullImageUrl = baseUrl + profilePath;
-      }
-    }
+    String fullImageUrl = resolveImageUrl(profilePath);
     return Advisor(
       id: json['id']?.toString() ?? '',
       name: json['user_name'] as String? ?? 'N/A',
@@ -76,9 +67,6 @@ class Advisor {
   }
 }
 // --- End Data Model ---
-
-// Base URL for images (from your paste-2.txt)
-const String BASE_IMAGE_URL = AppConfig.staticAssetBase;
 
 // --- Main Screen Widget (from your paste-2.txt) ---
 class AdvisorListScreen extends StatefulWidget {
@@ -215,7 +203,7 @@ class _AdvisorListScreenState extends State<AdvisorListScreen>
           for (var jsonItem in advisorDataList) {
             try {
               if (jsonItem is Map<String, dynamic>) {
-                fetchedAdvisors.add(Advisor.fromJson(jsonItem, BASE_IMAGE_URL));
+                fetchedAdvisors.add(Advisor.fromJson(jsonItem));
               } else {
                 log("Skipping invalid item: $jsonItem");
               }

@@ -24,11 +24,40 @@ const { getAccountById } = require('../utils/account');
 
 const FAR_FUTURE = new Date('2099-12-31T23:59:59.999Z');
 
-// Normalize avatar to a string URL
+const DEFAULT_AVATAR_URL = `${config.serverUrl}/images/user/avatar.webp`;
+
+// Normalize any avatar/path to a usable absolute URL. Migrated old PHP paths
+// like `img/...` and broken placeholders are remapped to the new static host.
 const avatarUrl = (avatar) => {
-  if (!avatar) return '';
-  if (typeof avatar === 'string') return avatar;
-  return avatar.url || '';
+  if (!avatar) return DEFAULT_AVATAR_URL;
+  let value = avatar;
+  if (typeof avatar === 'object') value = avatar.url || avatar.src || '';
+  if (typeof value !== 'string') return DEFAULT_AVATAR_URL;
+  value = value.trim().replace(/\\/g, '/');
+  if (!value) return DEFAULT_AVATAR_URL;
+
+  const lower = value.toLowerCase();
+  if (
+    lower === 'default_avatar.png' ||
+    lower === '/default_avatar.png' ||
+    lower === 'img/userdemo.webp' ||
+    lower === '/img/userdemo.webp' ||
+    lower === '/images/user/userdemo.webp'
+  ) {
+    return DEFAULT_AVATAR_URL;
+  }
+
+  if (value.startsWith('http://') || value.startsWith('https://')) return value;
+
+  // Old PHP site stored files under `img/`. Serve them from the new `/images/user/`.
+  if (value.startsWith('img/') || value.startsWith('/img/')) {
+    const fileName = value.replace(/^\/?img\//, '');
+    return `${config.serverUrl}/images/user/${fileName}`;
+  }
+
+  // Relative paths: prepend server root.
+  if (value.startsWith('/')) return `${config.serverUrl}${value}`;
+  return `${config.serverUrl}/${value}`;
 };
 
 // Resolve a string id to a MongoDB ObjectId. If it's already a valid ObjectId it is used
@@ -798,7 +827,7 @@ router.get('/reviews', asyncHandler(async (req, res) => {
       visa_type: r.visa_type || r.subtitle || r.visa || 'Visa',
       rating: String(r.rating ?? r.stars ?? 5.0),
       story: r.story || r.description || r.desc || r.content || '',
-      user_image: r.user_image || r.imageUrl || r.image || r.photo || '',
+      user_image: avatarUrl(r.user_image || r.imageUrl || r.image || r.photo || ''),
     })),
   });
 }));
@@ -1041,7 +1070,7 @@ router.get('/users-all-data', asyncHandler(async (req, res) => {
     const lastMessageTime = lastMsg ? lastMsg.createdAt : null;
     const unreadCount = unreadByConversation.get(conv._id.toString()) || 0;
 
-    const agentProfile = (user.avatar && typeof user.avatar === 'object' ? user.avatar.url : user.avatar) || '';
+    const agentProfile = avatarUrl(user.avatar);
 
     result.push({
       id: user.sqlId ? user.sqlId.toString() : user._id.toString(),

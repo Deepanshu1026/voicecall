@@ -63,7 +63,7 @@ class AppConfig {
   static String get updateCountryCode => '$flutterApiBase/update-country-code'; // was appupdatecountrycode.php
   static String get instaApiKey => '$flutterApiBase/insta-api-key';          // was instaapi.php
 
-  // Static assets host (kept for non-API image URLs the app may still reference)
-  // Point this to the domain serving the old PHP site assets.
-  static const String staticAssetBase = 'https://avisaexperts.com';
+  // Static assets host. The new backend also serves the React public images.
+  // Point this to the root of the backend domain so old `img/...` paths resolve.
+  static const String staticAssetBase = 'https://voicecall-6ylg.onrender.com';
 }

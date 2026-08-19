@@ -18,6 +18,7 @@ import '../appbar/common_widgets.dart';
 import '../navigation/main_navigation_screen.dart';
 import '../widget/chatbox.dart';
 import '../widget/promotion_video.dart';
+import '../utils/image_url_resolver.dart';
 // import 'appointment_booking_page.dart';
 import 'advisor_list_screen.dart';
 import '../config/app_config.dart';
@@ -1338,8 +1339,7 @@ class _HomeScreenState extends State<HomeScreen>
                           jsonItem['rating']?.toString() ?? '5.0') ??
                       5.0,
                   storySnippet: jsonItem['story'] ?? 'Success story',
-                  userImageUrl: jsonItem['user_image'] ??
-                      '${AppConfig.staticAssetBase}/img/default_user.webp',
+                  userImageUrl: resolveImageUrl(jsonItem['user_image'] as String?),
                 );
               } else {
                 logger.w(

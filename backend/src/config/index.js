@@ -5,6 +5,7 @@ const fs = require('fs');
 module.exports = {
   port: process.env.PORT || 5002,
   nodeEnv: process.env.NODE_ENV || 'development',
+  serverUrl: (process.env.SERVER_URL || 'https://voicecall-6ylg.onrender.com').replace(/\/+$/, ''),
   mongodbUri: (() => {
     const uri = process.env.MONGODB_URI || '';
     // Force the correct production database name regardless of env var

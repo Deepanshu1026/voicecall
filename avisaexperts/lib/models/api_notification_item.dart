@@ -3,7 +3,7 @@ import 'dart:developer';
 
 import 'package:intl/intl.dart';
 
-import '../config/app_config.dart';
+import '../utils/image_url_resolver.dart';
 
 class ApiNotificationItem {
   final String id;
@@ -57,10 +57,7 @@ class ApiNotificationItem {
 
   String? get fullImageUrl {
     if (mediaPath != null && mediaPath!.isNotEmpty) {
-      if (mediaPath!.startsWith('http://') || mediaPath!.startsWith('https://')) {
-        return mediaPath;
-      }
-      return "${AppConfig.staticAssetBase}/$mediaPath";
+      return resolveImageUrl(mediaPath);
     }
     return null;
   }

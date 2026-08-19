@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import '../config/app_config.dart';
+import '../utils/image_url_resolver.dart';
 
 class ConsultantData {
   final String userId;
@@ -46,12 +46,7 @@ class ConsultantData {
 
   String? get fullProfileUrl {
     if (profile.isEmpty) return null;
-    String imageUrl = profile.replaceAll('\\', '/');
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
-    } else {
-      return '${AppConfig.staticAssetBase}/$imageUrl';
-    }
+    return resolveImageUrl(profile);
   }
 
   Future<void> saveToPrefs() async {
@@ -143,12 +138,7 @@ class ConsultantUserItem {
 
   String? get fullProfileUrl {
     if (userProfile.isEmpty) return null;
-    String imageUrl = userProfile.replaceAll('\\', '/');
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
-    } else {
-      return '${AppConfig.staticAssetBase}/$imageUrl';
-    }
+    return resolveImageUrl(userProfile);
   }
 
   String get timeFormatted {
