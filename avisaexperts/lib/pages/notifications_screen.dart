@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http; // For API calls
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert'; // For jsonDecode
 import 'dart:async'; // For Future, async
 
@@ -37,8 +38,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       _errorMessage = null;
     });
 
-    // Your API endpoint for fetching notifications
-    final url = Uri.parse(AppConfig.notifications);
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('userId') ?? prefs.getString('user_id');
+    if (userId == null || userId.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _notifications = [];
+          _isLoading = false;
+          _errorMessage = 'User not logged in.';
+        });
+      }
+      return;
+    }
+
+    // Always scope notifications to the current user so old global notifications
+    // do not appear for newly created users.
+    final url = Uri.parse('${AppConfig.notifications}?user_id=$userId&limit=50');
     print("NotificationsScreen: Fetching notifications from $url");
 
     try {
@@ -142,6 +157,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           _notifications = []; // Clear any old notifications on error
         });
       }
+    }
+  }
+
+  // --- Mark a single notification as read ---
+  Future<void> _markAsRead(String id) async {
+    try {
+      final url = Uri.parse('${AppConfig.notifications}/$id/read');
+      final response = await http.patch(url).timeout(const Duration(seconds: 10));
+      print('NotificationsScreen: mark read status ${response.statusCode}');
+    } catch (e) {
+      print('NotificationsScreen: Failed to mark as read: $e');
     }
   }
 
@@ -420,6 +446,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
+                                        _markAsRead(notification.id);
+                                        // Optimistically mark as read in the local list
+                                        setState(() {
+                                          _notifications = _notifications.map((n) {
+                                            if (n.id == notification.id) {
+                                              return ApiNotificationItem(
+                                                id: n.id,
+                                                title: n.title,
+                                                message: n.message,
+                                                mediaPath: n.mediaPath,
+                                                dateStr: n.dateStr,
+                                                timeStr: n.timeStr,
+                                                type: n.type,
+                                                isRead: true,
+                                                link: n.link,
+                                              );
+                                            }
+                                            return n;
+                                          }).toList();
+                                        });
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           SnackBar(

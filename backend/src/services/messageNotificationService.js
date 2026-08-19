@@ -1,5 +1,6 @@
 const pushNotificationService = require('./pushNotificationService');
 const FcmToken = require('../models/FcmToken');
+const Notification = require('../models/Notification');
 const { getAccountById } = require('../utils/account');
 
 const DEFAULT_AVATAR_PATH = '/images/user/avatar.webp';
@@ -40,6 +41,27 @@ function buildMessageBody(message) {
   return (message.content || '').trim().substring(0, 100) || 'New message';
 }
 
+async function createChatNotification({ recipientId, sender, message, conversationId }) {
+  try {
+    const senderDoc = sender?._id
+      ? sender
+      : await getAccountById(sender || message.sender, 'displayName username');
+    const senderName = senderDoc?.displayName || senderDoc?.username || senderDoc?.name || 'Someone';
+    const body = buildMessageBody(message);
+
+    await Notification.create({
+      userId: recipientId,
+      title: `New message from ${senderName}`,
+      message: body,
+      type: 'chat',
+      link: conversationId ? conversationId.toString() : '',
+      isRead: false,
+    });
+  } catch (err) {
+    console.error('[MessageNotification] in-app notification failed:', err.message);
+  }
+}
+
 async function notifyMessageReceived({ recipientId, sender, message, conversationId }) {
   if (!recipientId || !message) {
     return { success: false, error: 'Missing recipient or message' };
@@ -48,6 +70,9 @@ async function notifyMessageReceived({ recipientId, sender, message, conversatio
   if (message.isSystemMessage) {
     return { success: false, error: 'System message skipped' };
   }
+
+  // Always create an in-app notification record for the recipient
+  await createChatNotification({ recipientId, sender, message, conversationId });
 
   const fcm = pushNotificationService.isConfigured();
   if (!fcm) {

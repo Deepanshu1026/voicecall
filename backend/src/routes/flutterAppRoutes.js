@@ -539,9 +539,37 @@ router.post('/tickets', asyncHandler(async (req, res) => {
 // ==================== NOTIFICATIONS ====================
 
 router.get('/notifications', asyncHandler(async (req, res) => {
-  const { user_id } = req.query;
-  const filter = user_id ? { $or: [{ userId: user_id }, { userId: { $exists: false } }] } : {};
-  const notifications = await Notification.find(filter).sort({ createdAt: -1 }).lean();
+  const { user_id, page = 1, limit = 20 } = req.query;
+  if (!user_id) {
+    return res.json({ success: true, notifications: [], message: 'user_id is required' });
+  }
+
+  // Find the user (or employee) so we can exclude global notifications created before they joined
+  const account =
+    (await User.findById(user_id).select('createdAt').lean()) ||
+    (await Employee.findById(user_id).select('createdAt').lean());
+  if (!account) {
+    return res.json({ success: true, notifications: [] });
+  }
+
+  const joinedAt = account.createdAt || new Date(0);
+  const filter = {
+    $or: [
+      { userId: user_id },
+      // Global notifications only if created after the user joined the platform
+      { userId: { $exists: false }, createdAt: { $gte: joinedAt } },
+    ],
+  };
+
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const limitNum = Math.min(Math.max(parseInt(limit, 10) || 20, 1), 100);
+  const skip = (pageNum - 1) * limitNum;
+
+  const [notifications, total] = await Promise.all([
+    Notification.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
+    Notification.countDocuments(filter),
+  ]);
+
   const data = notifications.map((n) => ({
     id: n._id,
     title: n.title,
@@ -554,7 +582,17 @@ router.get('/notifications', asyncHandler(async (req, res) => {
     time: n.createdAt ? new Date(n.createdAt).toTimeString().split(' ')[0] : '',
     created_at: n.createdAt,
   }));
-  res.json({ success: true, notifications: data });
+
+  res.json({
+    success: true,
+    notifications: data,
+    pagination: {
+      page: pageNum,
+      limit: limitNum,
+      total,
+      pages: Math.ceil(total / limitNum),
+    },
+  });
 }));
 
 // Mark notification as read
