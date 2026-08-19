@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:email_validator/email_validator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_messaging/firebase_messaging.dart'; // <-- Added for FCM
 import 'dart:convert';
+
+import '../services/fcm_service.dart';
 import 'dart:async';
 
 import '../appbar/common_widgets.dart';
@@ -295,22 +296,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   // --- FCM TOKEN SAVE FUNCTION ---
   Future<void> handleLoginSuccessFCM(String userId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userId', userId);
-
-    // Get FCM Token
-    String? fcmToken = await FirebaseMessaging.instance.getToken();
-    debugPrint("✅ FCM Token after login: $fcmToken");
-
-    final response = await http.post(
-      Uri.parse(AppConfig.fcmToken),
-      body: {
-        'token': fcmToken,
-        'device': 'android',
-        'user_id': userId,
-      },
-    );
-    debugPrint("📡 Token sent to server: ${response.body}");
+    await FCMService.sendTokenToServer(userId: userId);
   }
   // --- END FCM TOKEN SAVE FUNCTION ---
 

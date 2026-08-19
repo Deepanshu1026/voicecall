@@ -99,6 +99,8 @@ class FCMService {
       if (token != null) {
         await _saveToken(token);
       }
+      // Sync token on startup in case it was refreshed while the app was closed
+      await sendTokenToServer();
       _listenToTokenRefresh();
     } catch (e) {
       debugPrint('❌ FCM token error: $e');
@@ -510,8 +512,8 @@ class FCMService {
         FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
       debugPrint('🔄 FCM token refreshed: $newToken');
       await _saveToken(newToken);
-      // Optionally send new token to your backend here:
-      // await _sendTokenToServer(newToken);
+      // Sync the refreshed token to the backend automatically
+      await sendTokenToServer();
     }, onError: (e) {
       debugPrint('❌ Token refresh stream error: $e');
     });
@@ -524,6 +526,60 @@ class FCMService {
       await prefs.setString(_prefsKeyLastToken, token);
     } catch (e) {
       debugPrint('❌ Failed to persist FCM token: $e');
+    }
+  }
+
+  /// ✅ PUBLIC: Send the current FCM token to the backend.
+  /// Called on login, guest creation, app startup, and token refresh.
+  static Future<bool> sendTokenToServer({String? userId}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final effectiveUserId = userId ??
+          prefs.getString('user_id') ??
+          prefs.getString('userId') ??
+          prefs.getString('USER_ID');
+
+      if (effectiveUserId == null || effectiveUserId.isEmpty) {
+        debugPrint('⚠️ No user_id available, skipping FCM token sync');
+        return false;
+      }
+
+      final token = await getToken();
+      if (token == null || token.isEmpty) {
+        debugPrint('⚠️ FCM token is null/empty, skipping server sync');
+        return false;
+      }
+
+      // Avoid duplicate calls if the same token is already synced for the same user
+      final lastToken = prefs.getString(_prefsKeyLastToken);
+      final lastUserId = prefs.getString('fcm_last_user_id');
+      if (lastToken == token && lastUserId == effectiveUserId) {
+        debugPrint('📡 FCM token already synced for user $effectiveUserId, skipping');
+        return true;
+      }
+
+      final resp = await http.post(
+        Uri.parse(AppConfig.fcmToken),
+        body: {
+          'token': token,
+          'device': Platform.isAndroid ? 'android' : 'ios',
+          'user_id': effectiveUserId,
+        },
+      ).timeout(const Duration(seconds: 15));
+
+      if (resp.statusCode == 200) {
+        await _saveToken(token);
+        await prefs.setString('fcm_last_user_id', effectiveUserId);
+        await prefs.setString('fcm_token', token);
+        debugPrint('📡 FCM token synced to server: ${resp.body}');
+        return true;
+      } else {
+        debugPrint('❌ Failed to sync FCM token: HTTP ${resp.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ Error syncing FCM token: $e');
+      return false;
     }
   }
 

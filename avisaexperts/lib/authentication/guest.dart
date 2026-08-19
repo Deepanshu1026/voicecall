@@ -1,14 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../config/app_config.dart';
+import '../services/fcm_service.dart';
 
 class GuestService {
   static String get endpoint => AppConfig.guest;
-  static String get saveTokenEndpoint => AppConfig.fcmToken;
 
   static Future<Map<String, dynamic>> createGuestUser() async {
     try {
@@ -66,10 +64,7 @@ class GuestService {
 
       // Always register the FCM token for push notifications
       if (id != null) {
-        final fcmToken = await _fetchAndSendFcmToken(id);
-        if (fcmToken != null && fcmToken.isNotEmpty) {
-          await prefs.setString('fcm_token', fcmToken);
-        }
+        await FCMService.sendTokenToServer(userId: id);
       }
 
       final dynamic savedIdValue = prefs.get('userId') ?? prefs.get('user_id');
@@ -94,49 +89,6 @@ class GuestService {
       };
     } catch (e) {
       return {'success': false, 'message': e.toString()};
-    }
-  }
-
-  static Future<String?> _fetchAndSendFcmToken(String userId) async {
-    try {
-      final String? fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken == null || fcmToken.trim().isEmpty) {
-        // ignore: avoid_print
-        print('⚠️ FCM token is null/empty');
-        return null;
-      }
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('fcm_token', fcmToken);
-
-      final resp = await http.post(
-        Uri.parse(saveTokenEndpoint),
-        body: {
-          'token': fcmToken,
-          'device': Platform.isAndroid ? 'android' : 'ios',
-          'user_id': userId.toString(),
-        },
-      ).timeout(const Duration(seconds: 15));
-
-      if (resp.statusCode == 200) {
-        try {
-          final Map<String, dynamic> res = json.decode(resp.body);
-          // ignore: avoid_print
-          print('📡 save_token response: $res');
-        } catch (_) {
-          // ignore: avoid_print
-          print('📡 save_token raw response: ${resp.body}');
-        }
-        return fcmToken;
-      } else {
-        // ignore: avoid_print
-        print('❌ save_token failed HTTP ${resp.statusCode}');
-        return fcmToken;
-      }
-    } catch (e) {
-      // ignore: avoid_print
-      print('❌ Error fetching/sending FCM token: $e');
-      return null;
     }
   }
 
