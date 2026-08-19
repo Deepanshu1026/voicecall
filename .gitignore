@@ -106,3 +106,6 @@ jspm_packages/
 # Nested legacy project
 avisaexperts17july/
 
+# SQL dumps / data imports
+*.sql
+
