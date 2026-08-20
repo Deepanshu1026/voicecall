@@ -81,6 +81,8 @@ app.use((req, res, next) => {
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 // Alias old PHP site `/img/` paths to the bundled React images folder.
 app.use('/img', express.static(path.join(__dirname, '..', '..', 'frontend', 'public', 'images', 'user')));
+// Serve the bundled React images folder directly so the app can load `/images/user/...`.
+app.use('/images/user', express.static(path.join(__dirname, '..', '..', 'frontend', 'public', 'images', 'user')));
 
 const limiter = rateLimit({
   windowMs: config.rateLimit.windowMs,
