@@ -2950,51 +2950,19 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                     },
                   ),
                   Expanded(
-                    child: Focus(
-                      onKeyEvent: (FocusNode node, KeyEvent event) {
-                        if (event is KeyDownEvent &&
-                            event.logicalKey == LogicalKeyboardKey.enter) {
-                          if (HardwareKeyboard.instance.isShiftPressed) {
-                            // Shift+Enter inserts a newline at the cursor.
-                            final text = _messageController.text;
-                            final selection = _messageController.selection;
-                            final newText = text.replaceRange(
-                                selection.start, selection.end, '\n');
-                            final newOffset = selection.start + 1;
-                            _messageController.value = TextEditingValue(
-                              text: newText,
-                              selection: TextSelection.collapsed(
-                                  offset: newOffset),
-                            );
-                            return KeyEventResult.handled;
-                          }
-                          if (_messageController.text.trim().isNotEmpty) {
-                            _sendMessage();
-                          }
-                          return KeyEventResult.handled;
-                        }
-                        return KeyEventResult.ignored;
-                      },
-                      child: TextField(
-                        controller: _messageController,
-                        focusNode: _messageFocusNode,
-                        style: const TextStyle(color: Colors.black87),
-                        decoration: const InputDecoration(
-                          hintText: 'Type a message',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(vertical: 10),
-                        ),
-                        maxLines: 5,
-                        minLines: 1,
-                        textCapitalization: TextCapitalization.sentences,
-                        textInputAction: TextInputAction.send,
-                        onSubmitted: (_) {
-                          if (_messageController.text.trim().isNotEmpty) {
-                            _sendMessage();
-                          }
-                        },
+                    child: TextField(
+                      controller: _messageController,
+                      focusNode: _messageFocusNode,
+                      style: const TextStyle(color: Colors.black87),
+                      decoration: const InputDecoration(
+                        hintText: 'Type a message',
+                        hintStyle: TextStyle(color: Colors.grey),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 10),
                       ),
+                      maxLines: 5,
+                      minLines: 1,
+                      textCapitalization: TextCapitalization.sentences,
                     ),
                   ),
                   IconButton(
