@@ -966,7 +966,7 @@ router.get('/chat/messages', asyncHandler(async (req, res) => {
 
 // Send a message (like PHP sendMessage.php)
 router.post('/chat/send', multerUpload.single('file'), handleMulterError, asyncHandler(async (req, res) => {
-  const { sender_id, receiver_id, message, file_path, file_type, file_name, file_size } = req.body;
+  const { sender_id, receiver_id, message, file_path, file_type, file_name, file_size, reply_to_id } = req.body;
   if (!sender_id || !receiver_id || !message) {
     return res.json({ success: false, message: 'sender_id, receiver_id, message required' });
   }
@@ -1011,13 +1011,15 @@ router.post('/chat/send', multerUpload.single('file'), handleMulterError, asyncH
       fileUrl = cloudResult.url;
       filePublicId = cloudResult.publicId;
     } else {
-      fileUrl = `/uploads/files/${req.file.filename}`;
+      fileUrl = `${config.serverUrl}/uploads/files/${req.file.filename}`;
       filePublicId = req.file.filename;
     }
     finalFileName = originalName;
     finalFileSize = req.file.size || finalFileSize;
     finalMimeType = req.file.mimetype || finalMimeType;
   }
+
+  const replyToId = reply_to_id ? await resolveId(reply_to_id) : null;
 
   const msg = await Message.create({
     conversation: conv._id,
@@ -1030,6 +1032,7 @@ router.post('/chat/send', multerUpload.single('file'), handleMulterError, asyncH
     fileSize: finalFileSize || undefined,
     mimeType: finalMimeType || undefined,
     filePublicId: filePublicId || undefined,
+    replyTo: replyToId || undefined,
     status: 'sent',
     'statusTimestamps.sent': new Date(),
   });
@@ -1040,6 +1043,11 @@ router.post('/chat/send', multerUpload.single('file'), handleMulterError, asyncH
   if (unreadEntry) unreadEntry.count += 1;
   else conv.unreadCount.push({ user: rId, count: 1 });
   await conv.save();
+
+  // Populate replyTo so clients receive the quoted text in real-time
+  if (msg.replyTo) {
+    await msg.populate('replyTo');
+  }
 
   // Emit socket event for real-time
   if (req.io) {

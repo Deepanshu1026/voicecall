@@ -289,7 +289,7 @@ const sendMessage = asyncHandler(async (req, res) => {
       fileData = {
         fileName: originalName,
         fileSize: req.file.size || fileSize,
-        fileUrl: `/uploads/files/${req.file.filename}`,
+        fileUrl: `${config.serverUrl}/uploads/files/${req.file.filename}`,
         filePublicId: req.file.filename,
         mimeType: req.file.mimetype || mimeType,
       };
