@@ -55,13 +55,14 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
   }, [conversation?._id, recipientId, sending, emit, replyingTo, chat, onCancelReply]);
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage(message);
-    }
-    if (e.key === 'Enter' && e.shiftKey) {
+    const isEnter = e.key === 'Enter' || e.key === 'NumpadEnter';
+    if (!isEnter || e.isComposing || e.repeat) return;
+    if (e.shiftKey) {
       // Shift+Enter: let the default newline behavior happen (textarea handles it)
+      return;
     }
+    e.preventDefault();
+    handleSendMessage(message);
   };
 
   const handleFileSelect = async (e) => {
@@ -145,6 +146,7 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
             placeholder="Type your message here..."
             rows={1}
             disabled={sending}
+            enterKeyHint="send"
             className="flex-1 resize-none border border-gray-300 rounded-2xl px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#001E74] max-h-32"
           />
 
@@ -236,6 +238,7 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
           rows={1}
           className="flex-1 resize-none bg-transparent border-0 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none max-h-32"
           disabled={sending}
+          enterKeyHint="send"
           style={{ lineHeight: '1.4' }}
           onInput={(e) => {
             e.target.style.height = 'auto';
