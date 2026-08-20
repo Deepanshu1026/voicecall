@@ -3173,15 +3173,6 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                           textCapitalization: TextCapitalization.sentences,
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.attach_file, color: Colors.grey[600]),
-                        onPressed: _showAttachmentOptions,
-                      ),
-                      if (_messageController.text.trim().isEmpty)
-                        IconButton(
-                          icon: Icon(Icons.camera_alt, color: Colors.grey[600]),
-                          onPressed: _takePhoto,
-                        ),
                     ],
                   ),
                 ),
