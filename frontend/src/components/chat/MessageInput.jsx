@@ -55,7 +55,11 @@ const MessageInput = ({ conversation, chat, replyingTo, onCancelReply, recipient
   }, [conversation?._id, recipientId, sending, emit, replyingTo, chat, onCancelReply]);
 
   const handleKeyDown = (e) => {
-    const isEnter = e.key === 'Enter' || e.key === 'NumpadEnter';
+    const isEnter =
+      e.key === 'Enter' ||
+      e.key === 'NumpadEnter' ||
+      e.keyCode === 13 ||
+      e.which === 13;
     if (!isEnter || e.isComposing || e.repeat) return;
     if (e.shiftKey) {
       // Shift+Enter: let the default newline behavior happen (textarea handles it)
