@@ -13,7 +13,7 @@ const AgentDailyLogins = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ current_page: 1, total_pages: 1, total_records: 0 });
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(isAdmin ? '' : new Date().toISOString().split('T')[0]);
   const [search, setSearch] = useState('');
 
   const fetchLogins = async (p, d, s) => {
