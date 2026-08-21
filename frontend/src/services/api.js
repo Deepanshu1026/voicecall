@@ -203,6 +203,7 @@ export const agentPortalAPI = {
   checkContactHistory: (contact) => api.get('/agent-portal/contact-history', { params: { contact } }),
   getPendingRemarks: () => api.get('/agent-portal/pending-remarks'),
   getDailyLogins: (page, date, search) => api.get('/agent-portal/daily-logins', { params: { page, date, search } }),
+  getNewUsers: (page, date, search) => api.get('/agent-portal/new-users', { params: { page, date, search } }),
   getAppointments: (page, date, search) => api.get('/agent-portal/appointments', { params: { page, date, search } }),
   getApplicationsList: (page, date, search) => api.get('/agent-portal/applications-list', { params: { page, date, search } }),
 };

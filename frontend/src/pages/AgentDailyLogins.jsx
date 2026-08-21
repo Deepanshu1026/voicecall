@@ -20,13 +20,14 @@ const AgentDailyLogins = () => {
     try {
       setLoading(true);
       const pageNum = p || page;
-      const dateStr = isAdmin ? null : d || date;
+      const dateStr = d || date;
       const searchStr = isAdmin ? s || search : '';
-      const res = await agentPortalAPI.getDailyLogins(pageNum, dateStr, searchStr);
+      const apiCall = isAdmin ? agentPortalAPI.getNewUsers : agentPortalAPI.getDailyLogins;
+      const res = await apiCall(pageNum, dateStr, searchStr);
       setLogins(res.data.data || []);
       setPagination(res.data.pagination || { current_page: pageNum, total_pages: 1, total_records: 0 });
     } catch (err) {
-      toast.error('Failed to load logins');
+      toast.error(isAdmin ? 'Failed to load new users' : 'Failed to load logins');
       console.error(err);
     } finally {
       setLoading(false);
@@ -41,7 +42,7 @@ const AgentDailyLogins = () => {
     const d = e.target.value;
     setDate(d);
     setPage(1);
-    fetchLogins(1, d, '');
+    fetchLogins(1, d, isAdmin ? search : '');
   };
 
   const handleSearchChange = (e) => {
@@ -60,7 +61,7 @@ const AgentDailyLogins = () => {
   const renderPagination = () => {
     const total = pagination.total_pages || 1;
     const current = pagination.current_page || 1;
-    const go = (p) => { setPage(p); fetchLogins(p, date); };
+    const go = (p) => { setPage(p); fetchLogins(p, date, isAdmin ? search : ''); };
 
     const pages = [];
     const range = 2;
@@ -102,10 +103,10 @@ const AgentDailyLogins = () => {
       <div className="page-header d-flex justify-content-between align-items-center mb-4">
         <div>
           <h3 style={{ fontSize: '1.75rem', fontWeight: 600, color: '#1a202c', margin: 0 }}>
-            {isAdmin ? 'All Logins' : 'Daily Logins'}
+            {isAdmin ? 'New Users' : 'Daily Logins'}
           </h3>
           <p style={{ color: '#718096', margin: '4px 0 0 0', fontSize: '0.95rem' }}>
-            {isAdmin ? 'All user login records.' : 'Agent login history.'}
+            {isAdmin ? 'All newly registered users with details.' : 'Agent login history.'}
           </p>
         </div>
         <button className="agent-btn agent-btn-outline-dark" onClick={() => navigate('/agent/dashboard')}>
@@ -116,20 +117,16 @@ const AgentDailyLogins = () => {
       {/* Filter */}
       <div className="agent-card" style={{ padding: '16px 24px', marginBottom: '24px' }}>
         <div className="d-flex align-items-center gap-3 flex-wrap">
-          {!isAdmin && (
-            <>
-              <label style={{ fontWeight: 500, fontSize: '0.9rem', color: '#64748b', whiteSpace: 'nowrap' }}>
-                <i className="bi bi-calendar3 me-2" />Date:
-              </label>
-              <input
-                type="date"
-                className="form-control"
-                style={{ maxWidth: '250px', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '0.5rem 1rem' }}
-                value={date}
-                onChange={handleDateChange}
-              />
-            </>
-          )}
+          <label style={{ fontWeight: 500, fontSize: '0.9rem', color: '#64748b', whiteSpace: 'nowrap' }}>
+            <i className="bi bi-calendar3 me-2" />Date:
+          </label>
+          <input
+            type="date"
+            className="form-control"
+            style={{ maxWidth: '250px', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '0.5rem 1rem' }}
+            value={date}
+            onChange={handleDateChange}
+          />
           {isAdmin && (
             <>
               <label style={{ fontWeight: 500, fontSize: '0.9rem', color: '#64748b', whiteSpace: 'nowrap' }}>
@@ -151,7 +148,7 @@ const AgentDailyLogins = () => {
       {/* Table */}
       <div className="agent-card">
         <div className="agent-card-header">
-          <h3>Login Records</h3>
+          <h3>{isAdmin ? 'New User Records' : 'Login Records'}</h3>
           <span className="text-muted" style={{ fontSize: '0.85rem' }}>
             Total: <strong>{pagination.total_records}</strong>
           </span>
@@ -171,18 +168,19 @@ const AgentDailyLogins = () => {
                     <th>User Name</th>
                     <th>Email</th>
                     <th>Mobile</th>
-                    <th>Login From</th>
-                    <th>Login Time</th>
+                    {isAdmin && <th>Country</th>}
+                    <th>{isAdmin ? 'Source' : 'Login From'}</th>
+                    <th>{isAdmin ? 'Registered At' : 'Login Time'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {logins.length === 0 ? (
                     <tr>
-                      <td colSpan={6}>
+                      <td colSpan={isAdmin ? 7 : 6}>
                         <div className="agent-empty">
                           <i className="bi bi-inbox" />
-                          <div className="fw-semibold">No logins found</div>
-                          <div className="small">No records for this date.</div>
+                          <div className="fw-semibold">{isAdmin ? 'No new users found' : 'No logins found'}</div>
+                          <div className="small">{isAdmin ? 'No registered users match this filter.' : 'No records for this date.'}</div>
                         </div>
                       </td>
                     </tr>
@@ -192,7 +190,8 @@ const AgentDailyLogins = () => {
                         <td style={{ color: '#718096', fontSize: '0.85rem' }}>{(pagination.current_page - 1) * 10 + idx + 1}</td>
                         <td><span className="fw-semibold">{login.user_name}</span></td>
                         <td>{login.user_email}</td>
-                        <td>{login.user_mobile || 'N/A'}</td>
+                        <td>{login.country_code ? `+${login.country_code} ${login.user_mobile || ''}` : (login.user_mobile || 'N/A')}</td>
+                        {isAdmin && <td>{login.country_code ? `+${login.country_code}` : 'N/A'}</td>}
                         <td>
                           <span className={`badge bg-${login.login_from === 'app' ? 'info' : 'secondary'} text-white`} style={{ padding: '0.35em 0.6em', fontSize: '0.75rem', borderRadius: '6px' }}>
                             {login.login_from}

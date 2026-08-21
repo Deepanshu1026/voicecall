@@ -178,6 +178,15 @@ exports.getDailyLogins = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, ...data });
 });
 
+exports.getNewUsers = asyncHandler(async (req, res) => {
+  await resolveContext(req, { allowAdmin: true });
+  const page = parseInt(req.query.page, 10) || 1;
+  const date = req.query.date || null;
+  const search = req.query.search || '';
+  const data = await agentPortalService.getDailyLogins(page, date, search);
+  res.status(200).json({ success: true, ...data });
+});
+
 const formatDate = (dateValue) => {
   if (!dateValue) return '';
   if (dateValue instanceof Date) {
