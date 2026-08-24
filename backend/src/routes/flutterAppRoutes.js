@@ -165,39 +165,33 @@ router.post('/register', asyncHandler(async (req, res) => {
 // Guest creation (mobile app or web widget)
 router.post('/guest', asyncHandler(async (req, res) => {
   const { loginFrom = 'app' } = req.body;
-  let suffix = 1;
   let user = null;
   let attempts = 0;
-  const maxAttempts = 50;
+  const maxAttempts = 5;
 
   while (attempts < maxAttempts) {
-    const username = `guestapp${suffix}`;
-    const email = `guestapp${suffix}@example.com`;
-    const existing = await User.findOne({ $or: [{ username }, { email }] });
+    const suffix = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const username = `guest${suffix}`;
+    const email = `guest${suffix}@auto.example`;
 
-    if (!existing) {
-      try {
-        user = await User.create({
-          username,
-          email,
-          password: `guest${suffix}`,
-          displayName: username,
-          role: 'user',
-          status: 'online',
-          loginFrom: loginFrom === 'web' ? 'web' : 'app',
-        });
-        break;
-      } catch (err) {
-        if (err.code === 11000) {
-          suffix += 1;
-          attempts += 1;
-          continue;
-        }
-        throw err;
+    try {
+      user = await User.create({
+        username,
+        email,
+        password: crypto.randomBytes(8).toString('hex'),
+        displayName: `Guest ${suffix.slice(-4)}`,
+        role: 'user',
+        status: 'online',
+        loginFrom: loginFrom === 'web' ? 'web' : 'app',
+      });
+      break;
+    } catch (err) {
+      if (err.code === 11000) {
+        attempts += 1;
+        continue;
       }
+      throw err;
     }
-    suffix += 1;
-    attempts += 1;
   }
 
   if (!user) {
