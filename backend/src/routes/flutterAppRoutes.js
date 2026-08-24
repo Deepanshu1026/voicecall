@@ -466,7 +466,10 @@ router.get('/inbox', asyncHandler(async (req, res) => {
   }
   const effectiveReceiverId = receiverOid.toString();
 
-  const conversations = await Conversation.find({ participants: receiverOid, type: 'direct' }).lean();
+  const conversations = await Conversation.find({ participants: receiverOid, type: 'direct' })
+    .sort({ updatedAt: -1 })
+    .populate('lastMessage', 'createdAt content sender status readBy')
+    .lean();
   if (!conversations.length) {
     return res.json({ success: true, user_id: effectiveReceiverId, inbox: [], total_contacts: 0, total_unread_count: 0 });
   }
@@ -484,16 +487,6 @@ router.get('/inbox', asyncHandler(async (req, res) => {
   const participantMap = new Map();
   [...users, ...employees].forEach((p) => participantMap.set(p._id.toString(), p));
 
-  // Batch fetch last messages
-  const lastMessages = await Message.find({ conversation: { $in: conversationIds } })
-    .sort({ createdAt: -1 })
-    .lean();
-  const lastMessageByConv = new Map();
-  lastMessages.forEach((m) => {
-    const key = m.conversation.toString();
-    if (!lastMessageByConv.has(key)) lastMessageByConv.set(key, m);
-  });
-
   const inbox = [];
   let totalUnread = 0;
 
@@ -503,7 +496,7 @@ router.get('/inbox', asyncHandler(async (req, res) => {
     const other = participantMap.get(otherParticipant.toString());
     if (!other) continue;
 
-    const lastMsg = lastMessageByConv.get(conv._id.toString());
+    const lastMsg = conv.lastMessage;
     if (!lastMsg) continue;
 
     const isFromMe = lastMsg.sender?.toString() === effectiveReceiverId;
@@ -1099,7 +1092,10 @@ router.get('/users-all-data', asyncHandler(async (req, res) => {
   const conversations = await Conversation.find({
     type: 'direct',
     participants: agentOid,
-  }).lean();
+  })
+    .sort({ updatedAt: -1 })
+    .populate('lastMessage', 'createdAt')
+    .lean();
 
   if (!conversations.length) return res.json({ success: true, data: [] });
 
@@ -1115,18 +1111,8 @@ router.get('/users-all-data', asyncHandler(async (req, res) => {
 
   const userMap = new Map(users.map((u) => [u._id.toString(), u]));
 
-  // Fetch last messages and unread counts in batch
-  const conversationIds = conversations.map((c) => c._id);
-  const lastMessages = await Message.find({ conversation: { $in: conversationIds } })
-    .sort({ createdAt: -1 })
-    .lean();
-  const lastMessageByConv = new Map();
-  lastMessages.forEach((m) => {
-    const key = m.conversation.toString();
-    if (!lastMessageByConv.has(key)) lastMessageByConv.set(key, m);
-  });
-
   // Batch count unread messages per conversation
+  const conversationIds = conversations.map((c) => c._id);
   const unreadByConversation = new Map();
   const userObjectIds = users.map((u) => u._id);
   if (conversationIds.length && userObjectIds.length) {
@@ -1151,8 +1137,7 @@ router.get('/users-all-data', asyncHandler(async (req, res) => {
     const user = userMap.get(otherParticipantId.toString());
     if (!user) continue;
 
-    const lastMsg = lastMessageByConv.get(conv._id.toString());
-    const lastMessageTime = lastMsg ? lastMsg.createdAt : null;
+    const lastMessageTime = conv.lastMessage?.createdAt || conv.updatedAt || null;
     const unreadCount = unreadByConversation.get(conv._id.toString()) || 0;
 
     const agentProfile = avatarUrl(user.avatar);

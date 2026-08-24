@@ -27,6 +27,7 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
   final TextEditingController _searchController = TextEditingController();
   Timer? _pollingTimer;
   bool _isAppInForeground = true;
+  bool _isFetching = false;
 
   @override
   void initState() {
@@ -109,7 +110,9 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
   }
 
   Future<void> _fetchUsersSilently() async {
+    if (_isFetching) return;
     try {
+      _isFetching = true;
       final users = await _fetchUsersFromApi();
       if (mounted) {
         setState(() {
@@ -129,6 +132,8 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
       }
     } catch (e) {
       debugPrint('Silent refresh error: $e');
+    } finally {
+      _isFetching = false;
     }
   }
 
