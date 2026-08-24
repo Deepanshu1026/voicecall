@@ -160,6 +160,7 @@ connectDB().then(async () => {
   try {
     const collection = require('mongoose').connection.db.collection('users');
     const indexes = await collection.indexes();
+    let dropped = false;
     for (const idx of indexes) {
       if (
         idx.unique &&
@@ -170,10 +171,14 @@ connectDB().then(async () => {
       ) {
         console.log(`Dropping broken unique index on users.mobile: ${idx.name}`);
         await collection.dropIndex(idx.name);
+        dropped = true;
       }
     }
+    if (dropped) {
+      await collection.createIndex({ mobile: 1 }, { name: 'mobile_1' });
+      console.log('Created non-unique index on users.mobile.');
+    }
   } catch (e) {
-    // Not critical — app still works, guest creation may just retry once
     console.warn('Could not fix mobile index (non-fatal):', e.message);
   }
   startServer(config.port);
