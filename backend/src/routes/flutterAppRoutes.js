@@ -577,10 +577,14 @@ router.get('/notifications', asyncHandler(async (req, res) => {
     return res.json({ success: true, notifications: [], message: 'user_id is required' });
   }
 
+  // Resolve the ID in case the Flutter app passes a numeric SQL ID from old accounts
+  const resolvedId = await resolveId(user_id);
+  const oid = resolvedId || user_id;
+
   // Find the user (or employee) so we can exclude global notifications created before they joined
   const account =
-    (await User.findById(user_id).select('createdAt').lean()) ||
-    (await Employee.findById(user_id).select('createdAt').lean());
+    (await User.findById(oid).select('createdAt').lean()) ||
+    (await Employee.findById(oid).select('createdAt').lean());
   if (!account) {
     return res.json({ success: true, notifications: [] });
   }
@@ -588,7 +592,7 @@ router.get('/notifications', asyncHandler(async (req, res) => {
   const joinedAt = account.createdAt || new Date(0);
   const filter = {
     $or: [
-      { userId: user_id },
+      { userId: oid },
       // Global notifications only if created after the user joined the platform
       { userId: { $exists: false }, createdAt: { $gte: joinedAt } },
     ],

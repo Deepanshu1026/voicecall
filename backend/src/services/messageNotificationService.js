@@ -49,8 +49,18 @@ async function createChatNotification({ recipientId, sender, message, conversati
     const senderName = senderDoc?.displayName || senderDoc?.username || senderDoc?.name || 'Someone';
     const body = buildMessageBody(message);
 
+    // Ensure userId is a valid ObjectId — old accounts may pass numeric SQL IDs
+    let userId = recipientId;
+    try {
+      const mongoose = require('mongoose');
+      if (userId && !mongoose.Types.ObjectId.isValid(String(userId))) {
+        const resolved = await getAccountById(userId, '_id');
+        if (resolved?._id) userId = resolved._id;
+      }
+    } catch (_) { /* best effort */ }
+
     await Notification.create({
-      userId: recipientId,
+      userId,
       title: `New message from ${senderName}`,
       message: body,
       type: 'chat',
