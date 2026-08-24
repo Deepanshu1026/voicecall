@@ -154,7 +154,28 @@ const startServer = (port, maxAttempts = 5) => {
   });
 };
 
-connectDB().then(() => {
+connectDB().then(async () => {
+  // Fix broken unique index on User.mobile — old deployments created it
+  // without a partialFilterExpression, causing E11000 errors for guest users.
+  try {
+    const collection = require('mongoose').connection.db.collection('users');
+    const indexes = await collection.indexes();
+    for (const idx of indexes) {
+      if (
+        idx.unique &&
+        idx.key &&
+        idx.key.mobile !== undefined &&
+        (!idx.partialFilterExpression ||
+         !idx.partialFilterExpression.mobile)
+      ) {
+        console.log(`Dropping broken unique index on users.mobile: ${idx.name}`);
+        await collection.dropIndex(idx.name);
+      }
+    }
+  } catch (e) {
+    // Not critical — app still works, guest creation may just retry once
+    console.warn('Could not fix mobile index (non-fatal):', e.message);
+  }
   startServer(config.port);
 });
 

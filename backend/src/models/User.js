@@ -110,8 +110,10 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.index({ displayName: 'text', username: 'text' });
-// Partial unique index: only non-empty strings must be unique; nulls/empty strings are allowed to repeat.
-userSchema.index({ mobile: 1 }, { unique: true, partialFilterExpression: { mobile: { $type: 'string', $gt: '' } } });
+// Mobile uniqueness is enforced in application logic (auth routes),
+// not via a DB index. A broken unique partial index was causing
+// E11000 errors for guest users with null/undefined mobile values.
+userSchema.index({ mobile: 1 });
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
