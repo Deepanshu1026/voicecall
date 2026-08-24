@@ -62,6 +62,7 @@ class AppConfig {
   static String get screenshot => '$flutterApiBase/screenshot';              // was screenshot_update.php
   static String get updateCountryCode => '$flutterApiBase/update-country-code'; // was appupdatecountrycode.php
   static String get instaApiKey => '$flutterApiBase/insta-api-key';          // was instaapi.php
+  static String get adminSettings => '$apiBaseUrl/api/settings';                 // admin chat settings
 
   // Static assets host. The new backend also serves the React public images.
   // Point this to the root of the backend domain so old `img/...` paths resolve.

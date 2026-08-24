@@ -97,18 +97,6 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     }
   }
 
-  void _ensureScrollable() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scrollController.hasClients) return;
-      if (_scrollController.position.maxScrollExtent <= 0 &&
-          _hasMore &&
-          !_isLoadingMore &&
-          _page == 1) {
-        _loadMore();
-      }
-    });
-  }
-
   Future<void> _loadCurrentUser() async {
     final prefs = await SharedPreferences.getInstance();
     dynamic userIdValue = prefs.get('userId');
@@ -147,21 +135,44 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     });
   }
 
+  /// Silent poll: updates metadata (unread, online, time) in-place for
+  /// already-loaded users and prepends genuinely new conversations.
+  /// Never touches _page or _hasMore so pagination stays intact.
   Future<void> _fetchUsersSilently() async {
-    if (_isFetching) return;
+    if (_isFetching || _isLoadingMore) return;
     try {
       _isFetching = true;
-      final loadedCount = _allUsers.length;
-      final limit = loadedCount > _limit ? loadedCount : _limit;
-      final users = await _fetchUsersFromApi(page: 1, limit: limit);
+      // Only fetch the first page to detect new conversations & refresh
+      // metadata for recently-active users.
+      final freshUsers = await _fetchUsersFromApi(page: 1, limit: _limit);
       if (mounted) {
         setState(() {
-          _allUsers = users;
-          _filteredUsers = _applySearch(users);
-          _page = users.length ~/ _limit;
-          _hasMore = users.length >= loadedCount;
+          // Build a lookup from the fresh data
+          final freshById = <dynamic, ConsultantUserItem>{};
+          for (final u in freshUsers) {
+            freshById[u.id] = u;
+          }
+
+          // Update existing items in-place (preserves list order & scroll)
+          final updatedList = _allUsers.map((existing) {
+            final fresh = freshById[existing.id];
+            if (fresh != null) {
+              return fresh; // swap in updated metadata
+            }
+            return existing; // keep as-is
+          }).toList();
+
+          // Prepend any genuinely new users that weren't in the list
+          final existingIds = _allUsers.map((u) => u.id).toSet();
+          final newUsers =
+              freshUsers.where((u) => !existingIds.contains(u.id)).toList();
+          if (newUsers.isNotEmpty) {
+            updatedList.insertAll(0, newUsers);
+          }
+
+          _allUsers = updatedList;
+          _filteredUsers = _applySearch(_allUsers);
         });
-        _ensureScrollable();
       }
     } catch (e) {
       debugPrint('Silent refresh error: $e');
@@ -175,6 +186,7 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     final String url = _currentUserId != null
         ? '${AppConfig.usersAllData}?id=$_currentUserId&page=$page&limit=$limit'
         : '${AppConfig.usersAllData}?page=$page&limit=$limit';
+    debugPrint('📋 Fetching users: page=$page, limit=$limit');
     final response = await http.get(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -219,12 +231,15 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
         return 0;
       });
 
+      debugPrint('📋 Fetched ${users.length} users for page=$page');
       return users;
     } else {
       throw Exception('Failed to load users: ${response.statusCode}');
     }
   }
 
+  /// Full refresh — resets to page 1 (used on pull-to-refresh and
+  /// when returning from a chat).
   Future<void> _fetchUsers() async {
     try {
       if (mounted) {
@@ -242,7 +257,6 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
           _hasMore = users.length == _limit;
           _isLoadingUsers = false;
         });
-        _ensureScrollable();
       }
     } catch (e) {
       debugPrint('Error fetching users: $e');
@@ -254,31 +268,42 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     }
   }
 
+  /// Appends the next page of users to the bottom of the list.
   Future<void> _loadMore() async {
     if (_isLoadingMore || !_hasMore || _currentUserId == null) return;
-    _isLoadingMore = true;
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
     try {
       final nextPage = _page + 1;
+      debugPrint('📋 Loading more: nextPage=$nextPage, current items=${_allUsers.length}');
       final users = await _fetchUsersFromApi(page: nextPage, limit: _limit);
-          if (mounted) {
-            setState(() {
-              if (users.isEmpty) {
-                _hasMore = false;
-              } else {
-                final existingIds = _allUsers.map((u) => u.id).toSet();
-                final newUsers =
-                    users.where((u) => !existingIds.contains(u.id)).toList();
-                _page = nextPage;
-                _allUsers = [..._allUsers, ...newUsers];
-                _filteredUsers = _applySearch(_allUsers);
-                _hasMore = users.length == _limit;
-              }
-            });
+      if (mounted) {
+        setState(() {
+          if (users.isEmpty) {
+            _hasMore = false;
+          } else {
+            final existingIds = _allUsers.map((u) => u.id).toSet();
+            final newUsers =
+                users.where((u) => !existingIds.contains(u.id)).toList();
+            _page = nextPage;
+            _allUsers = [..._allUsers, ...newUsers];
+            _filteredUsers = _applySearch(_allUsers);
+            _hasMore = users.length == _limit;
+            debugPrint('📋 After loadMore: page=$_page, total=${_allUsers.length}, added=${newUsers.length}, hasMore=$_hasMore');
           }
+        });
+      }
     } catch (e) {
       debugPrint('Error loading more users: $e');
     } finally {
-      _isLoadingMore = false;
+      if (mounted) {
+        setState(() {
+          _isLoadingMore = false;
+        });
+      }
     }
   }
 
@@ -298,7 +323,7 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
         ),
       ),
     ).then((_) {
-      _fetchUsers();
+      _fetchUsersSilently();
     });
   }
 

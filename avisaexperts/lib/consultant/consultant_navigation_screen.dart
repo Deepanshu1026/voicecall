@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'consultant_chat_list_screen.dart';
 import 'consultant_profile_screen.dart';
+import 'consultant_admin_settings_screen.dart';
 
 const Color consultantPrimaryColor = Color(0xFF0D47A1);
 const Color consultantNavBackground = Colors.white;
@@ -30,11 +32,9 @@ class ConsultantNavigationScreen extends StatefulWidget {
 class _ConsultantNavigationScreenState extends State<ConsultantNavigationScreen>
     with TickerProviderStateMixin {
   int _currentIndex = 0;
+  bool _isAdmin = false;
 
-  final List<Widget> _screens = [
-    const ConsultantChatListScreen(),
-    const ConsultantProfileScreen(),
-  ];
+  List<Widget> _screens = [];
 
   List<int> _tabHistory = [0];
   DateTime? _lastBackButtonTime;
@@ -46,8 +46,24 @@ class _ConsultantNavigationScreenState extends State<ConsultantNavigationScreen>
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialTab.clamp(0, _screens.length - 1);
-    _tabHistory = [_currentIndex];
+    _checkAdminAndInit();
+  }
+
+  Future<void> _checkAdminAndInit() async {
+    final prefs = await SharedPreferences.getInstance();
+    final role = prefs.getString('consultantRole') ?? '';
+    if (mounted) {
+      setState(() {
+        _isAdmin = role == 'admin';
+        _screens = [
+          const ConsultantChatListScreen(),
+          const ConsultantProfileScreen(),
+          if (_isAdmin) const ConsultantAdminSettingsScreen(),
+        ];
+        _currentIndex = widget.initialTab.clamp(0, _screens.length - 1);
+        _tabHistory = [_currentIndex];
+      });
+    }
   }
 
   void _navigateTo(int index,
@@ -150,13 +166,19 @@ class _ConsultantNavigationScreenState extends State<ConsultantNavigationScreen>
   Widget build(BuildContext context) {
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
 
+    if (_screens.isEmpty) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return WillPopScope(
       onWillPop: _onWillPop,
-        child: Scaffold(
-          body: IndexedStack(
-            index: _currentIndex,
-            children: _screens,
-          ),
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
+        ),
           bottomNavigationBar: Container(
           height: consultantBottomNavBarHeight + bottomPadding,
           decoration: BoxDecoration(
@@ -188,6 +210,13 @@ class _ConsultantNavigationScreenState extends State<ConsultantNavigationScreen>
                   activeIcon: Icons.person_rounded,
                   label: 'Profile',
                 ),
+                if (_isAdmin)
+                  _buildNavItem(
+                    index: 2,
+                    icon: Icons.settings_outlined,
+                    activeIcon: Icons.settings,
+                    label: 'Settings',
+                  ),
               ],
             ),
           ),
