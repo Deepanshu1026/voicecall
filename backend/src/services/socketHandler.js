@@ -150,7 +150,9 @@ const refreshOnlineList = () => {
 const startStaleCleanup = (io) => {
   return setInterval(async () => {
     await markStaleUsersOffline();
-    await markStaleEmployeesOffline();
+    // Agents are NOT marked offline by the stale checker —
+    // they stay active until they explicitly log out.
+    // await markStaleEmployeesOffline();
     io.emit('online:users', refreshOnlineList());
   }, STALE_CLEANUP_INTERVAL_MS);
 };
@@ -1288,10 +1290,8 @@ const setupSocket = (io) => {
           employeeSocketSet.delete(socket.id);
           if (employeeSocketSet.size === 0) {
             onlineEmployeeSockets.delete(userId);
-            // Don't emit offline immediately — wait for the grace period.
-            // If the employee reconnects within the window, the timeout is cancelled
-            // and no flicker happens. scheduleEmployeeOffline handles the eventual emit.
-            scheduleEmployeeOffline(io, userId);
+            // Agents stay active until they explicitly log out.
+            // Do NOT call scheduleEmployeeOffline here.
           }
         }
       } else {
