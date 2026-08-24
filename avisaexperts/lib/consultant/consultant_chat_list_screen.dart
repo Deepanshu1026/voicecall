@@ -21,6 +21,7 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     with WidgetsBindingObserver {
   String? _currentUserId;
   bool _isLoading = true;
+  bool _isLoadingUsers = true;
   List<ConsultantUserItem> _allUsers = [];
   List<ConsultantUserItem> _filteredUsers = [];
   String _searchQuery = '';
@@ -87,12 +88,24 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
   }
 
   void _onScroll() {
+    if (!_scrollController.hasClients) return;
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent - 200 &&
         !_isLoadingMore &&
         _hasMore) {
       _loadMore();
     }
+  }
+
+  void _ensureScrollable() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      if (_scrollController.position.maxScrollExtent <= 0 &&
+          _hasMore &&
+          !_isLoadingMore) {
+        _loadMore();
+      }
+    });
   }
 
   Future<void> _loadCurrentUser() async {
@@ -115,6 +128,10 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     if (_currentUserId != null) {
       await _fetchUsers();
       _startPolling();
+    } else if (mounted) {
+      setState(() {
+        _isLoadingUsers = false;
+      });
     }
   }
 
@@ -143,6 +160,7 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
           _page = users.length ~/ _limit;
           _hasMore = users.length >= loadedCount;
         });
+        _ensureScrollable();
       }
     } catch (e) {
       debugPrint('Silent refresh error: $e');
@@ -208,6 +226,11 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
 
   Future<void> _fetchUsers() async {
     try {
+      if (mounted) {
+        setState(() {
+          _isLoadingUsers = true;
+        });
+      }
       _page = 1;
       _hasMore = true;
       final users = await _fetchUsersFromApi(page: _page, limit: _limit);
@@ -216,10 +239,17 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
           _allUsers = users;
           _filteredUsers = _applySearch(users);
           _hasMore = users.length == _limit;
+          _isLoadingUsers = false;
         });
+        _ensureScrollable();
       }
     } catch (e) {
       debugPrint('Error fetching users: $e');
+      if (mounted) {
+        setState(() {
+          _isLoadingUsers = false;
+        });
+      }
     }
   }
 
@@ -229,21 +259,22 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     try {
       final nextPage = _page + 1;
       final users = await _fetchUsersFromApi(page: nextPage, limit: _limit);
-      if (mounted) {
-        setState(() {
-          if (users.isEmpty) {
-            _hasMore = false;
-          } else {
-            final existingIds = _allUsers.map((u) => u.id).toSet();
-            final newUsers =
-                users.where((u) => !existingIds.contains(u.id)).toList();
-            _page = nextPage;
-            _allUsers = [..._allUsers, ...newUsers];
-            _filteredUsers = _applySearch(_allUsers);
-            _hasMore = users.length == _limit;
+          if (mounted) {
+            setState(() {
+              if (users.isEmpty) {
+                _hasMore = false;
+              } else {
+                final existingIds = _allUsers.map((u) => u.id).toSet();
+                final newUsers =
+                    users.where((u) => !existingIds.contains(u.id)).toList();
+                _page = nextPage;
+                _allUsers = [..._allUsers, ...newUsers];
+                _filteredUsers = _applySearch(_allUsers);
+                _hasMore = users.length == _limit;
+              }
+            });
+            _ensureScrollable();
           }
-        });
-      }
     } catch (e) {
       debugPrint('Error loading more users: $e');
     } finally {
@@ -527,14 +558,16 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
               ),
             ),
           Expanded(
-            child: _filteredUsers.isEmpty && !_isLoadingMore
-                ? RefreshIndicator(
-                    onRefresh: _fetchUsers,
-                    child: _buildEmptyState(),
-                  )
-                : RefreshIndicator(
-                    onRefresh: _fetchUsers,
-                    child: ListView.builder(
+            child: _isLoadingUsers
+                ? _buildLoader()
+                : _filteredUsers.isEmpty && !_isLoadingMore
+                    ? RefreshIndicator(
+                        onRefresh: _fetchUsers,
+                        child: _buildEmptyState(),
+                      )
+                    : RefreshIndicator(
+                        onRefresh: _fetchUsers,
+                        child: ListView.builder(
                       controller: _scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       itemCount: _filteredUsers.length + (_hasMore ? 1 : 0),
