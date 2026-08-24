@@ -28,11 +28,17 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
   Timer? _pollingTimer;
   bool _isAppInForeground = true;
   bool _isFetching = false;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
+  int _page = 1;
+  final int _limit = 10;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _scrollController.addListener(_onScroll);
     _loadCurrentUser();
     _searchController.addListener(_onSearchChanged);
   }
@@ -40,6 +46,8 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     _searchController.dispose();
     _pollingTimer?.cancel();
     super.dispose();
@@ -62,17 +70,29 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     }
   }
 
+  List<ConsultantUserItem> _applySearch(List<ConsultantUserItem> users) {
+    if (_searchQuery.isEmpty) return users;
+    return users.where((user) {
+      return user.userName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          user.userEmail.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          user.userMobile.contains(_searchQuery);
+    }).toList();
+  }
+
   void _onSearchChanged() {
     setState(() {
       _searchQuery = _searchController.text;
-      _filteredUsers = _allUsers.where((user) {
-        return user.userName
-                .toLowerCase()
-                .contains(_searchQuery.toLowerCase()) ||
-            user.userEmail.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-            user.userMobile.contains(_searchQuery);
-      }).toList();
+      _filteredUsers = _applySearch(_allUsers);
     });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        !_isLoadingMore &&
+        _hasMore) {
+      _loadMore();
+    }
   }
 
   Future<void> _loadCurrentUser() async {
@@ -113,21 +133,15 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     if (_isFetching) return;
     try {
       _isFetching = true;
-      final users = await _fetchUsersFromApi();
+      final loadedCount = _allUsers.length;
+      final limit = loadedCount > _limit ? loadedCount : _limit;
+      final users = await _fetchUsersFromApi(page: 1, limit: limit);
       if (mounted) {
         setState(() {
           _allUsers = users;
-          _filteredUsers = _searchQuery.isEmpty
-              ? users
-              : users.where((user) {
-                  return user.userName
-                          .toLowerCase()
-                          .contains(_searchQuery.toLowerCase()) ||
-                      user.userEmail
-                          .toLowerCase()
-                          .contains(_searchQuery.toLowerCase()) ||
-                      user.userMobile.contains(_searchQuery);
-                }).toList();
+          _filteredUsers = _applySearch(users);
+          _page = users.length ~/ _limit;
+          _hasMore = users.length >= loadedCount;
         });
       }
     } catch (e) {
@@ -137,10 +151,11 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     }
   }
 
-  Future<List<ConsultantUserItem>> _fetchUsersFromApi() async {
+  Future<List<ConsultantUserItem>> _fetchUsersFromApi(
+      {int page = 1, int limit = 10}) async {
     final String url = _currentUserId != null
-        ? '${AppConfig.usersAllData}?id=$_currentUserId'
-        : AppConfig.usersAllData;
+        ? '${AppConfig.usersAllData}?id=$_currentUserId&page=$page&limit=$limit'
+        : '${AppConfig.usersAllData}?page=$page&limit=$limit';
     final response = await http.get(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
@@ -149,67 +164,43 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     if (response.statusCode == 200) {
       final dynamic responseData = json.decode(response.body);
 
+      List<dynamic> usersJson;
       if (responseData is List) {
-        final List<ConsultantUserItem> users = responseData
-            .map((jsonItem) {
-              try {
-                return ConsultantUserItem.fromJson(
-                    jsonItem as Map<String, dynamic>);
-              } catch (e) {
-                debugPrint('Error parsing user item: $e');
-                return null;
-              }
-            })
-            .where((item) => item != null)
-            .cast<ConsultantUserItem>()
-            .toList();
-
-        users.sort((a, b) {
-          if (a.hasUnread != b.hasUnread) {
-            return a.hasUnread ? -1 : 1;
-          }
-          if (a.isOnline != b.isOnline) {
-            return a.isOnline ? -1 : 1;
-          }
-          if (a.messageDateTime != null && b.messageDateTime != null) {
-            return b.messageDateTime!.compareTo(a.messageDateTime!);
-          }
-          return 0;
-        });
-
-        return users;
+        usersJson = responseData;
       } else if (responseData is Map && responseData['success'] == true) {
-        final List<dynamic> usersJson = responseData['data'] ?? [];
-        final List<ConsultantUserItem> users = usersJson
-            .map((jsonItem) {
-              try {
-                return ConsultantUserItem.fromJson(
-                    jsonItem as Map<String, dynamic>);
-              } catch (e) {
-                return null;
-              }
-            })
-            .where((item) => item != null)
-            .cast<ConsultantUserItem>()
-            .toList();
-
-        users.sort((a, b) {
-          if (a.hasUnread != b.hasUnread) {
-            return a.hasUnread ? -1 : 1;
-          }
-          if (a.isOnline != b.isOnline) {
-            return a.isOnline ? -1 : 1;
-          }
-          if (a.messageDateTime != null && b.messageDateTime != null) {
-            return b.messageDateTime!.compareTo(a.messageDateTime!);
-          }
-          return 0;
-        });
-
-        return users;
+        usersJson = responseData['data'] ?? [];
       } else {
         throw Exception('Invalid response format');
       }
+
+      final List<ConsultantUserItem> users = usersJson
+          .map((jsonItem) {
+            try {
+              return ConsultantUserItem.fromJson(
+                  jsonItem as Map<String, dynamic>);
+            } catch (e) {
+              debugPrint('Error parsing user item: $e');
+              return null;
+            }
+          })
+          .where((item) => item != null)
+          .cast<ConsultantUserItem>()
+          .toList();
+
+      users.sort((a, b) {
+        if (a.hasUnread != b.hasUnread) {
+          return a.hasUnread ? -1 : 1;
+        }
+        if (a.isOnline != b.isOnline) {
+          return a.isOnline ? -1 : 1;
+        }
+        if (a.messageDateTime != null && b.messageDateTime != null) {
+          return b.messageDateTime!.compareTo(a.messageDateTime!);
+        }
+        return 0;
+      });
+
+      return users;
     } else {
       throw Exception('Failed to load users: ${response.statusCode}');
     }
@@ -217,25 +208,46 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
 
   Future<void> _fetchUsers() async {
     try {
-      final users = await _fetchUsersFromApi();
+      _page = 1;
+      _hasMore = true;
+      final users = await _fetchUsersFromApi(page: _page, limit: _limit);
       if (mounted) {
         setState(() {
           _allUsers = users;
-          _filteredUsers = _searchQuery.isEmpty
-              ? users
-              : users.where((user) {
-                  return user.userName
-                          .toLowerCase()
-                          .contains(_searchQuery.toLowerCase()) ||
-                      user.userEmail
-                          .toLowerCase()
-                          .contains(_searchQuery.toLowerCase()) ||
-                      user.userMobile.contains(_searchQuery);
-                }).toList();
+          _filteredUsers = _applySearch(users);
+          _hasMore = users.length == _limit;
         });
       }
     } catch (e) {
       debugPrint('Error fetching users: $e');
+    }
+  }
+
+  Future<void> _loadMore() async {
+    if (_isLoadingMore || !_hasMore || _currentUserId == null) return;
+    _isLoadingMore = true;
+    try {
+      final nextPage = _page + 1;
+      final users = await _fetchUsersFromApi(page: nextPage, limit: _limit);
+      if (mounted) {
+        setState(() {
+          if (users.isEmpty) {
+            _hasMore = false;
+          } else {
+            final existingIds = _allUsers.map((u) => u.id).toSet();
+            final newUsers =
+                users.where((u) => !existingIds.contains(u.id)).toList();
+            _page = nextPage;
+            _allUsers = [..._allUsers, ...newUsers];
+            _filteredUsers = _applySearch(_allUsers);
+            _hasMore = users.length == _limit;
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading more users: $e');
+    } finally {
+      _isLoadingMore = false;
     }
   }
 
@@ -449,6 +461,15 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
     );
   }
 
+  Widget _buildLoader() {
+    return const Padding(
+      padding: EdgeInsets.all(16),
+      child: Center(
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading || _currentUserId == null) {
@@ -506,26 +527,34 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
               ),
             ),
           Expanded(
-            child: _filteredUsers.isEmpty
+            child: _filteredUsers.isEmpty && !_isLoadingMore
                 ? RefreshIndicator(
                     onRefresh: _fetchUsers,
                     child: _buildEmptyState(),
                   )
                 : RefreshIndicator(
                     onRefresh: _fetchUsers,
-                    child: ListView.separated(
+                    child: ListView.builder(
+                      controller: _scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 4),
-                      itemCount: _filteredUsers.length,
-                      separatorBuilder: (context, index) {
-                        return Divider(
-                          color: Colors.grey.withOpacity(0.2),
-                          height: 1,
-                          indent: 16,
-                          endIndent: 16,
-                        );
-                      },
+                      itemCount: _filteredUsers.length + (_hasMore ? 1 : 0),
                       itemBuilder: (context, index) {
-                        return _buildUserTile(_filteredUsers[index]);
+                        if (index == _filteredUsers.length) {
+                          return _buildLoader();
+                        }
+                        final isLast = index == _filteredUsers.length - 1;
+                        return Column(
+                          children: [
+                            _buildUserTile(_filteredUsers[index]),
+                            if (!isLast)
+                              Divider(
+                                color: Colors.grey.withOpacity(0.2),
+                                height: 1,
+                                indent: 16,
+                                endIndent: 16,
+                              ),
+                          ],
+                        );
                       },
                     ),
                   ),

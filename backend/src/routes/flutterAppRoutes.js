@@ -1080,24 +1080,37 @@ router.post('/chat/send', multerUpload.single('file'), handleMulterError, asyncH
 // (like PHP getUsersAllData.php)
 router.get('/users-all-data', asyncHandler(async (req, res) => {
   const { id } = req.query;
-  if (!id) return res.json({ success: true, data: [] });
+  if (!id) return res.json({ success: true, data: [], pagination: { current_page: 1, total_pages: 1, total_records: 0 } });
 
   const agentOid = await resolveId(id);
-  if (!agentOid) return res.json({ success: true, data: [] });
+  if (!agentOid) return res.json({ success: true, data: [], pagination: { current_page: 1, total_pages: 1, total_records: 0 } });
 
   const Message = require('../models/Message');
   const Conversation = require('../models/Conversation');
 
+  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 50);
+  const skip = (page - 1) * limit;
+
+  const baseFilter = { type: 'direct', participants: agentOid };
+  const total = await Conversation.countDocuments(baseFilter);
+  const totalPages = total === 0 ? 1 : Math.ceil(total / limit);
+
   // Find all direct conversations where the agent participates
-  const conversations = await Conversation.find({
-    type: 'direct',
-    participants: agentOid,
-  })
+  const conversations = await Conversation.find(baseFilter)
     .sort({ updatedAt: -1 })
+    .skip(skip)
+    .limit(limit)
     .populate('lastMessage', 'createdAt')
     .lean();
 
-  if (!conversations.length) return res.json({ success: true, data: [] });
+  if (!conversations.length) {
+    return res.json({
+      success: true,
+      data: [],
+      pagination: { current_page: page, total_pages: totalPages, total_records: total },
+    });
+  }
 
   const otherParticipantIds = conversations
     .map((c) => c.participants.find((p) => p.toString() !== agentOid.toString()))
@@ -1164,7 +1177,15 @@ router.get('/users-all-data', asyncHandler(async (req, res) => {
     return tb - ta;
   });
 
-  res.json({ success: true, data: result });
+  res.json({
+    success: true,
+    data: result,
+    pagination: {
+      current_page: page,
+      total_pages: totalPages,
+      total_records: total,
+    },
+  });
 }));
 
 // ==================== BLOG POSTS ====================
