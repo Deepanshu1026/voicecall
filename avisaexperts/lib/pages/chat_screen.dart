@@ -486,7 +486,8 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
+class _ChatScreenState extends State<ChatScreen>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _messageFocusNode = FocusNode();
@@ -519,6 +520,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   // Scroll behavior tracking
   bool _isUserScrolledUp = false;
   bool _isLoadingNewMessages = false;
+  bool _isRefreshingMessages = false;
   bool _greetingRequested = false;
 
   // Animation controllers
@@ -540,6 +542,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _typingAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
@@ -583,6 +586,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _messageController.dispose();
     _scrollController.dispose();
     _messageFocusNode.dispose();
@@ -592,6 +596,23 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     _removeSocketListener?.call();
     clearCurrentChatReceiver();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _messageRefreshTimer?.cancel();
+        _startMessageRefreshTimer();
+        _setupSocketListeners();
+        break;
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+        _messageRefreshTimer?.cancel();
+        break;
+    }
   }
 
   Future<void> _loadCurrentUserIdAndInitializeChat() async {
@@ -886,10 +907,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _loadMessagesFromAPI() async {
-    if (_currentUserId.isEmpty || _isLoadingNewMessages) return;
+  Future<void> _loadMessagesFromAPI({bool silent = false}) async {
+    if (_currentUserId.isEmpty || _isLoadingNewMessages || _isRefreshingMessages) return;
 
-    setState(() => _isLoadingNewMessages = true);
+    if (silent) {
+      _isRefreshingMessages = true;
+    } else {
+      setState(() => _isLoadingNewMessages = true);
+    }
 
     try {
       final dio = Dio();
@@ -1013,7 +1038,15 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     } catch (e) {
       logger.e("Error fetching messages: $e");
     } finally {
-      setState(() => _isLoadingNewMessages = false);
+      if (silent) {
+        _isRefreshingMessages = false;
+      } else {
+        if (mounted) {
+          setState(() => _isLoadingNewMessages = false);
+        } else {
+          _isLoadingNewMessages = false;
+        }
+      }
     }
   }
 
@@ -1176,7 +1209,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     _messageRefreshTimer?.cancel();
     _messageRefreshTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (mounted) {
-        _loadMessagesFromAPI();
+        _loadMessagesFromAPI(silent: true);
       } else {
         timer.cancel();
       }

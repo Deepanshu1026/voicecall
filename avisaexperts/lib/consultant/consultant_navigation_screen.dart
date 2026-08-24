@@ -39,8 +39,6 @@ class _ConsultantNavigationScreenState extends State<ConsultantNavigationScreen>
   List<int> _tabHistory = [0];
   DateTime? _lastBackButtonTime;
 
-  late PageController _pageController;
-
   void setTabIndex(int index) {
     _navigateTo(index);
   }
@@ -50,13 +48,6 @@ class _ConsultantNavigationScreenState extends State<ConsultantNavigationScreen>
     super.initState();
     _currentIndex = widget.initialTab.clamp(0, _screens.length - 1);
     _tabHistory = [_currentIndex];
-    _pageController = PageController(initialPage: _currentIndex);
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
   }
 
   void _navigateTo(int index,
@@ -76,16 +67,6 @@ class _ConsultantNavigationScreenState extends State<ConsultantNavigationScreen>
         }
         _currentIndex = index;
       });
-
-      if (!fromPageView &&
-          _pageController.hasClients &&
-          _pageController.page?.round() != index) {
-        _pageController.animateToPage(
-          index,
-          duration: const Duration(milliseconds: 350),
-          curve: Curves.easeInOutCubic,
-        );
-      }
     }
   }
 
@@ -171,18 +152,12 @@ class _ConsultantNavigationScreenState extends State<ConsultantNavigationScreen>
 
     return WillPopScope(
       onWillPop: _onWillPop,
-      child: Scaffold(
-        body: PageView(
-          controller: _pageController,
-          children: _screens,
-          onPageChanged: (index) {
-            _navigateTo(index,
-                isForwardNavigation:
-                    _tabHistory.isNotEmpty ? _tabHistory.last < index : true,
-                fromPageView: true);
-          },
-        ),
-        bottomNavigationBar: Container(
+        child: Scaffold(
+          body: IndexedStack(
+            index: _currentIndex,
+            children: _screens,
+          ),
+          bottomNavigationBar: Container(
           height: consultantBottomNavBarHeight + bottomPadding,
           decoration: BoxDecoration(
             color: consultantNavBackground,
