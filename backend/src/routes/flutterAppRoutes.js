@@ -176,17 +176,25 @@ router.post('/guest', asyncHandler(async (req, res) => {
     const existing = await User.findOne({ $or: [{ username }, { email }] });
 
     if (!existing) {
-      user = await User.create({
-        username,
-        email,
-        password: `guest${suffix}`,
-        displayName: username,
-        mobile: null,
-        role: 'user',
-        status: 'online',
-        loginFrom: loginFrom === 'web' ? 'web' : 'app',
-      });
-      break;
+      try {
+        user = await User.create({
+          username,
+          email,
+          password: `guest${suffix}`,
+          displayName: username,
+          role: 'user',
+          status: 'online',
+          loginFrom: loginFrom === 'web' ? 'web' : 'app',
+        });
+        break;
+      } catch (err) {
+        if (err.code === 11000) {
+          suffix += 1;
+          attempts += 1;
+          continue;
+        }
+        throw err;
+      }
     }
     suffix += 1;
     attempts += 1;
