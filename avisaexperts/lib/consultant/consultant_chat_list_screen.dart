@@ -90,7 +90,7 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
   void _onScroll() {
     if (!_scrollController.hasClients) return;
     if (_scrollController.position.pixels >=
-            _scrollController.position.maxScrollExtent - 200 &&
+            _scrollController.position.maxScrollExtent - 80 &&
         !_isLoadingMore &&
         _hasMore) {
       _loadMore();
@@ -102,7 +102,8 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
       if (!mounted || !_scrollController.hasClients) return;
       if (_scrollController.position.maxScrollExtent <= 0 &&
           _hasMore &&
-          !_isLoadingMore) {
+          !_isLoadingMore &&
+          _page == 1) {
         _loadMore();
       }
     });
@@ -273,7 +274,6 @@ class _ConsultantChatListScreenState extends State<ConsultantChatListScreen>
                 _hasMore = users.length == _limit;
               }
             });
-            _ensureScrollable();
           }
     } catch (e) {
       debugPrint('Error loading more users: $e');
