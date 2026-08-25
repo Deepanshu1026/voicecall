@@ -13,6 +13,7 @@ import AgentNewApplication from './pages/AgentNewApplication';
 import AgentDailyLogins from './pages/AgentDailyLogins';
 import AgentPendingRemarks from './pages/AgentPendingRemarks';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminContactSettings from './pages/AdminContactSettings';
 import AdminChatDashboard from './pages/AdminChatDashboard';
 import AdminPushNotifications from './pages/AdminPushNotifications';
 import AdminBannerControl from './pages/AdminBannerControl';
@@ -153,6 +154,7 @@ function App() {
           element={<Chat className="chat-agent-wrapper" />}
         />
         <Route path="admin" element={<AdminDashboard />} />
+        <Route path="admin/contact" element={<AdminContactSettings />} />
         <Route path="admin/chats" element={<AdminChatDashboard />} />
         <Route path="admin/push" element={<AdminPushNotifications />} />
         <Route path="admin/banner" element={<AdminBannerControl />} />

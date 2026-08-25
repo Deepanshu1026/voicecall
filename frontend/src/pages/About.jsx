@@ -1,7 +1,15 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../components/user/LandingLayout';
 import SEO from '../components/common/SEO';
+import api from '../services/api';
 import '../styles/about.css';
+
+const DEFAULT_CONTACT = {
+  email: 'Support@avisaexperts.com',
+  phone: '+91 120-4502750',
+  whatsapp: '+91 9711000022',
+};
 
 const checkSvg = (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -36,6 +44,16 @@ const instagramSvg = (
 
 const About = () => {
   const navigate = useNavigate();
+  const [contact, setContact] = useState(DEFAULT_CONTACT);
+
+  useEffect(() => {
+    api.get('/settings/contact')
+      .then((res) => {
+        const s = res.data?.data?.settings;
+        if (s) setContact((prev) => ({ ...prev, ...s }));
+      })
+      .catch(() => {});
+  }, []);
 
   const achievements = [
     { icon: '/images/user/expsvg1.svg', text: '2 LAKH+', sub: 'Happy Clients' },
@@ -211,22 +229,22 @@ const About = () => {
               <div className="about-contact-methods">
                 <h3>Get In Touch</h3>
                 <p>Choose your preferred way to connect</p>
-                <a href="mailto:Support@avisaexperts.com" className="about-contact-link">
+                <a href={`mailto:${contact.email}`} className="about-contact-link">
                   <div className="about-contact-card">
                     <h4>Email</h4>
-                    <span>Support@avisaexperts.com</span>
+                    <span>{contact.email}</span>
                   </div>
                 </a>
-                <a href="tel:+911204502750" className="about-contact-link">
+                <a href={`tel:${contact.phone.replace(/\D/g,'')}`} className="about-contact-link">
                   <div className="about-contact-card">
                     <h4>Phone</h4>
-                    <span>+91 120-4502750</span>
+                    <span>{contact.phone}</span>
                   </div>
                 </a>
-                <a href="https://wa.me/919711000022" className="about-contact-link">
+                <a href={`https://wa.me/${contact.whatsapp.replace(/\D/g,'')}`} className="about-contact-link">
                   <div className="about-contact-card">
                     <h4>WhatsApp Only</h4>
-                    <span>+91 9711000022</span>
+                    <span>{contact.whatsapp}</span>
                   </div>
                 </a>
                 <a href="/consultants" className="about-contact-link">

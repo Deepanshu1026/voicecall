@@ -1,4 +1,5 @@
 const Setting = require('../models/Setting');
+const ContactSettings = require('../models/ContactSettings');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
@@ -47,4 +48,53 @@ const updateSettings = asyncHandler(async (req, res) => {
   ApiResponse.success(res, { settings }, 'Settings updated');
 });
 
-module.exports = { getSettings, updateSettings };
+const CONTACT_DEFAULTS = {
+  email: 'Support@avisaexperts.com',
+  phone: '+91 120-4502750',
+  whatsapp: '+91 9711000022',
+  emailResponseTime: 'Response within 2-4 hours',
+  phoneHours: 'Mon-Sat, 11AM-6PM EST',
+  whatsappHours: 'Mon-Sat, 11AM-6PM EST',
+};
+
+const getContactSettings = asyncHandler(async (req, res) => {
+  const docs = await ContactSettings.find({}).lean();
+  const settings = { ...CONTACT_DEFAULTS };
+  for (const doc of docs) {
+    settings[doc.key] = doc.value;
+  }
+  ApiResponse.success(res, { settings });
+});
+
+const updateContactSettings = asyncHandler(async (req, res) => {
+  const updates = req.body;
+  if (!updates || typeof updates !== 'object') {
+    throw new AppError('Settings body is required', 400);
+  }
+
+  const allowedKeys = Object.keys(CONTACT_DEFAULTS);
+  const invalidKeys = Object.keys(updates).filter((k) => !allowedKeys.includes(k));
+  if (invalidKeys.length > 0) {
+    throw new AppError(`Invalid settings keys: ${invalidKeys.join(', ')}`, 400);
+  }
+
+  const bulkOps = Object.entries(updates).map(([key, value]) => ({
+    updateOne: {
+      filter: { key },
+      update: { $set: { key, value } },
+      upsert: true,
+    },
+  }));
+
+  await ContactSettings.bulkWrite(bulkOps);
+
+  const docs = await ContactSettings.find({ key: { $in: Object.keys(updates) } }).lean();
+  const settings = { ...CONTACT_DEFAULTS };
+  for (const doc of docs) {
+    settings[doc.key] = doc.value;
+  }
+
+  ApiResponse.success(res, { settings }, 'Contact settings updated');
+});
+
+module.exports = { getSettings, updateSettings, getContactSettings, updateContactSettings };

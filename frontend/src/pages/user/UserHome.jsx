@@ -3,11 +3,31 @@ import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../../components/user/LandingLayout';
 import AgentChatWidget from '../../components/user/AgentChatWidget';
 import SEO from '../../components/common/SEO';
+import api from '../../services/api';
 import '../../styles/userLanding.css';
+
+const DEFAULT_CONTACT = {
+  email: 'Support@avisaexperts.com',
+  phone: '+91 120-4502750',
+  whatsapp: '+91 9711000022',
+  emailResponseTime: 'Response within 2-4 hours',
+  phoneHours: 'Mon-Sat, 11AM-6PM EST',
+  whatsappHours: 'Mon-Sat, 11AM-6PM EST',
+};
 
 const UserHome = () => {
   const navigate = useNavigate();
   const [reviewIndex, setReviewIndex] = useState(0);
+  const [contactSettings, setContactSettings] = useState(DEFAULT_CONTACT);
+
+  useEffect(() => {
+    api.get('/settings/contact')
+      .then((res) => {
+        const s = res.data?.data?.settings;
+        if (s) setContactSettings((prev) => ({ ...prev, ...s }));
+      })
+      .catch(() => { /* use defaults */ });
+  }, []);
   const [stats, setStats] = useState({ clients: 0, consultants: 0, years: 0 });
   const reviewsWrapperRef = useRef(null);
   const statsRef = useRef(null);
@@ -460,7 +480,7 @@ const UserHome = () => {
                 <p>Choose your preferred way to connect</p>
               </div>
               <div className="lets_connect_methods">
-                <a href="mailto:Support@avisaexperts.com" className="lets_connect_link">
+                <a href={`mailto:${contactSettings.email}`} className="lets_connect_link">
                   <div className="lets_connect_card lets_connect_primary">
                     <div className="lets_connect_card_header">
                       <div className="lets_connect_icon">
@@ -473,19 +493,19 @@ const UserHome = () => {
                     </div>
                     <div className="lets_connect_info">
                       <h4>Email</h4>
-                      <span className="lets_connect_contact_detail">Support@avisaexperts.com</span>
+                      <span className="lets_connect_contact_detail">{contactSettings.email}</span>
                       <span className="lets_connect_response_time">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <circle cx="12" cy="12" r="10" stroke="#3b82f6" strokeWidth="2" />
                           <path d="M12 6V12L16 14" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" />
                         </svg>
-                        Response within 2-4 hours
+                        {contactSettings.emailResponseTime}
                       </span>
                     </div>
                   </div>
                 </a>
 
-                <a href="tel:+911204502750" className="lets_connect_link">
+                <a href={`tel:${contactSettings.phone.replace(/\D/g,'')}`} className="lets_connect_link">
                   <div className="lets_connect_card">
                     <div className="lets_connect_card_header">
                       <div className="lets_connect_icon">
@@ -497,19 +517,19 @@ const UserHome = () => {
                     </div>
                     <div className="lets_connect_info">
                       <h4>Phone</h4>
-                      <span className="lets_connect_contact_detail">+91 120-4502750</span>
+                      <span className="lets_connect_contact_detail">{contactSettings.phone}</span>
                       <span className="lets_connect_response_time">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <rect x="3" y="4" width="18" height="18" rx="2" stroke="#3b82f6" strokeWidth="2" />
                           <path d="M16 2V6M8 2V6M3 10H21" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" />
                         </svg>
-                        Mon-Sat, 11AM-6PM EST
+                        {contactSettings.phoneHours}
                       </span>
                     </div>
                   </div>
                 </a>
 
-                <a href="https://wa.me/919711000022" className="lets_connect_link">
+                <a href={`https://wa.me/${contactSettings.whatsapp.replace(/\D/g,'')}`} className="lets_connect_link">
                   <div className="lets_connect_card">
                     <div className="lets_connect_card_header">
                       <div className="lets_connect_icon">
@@ -522,13 +542,13 @@ const UserHome = () => {
                     </div>
                     <div className="lets_connect_info">
                       <h4>WhatsApp Only</h4>
-                      <span className="lets_connect_contact_detail">+91 9711000022</span>
+                      <span className="lets_connect_contact_detail">{contactSettings.whatsapp}</span>
                       <span className="lets_connect_response_time">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <rect x="3" y="4" width="18" height="18" rx="2" stroke="#3b82f6" strokeWidth="2" />
                           <path d="M16 2V6M8 2V6M3 10H21" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" />
                         </svg>
-                        Mon-Sat, 11AM-6PM EST
+                        {contactSettings.whatsappHours}
                       </span>
                     </div>
                   </div>
