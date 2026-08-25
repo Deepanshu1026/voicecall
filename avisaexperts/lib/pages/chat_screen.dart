@@ -2361,21 +2361,6 @@ class _ChatScreenState extends State<ChatScreen>
             tooltip: 'User Details',
             onPressed: _showUserDetailsSheet,
           ),
-        IconButton(
-          icon: const Icon(Icons.call, color: Colors.white),
-          tooltip: 'Voice call',
-          onPressed: () async {
-            await WebRTCCallService().startCall(
-              widget.advisorId,
-              receiver: {
-                '_id': widget.advisorId,
-                'displayName': widget.advisorName,
-                'avatar': widget.advisorImageUrl,
-              },
-              type: 'audio',
-            );
-          },
-        ),
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_vert, color: Colors.white),
           color: Colors.white,
