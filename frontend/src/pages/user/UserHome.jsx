@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../../components/user/LandingLayout';
 import AgentChatWidget from '../../components/user/AgentChatWidget';
 import SEO from '../../components/common/SEO';
+import toast from 'react-hot-toast';
 import api from '../../services/api';
 import '../../styles/userLanding.css';
 
@@ -600,15 +601,15 @@ const UserHome = () => {
                     page: 'home',
                   };
                   if (!data.name || !data.email || !data.phone || !data.message) {
-                    alert('Please fill in all fields');
+                    toast.error('Please fill in all fields');
                     return;
                   }
                   try {
                     await api.post('/settings/contact/submit', data);
-                    alert('Message sent! We will get back to you soon.');
+                    toast.success('Message sent! We will get back to you soon.');
                     form.reset();
                   } catch {
-                    alert('Failed to send message. Please try emailing us directly.');
+                    toast.error('Failed to send message. Please try emailing us directly.');
                   }
                 }}>
                 <div className="form_row">
