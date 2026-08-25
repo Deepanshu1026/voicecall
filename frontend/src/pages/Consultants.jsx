@@ -231,6 +231,15 @@ const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall, f
             <FiMessageCircle className="btn-icon" />
             Chat
           </button>
+          <button
+            className="btn btn-call offline-btn"
+            disabled
+            title="Call feature coming soon"
+          >
+            <FiPhone className="btn-icon" />
+            Call
+            <span style={{ fontSize: '0.6rem', display: 'block', lineHeight: 1 }}>Soon</span>
+          </button>
         </div>
       </div>
     </div>

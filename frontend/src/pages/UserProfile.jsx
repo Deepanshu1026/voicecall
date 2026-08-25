@@ -127,6 +127,12 @@ const UserProfile = () => {
               <HiChatBubbleLeftRight className="w-4 h-4" />
               {isCurrentUser ? 'My Profile' : 'Message'}
             </button>
+            {!isCurrentUser && (
+              <button disabled className="btn-secondary flex items-center gap-2 opacity-50 cursor-not-allowed" title="Call feature coming soon">
+                <HiPhone className="w-4 h-4" />
+                Call <span style={{ fontSize: '0.65rem', opacity: 0.7 }}>Soon</span>
+              </button>
+            )}
           </div>
         </div>
 
