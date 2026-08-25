@@ -1323,7 +1323,8 @@ router.get('/posts/:id/related', asyncHandler(async (req, res) => {
 router.get('/wallet', asyncHandler(async (req, res) => {
   const { user_id } = req.query;
   if (!user_id) throw new AppError('user_id is required', 400);
-  const user = await User.findById(user_id).select('walletBalance username displayName email');
+  const oid = await resolveId(user_id);
+  const user = oid ? await User.findById(oid).select('walletBalance username displayName email') : null;
   if (!user) throw new AppError('User not found', 404);
 
   // Auto-add ₹40 pre-recharge for users with 0 balance (reversible)
@@ -1333,7 +1334,7 @@ router.get('/wallet', asyncHandler(async (req, res) => {
   }
 
   const Transaction = require('../models/Transaction');
-  const transactions = await Transaction.find({ user: user_id }).sort({ createdAt: -1 }).limit(50);
+  const transactions = await Transaction.find({ user: oid }).sort({ createdAt: -1 }).limit(50);
   res.json({ success: true, balance: user.walletBalance, user: { username: user.username, displayName: user.displayName, email: user.email }, transactions, preRechargeNote: '₹40 pre-recharge added' });
 }));
 
