@@ -1,5 +1,6 @@
 const Setting = require('../models/Setting');
 const ContactSettings = require('../models/ContactSettings');
+const ContactSubmission = require('../models/ContactSubmission');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
@@ -97,4 +98,41 @@ const updateContactSettings = asyncHandler(async (req, res) => {
   ApiResponse.success(res, { settings }, 'Contact settings updated');
 });
 
-module.exports = { getSettings, updateSettings, getContactSettings, updateContactSettings };
+const submitContactForm = asyncHandler(async (req, res) => {
+  const { name, email, phone, message, page } = req.body;
+  if (!name || !email || !phone || !message) {
+    throw new AppError('All fields are required', 400);
+  }
+  await ContactSubmission.create({ name, email, phone, message, page: page || 'home' });
+  ApiResponse.success(res, null, 'Your message has been sent. We will get back to you soon!');
+});
+
+const getContactSubmissions = asyncHandler(async (req, res) => {
+  const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 20, 1), 100);
+  const skip = (page - 1) * limit;
+
+  const [submissions, total] = await Promise.all([
+    ContactSubmission.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+    ContactSubmission.countDocuments({}),
+  ]);
+
+  const data = submissions.map((s) => ({
+    id: s._id,
+    name: s.name,
+    email: s.email,
+    phone: s.phone,
+    message: s.message,
+    page: s.page,
+    isRead: s.isRead,
+    createdAt: s.createdAt,
+  }));
+
+  res.json({
+    success: true,
+    data,
+    pagination: { current_page: page, total_pages: Math.ceil(total / limit), total_records: total },
+  });
+});
+
+module.exports = { getSettings, updateSettings, getContactSettings, updateContactSettings, submitContactForm, getContactSubmissions };

@@ -589,7 +589,28 @@ const UserHome = () => {
                 <h3>Send a Message</h3>
                 <p>Submit your query below.</p>
               </div>
-              <form className="lets_connect_form" onSubmit={(e) => e.preventDefault()}>
+              <form className="lets_connect_form" onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.target;
+                  const data = {
+                    name: form.name.value.trim(),
+                    email: form.email.value.trim(),
+                    phone: form.phone.value.trim(),
+                    message: form.message.value.trim(),
+                    page: 'home',
+                  };
+                  if (!data.name || !data.email || !data.phone || !data.message) {
+                    alert('Please fill in all fields');
+                    return;
+                  }
+                  try {
+                    await api.post('/settings/contact/submit', data);
+                    alert('Message sent! We will get back to you soon.');
+                    form.reset();
+                  } catch {
+                    alert('Failed to send message. Please try emailing us directly.');
+                  }
+                }}>
                 <div className="form_row">
                   <div className="lets_connect_form_group half_width">
                     <label htmlFor="lets_connect_name">

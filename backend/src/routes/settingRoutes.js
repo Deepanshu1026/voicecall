@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getSettings, updateSettings, getContactSettings, updateContactSettings } = require('../controllers/settingController');
+const { getSettings, updateSettings, getContactSettings, updateContactSettings, submitContactForm, getContactSubmissions } = require('../controllers/settingController');
 const { employeeAuth } = require('../middleware/employeeAuth');
 const AppError = require('../utils/AppError');
 
@@ -16,5 +16,8 @@ router.put('/', employeeAuth, requireAdmin, updateSettings);
 
 router.get('/contact', getContactSettings);
 router.put('/contact', employeeAuth, requireAdmin, updateContactSettings);
+
+router.post('/contact/submit', submitContactForm);
+router.get('/contact/submissions', employeeAuth, requireAdmin, getContactSubmissions);
 
 module.exports = router;

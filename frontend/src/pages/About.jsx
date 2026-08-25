@@ -257,7 +257,28 @@ const About = () => {
               <div className="about-contact-form">
                 <h3>Send a Message</h3>
                 <p>Submit your query below.</p>
-                <form onSubmit={(e) => e.preventDefault()}>
+                <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    const data = {
+                      name: form[0].value.trim(),
+                      email: form[1].value.trim(),
+                      phone: form[2].value.trim(),
+                      message: form[3].value.trim(),
+                      page: 'about',
+                    };
+                    if (!data.name || !data.email || !data.phone || !data.message) {
+                      alert('Please fill in all fields');
+                      return;
+                    }
+                    try {
+                      await api.post('/settings/contact/submit', data);
+                      alert('Message sent! We will get back to you soon.');
+                      form.reset();
+                    } catch {
+                      alert('Failed to send message. Please try emailing us directly.');
+                    }
+                  }}>
                   <div className="about-form-row">
                     <input type="text" placeholder="Full Name" required />
                     <input type="email" placeholder="Email Address" required />

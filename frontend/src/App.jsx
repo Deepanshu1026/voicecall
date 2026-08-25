@@ -14,6 +14,7 @@ import AgentDailyLogins from './pages/AgentDailyLogins';
 import AgentPendingRemarks from './pages/AgentPendingRemarks';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminContactSettings from './pages/AdminContactSettings';
+import AdminContactSubmissions from './pages/AdminContactSubmissions';
 import AdminChatDashboard from './pages/AdminChatDashboard';
 import AdminPushNotifications from './pages/AdminPushNotifications';
 import AdminBannerControl from './pages/AdminBannerControl';
@@ -155,6 +156,7 @@ function App() {
         />
         <Route path="admin" element={<AdminDashboard />} />
         <Route path="admin/contact" element={<AdminContactSettings />} />
+        <Route path="admin/contact/submissions" element={<AdminContactSubmissions />} />
         <Route path="admin/chats" element={<AdminChatDashboard />} />
         <Route path="admin/push" element={<AdminPushNotifications />} />
         <Route path="admin/banner" element={<AdminBannerControl />} />
