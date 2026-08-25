@@ -129,14 +129,25 @@ const AgentNewApplication = () => {
                 {searching && <small className="text-muted">Searching...</small>}
                 {history.length > 0 && (
                   <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', padding: '12px', marginBottom: '12px', fontSize: '0.85rem', background: '#f8fafc' }}>
-                    <div className="fw-bold mb-2" style={{ fontSize: '0.8rem', color: '#64748b' }}>Previous Applications</div>
+                    <div className="fw-bold mb-2" style={{ fontSize: '0.8rem', color: '#64748b' }}>Previous Applications ({history.length})</div>
                     {history.map((h) => (
-                      <div key={h.id} style={{ padding: '6px 0', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                          <span className="fw-semibold">{h.client_name}</span>
-                          <span className={`ms-2 status-pill ${h.status}`} style={{ fontSize: '0.65rem', padding: '2px 8px' }}>{h.status}</span>
+                      <div key={h.id} style={{ padding: '8px 0', borderBottom: '1px solid #e2e8f0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <span className="fw-semibold">{h.client_name}</span>
+                            <span className={`ms-2 status-pill ${h.status}`} style={{ fontSize: '0.65rem', padding: '2px 8px' }}>{h.status}</span>
+                          </div>
+                          <small className="text-muted">{logTime(h.created_at)}</small>
                         </div>
-                        <small className="text-muted">{logTime(h.created_at)}</small>
+                        <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '3px' }}>
+                          {h.visa_type !== 'N/A' && <span className="me-3"><strong>Visa:</strong> {h.visa_type}</span>}
+                          {h.details?.occupation && <span className="me-3"><strong>Occ:</strong> {h.details.occupation}</span>}
+                          {h.details?.lead_source && <span className="me-3"><strong>Source:</strong> {h.details.lead_source}</span>}
+                          {h.details?.lead_outcome && <span style={{ color: h.details.lead_outcome === 'Interested' ? '#16a34a' : h.details.lead_outcome === 'Later' ? '#d97706' : '#dc2626' }}><strong>Outcome:</strong> {h.details.lead_outcome}</span>}
+                        </div>
+                        <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '2px' }}>
+                          Agent: {h.agent_name || 'Unknown'}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -283,29 +294,55 @@ const AgentNewApplication = () => {
             <h6 className="fw-bold mb-3" style={{ fontSize: '1rem' }}>
               <i className="bi bi-clock-history me-2" />Recent History
             </h6>
-            {history.length === 0 ? (
-              <div className="text-center py-4" style={{ color: '#718096', fontSize: '0.9rem' }}>
-                <i className="bi bi-inbox" style={{ fontSize: '1.5rem', display: 'block', marginBottom: '8px' }} />
-                Search a contact number to see history.
-              </div>
-            ) : (
-              <div className="agent-history-list">
-                {history.map((h) => (
-                  <div key={h.id} className="agent-history-item">
-                    <div style={{ fontSize: '0.85rem' }}>
-                      <span className="fw-bold">{h.client_name}</span>
-                      <span className={`ms-2 status-pill ${h.status}`} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{h.status}</span>
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '4px' }}>
-                      <i className="bi bi-calendar3 me-1" />{logTime(h.created_at)}
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                      <i className="bi bi-person me-1" />{h.details?.visa_type || 'N/A'}
-                    </div>
+                {history.length === 0 ? (
+                  <div className="text-center py-4" style={{ color: '#718096', fontSize: '0.9rem' }}>
+                    <i className="bi bi-inbox" style={{ fontSize: '1.5rem', display: 'block', marginBottom: '8px' }} />
+                    Search a contact number to see history.
                   </div>
-                ))}
-              </div>
-            )}
+                ) : (
+                  <div className="agent-history-list">
+                    {history.map((h) => {
+                      const d = h.details || {};
+                      const fields = [
+                        { label: 'Visa', value: h.visa_type !== 'N/A' ? h.visa_type : null },
+                        { label: 'Gender', value: d.gender },
+                        { label: 'Age', value: d.age },
+                        { label: 'Occupation', value: d.occupation },
+                        { label: 'Income', value: d.income },
+                        { label: 'Education', value: d.education },
+                        { label: 'IELTS', value: d.ielts_score },
+                        { label: 'Travel', value: d.travel_history },
+                        { label: 'Source', value: d.lead_source },
+                        { label: 'Outcome', value: d.lead_outcome, color: d.lead_outcome === 'Interested' ? '#16a34a' : d.lead_outcome === 'Later' ? '#d97706' : '#dc2626' },
+                        { label: 'City', value: d.city },
+                        { label: 'State', value: d.state },
+                        { label: 'Address', value: d.address },
+                        { label: 'Notes', value: d.client_notes },
+                      ].filter((f) => f.value);
+                      return (
+                        <div key={h.id} className="agent-history-item" style={{ padding: '10px 0' }}>
+                          <div style={{ fontSize: '0.85rem', marginBottom: '4px' }}>
+                            <span className="fw-bold">{h.client_name}</span>
+                            <span className={`ms-2 status-pill ${h.status}`} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{h.status}</span>
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '4px' }}>
+                            <i className="bi bi-calendar3 me-1" />{logTime(h.created_at)}
+                            <span className="ms-2"><i className="bi bi-person-badge me-1" />{h.agent_name || 'Unknown'}</span>
+                          </div>
+                          {fields.length > 0 && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', fontSize: '0.73rem', color: '#475569', background: '#f1f5f9', padding: '6px 8px', borderRadius: '6px' }}>
+                              {fields.map((f) => (
+                                <span key={f.label} style={{ color: f.color }}>
+                                  <strong>{f.label}:</strong> {f.value}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
           </div>
         </div>
       </div>
