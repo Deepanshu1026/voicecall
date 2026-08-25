@@ -41,7 +41,7 @@ const AgentLayout = () => {
 
   const fetchUnread = useCallback(async () => {
     try {
-      const res = await api.get('/chat/conversations');
+      const res = await api.get('/chat');
       const convs = res.data?.data || res.data?.conversations || [];
       const count = convs.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
       setTotalUnread(count);
