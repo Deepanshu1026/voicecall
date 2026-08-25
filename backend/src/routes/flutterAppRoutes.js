@@ -569,6 +569,69 @@ router.post('/tickets', asyncHandler(async (req, res) => {
   res.json({ count: data.length, data });
 }));
 
+// ==================== MESSAGE TEMPLATES (agent) ====================
+
+const MessageTemplate = require('../models/MessageTemplate');
+
+router.get('/templates', asyncHandler(async (req, res) => {
+  const { agent_id } = req.query;
+  if (!agent_id) return res.json({ success: true, templates: [] });
+  const agentOid = await resolveId(agent_id);
+  if (!agentOid) return res.json({ success: true, templates: [] });
+  const templates = await MessageTemplate.find({ agentId: agentOid })
+    .sort({ createdAt: -1 })
+    .select('title content createdAt')
+    .lean();
+  const data = templates.map((t) => ({
+    id: t._id.toString(),
+    title: t.title,
+    content: t.content,
+    created_at: t.createdAt,
+  }));
+  res.json({ success: true, templates: data });
+}));
+
+router.post('/templates', asyncHandler(async (req, res) => {
+  const { agent_id, title, content } = req.body;
+  if (!agent_id || !title?.trim() || !content?.trim()) {
+    throw new AppError('agent_id, title, and content are required', 400);
+  }
+  const agentOid = await resolveId(agent_id);
+  if (!agentOid) throw new AppError('Agent not found', 404);
+  const template = await MessageTemplate.create({
+    agentId: agentOid,
+    title: title.trim(),
+    content: content.trim(),
+  });
+  res.status(201).json({ success: true, template: { id: template._id.toString(), title: template.title, content: template.content, created_at: template.createdAt } });
+}));
+
+router.put('/templates/:id', asyncHandler(async (req, res) => {
+  const { agent_id, title, content } = req.body;
+  if (!agent_id || !title?.trim() || !content?.trim()) {
+    throw new AppError('agent_id, title, and content are required', 400);
+  }
+  const agentOid = await resolveId(agent_id);
+  if (!agentOid) throw new AppError('Agent not found', 404);
+  const template = await MessageTemplate.findOneAndUpdate(
+    { _id: req.params.id, agentId: agentOid },
+    { title: title.trim(), content: content.trim() },
+    { new: true }
+  );
+  if (!template) throw new AppError('Template not found', 404);
+  res.json({ success: true, template: { id: template._id.toString(), title: template.title, content: template.content, created_at: template.createdAt } });
+}));
+
+router.delete('/templates/:id', asyncHandler(async (req, res) => {
+  const { agent_id } = req.query;
+  if (!agent_id) throw new AppError('agent_id is required', 400);
+  const agentOid = await resolveId(agent_id);
+  if (!agentOid) throw new AppError('Agent not found', 404);
+  const template = await MessageTemplate.findOneAndDelete({ _id: req.params.id, agentId: agentOid });
+  if (!template) throw new AppError('Template not found', 404);
+  res.json({ success: true });
+}));
+
 // ==================== NOTIFICATIONS ====================
 
 router.get('/notifications', asyncHandler(async (req, res) => {

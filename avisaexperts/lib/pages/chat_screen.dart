@@ -17,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import '../config/app_config.dart';
+import '../consultant/consultant_template_picker.dart';
 import '../services/chat_socket_service.dart';
 import '../services/webrtc_call_service.dart';
 import '../models/app_notifiers.dart';
@@ -3183,6 +3184,34 @@ class _ChatScreenState extends State<ChatScreen>
                   ),
                   child: Row(
                     children: [
+                      if (_isCurrentUserConsultant)
+                        IconButton(
+                          icon: Icon(Icons.auto_fix_high,
+                              color: const Color(0xFF0D47A1), size: 22),
+                          tooltip: 'Templates',
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.white,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(16)),
+                              ),
+                              builder: (_) => ConsultantTemplatePicker(
+                                agentId: _currentUserId,
+                                onSelect: (content) {
+                                  _messageController.text = content;
+                                  _messageController.selection =
+                                      TextSelection.fromPosition(
+                                    TextPosition(
+                                        offset: _messageController.text.length),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
                       IconButton(
                         icon: Icon(Icons.emoji_emotions_outlined,
                             color: Colors.grey[600]),
