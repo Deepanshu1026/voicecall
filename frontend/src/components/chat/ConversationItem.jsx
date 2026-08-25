@@ -91,15 +91,6 @@ const ConversationItem = ({ conversation, isActive, onSelect }) => {
           </div>
 
           <div className="flex items-center gap-1.5 flex-shrink-0 ml-1">
-            {online && (
-              <button
-                onClick={(e) => { e.stopPropagation(); startCall(otherParticipant?._id, otherParticipant, 'audio'); }}
-                className="p-1 rounded-full text-green-600 hover:bg-green-50 transition-colors"
-                title="Call"
-              >
-                <HiPhone className="w-3.5 h-3.5" />
-              </button>
-            )}
             {unread > 0 && (
               <span className="min-w-[20px] h-[20px] flex items-center justify-center bg-primary-600 text-white text-[11px] font-bold rounded-full px-1.5 shadow-sm">
                 {unread > 99 ? '99+' : unread}

@@ -231,14 +231,6 @@ const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall, f
             <FiMessageCircle className="btn-icon" />
             Chat
           </button>
-          <button
-            className={`btn btn-call ${isOnline ? 'online-btn' : 'offline-btn'}`}
-            disabled={!isOnline}
-            onClick={() => onStartCall(consultant)}
-          >
-            <FiPhone className="btn-icon" />
-            Call
-          </button>
         </div>
       </div>
     </div>

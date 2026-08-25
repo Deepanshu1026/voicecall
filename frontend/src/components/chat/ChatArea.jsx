@@ -385,13 +385,6 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
             >
               {online ? 'Online' : 'End Chat'}
             </button>
-            <button
-              onClick={() => startCall(otherParticipant?._id, otherParticipant, 'audio')}
-              className="p-2 rounded-full hover:bg-white/20 transition"
-              title="Voice call"
-            >
-              <HiPhone className="w-5 h-5" />
-            </button>
             {onClose && (
               <button
                 onClick={onClose}
@@ -448,13 +441,6 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
           </div>
 
           <div className="flex items-center gap-0.5">
-            <button
-              onClick={() => startCall(otherParticipant?._id, otherParticipant, 'audio')}
-              className="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-gray-100 transition-colors"
-              title="Voice call"
-            >
-              <HiPhone className="w-5 h-5" />
-            </button>
             <button
               onClick={() => setShowInfo(!showInfo)}
               className="p-2 rounded-full text-gray-500 hover:bg-gray-100 transition-colors"
@@ -645,14 +631,6 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
                     className="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold shadow-md disabled:opacity-60 disabled:cursor-not-allowed transition"
                   >
                     {paying ? 'Processing payment...' : `Extend chat for ₹${paymentAmount}`}
-                  </button>
-                )}
-                {canCall && (
-                  <button
-                    onClick={() => startCall(otherParticipant._id, otherParticipant, 'audio')}
-                    className="w-full py-3 px-4 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-semibold shadow-md transition"
-                  >
-                    Start voice call ₹{otherParticipant.callRate}/min
                   </button>
                 )}
               </div>

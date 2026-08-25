@@ -140,26 +140,6 @@ const CallManager = ({ children }) => {
     }
   }, [webrtc, user]);
 
-  // Start a call when the user arrives with ?callUserId=... (legacy/consultant links)
-  useEffect(() => {
-    const callUserId = searchParams.get('callUserId');
-    if (!callUserId || !user) return;
-    if (urlActionRef.current) return;
-    urlActionRef.current = true;
-
-    const process = async () => {
-      try {
-        const userRes = await userAPI.getUserById(callUserId);
-        startCall(callUserId, userRes.data?.data, 'audio');
-      } catch (err) {
-        console.error('Failed to fetch call target:', err);
-        startCall(callUserId);
-      }
-      setSearchParams({}, { replace: true });
-    };
-    process();
-  }, [searchParams, startCall, setSearchParams, user]);
-
   const value = useMemo(() => ({
     webrtc,
     localStream: webrtc.localStream,

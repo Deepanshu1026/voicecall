@@ -127,18 +127,6 @@ const UserProfile = () => {
               <HiChatBubbleLeftRight className="w-4 h-4" />
               {isCurrentUser ? 'My Profile' : 'Message'}
             </button>
-            {!isCurrentUser && (
-              <>
-                <button onClick={() => handleCall('audio')} className="btn-secondary flex items-center gap-2">
-                  <HiPhone className="w-4 h-4" />
-                  Call
-                </button>
-                <button onClick={() => handleCall('video')} className="btn-secondary flex items-center gap-2">
-                  <HiVideoCamera className="w-4 h-4" />
-                  Video
-                </button>
-              </>
-            )}
           </div>
         </div>
 

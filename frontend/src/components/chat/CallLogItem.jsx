@@ -47,13 +47,6 @@ const CallLogItem = ({ call, currentUserId, onCallClick }) => {
             </p>
           </div>
 
-          <button
-            onClick={(e) => { e.stopPropagation(); onCallClick(otherUser); }}
-            className="p-1 rounded-full text-green-600 hover:bg-green-50 transition-colors flex-shrink-0"
-            title="Call back"
-          >
-            <HiPhone className="w-3.5 h-3.5" />
-          </button>
         </div>
       </div>
     </div>
