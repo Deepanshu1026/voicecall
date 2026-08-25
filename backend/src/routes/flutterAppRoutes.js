@@ -1324,18 +1324,24 @@ router.get('/wallet', asyncHandler(async (req, res) => {
   const { user_id } = req.query;
   if (!user_id) throw new AppError('user_id is required', 400);
   const oid = await resolveId(user_id);
-  const user = oid ? await User.findById(oid).select('walletBalance username displayName email') : null;
-  if (!user) throw new AppError('User not found', 404);
+  let user = oid ? await User.findById(oid).select('walletBalance username displayName email') : null;
+  let emp = null;
+  if (!user) {
+    emp = oid ? await Employee.findById(oid).select('walletBalance username displayName email') : null;
+  }
+  if (!user && !emp) throw new AppError('User not found', 404);
+
+  const account = user || emp;
 
   // Auto-add ₹40 pre-recharge for users with 0 balance (reversible)
-  if ((user.walletBalance || 0) <= 0) {
-    user.walletBalance = 40;
-    await user.save();
+  if ((account.walletBalance || 0) <= 0) {
+    account.walletBalance = 40;
+    await account.save();
   }
 
   const Transaction = require('../models/Transaction');
   const transactions = await Transaction.find({ user: oid }).sort({ createdAt: -1 }).limit(50);
-  res.json({ success: true, balance: user.walletBalance, user: { username: user.username, displayName: user.displayName, email: user.email }, transactions, preRechargeNote: '₹40 pre-recharge added' });
+  res.json({ success: true, balance: account.walletBalance, user: { username: account.username, displayName: account.displayName || account.username, email: account.email }, transactions, preRechargeNote: '₹40 pre-recharge added' });
 }));
 
 router.post('/wallet/reset-balance', asyncHandler(async (req, res) => {
