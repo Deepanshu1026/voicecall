@@ -823,7 +823,7 @@ class _InboxScreenState extends State<InboxScreen>
               ),
           ],
         ),
-        onTap: isOffline ? _showOfflineDialog : () => _openChat(entry),
+        onTap: () => _openChat(entry),
       ),
     );
   }
@@ -942,6 +942,7 @@ class _InboxScreenState extends State<InboxScreen>
           advisorId: entry.agentId.toString(),
           advisorName: entry.agentName,
           advisorImageUrl: entry.fullProfileUrl,
+          contactOnline: entry.isOnline,
         ),
       ),
     ).then((_) {

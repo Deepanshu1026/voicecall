@@ -470,6 +470,7 @@ class ChatScreen extends StatefulWidget {
   final String? contactStatus;
   final String? contactRole;
   final int? contactTotalOrders;
+  final bool contactOnline;
 
   const ChatScreen({
     super.key,
@@ -481,6 +482,7 @@ class ChatScreen extends StatefulWidget {
     this.contactStatus,
     this.contactRole,
     this.contactTotalOrders,
+    this.contactOnline = true,
   });
 
   @override
@@ -498,7 +500,7 @@ class _ChatScreenState extends State<ChatScreen>
   List<ChatMessage> _messages = [];
   bool _isTyping = false;
   ChatMessage? _replyingToMessage;
-  final bool _isOnline = true;
+  bool get _isOnline => widget.contactOnline;
   String _currentUserId = '';
   String _accessToken = '';
   bool _isLoadingUserId = true;
@@ -672,6 +674,13 @@ class _ChatScreenState extends State<ChatScreen>
     await _loadConversation();
     await _loadMessagesFromAPI();
     await _sendGreetingIfNeeded();
+    _markMessagesSeen();
+  }
+
+  void _markMessagesSeen() {
+    if (_conversationId.isNotEmpty && _currentUserId.isNotEmpty) {
+      ChatSocketService().emitRead(_conversationId);
+    }
   }
 
   Future<void> _markCurrentChatReceiver() async {
@@ -1337,6 +1346,7 @@ class _ChatScreenState extends State<ChatScreen>
     if (!_isUserScrolledUp) {
       _scrollToBottomSmooth();
     }
+    _markMessagesSeen();
   }
 
   // NEW: Check if there are unread messages from advisor
@@ -3139,18 +3149,25 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   Widget _buildMessageInput() {
-    final bool canSend = !_showPaymentUI || _isPaid;
+    final bool canSend = (!_showPaymentUI || _isPaid) && _isOnline;
     if (!canSend) {
+      final bool isPaymentBlock = _showPaymentUI && !_isPaid;
       return Container(
         color: Colors.grey[200],
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         child: Row(
           children: [
-            Icon(Icons.lock_outline, color: Colors.grey[600], size: 20),
+            Icon(
+              isPaymentBlock ? Icons.lock_outline : Icons.offline_bolt,
+              color: Colors.grey[600],
+              size: 20,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                'Free chat ended. Pay ₹$_paymentAmount to continue chatting.',
+                isPaymentBlock
+                    ? 'Free chat ended. Pay ₹$_paymentAmount to continue chatting.'
+                    : 'Agent is currently offline. You can still read messages.',
                 style: TextStyle(fontSize: 13, color: Colors.grey[700]),
               ),
             ),

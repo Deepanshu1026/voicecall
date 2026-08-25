@@ -198,7 +198,7 @@ class ChatSocketService {
   /// Mark all messages in a conversation as read
   void emitRead(String conversationId) {
     if (_socket != null && _isConnected) {
-      _socket!.emit('message:read', {'conversationId': conversationId});
+      _socket!.emit('message:seen', {'conversationId': conversationId});
     }
   }
 
