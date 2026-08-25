@@ -1,8 +1,10 @@
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
 import AgentSlidePanel from '../components/agent/AgentSlidePanel';
 import SEO from '../components/common/SEO';
+import api from '../services/api';
 import '../styles/agentPortal.css';
 import '../styles/agentSlidePanel.css';
 
@@ -13,7 +15,7 @@ const agentMenu = [
   { path: '/agent/dashboard/appointments', label: 'Appointments', icon: 'bi bi-calendar-check' },
   { path: '/agent/dashboard/applications', label: 'Applications', icon: 'bi bi-file-text' },
   { path: '/agent/dashboard/pending-remarks', label: 'Pending Remarks', icon: 'bi bi-chat-dots', badge: 'pendingRemarks' },
-  { path: '/agent/dashboard/chat', label: 'Client Chat', icon: 'bi bi-chat' },
+  { path: '/agent/dashboard/chat', label: 'Client Chat', icon: 'bi bi-chat', badge: 'unread' },
 ];
 
 const adminMenu = [
@@ -33,6 +35,29 @@ const AgentLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isChatPath = location.pathname === '/agent/dashboard/chat';
+  const { on } = useSocket();
+  const [totalUnread, setTotalUnread] = useState(0);
+  const unreadRef = useRef(totalUnread);
+
+  const fetchUnread = useCallback(async () => {
+    try {
+      const res = await api.get('/chat/conversations');
+      const convs = res.data?.data || res.data?.conversations || [];
+      const count = convs.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+      setTotalUnread(count);
+      unreadRef.current = count;
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => { fetchUnread(); }, [fetchUnread]);
+
+  useEffect(() => {
+    const handlers = ['message:new', 'messages:read', 'conversation:updated', 'conversation:new'];
+    const cleanups = handlers.map((ev) =>
+      on(ev, () => fetchUnread())
+    );
+    return () => cleanups.forEach((c) => c());
+  }, [on, fetchUnread]);
 
   // Warn when closing the tab/window and send a logout beacon
   useEffect(() => {
@@ -97,6 +122,9 @@ const AgentLayout = () => {
               <i className={item.icon} />
               <span>{item.label}</span>
               {item.badge === 'pendingRemarks' && <span className="sidebar-badge">27</span>}
+              {item.badge === 'unread' && totalUnread > 0 && (
+                <span className="sidebar-badge">{totalUnread > 99 ? '99+' : totalUnread}</span>
+              )}
             </NavLink>
           ))}
         </nav>
