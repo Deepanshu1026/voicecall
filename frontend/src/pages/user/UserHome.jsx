@@ -218,8 +218,8 @@ const UserHome = () => {
       availableLanguage: ['English', 'Hindi'],
     },
     sameAs: [
-      'https://www.instagram.com/avisaexperts/',
-      'https://www.facebook.com/avisaexperts',
+      'https://www.instagram.com/avisa.expert/',
+      'https://www.facebook.com/profile.php?id=61590985693281',
     ],
     image: [
       'https://ik.imagekit.io/kaveeshkapoor/image_library/image_library_66_kEoLRyiBP.HEIC',
@@ -429,7 +429,7 @@ const UserHome = () => {
                 Start your journey with A Visa Experts — where your travel plans begin with confidence.
               </p>
               <div className="social-icons">
-                <a href="/home" aria-label="Linkedin">
+                <a href="https://www.linkedin.com/company/a-visa-experts" aria-label="Linkedin">
                   <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 16 16" fill="none">
                     <g clipPath="url(#clipLinkedin)">
                       <path d="M12.25 0H3.75C1.67893 0 0 1.67893 0 3.75V12.25C0 14.3211 1.67893 16 3.75 16H12.25C14.3211 16 16 14.3211 16 12.25V3.75C16 1.67893 14.3211 0 12.25 0Z" fill="white" />
@@ -443,13 +443,13 @@ const UserHome = () => {
                     </defs>
                   </svg>
                 </a>
-                <a href="/home" aria-label="instagram">
+                <a href="https://www.instagram.com/avisa.expert/" aria-label="instagram">
                   <img src="/images/user/instagram 1.webp" alt="instagram" />
                 </a>
-                <a href="/home" aria-label="facebook">
+                <a href="https://www.facebook.com/profile.php?id=61590985693281" aria-label="facebook">
                   <img src="/images/user/logos_facebook 1.webp" alt="facebook" />
                 </a>
-                <a href="/home" aria-label="you-tube">
+                <a href="https://www.youtube.com/@avisaexperts" aria-label="you-tube">
                   <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 64 45" fill="none">
                     <g clipPath="url(#clipYoutube)">
                       <path d="M62.5865 7.01875C62.2195 5.66214 61.5034 4.42536 60.5096 3.43157C59.5159 2.43778 58.2791 1.72165 56.9226 1.3545C51.9561 0 31.9675 0 31.9675 0C31.9675 0 11.978 0.0409999 7.01155 1.3955C5.65492 1.76267 4.41816 2.47884 3.42441 3.47268C2.43066 4.46651 1.7146 5.70334 1.34755 7.06C-0.154702 15.8845 -0.737452 29.331 1.3888 37.8025C1.75589 39.1591 2.47196 40.3959 3.46571 41.3897C4.45946 42.3835 5.6962 43.0996 7.0528 43.4668C12.0193 44.8213 32.0083 44.8213 32.0083 44.8213C32.0083 44.8213 51.997 44.8213 56.9633 43.4668C58.3199 43.0996 59.5567 42.3835 60.5505 41.3897C61.5443 40.3959 62.2604 39.1591 62.6275 37.8025C64.212 28.9655 64.7003 15.5273 62.5865 7.01875Z" fill="#FF0000" />
@@ -458,23 +458,6 @@ const UserHome = () => {
                     <defs>
                       <clipPath id="clipYoutube">
                         <rect width="64" height="45" fill="white" />
-                      </clipPath>
-                    </defs>
-                  </svg>
-                </a>
-                <a href="/home" aria-label="Twitter">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none">
-                    <path fillRule="evenodd" clipRule="evenodd" d="M5 1C3.93913 1 2.92172 1.42143 2.17157 2.17157C1.42143 2.92172 1 3.93913 1 5V19C1 20.0609 1.42143 21.0783 2.17157 21.8284C2.92172 22.5786 3.93913 23 5 23H19C20.0609 23 21.0783 22.5786 21.8284 21.8284C22.5786 21.0783 23 20.0609 23 19V5C23 3.93913 22.5786 2.92172 21.8284 2.17157C21.0783 1.42143 20.0609 1 19 1H5ZM4.666 4.5C4.55653 4.54068 4.45808 4.60637 4.37848 4.69182C4.29887 4.77727 4.24033 4.88013 4.2075 4.99221C4.17468 5.10428 4.16848 5.22248 4.1894 5.33737C4.21032 5.45227 4.25778 5.56069 4.328 5.654L9.942 13.104L4.027 19.449L3.983 19.5H6.03L10.86 14.321L14.572 19.249C14.6581 19.3631 14.775 19.4502 14.909 19.5H19.331C19.4403 19.4591 19.5386 19.3933 19.6179 19.3077C19.6973 19.2222 19.7556 19.1193 19.7883 19.0072C19.8209 18.8952 19.8269 18.7771 19.8059 18.6623C19.7848 18.5475 19.7373 18.4392 19.667 18.346L14.053 10.896L20.017 4.5H17.967L13.137 9.68L9.423 4.752C9.33702 4.63756 9.22008 4.55012 9.086 4.5H4.666ZM15.546 18.048L6.431 5.952H8.45L17.564 18.047L15.546 18.048Z" fill="black" />
-                  </svg>
-                </a>
-                <a href="/home" aria-label="kaveesh-kapoor">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <g clipPath="url(#clipPodcast)">
-                      <path d="M9 1.5C9 2.32969 9.67031 3 10.5 3C16.2984 3 21 7.70156 21 13.5C21 14.3297 21.6703 15 22.5 15C23.3297 15 24 14.3297 24 13.5C24 6.04219 17.9578 0 10.5 0C9.67031 0 9 0.670312 9 1.5ZM9 6C9 6.82969 9.67031 7.5 10.5 7.5C13.8141 7.5 16.5 10.1859 16.5 13.5C16.5 14.3297 17.1703 15 18 15C18.8297 15 19.5 14.3297 19.5 13.5C19.5 8.53125 15.4688 4.5 10.5 4.5C9.67031 4.5 9 5.17031 9 6ZM4.5 6.75C4.5 5.50781 3.49219 4.5 2.25 4.5C1.00781 4.5 0 5.50781 0 6.75V17.25C0 20.9766 3.02344 24 6.75 24C10.4766 24 13.5 20.9766 13.5 17.25C13.5 13.5234 10.4766 10.5 6.75 10.5H6V15H6.75C7.99219 15 9 16.0078 9 17.25C9 18.4922 7.99219 19.5 6.75 19.5C5.50781 19.5 4.5 18.4922 4.5 17.25V6.75Z" fill="#001E74" />
-                    </g>
-                    <defs>
-                      <clipPath id="clipPodcast">
-                        <rect width="24" height="24" fill="white" />
                       </clipPath>
                     </defs>
                   </svg>
@@ -552,7 +535,7 @@ const UserHome = () => {
                   </div>
                 </a>
 
-                <a href={`tel:${contactSettings.phone.replace(/\D/g,'')}`} className="lets_connect_link">
+                <a href={`tel:${contactSettings.phone.replace(/\D/g, '')}`} className="lets_connect_link">
                   <div className="lets_connect_card">
                     <div className="lets_connect_card_header">
                       <div className="lets_connect_icon">
@@ -576,7 +559,7 @@ const UserHome = () => {
                   </div>
                 </a>
 
-                <a href={`https://wa.me/${contactSettings.whatsapp.replace(/\D/g,'')}`} className="lets_connect_link">
+                <a href={`https://wa.me/${contactSettings.whatsapp.replace(/\D/g, '')}`} className="lets_connect_link">
                   <div className="lets_connect_card">
                     <div className="lets_connect_card_header">
                       <div className="lets_connect_icon">
@@ -637,27 +620,27 @@ const UserHome = () => {
                 <p>Submit your query below.</p>
               </div>
               <form className="lets_connect_form" onSubmit={async (e) => {
-                  e.preventDefault();
-                  const form = e.target;
-                  const data = {
-                    name: form.name.value.trim(),
-                    email: form.email.value.trim(),
-                    phone: form.phone.value.trim(),
-                    message: form.message.value.trim(),
-                    page: 'home',
-                  };
-                  if (!data.name || !data.email || !data.phone || !data.message) {
-                    toast.error('Please fill in all fields');
-                    return;
-                  }
-                  try {
-                    await api.post('/settings/contact/submit', data);
-                    toast.success('Message sent! We will get back to you soon.');
-                    form.reset();
-                  } catch {
-                    toast.error('Failed to send message. Please try emailing us directly.');
-                  }
-                }}>
+                e.preventDefault();
+                const form = e.target;
+                const data = {
+                  name: form.name.value.trim(),
+                  email: form.email.value.trim(),
+                  phone: form.phone.value.trim(),
+                  message: form.message.value.trim(),
+                  page: 'home',
+                };
+                if (!data.name || !data.email || !data.phone || !data.message) {
+                  toast.error('Please fill in all fields');
+                  return;
+                }
+                try {
+                  await api.post('/settings/contact/submit', data);
+                  toast.success('Message sent! We will get back to you soon.');
+                  form.reset();
+                } catch {
+                  toast.error('Failed to send message. Please try emailing us directly.');
+                }
+              }}>
                 <div className="form_row">
                   <div className="lets_connect_form_group half_width">
                     <label htmlFor="lets_connect_name">
@@ -731,7 +714,7 @@ const UserHome = () => {
           <button className="view-button" aria-label="View All Destinations" onClick={() => navigate('/tourist-visa')}>
             View All Destinations
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </div>
@@ -777,7 +760,7 @@ const UserHome = () => {
                 <div className="review-content">
                   <div className="review-quote-icon">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M10 11H6.414L9.707 7.707L8.293 6.293L3.586 11L8.293 15.707L9.707 14.293L6.414 11H10V11ZM20.414 11H17V11H13.586L16.879 7.707L15.465 6.293L10.758 11L15.465 15.707L16.879 14.293L13.586 11H20.414Z" fill="#f58634" fillOpacity="0.3"/>
+                      <path d="M10 11H6.414L9.707 7.707L8.293 6.293L3.586 11L8.293 15.707L9.707 14.293L6.414 11H10V11ZM20.414 11H17V11H13.586L16.879 7.707L15.465 6.293L10.758 11L15.465 15.707L16.879 14.293L13.586 11H20.414Z" fill="#f58634" fillOpacity="0.3" />
                     </svg>
                   </div>
                   <h3>{review.title}</h3>
@@ -802,12 +785,12 @@ const UserHome = () => {
         <div className="reviews-navigation">
           <button className="nav-button" aria-label="Previous Review" onClick={() => scrollReviews('prev')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
           <button className="nav-button" aria-label="Next Review" onClick={() => scrollReviews('next')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         </div>
