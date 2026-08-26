@@ -859,6 +859,8 @@ const setupSocket = (io) => {
       const isActive = account.status === 'online' || account.workStatus === 'active';
       console.log(`[isUserOnlineDB] isActive=${isActive}`);
       if (!isActive) return false;
+      // Agents stay online forever — only explicit logout sets workStatus to unavailable
+      if (account.workStatus === 'active') return true;
       const lastSeenMs = Date.now() - new Date(account.lastSeen).getTime();
       const withinTimeout = lastSeenMs < HEARTBEAT_TIMEOUT_MS;
       console.log(`[isUserOnlineDB] lastSeenMs=${lastSeenMs}, withinTimeout=${withinTimeout}`);
