@@ -745,6 +745,7 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   bool _shouldShowPaymentUI() {
+    if (_isCurrentUserConsultant) return false;
     if (_isPaid) return false;
     if (_freeUntil == null) return true;
     return DateTime.now().isAfter(_freeUntil!);
@@ -752,7 +753,7 @@ class _ChatScreenState extends State<ChatScreen>
 
   void _startFreeChatTimer() {
     _freeChatTimer?.cancel();
-    if (_isPaid || _freeUntil == null) {
+    if (_isCurrentUserConsultant || _isPaid || _freeUntil == null) {
       setState(() => _freeChatRemaining = '');
       return;
     }
@@ -3134,7 +3135,7 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   Widget _buildMessageInput() {
-    final bool canSend = (!_showPaymentUI || _isPaid) && _isOnline;
+    final bool canSend = _isCurrentUserConsultant || ((!_showPaymentUI || _isPaid) && _isOnline);
     if (!canSend) {
       final bool isPaymentBlock = _showPaymentUI && !_isPaid;
       return Container(
