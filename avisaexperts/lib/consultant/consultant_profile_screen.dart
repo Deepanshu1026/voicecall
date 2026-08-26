@@ -154,14 +154,14 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen>
     if (confirmLogout == true) {
       try {
         final prefs = await SharedPreferences.getInstance();
-        final sessionToken = prefs.getString('consultantSessionToken') ?? '';
+        final token = prefs.getString('accessToken') ?? '';
         // Notify backend that agent is logging out
         try {
           await http.post(
             Uri.parse('${AppConfig.apiBaseUrl}/api/employees/logout'),
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer $sessionToken',
+              'Authorization': 'Bearer $token',
             },
           ).timeout(const Duration(seconds: 10));
         } catch (_) { /* best effort */ }

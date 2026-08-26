@@ -202,14 +202,14 @@ const UserHome = () => {
     return stars;
   };
 
-  const jsonLd = {
+  const jsonLd = [{
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'A Visa Experts',
     url: 'https://avisaexperts.com',
     logo: 'https://avisaexperts.com/images/user/tmlogo 1.webp',
     description:
-      'A Visa Experts is a trusted visa and immigration company helping individuals and families with tourist, work, transit, and permanent residency visas.',
+      'Trusted as the No.1 Visa Immigration Company, our Visa Immigration Experts help with tourist, work and transit visas globally.',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+91-120-4502750',
@@ -218,11 +218,57 @@ const UserHome = () => {
       availableLanguage: ['English', 'Hindi'],
     },
     sameAs: [
-      'https://www.instagram.com/kaveesh.kapoor',
+      'https://www.instagram.com/avisaexperts/',
       'https://www.facebook.com/avisaexperts',
-      'https://www.youtube.com/@avisaexperts',
     ],
-  };
+    image: [
+      'https://ik.imagekit.io/kaveeshkapoor/image_library/image_library_66_kEoLRyiBP.HEIC',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_74_wU1l2Rrwv.JPG',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_75_xgqf4Yn45.JPG',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_76_NShavxym8.JPG',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_77_thDVbAPV0.PNG',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_78_TFFk5GeZv.PNG',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_82_ss3Pf6Vwv.JPG',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_83_Nh2zNphmQ.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_86_U0JUredyY.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_87_pB0kAin6A.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_88_Y1lgfa1bx.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_89_MGWM0goWW.PNG',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_90_wygtbpgfk.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_92_B_IbLp9Jr.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_93_qLn6lCW98.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_94_-XCq4TgZ_.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_98_41mY5jHiD.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_99_QIExGTeEx.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_100_NJVSmrV0J.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_102_fTc4_usqE.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_103_BWPywuaHT.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_122_kz-Hp3vO_.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_123_pn_PdugKk.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_125_pwyQgcEc4.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_126_LGucb4dnd.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_127_KWJZo2HQi.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_129_s5q8KKtZG.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_130_NHkfmAvNn.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_132_QnwpfeZLP.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_134_H6YXU9NvD.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_135_Nuztto9xt.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_138_O3NnVPWx2.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_140_s1VInDH48.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_142_uoKkwPUmn.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_143_yPlx7OxnQ.jpg',
+      'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_144_mRRBb9OKe.jpg',
+      'https://avisaexperts.com/uploads1/kaveesh_kapoor(3).jpg',
+      'https://avisaexperts.com/uploads1/kaveesh_kapoor(2).jpg',
+      'https://avisaexperts.com/uploads1/kaveesh_kapoor(1).jpg',
+    ],
+  }, {
+    '@context': 'https://schema.org',
+    '@type': 'ImageObject',
+    contentUrl: 'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_74_wU1l2Rrwv.JPG',
+    description: 'Kaveesh Kapoor at his own Seminar.',
+    name: 'Kaveesh Kapoor',
+  }];
 
   return (
     <LandingLayout>
