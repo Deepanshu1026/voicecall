@@ -781,7 +781,7 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   Future<void> _loadWallet() async {
-    if (_currentUserId.isEmpty || _isLoadingWallet) return;
+    if (_isCurrentUserConsultant || _currentUserId.isEmpty || _isLoadingWallet) return;
     setState(() => _isLoadingWallet = true);
     try {
       final dio = Dio();

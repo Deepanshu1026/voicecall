@@ -1425,7 +1425,18 @@ router.post('/chat/conversation', asyncHandler(async (req, res) => {
     { _id: receiver._id?.toString() || receiver_id, displayName: receiver.displayName || receiver.username || null, username: receiver.username || 'Unknown', avatar: avatarUrl(receiver.avatar) },
   ];
 
-  const convData = { id: conv._id, _id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: participantData, isActive: conv.isActive, updatedAt: conv.updatedAt || new Date() };
+  const isSenderAgent = sender?.role !== 'user';
+  const convData = {
+    id: conv._id,
+    _id: conv._id,
+    freeUntil: isSenderAgent ? null : conv.freeUntil,
+    isPaid: isSenderAgent ? true : conv.isPaid,
+    paymentAmount: isSenderAgent ? 0 : conv.paymentAmount,
+    lockedToAgent: conv.lockedToAgent?.toString() || null,
+    participants: participantData,
+    isActive: conv.isActive,
+    updatedAt: conv.updatedAt || new Date(),
+  };
 
   // Emit real-time socket events
   if (req.io) {
