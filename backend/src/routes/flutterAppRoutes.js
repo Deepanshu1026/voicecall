@@ -213,6 +213,64 @@ router.post('/guest', asyncHandler(async (req, res) => {
   });
 }));
 
+// Upgrade guest to full user account
+router.post('/guest/upgrade', multerUpload.single('user_profile'), handleMulterError, asyncHandler(async (req, res) => {
+  const { user_id, user_name, country_code, user_mobile, user_password, specialization, form_submitted } = req.body;
+  if (!user_id || !user_name || !user_mobile) {
+    throw new AppError('user_id, user_name, and user_mobile are required', 400);
+  }
+
+  const oid = await resolveId(user_id);
+  if (!oid) throw new AppError('User not found', 404);
+
+  const user = await User.findById(oid);
+  if (!user) throw new AppError('User not found', 404);
+
+  // Update user profile
+  user.displayName = user_name.trim();
+  user.mobile = user_mobile.trim();
+  if (country_code) user.countryCode = country_code;
+  if (user_password && user_password.trim().length >= 6) {
+    user.password = user_password.trim(); // pre-save hook will hash it
+  }
+
+  // Handle profile image upload
+  if (req.file) {
+    const originalName = req.file.originalname || 'profile.jpg';
+    const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(originalName);
+    if (config.cloudinary.cloudName) {
+      const cloudResult = await uploadToCloudinary(req.file.path, {
+        folder: 'voicecall/profiles',
+        resourceType: isImage ? 'image' : 'auto',
+      });
+      user.avatar = { url: cloudResult.url, publicId: cloudResult.publicId };
+    } else {
+      user.avatar = { url: `${config.serverUrl}/uploads/files/${req.file.filename}`, publicId: req.file.filename };
+    }
+  }
+
+  if (form_submitted) user.settings = { ...(user.settings || {}), formSubmitted: true };
+  await user.save({ validateBeforeSave: true });
+
+  // Generate new token
+  const tokens = generateTokens(user._id);
+  user.refreshToken = tokens.refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  res.json({
+    success: true,
+    message: 'Account upgraded successfully! Welcome aboard!',
+    user_id: user._id.toString(),
+    user_name: user.displayName,
+    user_email: user.email,
+    user_mobile: user.mobile,
+    user_profile: avatarUrl(user.avatar),
+    form_submitted: form_submitted || 'Yes',
+    token: tokens.accessToken,
+    refreshToken: tokens.refreshToken,
+  });
+}));
+
 // Consultant/agent login (mobile app)
 router.get('/agent-login', asyncHandler(async (req, res) => {
   const { useremail, password } = req.query;
