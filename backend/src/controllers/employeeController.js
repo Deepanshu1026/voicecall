@@ -91,6 +91,11 @@ const logout = asyncHandler(async (req, res) => {
     employee.workStatus = 'unavailable';
     employee.lastSeen = new Date();
     await employee.save({ validateBeforeSave: false });
+
+    // Notify connected clients that this agent is now offline
+    if (req.io) {
+      req.io.emit('user:status', { userId: employee._id.toString(), status: 'offline', lastSeen: employee.lastSeen });
+    }
   }
 
   ApiResponse.success(res, null, 'Logged out successfully');

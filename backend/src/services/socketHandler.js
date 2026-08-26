@@ -141,9 +141,10 @@ const markUserOnline = async (io, userId) => {
 };
 
 const refreshOnlineList = () => {
-  // Real-time online list built from active socket sets (fast, no DB query)
+  // Users: only online if they have an active socket
   const userIds = Array.from(onlineUserSockets.keys()).filter((id) => onlineUserSockets.get(id)?.size > 0);
-  const employeeIds = Array.from(onlineEmployeeSockets.keys()).filter((id) => onlineEmployeeSockets.get(id)?.size > 0);
+  // Agents: always show as online (they stay active until explicit logout)
+  const employeeIds = Array.from(onlineEmployeeSockets.keys());
   return [...userIds, ...employeeIds];
 };
 
@@ -1288,11 +1289,9 @@ const setupSocket = (io) => {
         const employeeSocketSet = onlineEmployeeSockets.get(userId);
         if (employeeSocketSet) {
           employeeSocketSet.delete(socket.id);
-          if (employeeSocketSet.size === 0) {
-            onlineEmployeeSockets.delete(userId);
-            // Agents stay active until they explicitly log out.
-            // Do NOT call scheduleEmployeeOffline here.
-          }
+          // Agents stay active in the online list until they explicitly log out.
+          // Do NOT delete from onlineEmployeeSockets — the empty set
+          // still signals that this agent is "active" via their workStatus.
         }
       } else {
         const userSocketSet = onlineUserSockets.get(userId);
