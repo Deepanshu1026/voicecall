@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:http/http.dart' as http;
 
+import '../config/app_config.dart';
 import '../authentication/role_selection_screen.dart';
 import '../nested_screen/privacy_policy_page.dart';
 import '../nested_screen/term_condition.dart';
@@ -152,6 +154,17 @@ class _ConsultantProfileScreenState extends State<ConsultantProfileScreen>
     if (confirmLogout == true) {
       try {
         final prefs = await SharedPreferences.getInstance();
+        final sessionToken = prefs.getString('consultantSessionToken') ?? '';
+        // Notify backend that agent is logging out
+        try {
+          await http.post(
+            Uri.parse('${AppConfig.apiBaseUrl}/api/employees/logout'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $sessionToken',
+            },
+          ).timeout(const Duration(seconds: 10));
+        } catch (_) { /* best effort */ }
         await prefs.clear();
         if (context.mounted) {
           Navigator.of(context).pushAndRemoveUntil(
