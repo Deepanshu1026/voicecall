@@ -79,7 +79,7 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
   const isPaid = liveConversation?.isPaid;
   const isLockedUser = isUser && isConsultation && user?._id !== lockedToAgent?.toString();
   const isUserConsultation = isConsultation && user?._id !== lockedToAgent?.toString();
-  const canUserReply = (!isLockedUser || isPaid || !isFreeExpired) && online;
+  const canUserReply = isLockedUser ? ((isPaid || !isFreeExpired) && online) : true;
   const paymentAmount = liveConversation?.paymentAmount || 100;
 
   useEffect(() => {
