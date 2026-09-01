@@ -21,7 +21,6 @@ const employeeSchema = new mongoose.Schema(
     email: {
       type: String,
       required: [true, 'Email is required'],
-      unique: true,
       lowercase: true,
       trim: true,
       match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email'],
@@ -125,8 +124,7 @@ const employeeSchema = new mongoose.Schema(
 
 employeeSchema.index({ displayName: 'text', username: 'text' });
 employeeSchema.index({ role: 1, status: 1 });
-// Partial unique index: only non-empty strings must be unique; nulls/empty strings are allowed to repeat.
-employeeSchema.index({ mobile: 1 }, { unique: true, partialFilterExpression: { mobile: { $type: 'string', $gt: '' } } });
+employeeSchema.index({ mobile: 1 });
 
 employeeSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();

@@ -185,20 +185,27 @@ connectDB().then(async () => {
     console.warn('Could not fix mobile index (non-fatal):', e.message);
   }
 
-  // Allow duplicate usernames — drop unique index on username for users & employees
+  // Allow duplicate username/email/mobile — drop unique indexes on these fields
+  // for users & employees. Duplicates are now permitted app-wide.
   try {
     for (const collName of ['users', 'employees']) {
       const collection = db.collection(collName);
       const indexes = await collection.indexes();
       for (const idx of indexes) {
-        if (idx.unique && idx.key && idx.key.username !== undefined) {
-          console.log(`Dropping unique index on ${collName}.username: ${idx.name}`);
+        if (
+          idx.unique &&
+          idx.key &&
+          (idx.key.username !== undefined ||
+            idx.key.email !== undefined ||
+            idx.key.mobile !== undefined)
+        ) {
+          console.log(`Dropping unique index on ${collName}: ${idx.name}`);
           await collection.dropIndex(idx.name);
         }
       }
     }
   } catch (e) {
-    console.warn('Could not drop username unique indexes (non-fatal):', e.message);
+    console.warn('Could not drop duplicate-unique indexes (non-fatal):', e.message);
   }
 
   startServer(config.port);

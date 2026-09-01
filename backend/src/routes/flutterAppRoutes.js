@@ -139,14 +139,6 @@ router.post('/register', asyncHandler(async (req, res) => {
   if (password.length < 6) throw new AppError('Password must be at least 6 characters', 400);
   if (!/^\d{6,15}$/.test(phone)) throw new AppError('Invalid phone number', 400);
 
-  const existing = await User.findOne({
-    $or: [{ email: email.toLowerCase().trim() }, { mobile: phone.trim() }],
-  });
-  if (existing) {
-    const field = existing.email === email.toLowerCase().trim() ? 'email' : 'phone';
-    throw new AppError(`Account with this ${field} already exists`, 409);
-  }
-
   const user = await User.create({
     username: username.trim(),
     email: email.toLowerCase().trim(),
@@ -437,14 +429,6 @@ router.get('/edit-profile', asyncHandler(async (req, res) => {
 
   const cleanEmail = email.toLowerCase().trim();
   const cleanMobile = contact.trim();
-  const duplicate = await User.findOne({
-    _id: { $ne: userObjectId },
-    $or: [{ email: cleanEmail }, { mobile: cleanMobile }],
-  });
-  if (duplicate) {
-    const field = duplicate.email === cleanEmail ? 'email' : 'phone';
-    throw new AppError(`Another account with this ${field} already exists`, 409);
-  }
 
   const update = { displayName: name.trim(), mobile: cleanMobile, email: cleanEmail };
   await User.findByIdAndUpdate(userid, update);
@@ -472,14 +456,6 @@ router.post('/edit-profile', profileUpload, handleMulterError, asyncHandler(asyn
 
   const cleanEmail = email.toLowerCase().trim();
   const cleanMobile = contact.trim();
-  const duplicate = await User.findOne({
-    _id: { $ne: userObjectId },
-    $or: [{ email: cleanEmail }, { mobile: cleanMobile }],
-  });
-  if (duplicate) {
-    const field = duplicate.email === cleanEmail ? 'email' : 'phone';
-    throw new AppError(`Another account with this ${field} already exists`, 409);
-  }
 
   const update = { displayName: name.trim(), mobile: cleanMobile, email: cleanEmail };
 
