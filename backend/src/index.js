@@ -155,10 +155,13 @@ const startServer = (port, maxAttempts = 5) => {
 };
 
 connectDB().then(async () => {
+  const mongoose = require('mongoose');
+  const db = mongoose.connection.db;
+
   // Fix broken unique index on User.mobile — old deployments created it
   // without a partialFilterExpression, causing E11000 errors for guest users.
   try {
-    const collection = require('mongoose').connection.db.collection('users');
+    const collection = db.collection('users');
     const indexes = await collection.indexes();
     let dropped = false;
     for (const idx of indexes) {
@@ -167,7 +170,7 @@ connectDB().then(async () => {
         idx.key &&
         idx.key.mobile !== undefined &&
         (!idx.partialFilterExpression ||
-         !idx.partialFilterExpression.mobile)
+          !idx.partialFilterExpression.mobile)
       ) {
         console.log(`Dropping broken unique index on users.mobile: ${idx.name}`);
         await collection.dropIndex(idx.name);
@@ -181,6 +184,23 @@ connectDB().then(async () => {
   } catch (e) {
     console.warn('Could not fix mobile index (non-fatal):', e.message);
   }
+
+  // Allow duplicate usernames — drop unique index on username for users & employees
+  try {
+    for (const collName of ['users', 'employees']) {
+      const collection = db.collection(collName);
+      const indexes = await collection.indexes();
+      for (const idx of indexes) {
+        if (idx.unique && idx.key && idx.key.username !== undefined) {
+          console.log(`Dropping unique index on ${collName}.username: ${idx.name}`);
+          await collection.dropIndex(idx.name);
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('Could not drop username unique indexes (non-fatal):', e.message);
+  }
+
   startServer(config.port);
 });
 

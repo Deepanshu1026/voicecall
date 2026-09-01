@@ -12,14 +12,13 @@ const register = asyncHandler(async (req, res) => {
   const { username, email, password, displayName, role, mobile } = req.body;
 
   const trimmedMobile = mobile ? mobile.trim() : null;
-  const query = { $or: [{ email }, { username }] };
+  const query = { $or: [{ email }] };
   if (trimmedMobile) query.$or.push({ mobile: trimmedMobile });
 
   const existingUser = await User.findOne(query);
   if (existingUser) {
-    let field = 'username';
-    if (existingUser.email === email) field = 'email';
-    else if (trimmedMobile && existingUser.mobile === trimmedMobile) field = 'phone';
+    let field = 'email';
+    if (trimmedMobile && existingUser.mobile === trimmedMobile) field = 'phone';
     throw new AppError(`User with that ${field} already exists`, 409);
   }
 
