@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.avisaexperts.app"
     compileSdk = 36
-    ndkVersion = "28.0.13004108"
+    ndkVersion = "29.0.13599879"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -58,12 +58,12 @@ flutter {
 
 dependencies {
     // ✅ Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-auth")
 
     // ✅ Firebase Messaging (for notifications)
     implementation("com.google.firebase:firebase-messaging-ktx:23.4.0")
 
     // ✅ JDK desugaring support
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
