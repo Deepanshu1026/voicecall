@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.avisaexperts.app"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.0.13004108"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
