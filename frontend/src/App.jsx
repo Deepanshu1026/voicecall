@@ -6,7 +6,6 @@ import LoadingScreen from './components/common/LoadingScreen';
 import UserLogin from './pages/UserLogin';
 import UserRegister from './pages/UserRegister';
 import AgentLogin from './pages/AgentLogin';
-import AgentRegister from './pages/AgentRegister';
 import AgentLayout from './pages/AgentLayout';
 import AgentDashboardHome from './pages/AgentDashboardHome';
 import AgentNewApplication from './pages/AgentNewApplication';
@@ -89,10 +88,6 @@ function App() {
       <Route
         path="/agent/login"
         element={isAuthenticated && EMPLOYEE_ROLES.includes(user?.role) ? <Navigate to="/agent/dashboard" replace /> : <AgentLogin />}
-      />
-      <Route
-        path="/agent/register"
-        element={isAuthenticated && EMPLOYEE_ROLES.includes(user?.role) ? <Navigate to="/agent/dashboard" replace /> : <AgentRegister />}
       />
 
       {/* Public landing pages */}

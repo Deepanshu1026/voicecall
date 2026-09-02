@@ -104,10 +104,7 @@ const AgentLogin = () => {
         </form>
 
         <div className="agent-auth-footer">
-          Don&apos;t have an agent account?{' '}
-          <Link to="/agent/register" className="agent-auth-link">
-            Register as agent
-          </Link>
+          Agent accounts are created by the administrator.
         </div>
 
         <div style={{ textAlign: 'center' }}>

@@ -5,7 +5,6 @@ const messageTemplateController = require('../controllers/messageTemplateControl
 const { employeeAuth } = require('../middleware/employeeAuth');
 
 router.post('/login', employeeController.login);
-router.post('/register', employeeController.register);
 router.post('/refresh-token', employeeController.refreshTokenHandler);
 
 router.get('/me', employeeAuth, employeeController.getMe);

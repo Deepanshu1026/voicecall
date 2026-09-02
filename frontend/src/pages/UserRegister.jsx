@@ -173,9 +173,9 @@ const UserRegister = () => {
           </Link>
           <br />
           <span style={{ fontSize: '13px' }}>
-            Want to join as an agent?{' '}
-            <Link to="/agent/register" className="auth-link">
-              Register as agent
+            Are you an agent?{' '}
+            <Link to="/agent/login" className="auth-link">
+              Sign in as agent
             </Link>
           </span>
         </div>
