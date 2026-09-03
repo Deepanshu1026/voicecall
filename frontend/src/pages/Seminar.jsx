@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../components/user/LandingLayout';
 import SEO from '../components/common/SEO';
-import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_POSTER } from '../config/seminarVideo';
+import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_POSTER, SEMINAR_VIDEO_IS_EMBED } from '../config/seminarVideo';
 import '../styles/seminar.css';
 
 const seminarStats = [
@@ -74,17 +74,28 @@ const Seminar = () => {
       <div className="seminar-page">
         {/* HERO — autoplay video background */}
         <section className="seminar-hero">
-          <video
-            className="seminar-hero-video"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster={SEMINAR_VIDEO_POSTER}
-          >
-            <source src={SEMINAR_VIDEO_URL} type="video/mp4" />
-          </video>
+          {SEMINAR_VIDEO_IS_EMBED ? (
+            <iframe
+              className="seminar-hero-video seminar-hero-embed"
+              src={SEMINAR_VIDEO_URL}
+              title="Seminar highlight video"
+              frameBorder="0"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <video
+              className="seminar-hero-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              poster={SEMINAR_VIDEO_POSTER}
+            >
+              <source src={SEMINAR_VIDEO_URL} type="video/mp4" />
+            </video>
+          )}
           <div className="seminar-hero-shade" />
           <div className="seminar-hero-vignette" />
 
