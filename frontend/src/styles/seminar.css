@@ -1,0 +1,468 @@
+:root {
+  --sm-black: #050505;
+  --sm-black-2: #0c0c0c;
+  --sm-black-3: #141414;
+  --sm-white: #ffffff;
+  --sm-silver: #c9c9c9;
+  --sm-platinum: #e8e8e8;
+  --sm-grey: #7a7a7a;
+  --sm-gold: #c9a24b;
+  --sm-border: rgba(255, 255, 255, 0.08);
+}
+
+.seminar-page {
+  background: var(--sm-black);
+  color: var(--sm-white);
+  font-family: 'Poppins', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ HERO ============ */
+.seminar-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  background:
+    radial-gradient(ellipse at 50% -20%, rgba(201, 162, 75, 0.18), transparent 60%),
+    linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+}
+.seminar-hero-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, 0.06), transparent 55%);
+  pointer-events: none;
+}
+.seminar-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+.seminar-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.35em;
+  font-size: 0.72rem;
+  color: var(--sm-gold);
+  margin-bottom: 28px;
+}
+.seminar-eyebrow::before,
+.seminar-eyebrow::after {
+  content: '';
+  width: 34px;
+  height: 1px;
+  background: var(--sm-gold);
+  opacity: 0.6;
+}
+.seminar-hero h1 {
+  font-size: clamp(2.4rem, 6vw, 4.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 20px;
+}
+.seminar-hero h1 .light {
+  display: block;
+  color: var(--sm-silver);
+  font-weight: 300;
+}
+.seminar-hero-sub {
+  color: var(--sm-grey);
+  font-size: 1.05rem;
+  max-width: 640px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+.seminar-hero-meta {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  color: var(--sm-silver);
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.seminar-hero-meta span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.seminar-hero-meta span::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--sm-gold);
+}
+
+/* ============ SCROLL CUE ============ */
+.seminar-scroll {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--sm-grey);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.seminar-scroll::after {
+  content: '';
+  width: 1px;
+  height: 42px;
+  background: linear-gradient(var(--sm-gold), transparent);
+  animation: scrollPulse 1.8s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ============ VIDEO FEATURE ============ */
+.seminar-video-section {
+  position: relative;
+  padding: 90px 24px;
+  background: var(--sm-black-2);
+}
+.seminar-container {
+  max-width: 1160px;
+  margin: 0 auto;
+}
+.seminar-video-wrap {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--sm-border);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+  background: #000;
+}
+.seminar-video-wrap video,
+.seminar-video-wrap img {
+  width: 100%;
+  height: 100%;
+  max-height: 600px;
+  object-fit: cover;
+  display: block;
+}
+.seminar-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.65) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 34px;
+}
+.seminar-video-overlay h3 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* ============ STATS ============ */
+.seminar-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--sm-border);
+  border: 1px solid var(--sm-border);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: -1px;
+}
+.seminar-stat {
+  background: var(--sm-black-3);
+  padding: 40px 20px;
+  text-align: center;
+}
+.seminar-stat-num {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #fff, #9a9a9a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.seminar-stat-label {
+  color: var(--sm-grey);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-top: 8px;
+}
+
+/* ============ SECTION HEAD ============ */
+.seminar-section-head {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 60px;
+}
+.seminar-section-head .kicker {
+  color: var(--sm-gold);
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+.seminar-section-head h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin: 14px 0;
+  letter-spacing: -0.01em;
+}
+.seminar-section-head p {
+  color: var(--sm-grey);
+  line-height: 1.7;
+  font-size: 0.98rem;
+}
+
+/* ============ SPEAKERS ============ */
+.seminar-speakers {
+  padding: 100px 24px;
+  background: var(--sm-black);
+}
+.seminar-speakers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+.seminar-speaker {
+  position: relative;
+  background: var(--sm-black-3);
+  border: 1px solid var(--sm-border);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform 0.4s, border-color 0.4s;
+}
+.seminar-speaker:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 162, 75, 0.4);
+}
+.seminar-speaker-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.05);
+  transition: filter 0.5s;
+}
+.seminar-speaker:hover .seminar-speaker-img {
+  filter: grayscale(0%);
+}
+.seminar-speaker-body {
+  padding: 24px;
+}
+.seminar-speaker-body h3 {
+  font-size: 1.35rem;
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+.seminar-speaker-body .role {
+  color: var(--sm-gold);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.seminar-speaker-body p {
+  color: var(--sm-grey);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
+/* ============ GALLERY ============ */
+.seminar-gallery {
+  padding: 100px 24px;
+  background: var(--sm-black-2);
+}
+.seminar-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.seminar-gallery-grid .g-item {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  cursor: pointer;
+}
+.seminar-gallery-grid .g-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: transform 0.6s, filter 0.5s;
+}
+.seminar-gallery-grid .g-item:hover img {
+  transform: scale(1.08);
+  filter: grayscale(0%);
+}
+.seminar-gallery-grid .g-item.wide {
+  grid-column: span 2;
+  aspect-ratio: 2 / 1;
+}
+.seminar-gallery-grid .g-item.tall {
+  grid-row: span 2;
+  aspect-ratio: auto;
+}
+
+/* ============ HIGHLIGHTS / AGENDA ============ */
+.seminar-highlights {
+  padding: 100px 24px;
+  background: var(--sm-black);
+}
+.seminar-timeline {
+  max-width: 720px;
+  margin: 0 auto;
+  position: relative;
+}
+.seminar-timeline::before {
+  content: '';
+  position: absolute;
+  left: 22px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--sm-border);
+}
+.seminar-tl-item {
+  position: relative;
+  padding: 0 0 38px 64px;
+}
+.seminar-tl-item:last-child {
+  padding-bottom: 0;
+}
+.seminar-tl-dot {
+  position: absolute;
+  left: 13px;
+  top: 4px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1px solid var(--sm-gold);
+  background: var(--sm-black);
+}
+.seminar-tl-item h4 {
+  font-size: 1.15rem;
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+.seminar-tl-item p {
+  color: var(--sm-grey);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin: 0;
+}
+.seminar-tl-item time {
+  color: var(--sm-gold);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* ============ TESTIMONIALS ============ */
+.seminar-testimonials {
+  padding: 100px 24px;
+  background: var(--sm-black-2);
+}
+.seminar-quotes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.seminar-quote {
+  background: var(--sm-black-3);
+  border: 1px solid var(--sm-border);
+  border-radius: 16px;
+  padding: 28px;
+}
+.seminar-quote .mark {
+  color: var(--sm-gold);
+  font-size: 2.4rem;
+  line-height: 1;
+  font-family: Georgia, serif;
+}
+.seminar-quote p {
+  color: var(--sm-platinum);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  margin: 16px 0;
+}
+.seminar-quote .who {
+  color: var(--sm-grey);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+/* ============ CTA ============ */
+.seminar-cta {
+  padding: 110px 24px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(201, 162, 75, 0.14), transparent 55%),
+    var(--sm-black);
+}
+.seminar-cta h2 {
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+.seminar-cta p {
+  color: var(--sm-grey);
+  max-width: 540px;
+  margin: 0 auto 34px;
+  line-height: 1.7;
+}
+.seminar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 34px;
+  background: #fff;
+  color: #000;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.seminar-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(255, 255, 255, 0.15);
+}
+.seminar-btn.outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid var(--sm-border);
+}
+.seminar-btn.outline:hover {
+  border-color: #fff;
+  box-shadow: none;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 960px) {
+  .seminar-stats { grid-template-columns: repeat(2, 1fr); }
+  .seminar-speakers-grid { grid-template-columns: 1fr; }
+  .seminar-gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .seminar-quotes { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .seminar-stats { grid-template-columns: 1fr 1fr; }
+  .seminar-hero-meta { gap: 16px; }
+}

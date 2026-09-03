@@ -35,6 +35,7 @@ import Consultants from './pages/Consultants';
 import Appointment from './pages/Appointment';
 import AppointmentPayment from './pages/AppointmentPayment';
 import UserProfile from './pages/UserProfile';
+import Seminar from './pages/Seminar';
 
 const EMPLOYEE_ROLES = ['case_manager', 'manager', 'senior_manager', 'admin'];
 
@@ -99,6 +100,7 @@ function App() {
       <Route path="/transit-visa" element={<TransitVisa />} />
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/blog/:id/:slug?" element={<BlogDetail />} />
+      <Route path="/seminar" element={<Seminar />} />
       <Route path="/consultants" element={<Consultants />} />
       <Route path="/appointment" element={<Appointment />} />
       <Route path="/appointment-payment" element={<AppointmentPayment />} />
