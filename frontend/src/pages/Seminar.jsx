@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../components/user/LandingLayout';
 import SEO from '../components/common/SEO';
+import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_POSTER } from '../config/seminarVideo';
 import '../styles/seminar.css';
 
 const seminarStats = [
@@ -48,20 +48,17 @@ const testimonials = [
   { quote: 'World-class insights delivered with such clarity. Best seminar I have attended in years.', who: 'Attendee — Mumbai' },
 ];
 
+const marqueeItems = ['Global Immigration', 'Visa Success', 'Expert Guidance', '2 Lakh+ Clients', 'Trusted Advisors', 'Study Abroad', 'PR & Work Visas'];
+
 const Seminar = () => {
   const navigate = useNavigate();
-  const [playing, setPlaying] = useState(false);
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Event',
     name: 'A Visa Experts — Global Immigration Seminar',
     description: 'A premium seminar by A Visa Experts on visa and immigration success.',
-    organizer: {
-      '@type': 'Organization',
-      name: 'A Visa Experts',
-      url: 'https://avisaexperts.com',
-    },
+    organizer: { '@type': 'Organization', name: 'A Visa Experts', url: 'https://avisaexperts.com' },
   };
 
   return (
@@ -75,9 +72,22 @@ const Seminar = () => {
       />
 
       <div className="seminar-page">
-        {/* HERO */}
+        {/* HERO — autoplay video background */}
         <section className="seminar-hero">
-          <div className="seminar-hero-glow" />
+          <video
+            className="seminar-hero-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster={SEMINAR_VIDEO_POSTER}
+          >
+            <source src={SEMINAR_VIDEO_URL} type="video/mp4" />
+          </video>
+          <div className="seminar-hero-shade" />
+          <div className="seminar-hero-vignette" />
+
           <div className="seminar-hero-inner">
             <div className="seminar-eyebrow">A Visa Experts Presents</div>
             <h1>
@@ -85,56 +95,34 @@ const Seminar = () => {
               <span className="light">Success Seminar 2026</span>
             </h1>
             <p className="seminar-hero-sub">
-              A landmark gathering of visa experts, industry leaders and ambitious
-              travellers — one powerful day dedicated to turning your migration dreams into reality.
+              A landmark gathering of visa experts, industry leaders and ambitious travellers —
+              one powerful day dedicated to turning your migration dreams into reality.
             </p>
+            <div className="seminar-hero-cta">
+              <button className="seminar-btn" onClick={() => navigate('/appointment')}>Book a Consultation</button>
+              <button className="seminar-btn outline" onClick={() => navigate('/consultants')}>Meet Our Experts</button>
+            </div>
             <div className="seminar-hero-meta">
               <span>New Delhi</span>
               <span>500+ Attendees</span>
               <span>Sold Out</span>
             </div>
           </div>
+
           <div className="seminar-scroll">Scroll</div>
         </section>
 
-        {/* VIDEO */}
-        <section className="seminar-video-section">
-          <div className="seminar-container">
-            <div className="seminar-video-wrap">
-              {playing ? (
-                <iframe
-                  width="100%"
-                  height="600"
-                  style={{ border: 'none', display: 'block' }}
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                  title="A Visa Experts Seminar"
-                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setPlaying(true)}>
-                  <img src="/images/user/blackbg 1.webp" alt="Seminar highlight" style={{ width: '100%', maxHeight: 600, objectFit: 'cover', display: 'block' }} />
-                  <div className="seminar-video-overlay">
-                    <h3>Watch the Seminar Highlights</h3>
-                  </div>
-                  <div
-                    style={{
-                      position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-                      width: 80, height: 80, borderRadius: '50%', background: 'rgba(255,255,255,0.12)',
-                      backdropFilter: 'blur(6px)', border: '1px solid rgba(255,255,255,0.4)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', color: '#fff',
-                    }}
-                  >
-                    ▶
-                  </div>
-                </div>
-              )}
-            </div>
+        {/* MARQUEE */}
+        <div className="seminar-marquee">
+          <div className="seminar-marquee-track">
+            {[...marqueeItems, ...marqueeItems].map((m, i) => (
+              <span key={i}><b>●</b> {m}</span>
+            ))}
           </div>
-        </section>
+        </div>
 
         {/* STATS */}
-        <section style={{ padding: '0 24px' }}>
+        <section style={{ padding: '70px 24px', background: 'var(--sm-black-2)' }}>
           <div className="seminar-container">
             <div className="seminar-stats">
               {seminarStats.map((s) => (
@@ -234,12 +222,8 @@ const Seminar = () => {
           <h2>Ready For Your Next Chapter?</h2>
           <p>Join our upcoming sessions and get one step closer to your global goals with A Visa Experts.</p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button className="seminar-btn" onClick={() => navigate('/appointment')}>
-              Book a Consultation
-            </button>
-            <button className="seminar-btn outline" onClick={() => navigate('/consultants')}>
-              Meet Our Experts
-            </button>
+            <button className="seminar-btn" onClick={() => navigate('/appointment')}>Book a Consultation</button>
+            <button className="seminar-btn outline" onClick={() => navigate('/consultants')}>Meet Our Experts</button>
           </div>
         </section>
       </div>
