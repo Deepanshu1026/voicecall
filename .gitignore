@@ -109,3 +109,8 @@ avisaexperts17july/
 # SQL dumps / data imports
 *.sql
 
+# Large video assets (kept local only, not committed)
+frontend/public/videos/
+*.MP4
+*.mp4
+
