@@ -139,11 +139,15 @@ async function updateApplication(sqlId, input) {
     throw new Error('Application not found or unauthorized');
   }
 
-  const details = { ...input };
-  delete details.id;
-  delete details.client_name;
-  delete details.contact_number;
-  delete details.submission_date;
+  // Build the new details from the submitted fields (excluding top-level ones)
+  const submittedDetails = { ...input };
+  delete submittedDetails.id;
+  delete submittedDetails.client_name;
+  delete submittedDetails.contact_number;
+  delete submittedDetails.submission_date;
+
+  // Merge with existing details so fields not in the form are preserved
+  const details = { ...(existing.details || {}), ...submittedDetails };
 
   const updatedAt = new Date();
   const update = {

@@ -150,11 +150,29 @@ const AgentDashboardHome = () => {
       id: selectedApp.id,
       client_name: selectedApp.client_name || '',
       contact_number: selectedApp.contact_number || '',
-      lead_outcome: d.lead_outcome || '',
-      submission_date: d.submission_date || '',
+      gender: d.gender || '',
+      age: d.age || '',
+      spouse_name: d.spouse_name || '',
+      spouse_age: d.spouse_age || '',
+      kids: d.kids || '',
+      address: d.address || '',
+      city: d.city || '',
+      state: d.state || '',
+      pincode: d.pincode || '',
       visa_type: d.visa_type || '',
-      country: d.country || '',
-      notes: d.notes || '',
+      visa_type_other: d.visa_type_other || '',
+      travel_history: d.travel_history || '',
+      refusal_history: d.refusal_history || '',
+      passport_validity: d.passport_validity || '',
+      education: d.education || '',
+      ielts_score: d.ielts_score || '',
+      occupation: d.occupation || '',
+      income: d.income || '',
+      remarks: d.remarks || '',
+      lead_source: d.lead_source || '',
+      lead_outcome: d.lead_outcome || '',
+      client_notes: d.client_notes || '',
+      submission_date: d.submission_date || '',
     });
     setEditModalOpen(true);
   };
@@ -403,29 +421,122 @@ const AgentDashboardHome = () => {
                     <input name="contact_number" value={editForm.contact_number} onChange={handleEditChange} required />
                   </div>
                   <div className="agent-form-group">
+                    <label>Gender</label>
+                    <select name="gender" value={editForm.gender} onChange={handleEditChange}>
+                      <option value="">Select</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Age</label>
+                    <input name="age" value={editForm.age} onChange={handleEditChange} placeholder="Age" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Spouse Name</label>
+                    <input name="spouse_name" value={editForm.spouse_name} onChange={handleEditChange} placeholder="Spouse name" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Spouse Age</label>
+                    <input name="spouse_age" value={editForm.spouse_age} onChange={handleEditChange} placeholder="Spouse age" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Kids</label>
+                    <input name="kids" value={editForm.kids} onChange={handleEditChange} placeholder="Number of kids" />
+                  </div>
+                  <div className="agent-form-group full-width">
+                    <label>Address</label>
+                    <input name="address" value={editForm.address} onChange={handleEditChange} placeholder="Full address" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>City</label>
+                    <input name="city" value={editForm.city} onChange={handleEditChange} placeholder="City" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>State</label>
+                    <input name="state" value={editForm.state} onChange={handleEditChange} placeholder="State" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Pincode</label>
+                    <input name="pincode" value={editForm.pincode} onChange={handleEditChange} placeholder="Pincode" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Visa Type</label>
+                    <select name="visa_type" value={editForm.visa_type} onChange={handleEditChange}>
+                      <option value="">Select visa type</option>
+                      <option value="Tourist">Tourist</option>
+                      <option value="Student">Student</option>
+                      <option value="Work">Work</option>
+                      <option value="PR">PR</option>
+                      <option value="Business">Business</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  {editForm.visa_type === 'Other' && (
+                    <div className="agent-form-group">
+                      <label>Other Visa Type</label>
+                      <input name="visa_type_other" value={editForm.visa_type_other} onChange={handleEditChange} placeholder="Specify visa type" />
+                    </div>
+                  )}
+                  <div className="agent-form-group">
+                    <label>Travel History</label>
+                    <input name="travel_history" value={editForm.travel_history} onChange={handleEditChange} placeholder="Countries visited" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Refusal History</label>
+                    <input name="refusal_history" value={editForm.refusal_history} onChange={handleEditChange} placeholder="Any refusals" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Passport Validity</label>
+                    <input name="passport_validity" value={editForm.passport_validity} onChange={handleEditChange} placeholder="Validity date" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Education</label>
+                    <input name="education" value={editForm.education} onChange={handleEditChange} placeholder="Highest education" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>IELTS Score</label>
+                    <input name="ielts_score" value={editForm.ielts_score} onChange={handleEditChange} placeholder="IELTS score" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Occupation</label>
+                    <input name="occupation" value={editForm.occupation} onChange={handleEditChange} placeholder="Occupation" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Income</label>
+                    <input name="income" value={editForm.income} onChange={handleEditChange} placeholder="Annual income" />
+                  </div>
+                  <div className="agent-form-group">
+                    <label>Lead Source</label>
+                    <select name="lead_source" value={editForm.lead_source} onChange={handleEditChange}>
+                      <option value="">Select source</option>
+                      <option value="Website">Website</option>
+                      <option value="Referral">Referral</option>
+                      <option value="Social Media">Social Media</option>
+                      <option value="Walk-in">Walk-in</option>
+                      <option value="Call">Call</option>
+                    </select>
+                  </div>
+                  <div className="agent-form-group">
                     <label>Lead Outcome</label>
                     <select name="lead_outcome" value={editForm.lead_outcome} onChange={handleEditChange}>
-                      <option value="">Select...</option>
+                      <option value="">Select outcome</option>
                       <option value="Interested">Interested</option>
                       <option value="Later">Call Back Later</option>
                       <option value="Time Waste">Time Waste</option>
                     </select>
                   </div>
                   <div className="agent-form-group">
-                    <label>Visa Type</label>
-                    <input name="visa_type" value={editForm.visa_type} onChange={handleEditChange} />
-                  </div>
-                  <div className="agent-form-group">
-                    <label>Country</label>
-                    <input name="country" value={editForm.country} onChange={handleEditChange} />
-                  </div>
-                  <div className="agent-form-group">
                     <label>Submission Date</label>
                     <input type="date" name="submission_date" value={editForm.submission_date} onChange={handleEditChange} />
                   </div>
                   <div className="agent-form-group full-width">
-                    <label>Notes</label>
-                    <textarea name="notes" value={editForm.notes} onChange={handleEditChange} rows={3} />
+                    <label>Remarks</label>
+                    <textarea name="remarks" value={editForm.remarks} onChange={handleEditChange} rows={2} placeholder="Any remarks" />
+                  </div>
+                  <div className="agent-form-group full-width">
+                    <label>Client Notes</label>
+                    <textarea name="client_notes" value={editForm.client_notes} onChange={handleEditChange} rows={2} placeholder="Additional notes" />
                   </div>
                 </div>
               </div>
