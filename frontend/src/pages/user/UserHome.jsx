@@ -468,8 +468,8 @@ const UserHome = () => {
           <div className="mainstats" ref={statsRef}>
             <div className="stats">
               <div className="stat-item">
-                <div className="number">{stats.clients} Lakh</div>
-                <div className="business-text">Happy Clients</div>
+                <div className="number">20K+</div>
+                <div className="business-text">Followers</div>
               </div>
               <div className="stat-item">
                 <div className="number">{stats.consultants}+</div>

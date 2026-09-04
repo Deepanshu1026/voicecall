@@ -57,7 +57,7 @@ const About = () => {
   }, []);
 
   const achievements = [
-    { icon: '/images/user/expsvg1.svg', text: '2 LAKH+', sub: 'Happy Clients' },
+    { icon: '/images/user/expsvg1.svg', text: '20K+', sub: 'Followers' },
     { icon: '/images/user/expsvg2.svg', text: '7+ Years', sub: 'of Experience' },
     { icon: '/images/user/expsvg3.svg', text: '40+', sub: 'Immigration Lawyers' },
     { icon: '/images/user/expsvg4.svg', text: '100%', sub: 'Success Rate*' },
