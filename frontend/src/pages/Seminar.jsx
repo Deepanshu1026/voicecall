@@ -21,13 +21,13 @@ const speakers = [
 ];
 
 const gallery = [
-  { img: '/images/user/sirpic 1.webp', cls: 'wide', depth: 18 },
-  { img: '/images/user/karansir 1.webp', cls: '', depth: 10 },
-  { img: '/images/user/teammember1 1.webp', cls: 'tall', depth: 26 },
-  { img: '/images/user/aboutus_full 1.webp', cls: '', depth: 12 },
-  { img: '/images/user/Background for visa 1.webp', cls: '', depth: 8 },
-  { img: '/images/user/client-bg 1.webp', cls: 'wide', depth: 22 },
-  { img: '/images/user/blackbg 1.webp', cls: '', depth: 15 },
+  { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788524351/DSC08783-100kb_yq5ibr.jpg', cls: 'wide', depth: 18 },
+  { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788524351/DSC08782-100kb_ieygmt.jpg', cls: '', depth: 10 },
+  { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523874/DSC08565_bboj12.jpg', cls: 'tall', depth: 26 },
+  { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523873/DSC08560_wvvwqo.jpg', cls: '', depth: 12 },
+  { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523872/DSC08562_ysozce.jpg', cls: '', depth: 8 },
+  { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523873/DSC08563_cwiyq0.jpg', cls: 'wide', depth: 22 },
+  { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523872/DSC08564_ai9hwh.jpg', cls: '', depth: 15 },
 ];
 
 const agenda = [
