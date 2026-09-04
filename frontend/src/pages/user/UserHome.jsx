@@ -29,10 +29,7 @@ const UserHome = () => {
       })
       .catch(() => { /* use defaults */ });
   }, []);
-  const [stats, setStats] = useState({ clients: 0, consultants: 0, years: 0 });
   const reviewsWrapperRef = useRef(null);
-  const statsRef = useRef(null);
-  const animatedStats = useRef(false);
 
   const heroCards = [
     {
@@ -133,36 +130,6 @@ const UserHome = () => {
       flag: '/images/user/aus.webp',
     },
   ];
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !animatedStats.current) {
-            animatedStats.current = true;
-            animateNumber('clients', 20, 1500);
-            animateNumber('consultants', 40, 1500);
-            animateNumber('years', 5, 1500);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-    if (statsRef.current) observer.observe(statsRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  const animateNumber = (key, target, duration) => {
-    let start = 0;
-    const startTime = performance.now();
-    const step = (now) => {
-      const progress = Math.min((now - startTime) / duration, 1);
-      const current = Math.floor(progress * target);
-      setStats((prev) => ({ ...prev, [key]: current }));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  };
 
   const [isPaused, setIsPaused] = useState(false);
   const autoPlayRef = useRef(null);
@@ -465,19 +432,23 @@ const UserHome = () => {
               </div>
             </div>
           </div>
-          <div className="mainstats" ref={statsRef}>
+          <div className="mainstats">
             <div className="stats">
               <div className="stat-item">
                 <div className="number">20K+</div>
                 <div className="business-text">Followers</div>
               </div>
               <div className="stat-item">
-                <div className="number">{stats.consultants}+</div>
-                <div className="business-text">Our Consultant</div>
+                <div className="number">7+ Years</div>
+                <div className="business-text">of Experience</div>
+              </div>
+              <div className="stat-item">
+                <div className="number">40+</div>
+                <div className="business-text">Immigration Lawyers</div>
               </div>
               <div className="stat-item" style={{ border: 'none' }}>
-                <div className="number">{stats.years}+</div>
-                <div className="business-text">Years In Business</div>
+                <div className="number">100%</div>
+                <div className="business-text">Success Rate*</div>
               </div>
             </div>
           </div>
