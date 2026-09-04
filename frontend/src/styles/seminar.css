@@ -18,6 +18,49 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* ============ MINIMAL SEMINAR NAV ============ */
+.seminar-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.seminar-nav-logo {
+  display: flex;
+  align-items: center;
+}
+
+.seminar-nav-logo img {
+  height: 42px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
+}
+
+.seminar-nav-back {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+
+.seminar-nav-back:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+}
+
 /* ============ HERO (VIDEO) ============ */
 .seminar-hero {
   position: relative;

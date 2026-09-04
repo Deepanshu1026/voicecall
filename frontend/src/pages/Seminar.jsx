@@ -1,5 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-import LandingLayout from '../components/user/LandingLayout';
+import { useNavigate, Link } from 'react-router-dom';
 import SEO from '../components/common/SEO';
 import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_POSTER, SEMINAR_VIDEO_IS_EMBED } from '../config/seminarVideo';
 import '../styles/seminar.css';
@@ -62,7 +61,7 @@ const Seminar = () => {
   };
 
   return (
-    <LandingLayout>
+    <>
       <SEO
         title="Seminar | A Visa Experts — Visa & Immigration Insights"
         description="A recap of A Visa Experts' latest successful immigration seminar — expert speakers, powerful sessions and real client success stories."
@@ -70,6 +69,16 @@ const Seminar = () => {
         ogImage="/images/user/sirpic 1.webp"
         jsonLd={jsonLd}
       />
+
+      {/* Minimal seminar-only nav */}
+      <nav className="seminar-nav">
+        <Link to="/home" className="seminar-nav-logo">
+          <img src="/images/user/tmlogo 1.webp" alt="A Visa Experts" />
+        </Link>
+        <Link to="/home" className="seminar-nav-back">
+          ← Back to Home
+        </Link>
+      </nav>
 
       <div className="seminar-page">
         {/* HERO — autoplay video background */}
@@ -238,7 +247,7 @@ const Seminar = () => {
           </div>
         </section>
       </div>
-    </LandingLayout>
+    </>
   );
 };
 
