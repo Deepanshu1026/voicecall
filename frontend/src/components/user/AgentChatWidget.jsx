@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
@@ -19,17 +19,8 @@ const AgentChatWidget = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(true);
+  const [closing, setClosing] = useState(false);
   const [guestLoading, setGuestLoading] = useState(false);
-  const listRef = useRef(null);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (listRef.current) {
-        listRef.current.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
-      }
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -94,6 +85,14 @@ const AgentChatWidget = () => {
     }
   };
 
+  const handleClose = () => {
+    setClosing(true);
+    setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+    }, 400);
+  };
+
   if (!open) {
     return (
       <button
@@ -108,13 +107,13 @@ const AgentChatWidget = () => {
   }
 
   return (
-    <div className="agent-chat-widget">
+    <div className={`agent-chat-widget ${closing ? 'closing' : ''}`}>
       <div className="agent-chat-loading-overlay" style={{ display: guestLoading ? 'flex' : 'none' }}>
         <div className="agent-chat-spinner"></div>
         <div className="agent-chat-loading-text">अतिथि सत्र बना रहे हैं... ⏳</div>
       </div>
 
-      <button className="agent-chat-close" onClick={() => setOpen(false)} aria-label="Close agent chat">
+      <button className="agent-chat-close" onClick={handleClose} aria-label="Close agent chat">
         &times;
       </button>
 
@@ -123,7 +122,7 @@ const AgentChatWidget = () => {
         अनुभवी एजेंटों से संपर्क करें
       </div>
 
-      <div className="agent-chat-list" ref={listRef}>
+      <div className="agent-chat-list">
         {loading ? (
           <p className="agent-chat-empty">एजेंट लोड हो रहे हैं...</p>
         ) : agents.length === 0 ? (

@@ -2340,6 +2340,13 @@ html {
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
 }
 
+.agent-chat-widget.closing {
+  animation: none;
+  transform: translateY(calc(100% + 40px));
+  opacity: 0;
+  pointer-events: none;
+}
+
 .agent-chat-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
   background-size: 400% 400%;
