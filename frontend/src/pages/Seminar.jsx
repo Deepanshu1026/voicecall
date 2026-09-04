@@ -1,6 +1,6 @@
 import { useNavigate, Link } from 'react-router-dom';
 import SEO from '../components/common/SEO';
-import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_POSTER, SEMINAR_VIDEO_IS_EMBED } from '../config/seminarVideo';
+import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_IS_EMBED } from '../config/seminarVideo';
 import '../styles/seminar.css';
 
 const seminarStats = [
@@ -100,7 +100,6 @@ const Seminar = () => {
               loop
               playsInline
               preload="auto"
-              poster={SEMINAR_VIDEO_POSTER}
             >
               <source src={SEMINAR_VIDEO_URL} type="video/mp4" />
             </video>
