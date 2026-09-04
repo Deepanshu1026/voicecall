@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
@@ -20,6 +20,16 @@ const AgentChatWidget = () => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(true);
   const [guestLoading, setGuestLoading] = useState(false);
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (listRef.current) {
+        listRef.current.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
+      }
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -113,7 +123,7 @@ const AgentChatWidget = () => {
         अनुभवी एजेंटों से संपर्क करें
       </div>
 
-      <div className="agent-chat-list">
+      <div className="agent-chat-list" ref={listRef}>
         {loading ? (
           <p className="agent-chat-empty">एजेंट लोड हो रहे हैं...</p>
         ) : agents.length === 0 ? (
