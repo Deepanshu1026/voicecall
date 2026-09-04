@@ -435,7 +435,7 @@ const UserHome = () => {
           <div className="mainstats">
             <div className="stats">
               <div className="stat-item">
-                <div className="number">20K+</div>
+                <div className="number">2 Lakh+</div>
                 <div className="business-text">Followers</div>
               </div>
               <div className="stat-item">
