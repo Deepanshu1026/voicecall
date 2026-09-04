@@ -465,7 +465,7 @@ Start your journey with A Visa Experts — where your travel plans begin with co
         <div class="stats">
           <div class="stat-item">
             <div class="number twenty-lakh" data-target="20">0</div>
-            <div class="business-text"> Happy Clients</div>
+            <div class="business-text"> Followers</div>
           </div>
           <div class="stat-item">
             <div class="number forty" data-target="40">0</div>
