@@ -163,12 +163,19 @@ const Seminar = () => {
               <p>Learn directly from the visionaries who have guided over two lakh clients to new beginnings abroad.</p>
             </div>
             <div className="seminar-speakers-grid">
-              {speakers.map((sp) => (
+              {speakers.map((sp, i) => (
                 <div className="seminar-speaker" key={sp.name}>
-                  <img className="seminar-speaker-img" src={sp.img} alt={sp.name} />
+                  <div className="seminar-speaker-media">
+                    <img className="seminar-speaker-img" src={sp.img} alt={sp.name} />
+                  </div>
                   <div className="seminar-speaker-body">
-                    <h3>{sp.name}</h3>
-                    <div className="role">{sp.role}</div>
+                    <div className="seminar-speaker-head">
+                      <div className="seminar-speaker-index">{String(i + 1).padStart(2, '0')}</div>
+                      <div>
+                        <h3>{sp.name}</h3>
+                        <div className="role">{sp.role}</div>
+                      </div>
+                    </div>
                     <p>{sp.bio}</p>
                   </div>
                 </div>

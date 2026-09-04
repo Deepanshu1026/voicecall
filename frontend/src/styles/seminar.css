@@ -349,148 +349,211 @@
 .seminar-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--sm-border);
-  border: 1px solid var(--sm-border);
-  border-radius: 16px;
-  overflow: hidden;
+  gap: 20px;
 }
 
 .seminar-stat {
-  background: var(--sm-black-3);
-  padding: 40px 20px;
+  position: relative;
+  padding: 42px 24px;
   text-align: center;
-  transition: background 0.3s;
+  background: linear-gradient(160deg, #141414 0%, #0d0d0d 100%);
+  border: 1px solid var(--sm-border);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform 0.35s ease, border-color 0.35s ease;
+}
+
+.seminar-stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 2px;
+  background: var(--sm-gold);
+  opacity: 0.6;
 }
 
 .seminar-stat:hover {
-  background: #181818;
+  transform: translateY(-6px);
+  border-color: rgba(201, 162, 75, 0.4);
 }
 
 .seminar-stat-num {
-  font-size: 2.7rem;
+  font-size: clamp(2.2rem, 4vw, 3rem);
   font-weight: 800;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #fff, #9a9a9a);
+  background: linear-gradient(135deg, #ffffff 0%, #d9d9d9 50%, #8f8f8f 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  line-height: 1.1;
 }
 
 .seminar-stat-label {
   color: var(--sm-grey);
-  font-size: 0.78rem;
-  letter-spacing: 0.18em;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 /* ============ SECTION HEAD ============ */
 .seminar-section-head {
   text-align: center;
-  max-width: 640px;
-  margin: 0 auto 60px;
+  max-width: 680px;
+  margin: 0 auto 68px;
 }
 
 .seminar-section-head .kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
   color: var(--sm-gold);
-  font-size: 0.72rem;
-  letter-spacing: 0.3em;
+  font-size: 0.7rem;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
 }
 
+.seminar-section-head .kicker::before,
+.seminar-section-head .kicker::after {
+  content: '';
+  width: 34px;
+  height: 1px;
+  background: var(--sm-gold);
+  opacity: 0.5;
+}
+
 .seminar-section-head h2 {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-size: clamp(2rem, 4.4vw, 3rem);
   font-weight: 700;
-  margin: 14px 0;
-  letter-spacing: -0.01em;
+  margin: 18px 0 14px;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
 }
 
 .seminar-section-head p {
   color: var(--sm-grey);
-  line-height: 1.7;
-  font-size: 0.98rem;
+  line-height: 1.75;
+  font-size: 1rem;
 }
 
 /* ============ SPEAKERS ============ */
 .seminar-speakers {
-  padding: 100px 24px;
+  padding: 110px 24px;
   background: var(--sm-black);
 }
 
 .seminar-speakers-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
+  gap: 28px;
+  max-width: 940px;
+  margin: 0 auto;
 }
 
 .seminar-speaker {
   position: relative;
-  background: var(--sm-black-3);
-  border: 1px solid var(--sm-border);
-  border-radius: 18px;
+  border-radius: 20px;
   overflow: hidden;
-  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s;
+  border: 1px solid var(--sm-border);
+  background: #0d0d0d;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s, box-shadow 0.4s;
 }
 
 .seminar-speaker:hover {
-  transform: translateY(-8px);
-  border-color: rgba(201, 162, 75, 0.45);
+  transform: translateY(-10px);
+  border-color: rgba(201, 162, 75, 0.5);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7);
+}
+
+.seminar-speaker-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
 }
 
 .seminar-speaker-img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
   object-fit: cover;
-  filter: grayscale(100%) contrast(1.05);
-  transition: filter 0.5s;
+  filter: grayscale(100%) contrast(1.06) brightness(0.9);
+  transition: filter 0.6s ease, transform 0.6s ease;
 }
 
 .seminar-speaker:hover .seminar-speaker-img {
-  filter: grayscale(0%);
+  filter: grayscale(0%) contrast(1.02) brightness(1);
+  transform: scale(1.05);
+}
+
+.seminar-speaker-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.75) 100%);
+  pointer-events: none;
 }
 
 .seminar-speaker-body {
-  padding: 24px;
+  padding: 22px 24px 26px;
+}
+
+.seminar-speaker-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.seminar-speaker-index {
+  font-size: 1.8rem;
+  font-weight: 200;
+  color: rgba(255, 255, 255, 0.14);
+  letter-spacing: -0.02em;
+  min-width: 40px;
 }
 
 .seminar-speaker-body h3 {
-  font-size: 1.35rem;
-  margin: 0 0 4px;
+  font-size: 1.3rem;
+  margin: 0;
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .seminar-speaker-body .role {
   color: var(--sm-gold);
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  margin-top: 3px;
 }
 
 .seminar-speaker-body p {
   color: var(--sm-grey);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.6;
-  margin-top: 12px;
+  margin: 14px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--sm-border);
 }
 
 /* ============ GALLERY ============ */
 .seminar-gallery {
-  padding: 100px 24px;
+  padding: 110px 24px;
   background: var(--sm-black-2);
 }
 
 .seminar-gallery-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  grid-auto-rows: 180px;
+  gap: 12px;
 }
 
 .seminar-gallery-grid .g-item {
   position: relative;
   border-radius: 14px;
   overflow: hidden;
-  aspect-ratio: 1;
   cursor: pointer;
 }
 
@@ -498,33 +561,44 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(100%);
-  transition: transform 0.6s, filter 0.5s;
+  filter: grayscale(100%) brightness(0.85);
+  transition: transform 0.7s ease, filter 0.5s ease;
+}
+
+.seminar-gallery-grid .g-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.65) 100%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.seminar-gallery-grid .g-item:hover::after {
+  opacity: 1;
 }
 
 .seminar-gallery-grid .g-item:hover img {
-  transform: scale(1.08);
-  filter: grayscale(0%);
+  transform: scale(1.1);
+  filter: grayscale(0%) brightness(1);
 }
 
 .seminar-gallery-grid .g-item.wide {
   grid-column: span 2;
-  aspect-ratio: 2 / 1;
 }
 
 .seminar-gallery-grid .g-item.tall {
   grid-row: span 2;
-  aspect-ratio: auto;
 }
 
-/* ============ HIGHLIGHTS ============ */
+/* ============ HIGHLIGHTS (AGENDA) ============ */
 .seminar-highlights {
-  padding: 100px 24px;
+  padding: 110px 24px;
   background: var(--sm-black);
 }
 
 .seminar-timeline {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
   position: relative;
 }
@@ -532,16 +606,16 @@
 .seminar-timeline::before {
   content: '';
   position: absolute;
-  left: 22px;
-  top: 0;
-  bottom: 0;
+  left: 23px;
+  top: 6px;
+  bottom: 6px;
   width: 1px;
-  background: var(--sm-border);
+  background: linear-gradient(180deg, var(--sm-gold), var(--sm-border), var(--sm-border));
 }
 
 .seminar-tl-item {
   position: relative;
-  padding: 0 0 38px 64px;
+  padding: 0 0 30px 70px;
 }
 
 .seminar-tl-item:last-child {
@@ -550,113 +624,155 @@
 
 .seminar-tl-dot {
   position: absolute;
-  left: 13px;
+  left: 14px;
   top: 4px;
   width: 19px;
   height: 19px;
   border-radius: 50%;
-  border: 1px solid var(--sm-gold);
-  background: var(--sm-black);
-  box-shadow: 0 0 10px rgba(201, 162, 75, 0.5);
-}
-
-.seminar-tl-item h4 {
-  font-size: 1.15rem;
-  margin: 0 0 6px;
-  font-weight: 600;
-}
-
-.seminar-tl-item p {
-  color: var(--sm-grey);
-  font-size: 0.92rem;
-  line-height: 1.6;
-  margin: 0;
+  border: 2px solid var(--sm-gold);
+  background: #050505;
+  box-shadow: 0 0 12px rgba(201, 162, 75, 0.55);
 }
 
 .seminar-tl-item time {
   color: var(--sm-gold);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  display: block;
-  margin-bottom: 8px;
+  display: inline-block;
+  margin-bottom: 7px;
+  font-weight: 600;
+}
+
+.seminar-tl-item h4 {
+  font-size: 1.22rem;
+  margin: 0 0 7px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.seminar-tl-item p {
+  color: var(--sm-grey);
+  font-size: 0.93rem;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 560px;
 }
 
 /* ============ TESTIMONIALS ============ */
 .seminar-testimonials {
-  padding: 100px 24px;
+  padding: 110px 24px;
   background: var(--sm-black-2);
 }
 
 .seminar-quotes {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 22px;
 }
 
 .seminar-quote {
-  background: var(--sm-black-3);
+  position: relative;
+  background: linear-gradient(165deg, #141414 0%, #0c0c0c 100%);
   border: 1px solid var(--sm-border);
-  border-radius: 16px;
-  padding: 28px;
-  transition: transform 0.3s;
+  border-radius: 18px;
+  padding: 30px 28px;
+  transition: transform 0.35s ease, border-color 0.35s ease;
 }
 
 .seminar-quote:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+  border-color: rgba(201, 162, 75, 0.35);
 }
 
 .seminar-quote .mark {
-  color: var(--sm-gold);
-  font-size: 2.4rem;
+  position: absolute;
+  top: 6px;
+  right: 18px;
+  color: rgba(201, 162, 75, 0.25);
+  font-size: 5rem;
   line-height: 1;
   font-family: Georgia, serif;
+  pointer-events: none;
 }
 
 .seminar-quote p {
   color: var(--sm-platinum);
-  line-height: 1.7;
-  font-size: 0.95rem;
-  margin: 16px 0;
+  line-height: 1.75;
+  font-size: 0.94rem;
+  margin: 10px 0 22px;
+  position: relative;
 }
 
 .seminar-quote .who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: var(--sm-grey);
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  padding-top: 16px;
+  border-top: 1px solid var(--sm-border);
+}
+
+.seminar-quote .who::before {
+  content: '';
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c9a24b, #6a5526);
+  flex-shrink: 0;
 }
 
 /* ============ CTA ============ */
 .seminar-cta {
-  padding: 120px 24px;
+  padding: 130px 24px;
   text-align: center;
-  background: radial-gradient(ellipse at 50% 100%, rgba(201, 162, 75, 0.15), transparent 55%), var(--sm-black);
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(201, 162, 75, 0.22), transparent 60%),
+    var(--sm-black);
+  overflow: hidden;
+}
+
+.seminar-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: var(--sm-gold);
+  opacity: 0.6;
 }
 
 .seminar-cta h2 {
-  font-size: clamp(1.8rem, 4.5vw, 3rem);
-  font-weight: 700;
-  margin: 0 0 16px;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  margin: 0 0 18px;
+  letter-spacing: -0.02em;
 }
 
 .seminar-cta p {
   color: var(--sm-grey);
   max-width: 540px;
-  margin: 0 auto 34px;
-  line-height: 1.7;
+  margin: 0 auto 38px;
+  line-height: 1.75;
+  font-size: 1.02rem;
 }
 
 .seminar-btn {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 34px;
+  padding: 17px 36px;
   background: #fff;
   color: #000;
   font-weight: 600;
   letter-spacing: 0.04em;
   border: none;
-  border-radius: 40px;
+  border-radius: 44px;
   cursor: pointer;
   text-decoration: none;
   transition: transform 0.3s, box-shadow 0.3s;
@@ -664,17 +780,18 @@
 
 .seminar-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 40px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 16px 46px rgba(255, 255, 255, 0.16);
 }
 
 .seminar-btn.outline {
   background: transparent;
   color: #fff;
-  border: 1px solid var(--sm-border);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .seminar-btn.outline:hover {
   border-color: #fff;
+  background: rgba(255, 255, 255, 0.05);
   box-shadow: none;
 }
 
