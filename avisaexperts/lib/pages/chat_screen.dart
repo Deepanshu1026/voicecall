@@ -751,9 +751,15 @@ class _ChatScreenState extends State<ChatScreen>
     return DateTime.now().isAfter(_freeUntil!);
   }
 
+  // The backend sets freeUntil to a far-future date (2099) for unlimited free chat
+  bool get _isUnlimitedFreeChat {
+    if (_freeUntil == null) return false;
+    return _freeUntil!.isAfter(DateTime.now().add(const Duration(days: 365)));
+  }
+
   void _startFreeChatTimer() {
     _freeChatTimer?.cancel();
-    if (_isCurrentUserConsultant || _isPaid || _freeUntil == null) {
+    if (_isCurrentUserConsultant || _isPaid || _freeUntil == null || _isUnlimitedFreeChat) {
       setState(() => _freeChatRemaining = '');
       return;
     }
@@ -764,7 +770,7 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   void _updateFreeChatRemaining() {
-    if (_freeUntil == null || _isPaid) return;
+    if (_freeUntil == null || _isPaid || _isUnlimitedFreeChat) return;
     final now = DateTime.now();
     if (now.isAfter(_freeUntil!)) {
       _freeChatTimer?.cancel();
@@ -3117,13 +3123,19 @@ class _ChatScreenState extends State<ChatScreen>
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Row(
           children: [
-            Icon(Icons.timer, color: Colors.orange[700], size: 18),
+            Icon(
+              _isUnlimitedFreeChat ? Icons.all_inclusive : Icons.timer,
+              color: Colors.orange[700],
+              size: 18,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                _freeChatRemaining.isNotEmpty
-                    ? 'Free chat ends in $_freeChatRemaining'
-                    : 'Free chat active',
+                _isUnlimitedFreeChat
+                    ? 'Unlimited free chat'
+                    : (_freeChatRemaining.isNotEmpty
+                        ? 'Free chat ends in $_freeChatRemaining'
+                        : 'Free chat active'),
                 style: TextStyle(fontSize: 12, color: Colors.orange[700], fontWeight: FontWeight.w600),
               ),
             ),
