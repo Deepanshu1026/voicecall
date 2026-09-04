@@ -1,7 +1,7 @@
 export const SEMINAR_VIDEO_URL =
-  'https://player.cloudinary.com/embed/?cloud_name=fniinv4k20&public_id=seminarvideo_-_Trim_v0x2sw&controls=false&autoplay=true&muted=true&loop=true';
+  'https://res.cloudinary.com/fniv4k20/video/upload/seminarvideo_-_Trim_v0x2sw.mp4';
 
 export const SEMINAR_VIDEO_POSTER = '/images/user/blackbg 1.webp';
 
-// Cloudinary embed player renders as an iframe, not a <video> element
-export const SEMINAR_VIDEO_IS_EMBED = true;
+// Native <video> element (direct mp4), not an iframe embed
+export const SEMINAR_VIDEO_IS_EMBED = false;
