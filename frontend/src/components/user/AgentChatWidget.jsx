@@ -22,6 +22,19 @@ const AgentChatWidget = () => {
   const [closing, setClosing] = useState(false);
   const [guestLoading, setGuestLoading] = useState(false);
 
+  // Auto-close popup with slide-down animation after 5 seconds
+  useEffect(() => {
+    if (!open || closing) return undefined;
+    const timer = setTimeout(() => {
+      setClosing(true);
+      setTimeout(() => {
+        setOpen(false);
+        setClosing(false);
+      }, 400);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [open, closing]);
+
   useEffect(() => {
     let cancelled = false;
     const fetchAgents = async () => {
