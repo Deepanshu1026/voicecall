@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import SEO from '../components/common/SEO';
 import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_IS_EMBED } from '../config/seminarVideo';
@@ -17,21 +18,16 @@ const speakers = [
     img: '/images/user/sirpic 1.webp',
     bio: 'Helped 2 LAKH+ clients settle abroad with his deep expertise in immigration law and visa advisory.',
   },
-  {
-    name: 'Karan Kapoor',
-    role: 'Managing Director & B2B Consultant',
-    img: '/images/user/karansir 1.webp',
-    bio: 'A trusted voice for business and work visas, guiding professionals and entrepreneurs toward global success.',
-  },
 ];
 
 const gallery = [
-  { img: '/images/user/sirpic 1.webp', cls: 'wide' },
-  { img: '/images/user/karansir 1.webp', cls: '' },
-  { img: '/images/user/teammember1 1.webp', cls: 'tall' },
-  { img: '/images/user/aboutus_full 1.webp', cls: '' },
-  { img: '/images/user/Background for visa 1.webp', cls: '' },
-  { img: '/images/user/client-bg 1.webp', cls: 'wide' },
+  { img: '/images/user/sirpic 1.webp', cls: 'wide', depth: 18 },
+  { img: '/images/user/karansir 1.webp', cls: '', depth: 10 },
+  { img: '/images/user/teammember1 1.webp', cls: 'tall', depth: 26 },
+  { img: '/images/user/aboutus_full 1.webp', cls: '', depth: 12 },
+  { img: '/images/user/Background for visa 1.webp', cls: '', depth: 8 },
+  { img: '/images/user/client-bg 1.webp', cls: 'wide', depth: 22 },
+  { img: '/images/user/blackbg 1.webp', cls: '', depth: 15 },
 ];
 
 const agenda = [
@@ -51,6 +47,15 @@ const marqueeItems = ['Global Immigration', 'Visa Success', 'Expert Guidance', '
 
 const Seminar = () => {
   const navigate = useNavigate();
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMouse({
+      x: (e.clientX - rect.left) / rect.width - 0.5,
+      y: (e.clientY - rect.top) / rect.height - 0.5,
+    });
+  };
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -164,9 +169,15 @@ const Seminar = () => {
             </div>
             <div className="seminar-speakers-grid">
               {speakers.map((sp, i) => (
-                <div className="seminar-speaker" key={sp.name}>
+                <div
+                  className="seminar-speaker"
+                  key={sp.name}
+                  onClick={() => navigate('/seminar/kaveesh-kapoor')}
+                  role="link"
+                >
                   <div className="seminar-speaker-media">
                     <img className="seminar-speaker-img" src={sp.img} alt={sp.name} />
+                    <span className="seminar-speaker-view">View Profile →</span>
                   </div>
                   <div className="seminar-speaker-body">
                     <div className="seminar-speaker-head">
@@ -184,17 +195,21 @@ const Seminar = () => {
           </div>
         </section>
 
-        {/* GALLERY */}
-        <section className="seminar-gallery">
-          <div className="seminar-container">
+        {/* GALLERY — full-screen mouse-reactive collage */}
+        <section className="seminar-collage" onMouseMove={handleMouseMove}>
+          <div className="seminar-collage-inner">
             <div className="seminar-section-head">
               <div className="kicker">The Moments</div>
               <h2>Captured At The Seminar</h2>
-              <p>A visual journey through the energy, insights and connections shared throughout the day.</p>
+              <p>Move your cursor and watch the moments come alive.</p>
             </div>
-            <div className="seminar-gallery-grid">
+            <div className="seminar-collage-grid">
               {gallery.map((g, i) => (
-                <div className={`g-item ${g.cls}`} key={i}>
+                <div
+                  className={`g-item ${g.cls}`}
+                  key={i}
+                  style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
+                >
                   <img src={g.img} alt={`Seminar moment ${i + 1}`} />
                 </div>
               ))}

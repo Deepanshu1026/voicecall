@@ -36,6 +36,7 @@ import Appointment from './pages/Appointment';
 import AppointmentPayment from './pages/AppointmentPayment';
 import UserProfile from './pages/UserProfile';
 import Seminar from './pages/Seminar';
+import SeminarSpeaker from './pages/SeminarSpeaker';
 
 const EMPLOYEE_ROLES = ['case_manager', 'manager', 'senior_manager', 'admin'];
 
@@ -101,6 +102,7 @@ function App() {
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/blog/:id/:slug?" element={<BlogDetail />} />
       <Route path="/seminar" element={<Seminar />} />
+      <Route path="/seminar/kaveesh-kapoor" element={<SeminarSpeaker />} />
       <Route path="/consultants" element={<Consultants />} />
       <Route path="/appointment" element={<Appointment />} />
       <Route path="/appointment-payment" element={<AppointmentPayment />} />
