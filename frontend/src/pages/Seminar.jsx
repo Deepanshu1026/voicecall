@@ -49,18 +49,18 @@ const marqueeItems = ['Global Immigration', 'Visa Success', 'Expert Guidance', '
 const editorialAboutData = {
   heading: 'About',
   images: {
-    // Column 1 - Top image (Warm editorial atmosphere / interior)
-    col1Top: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80',
-    // Column 2 - Bottom image (Tailored striped garment texture)
-    col2Bottom: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=800&q=80',
-    // Column 3 - Top image (Editorial portrait profile)
-    col3Top: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
-    // Column 4 - Top image (Close-up face & eyes portrait)
-    col4Top: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-    // Column 4 - Bottom image (Close-up lips, neck & collarbone)
-    col4Bottom: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
-    // Column 5 - Bottom image (Architectural silhouette / styling)
-    col5Bottom: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80',
+    // Column 1 - Top image
+    col1Top: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788524351/DSC08783-100kb_yq5ibr.jpg',
+    // Column 2 - Bottom image
+    col2Bottom: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788524351/DSC08782-100kb_ieygmt.jpg',
+    // Column 3 - Top image
+    col3Top: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523874/DSC08565_bboj12.jpg',
+    // Column 4 - Top image
+    col4Top: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523873/DSC08560_wvvwqo.jpg',
+    // Column 4 - Bottom image
+    col4Bottom: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523872/DSC08562_ysozce.jpg',
+    // Column 5 - Bottom image
+    col5Bottom: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523873/DSC08563_cwiyq0.jpg',
   },
   texts: {
     col1Bottom: 'The brand values precision tailoring, premium materials, and understated elegance, creating garments that remain relevant beyond seasonal trends.',
