@@ -197,6 +197,50 @@ const Seminar = () => {
           </div>
         </section>
 
+        {/* KEYNOTE / THE VISIONARY */}
+        <section className="seminar-visionary">
+          <div className="seminar-container">
+            <div className="seminar-visionary-inner">
+              <div className="seminar-visionary-media">
+                <div className="seminar-visionary-frame">
+                  <img src="/images/user/sirpic 1.webp" alt="Kaveesh Kapoor" />
+                </div>
+                <div className="seminar-visionary-badge">Keynote Speaker</div>
+              </div>
+              <div className="seminar-visionary-content">
+                <div className="kicker">The Visionary</div>
+                <h2>Kaveesh Kapoor</h2>
+                <div className="seminar-visionary-role">Chairman &amp; Founder — A Visa Experts</div>
+                <blockquote className="seminar-visionary-quote">
+                  &ldquo;Your migration dream isn&apos;t a lottery — it&apos;s a strategy. We give you the exact roadmap.&rdquo;
+                </blockquote>
+                <p className="seminar-visionary-desc">
+                  With over seven years at the helm and two lakh+ clients guided, Kaveesh has turned
+                  A Visa Experts into one of India&apos;s most trusted immigration consultancies — known for
+                  honest guidance and an unmatched success rate.
+                </p>
+                <div className="seminar-visionary-stats">
+                  <div className="seminar-visionary-stat">
+                    <strong>2 Lakh+</strong>
+                    <span>Clients Guided</span>
+                  </div>
+                  <div className="seminar-visionary-stat">
+                    <strong>7+ Years</strong>
+                    <span>Experience</span>
+                  </div>
+                  <div className="seminar-visionary-stat">
+                    <strong>100%</strong>
+                    <span>Success Rate</span>
+                  </div>
+                </div>
+                <button className="seminar-btn" onClick={() => navigate('/seminar/kaveesh-kapoor')}>
+                  Meet Kaveesh Kapoor →
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* GALLERY — full-screen mouse-reactive collage */}
         <section className="seminar-collage" onMouseMove={handleMouseMove}>
           <div className="seminar-collage-inner">
