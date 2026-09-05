@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Alex+Brush&family=Mrs+Saint+Delafield&display=swap');
+
 :root {
   --sm-black: #050505;
   --sm-black-2: #0b0b0b;
@@ -1241,5 +1243,223 @@
   .seminar-hero-meta {
     flex-direction: column;
     gap: 8px;
+  }
+}
+
+/* ============ EDITORIAL ABOUT SECTION ============ */
+.seminar-editorial-section {
+  position: relative;
+  background: #ffffff;
+  color: #111111;
+  padding: 110px 40px 120px;
+  overflow: hidden;
+  isolation: isolate;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Background geometric lines in top-right */
+.editorial-bg-geometry {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 600px;
+  height: 420px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.15;
+}
+
+.editorial-container {
+  max-width: 1340px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Handwriting script title "About" */
+.editorial-script-wrap {
+  position: absolute;
+  top: -46px;
+  left: 2.2%;
+  z-index: 10;
+  pointer-events: none;
+  user-select: none;
+}
+
+.editorial-script-title {
+  font-family: 'Caveat', 'Alex Brush', 'Mrs Saint Delafield', cursive;
+  font-size: clamp(5.5rem, 11vw, 10.5rem);
+  font-weight: 700;
+  color: #0d0d0d;
+  line-height: 0.82;
+  margin: 0;
+  transform: rotate(-6deg);
+  letter-spacing: -0.01em;
+  display: inline-block;
+}
+
+/* 5-column editorial grid */
+.editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+  position: relative;
+  align-items: stretch;
+}
+
+.editorial-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  min-width: 0;
+}
+
+/* Media Cards */
+.editorial-media-card {
+  position: relative;
+  width: 100%;
+  height: 290px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #f0f0f0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.editorial-media-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.editorial-media-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Double media in Column 4 */
+.editorial-col-double {
+  justify-content: flex-start;
+  gap: 24px;
+}
+
+.editorial-col-double .editorial-media-card {
+  height: 220px;
+}
+
+.editorial-col-double .editorial-media-card.col4-top img {
+  object-position: center 25%;
+}
+
+.editorial-col-double .editorial-media-card.col4-bottom img {
+  object-position: center 68%;
+}
+
+/* Text Cards */
+.editorial-text-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 200px;
+  padding: 6px 4px;
+}
+
+.editorial-text-card.align-top {
+  justify-content: flex-start;
+  padding-top: 14px;
+}
+
+.editorial-text-card.align-bottom {
+  justify-content: flex-end;
+  padding-bottom: 8px;
+}
+
+.editorial-text-card.col2-text {
+  justify-content: flex-start;
+  padding-top: 68px; /* Room for cursive About heading flourish */
+}
+
+.editorial-text {
+  font-size: 0.89rem;
+  line-height: 1.68;
+  color: #555555;
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+
+/* Subtle watermark at bottom */
+.editorial-footer-mark {
+  position: absolute;
+  bottom: 24px;
+  left: 40px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.03em;
+  z-index: 5;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1100px) {
+  .editorial-grid {
+    gap: 16px;
+  }
+  .editorial-media-card {
+    height: 240px;
+  }
+  .editorial-col-double .editorial-media-card {
+    height: 185px;
+  }
+  .editorial-text {
+    font-size: 0.82rem;
+  }
+  .editorial-text-card.col2-text {
+    padding-top: 48px;
+  }
+}
+
+@media (max-width: 900px) {
+  .seminar-editorial-section {
+    padding: 80px 24px 90px;
+  }
+  .editorial-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+  .editorial-col {
+    gap: 20px;
+  }
+  .editorial-script-wrap {
+    top: -26px;
+    left: 12px;
+  }
+  .editorial-text-card.col2-text {
+    padding-top: 12px;
+  }
+  .editorial-media-card {
+    height: 280px;
+  }
+  .editorial-col-double .editorial-media-card {
+    height: 220px;
+  }
+}
+
+@media (max-width: 580px) {
+  .editorial-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .editorial-script-title {
+    font-size: 4.8rem;
+  }
+  .editorial-media-card {
+    height: 250px;
+  }
+  .editorial-text-card {
+    min-height: auto;
+    padding: 0;
   }
 }

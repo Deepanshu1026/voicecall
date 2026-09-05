@@ -45,6 +45,31 @@ const testimonials = [
 
 const marqueeItems = ['Global Immigration', 'Visa Success', 'Expert Guidance', '2 Lakh+ Clients', 'Trusted Advisors', 'Study Abroad', 'PR & Work Visas'];
 
+// Editorial "About" Section Data — Configurable Image URLs & Editorial Narrative
+const editorialAboutData = {
+  heading: 'About',
+  images: {
+    // Column 1 - Top image (Warm editorial atmosphere / interior)
+    col1Top: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80',
+    // Column 2 - Bottom image (Tailored striped garment texture)
+    col2Bottom: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=800&q=80',
+    // Column 3 - Top image (Editorial portrait profile)
+    col3Top: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
+    // Column 4 - Top image (Close-up face & eyes portrait)
+    col4Top: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+    // Column 4 - Bottom image (Close-up lips, neck & collarbone)
+    col4Bottom: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+    // Column 5 - Bottom image (Architectural silhouette / styling)
+    col5Bottom: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80',
+  },
+  texts: {
+    col1Bottom: 'The brand values precision tailoring, premium materials, and understated elegance, creating garments that remain relevant beyond seasonal trends.',
+    col2Top: 'This project presents a concept website for Odette Beauclaire, a premium womenswear brand focused on timeless silhouettes, refined textures, and architectural tailoring.',
+    col3Bottom: 'The design focuses on clarity, strong typography, balanced spacing, and refined imagery to convey a premium brand identity.',
+    col5Top: 'The goal of the project was to create a minimal yet expressive interface that highlights the clothing without visual noise.',
+  },
+};
+
 const Seminar = () => {
   const navigate = useNavigate();
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
@@ -157,6 +182,121 @@ const Seminar = () => {
               ))}
             </div>
           </div>
+        </section>
+
+        {/* EDITORIAL ABOUT SECTION */}
+        <section className="seminar-editorial-section" id="seminar-about">
+          {/* Subtle geometric line graphics in top-right */}
+          <svg
+            className="editorial-bg-geometry"
+            viewBox="0 0 600 420"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <polygon
+              points="600,0 450,0 210,420 600,420"
+              stroke="#111111"
+              strokeWidth="0.8"
+              strokeDasharray="4 6"
+              opacity="0.22"
+            />
+            <line
+              x1="90"
+              y1="0"
+              x2="600"
+              y2="390"
+              stroke="#111111"
+              strokeWidth="0.8"
+              opacity="0.18"
+            />
+          </svg>
+
+          <div className="editorial-container">
+            {/* Expressive handwritten cursive "About" signature */}
+            <div className="editorial-script-wrap" aria-hidden="true">
+              <span className="editorial-script-title">{editorialAboutData.heading}</span>
+            </div>
+
+            {/* 5-Column Staggered Editorial Grid */}
+            <div className="editorial-grid">
+              {/* Column 1: Top Image, Bottom Text */}
+              <div className="editorial-col">
+                <div className="editorial-media-card">
+                  <img
+                    src={editorialAboutData.images.col1Top}
+                    alt="Editorial concept showcase 1"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="editorial-text-card align-bottom">
+                  <p className="editorial-text">{editorialAboutData.texts.col1Bottom}</p>
+                </div>
+              </div>
+
+              {/* Column 2: Top Text, Bottom Image */}
+              <div className="editorial-col">
+                <div className="editorial-text-card col2-text">
+                  <p className="editorial-text">{editorialAboutData.texts.col2Top}</p>
+                </div>
+                <div className="editorial-media-card">
+                  <img
+                    src={editorialAboutData.images.col2Bottom}
+                    alt="Editorial concept showcase 2"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Column 3: Top Image, Bottom Text */}
+              <div className="editorial-col">
+                <div className="editorial-media-card">
+                  <img
+                    src={editorialAboutData.images.col3Top}
+                    alt="Editorial concept showcase 3"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="editorial-text-card align-bottom">
+                  <p className="editorial-text">{editorialAboutData.texts.col3Bottom}</p>
+                </div>
+              </div>
+
+              {/* Column 4: Two Stacked Portrait Media Cards */}
+              <div className="editorial-col editorial-col-double">
+                <div className="editorial-media-card col4-top">
+                  <img
+                    src={editorialAboutData.images.col4Top}
+                    alt="Editorial portrait focus eyes"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="editorial-media-card col4-bottom">
+                  <img
+                    src={editorialAboutData.images.col4Bottom}
+                    alt="Editorial portrait focus lips and collar"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+
+              {/* Column 5: Top Text, Bottom Image */}
+              <div className="editorial-col">
+                <div className="editorial-text-card align-top">
+                  <p className="editorial-text">{editorialAboutData.texts.col5Top}</p>
+                </div>
+                <div className="editorial-media-card">
+                  <img
+                    src={editorialAboutData.images.col5Bottom}
+                    alt="Editorial concept showcase 4"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Discreet footer mark */}
+          <div className="editorial-footer-mark">site Design</div>
         </section>
 
         {/* SPEAKERS */}
