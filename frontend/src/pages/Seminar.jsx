@@ -11,23 +11,36 @@ const seminarStats = [
   { num: '48hrs', label: 'Of Guidance' },
 ];
 
-const speakers = [
-  {
-    name: 'Kaveesh Kapoor',
-    role: 'Chairman & Founder',
-    img: '/images/user/sirpic 1.webp',
-    bio: 'Helped 2 LAKH+ clients settle abroad with his deep expertise in immigration law and visa advisory.',
-  },
-];
-
 const gallery = [
   { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788524351/DSC08783-100kb_yq5ibr.jpg', cls: 'wide', depth: 18 },
   { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788524351/DSC08782-100kb_ieygmt.jpg', cls: '', depth: 10 },
   { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523874/DSC08565_bboj12.jpg', cls: 'tall', depth: 26 },
   { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523873/DSC08560_wvvwqo.jpg', cls: '', depth: 12 },
   { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523872/DSC08562_ysozce.jpg', cls: '', depth: 8 },
+  // Feature Card 1 (Fills Row 2, Col 3)
+  {
+    type: 'card',
+    cls: 'collage-feature-card card-1',
+    depth: 14,
+    badge: 'LIVE FROM THE STAGE',
+    title: '500+ Ambitious Minds',
+    desc: 'Actionable blueprints for Canada, UK, Australia & Europe migration.',
+    action: 'Watch Highlights',
+    arrow: 'loop',
+  },
   { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523873/DSC08563_cwiyq0.jpg', cls: 'wide', depth: 22 },
   { img: 'https://res.cloudinary.com/fniv4k20/image/upload/v1788523872/DSC08564_ai9hwh.jpg', cls: '', depth: 15 },
+  // Feature Card 2 (Fills Row 3, Col 4)
+  {
+    type: 'card',
+    cls: 'collage-feature-card card-2',
+    depth: 20,
+    badge: 'WHAT LIES AHEAD',
+    title: 'Your Global Future',
+    desc: 'Personalized legal advisory to turn migration dreams into reality.',
+    action: 'Discover Agenda',
+    arrow: 'down',
+  },
 ];
 
 const agenda = [
@@ -184,157 +197,6 @@ const Seminar = () => {
           </div>
         </section>
 
-        {/* EDITORIAL ABOUT SECTION */}
-        <section className="seminar-editorial-section" id="seminar-about">
-          {/* Subtle geometric line graphics in top-right */}
-          <svg
-            className="editorial-bg-geometry"
-            viewBox="0 0 600 420"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <polygon
-              points="600,0 450,0 210,420 600,420"
-              stroke="#111111"
-              strokeWidth="0.8"
-              strokeDasharray="4 6"
-              opacity="0.22"
-            />
-            <line
-              x1="90"
-              y1="0"
-              x2="600"
-              y2="390"
-              stroke="#111111"
-              strokeWidth="0.8"
-              opacity="0.18"
-            />
-          </svg>
-
-          <div className="editorial-container">
-            {/* Expressive handwritten cursive "About" signature */}
-            <div className="editorial-script-wrap" aria-hidden="true">
-              <span className="editorial-script-title">{editorialAboutData.heading}</span>
-            </div>
-
-            {/* 5-Column Staggered Editorial Grid */}
-            <div className="editorial-grid">
-              {/* Column 1: Top Image, Bottom Text */}
-              <div className="editorial-col">
-                <div className="editorial-media-card">
-                  <img
-                    src={editorialAboutData.images.col1Top}
-                    alt="Editorial concept showcase 1"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="editorial-text-card align-bottom">
-                  <p className="editorial-text">{editorialAboutData.texts.col1Bottom}</p>
-                </div>
-              </div>
-
-              {/* Column 2: Top Text, Bottom Image */}
-              <div className="editorial-col">
-                <div className="editorial-text-card col2-text">
-                  <p className="editorial-text">{editorialAboutData.texts.col2Top}</p>
-                </div>
-                <div className="editorial-media-card">
-                  <img
-                    src={editorialAboutData.images.col2Bottom}
-                    alt="Editorial concept showcase 2"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-
-              {/* Column 3: Top Image, Bottom Text */}
-              <div className="editorial-col">
-                <div className="editorial-media-card">
-                  <img
-                    src={editorialAboutData.images.col3Top}
-                    alt="Editorial concept showcase 3"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="editorial-text-card align-bottom">
-                  <p className="editorial-text">{editorialAboutData.texts.col3Bottom}</p>
-                </div>
-              </div>
-
-              {/* Column 4: Two Stacked Portrait Media Cards */}
-              <div className="editorial-col editorial-col-double">
-                <div className="editorial-media-card col4-top">
-                  <img
-                    src={editorialAboutData.images.col4Top}
-                    alt="Editorial portrait focus eyes"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="editorial-media-card col4-bottom">
-                  <img
-                    src={editorialAboutData.images.col4Bottom}
-                    alt="Editorial portrait focus lips and collar"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-
-              {/* Column 5: Top Text, Bottom Image */}
-              <div className="editorial-col">
-                <div className="editorial-text-card align-top">
-                  <p className="editorial-text">{editorialAboutData.texts.col5Top}</p>
-                </div>
-                <div className="editorial-media-card">
-                  <img
-                    src={editorialAboutData.images.col5Bottom}
-                    alt="Editorial concept showcase 4"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Discreet footer mark */}
-          <div className="editorial-footer-mark">site Design</div>
-        </section>
-
-        {/* SPEAKERS */}
-        <section className="seminar-speakers">
-          <div className="seminar-container">
-            <div className="seminar-section-head">
-              <div className="kicker">The Speakers</div>
-              <h2>Wisdom From Industry Leaders</h2>
-              <p>Learn directly from the visionaries who have guided over two lakh clients to new beginnings abroad.</p>
-            </div>
-            <div className="seminar-speakers-grid">
-              {speakers.map((sp, i) => (
-                <div
-                  className="seminar-speaker"
-                  key={sp.name}
-                  onClick={() => navigate('/seminar/kaveesh-kapoor')}
-                  role="link"
-                >
-                  <div className="seminar-speaker-media">
-                    <img className="seminar-speaker-img" src={sp.img} alt={sp.name} />
-                    <span className="seminar-speaker-view">View Profile →</span>
-                  </div>
-                  <div className="seminar-speaker-body">
-                    <div className="seminar-speaker-head">
-                      <div className="seminar-speaker-index">{String(i + 1).padStart(2, '0')}</div>
-                      <div>
-                        <h3>{sp.name}</h3>
-                        <div className="role">{sp.role}</div>
-                      </div>
-                    </div>
-                    <p>{sp.bio}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* GALLERY — full-screen mouse-reactive collage */}
         <section className="seminar-collage" onMouseMove={handleMouseMove}>
           <div className="seminar-collage-inner">
@@ -344,15 +206,114 @@ const Seminar = () => {
               <p>Move your cursor and watch the moments come alive.</p>
             </div>
             <div className="seminar-collage-grid">
-              {gallery.map((g, i) => (
-                <div
-                  className={`g-item ${g.cls}`}
-                  key={i}
-                  style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
-                >
-                  <img src={g.img} alt={`Seminar moment ${i + 1}`} />
-                </div>
-              ))}
+              {gallery.map((g, i) =>
+                g.type === 'card' ? (
+                  <div
+                    className={`g-item ${g.cls}`}
+                    key={i}
+                    style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
+                    onClick={() => {
+                      if (g.arrow === 'down') {
+                        document.querySelector('.seminar-highlights')?.scrollIntoView({ behavior: 'smooth' });
+                      } else {
+                        document.querySelector('.seminar-hero')?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    <div className="collage-card-glow" />
+                    <div className="collage-card-corner tl" />
+                    <div className="collage-card-corner br" />
+
+                    <div>
+                      <div className="collage-card-badge">
+                        <span className="collage-card-dot" />
+                        {g.badge}
+                      </div>
+                      <h3 className="collage-card-title">{g.title}</h3>
+                      <p className="collage-card-desc">{g.desc}</p>
+                    </div>
+
+                    <div className="collage-card-bottom">
+                      <span className="collage-card-action">
+                        {g.action}
+                      </span>
+                      {g.arrow === 'loop' ? (
+                        <svg
+                          className="collage-fancy-arrow arrow-curve-loop"
+                          viewBox="0 0 110 44"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <defs>
+                            <linearGradient id={`goldGradLoop-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#c9a24b" stopOpacity="0.35" />
+                              <stop offset="50%" stopColor="#f7dc99" />
+                              <stop offset="100%" stopColor="#c9a24b" />
+                            </linearGradient>
+                          </defs>
+                          {/* Decorative leading trail dots */}
+                          <circle cx="8" cy="34" r="2" fill="#c9a24b" opacity="0.45" />
+                          <circle cx="18" cy="35" r="2.5" fill="#c9a24b" opacity="0.75" />
+                          {/* Elegant swooshing curve */}
+                          <path
+                            d="M28 35 C 50 36, 62 10, 84 14 C 92 16, 99 23, 106 30"
+                            stroke={`url(#goldGradLoop-${i})`}
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                          />
+                          {/* Stylish barbed arrowhead */}
+                          <path
+                            d="M95 30 L 106 31 L 103 20"
+                            stroke={`url(#goldGradLoop-${i})`}
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      ) : (
+                        <svg
+                          className="collage-fancy-arrow arrow-curve-down"
+                          viewBox="0 0 76 58"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <defs>
+                            <linearGradient id={`goldGradDown-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#c9a24b" stopOpacity="0.35" />
+                              <stop offset="50%" stopColor="#f7dc99" />
+                              <stop offset="100%" stopColor="#c9a24b" />
+                            </linearGradient>
+                          </defs>
+                          {/* Decorative arcing dashed tail */}
+                          <path
+                            d="M10 10 C 35 4, 68 12, 64 36 C 61 46, 48 50, 36 53"
+                            stroke={`url(#goldGradDown-${i})`}
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeDasharray="4 2.5"
+                          />
+                          {/* Downward pointing arrowhead */}
+                          <path
+                            d="M47 46 L 35 54 L 38 41"
+                            stroke={`url(#goldGradDown-${i})`}
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    className={`g-item ${g.cls}`}
+                    key={i}
+                    style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
+                  >
+                    <img src={g.img} alt={`Seminar moment ${i + 1}`} />
+                  </div>
+                )
+              )}
             </div>
           </div>
         </section>
