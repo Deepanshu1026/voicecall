@@ -203,7 +203,7 @@ const Seminar = () => {
             <div className="seminar-visionary-inner">
               <div className="seminar-visionary-media">
                 <div className="seminar-visionary-frame">
-                  <img src="/images/user/sirpic 1.webp" alt="Kaveesh Kapoor" />
+                  <img src="https://res.cloudinary.com/fniv4k20/image/upload/v1788523873/DSC08563_cwiyq0.jpg" alt="Kaveesh Kapoor" />
                 </div>
                 <div className="seminar-visionary-badge">Keynote Speaker</div>
               </div>
