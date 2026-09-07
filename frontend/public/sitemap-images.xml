@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://avisaexperts.com/home</loc>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/sirpic%201.webp</image:loc>
+      <image:title>Kaveesh Kapoor - Visa Immigration Expert</image:title>
+      <image:caption>Kaveesh Kapoor, Chairman and Founder of A Visa Experts</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/tmlogo%201.webp</image:loc>
+      <image:title>A Visa Experts Logo</image:title>
+      <image:caption>A Visa Experts - Best Visa Immigration Company</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/carousel2img%201.webp</image:loc>
+      <image:title>Tourist Visa Consultation India</image:title>
+      <image:caption>Tourist visa guidance from A Visa Experts</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://avisaexperts.com/about</loc>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/sirpic%201.webp</image:loc>
+      <image:title>Kaveesh Kapoor - Immigration Expert</image:title>
+      <image:caption>Kaveesh Kapoor, immigration lawyer at A Visa Experts</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/karansir%201.webp</image:loc>
+      <image:title>Karan Kapoor - Managing Director</image:title>
+      <image:caption>Karan Kapoor, Managing Director of A Visa Experts</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://avisaexperts.com/tourist-visa</loc>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/touristvisa_full%201.webp</image:loc>
+      <image:title>Tourist Visa Services</image:title>
+      <image:caption>Tourist visa services by A Visa Experts</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/touristvisa_circle%201.webp</image:loc>
+      <image:title>Tourist Visa Application</image:title>
+      <image:caption>Apply for a tourist visa with A Visa Experts</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://avisaexperts.com/work-visa</loc>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/eurpean%20visa%201.webp</image:loc>
+      <image:title>Work Visa Services</image:title>
+      <image:caption>Work visa guidance by A Visa Experts</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://avisaexperts.com/transit-visa</loc>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/transitvisa_full%201.webp</image:loc>
+      <image:title>Transit Visa Services</image:title>
+      <image:caption>Transit visa assistance by A Visa Experts</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://avisaexperts.com/consultants</loc>
+    <image:image>
+      <image:loc>https://avisaexperts.com/images/user/teammember1%201.webp</image:loc>
+      <image:title>Visa Consultant Team</image:title>
+      <image:caption>Visa consultants at A Visa Experts</image:caption>
+    </image:image>
+  </url>
+</urlset>

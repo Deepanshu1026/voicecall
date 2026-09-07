@@ -249,7 +249,7 @@ const UserHome = () => {
       />
       {/* Hero */}
       <section className="outer-hero-new">
-        <img src="/images/user/slider4 1.webp" className="background-img" alt="slider" />
+        <img src="/images/user/slider4 1.webp" className="background-img" alt="A Visa Experts - Visa and Immigration Consultation" />
         <div className="new-hero-sec">
           <div className="new-hero-left">
             <h1>
@@ -268,7 +268,7 @@ const UserHome = () => {
             {heroCards.map((card, idx) => (
               <a href={card.href || '/home'} className="new-hero-card-wrapper" key={idx} aria-label={`Learn more about ${card.title}`}>
                 <div className="new-hero-card">
-                  <img src={card.img} alt={card.title} />
+                  <img src={card.img} alt={`${card.title} - Visa Services by A Visa Experts`} />
                   <div className="new-hero-card-content">
                     <h3>{card.title}</h3>
                     <p>{card.text}</p>
@@ -411,10 +411,10 @@ const UserHome = () => {
                   </svg>
                 </a>
                 <a href="https://www.instagram.com/avisa.expert/" aria-label="instagram">
-                  <img src="/images/user/instagram 1.webp" alt="instagram" />
+                  <img src="/images/user/instagram 1.webp" alt="Follow A Visa Experts on Instagram" />
                 </a>
                 <a href="https://www.facebook.com/profile.php?id=61590985693281" aria-label="facebook">
-                  <img src="/images/user/logos_facebook 1.webp" alt="facebook" />
+                  <img src="/images/user/logos_facebook 1.webp" alt="Follow A Visa Experts on Facebook" />
                 </a>
                 <a href="https://www.youtube.com/@avisaexperts" aria-label="you-tube">
                   <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 64 45" fill="none">
@@ -699,7 +699,7 @@ const UserHome = () => {
               <div className="destination-overlay" />
               <div className="location-info">
                 <div className="location-details">
-                  <img className="flag-icon" src={dest.flag} alt="flag" />
+                  <img className="flag-icon" src={dest.flag} alt={`${dest.name} visa support - A Visa Experts`} />
                   <h3>{dest.name}</h3>
                 </div>
                 <span className="destination-explore">Explore &rarr;</span>
