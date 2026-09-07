@@ -391,83 +391,246 @@ const UserHome = () => {
         </div>
       </section>
 
-      {/* About us */}
-      <section className="hero">
-        <div className="about-us">
-          <h2>About us</h2>
-          <div className="content">
-            <div className="image-placeholder" />
-            <div className="text">
-              <h2>Kaveesh Kapoor</h2>
-              <div className="about-role">Chairman &amp; Founder — A Visa Experts</div>
-              <p>
-                Welcome to A Visa Experts — India&apos;s trusted visa &amp; immigration consultancy. Founded by
-                Kaveesh Kapoor, we help individuals and families secure tourist, work, study and PR visas for the
-                USA, UK, Canada, Australia, Europe and beyond — with clear guidance, honest advice and a proven
-                track record of success.
+      {/* About Us & Founder Leadership Section */}
+      <section className="home-about-section" id="about-us">
+        {/* Ambient decorative lighting */}
+        <div className="home-about-glow-1" aria-hidden="true" />
+        <div className="home-about-glow-2" aria-hidden="true" />
+
+        <div className="home-about-container">
+          {/* Section Header */}
+          <div className="home-about-header">
+            <div className="home-about-badge">
+              <span className="home-about-badge-sparkle">✦</span>
+              <span>ABOUT A VISA EXPERTS</span>
+            </div>
+            <h2 className="home-about-title">
+              Guiding Your Global Journey With <span className="home-about-gold-gradient">Proven Excellence</span>
+            </h2>
+            <p className="home-about-subtitle">
+              India&apos;s trusted visa &amp; immigration consultancy, backed by seasoned legal advisors and hundreds of thousands of success stories.
+            </p>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="home-about-grid">
+            {/* Left: Founder Portrait Card with Floating Badges */}
+            <div className="home-about-image-wrapper">
+              <div className="home-about-image-frame">
+                <div className="home-about-image-glow" />
+                <img
+                  src="/images/user/sirpic 1.webp"
+                  alt="Kaveesh Kapoor - Chairman & Founder of A Visa Experts"
+                  className="home-about-img"
+                  loading="lazy"
+                />
+                <div className="home-about-image-overlay" />
+
+                {/* Floating Badge: Experience */}
+                <div className="home-about-float-badge float-badge-top">
+                  <div className="float-badge-icon gold">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                    </svg>
+                  </div>
+                  <div className="float-badge-text">
+                    <span className="float-val">7+ Years</span>
+                    <span className="float-lbl">Leadership</span>
+                  </div>
+                </div>
+
+                {/* Floating Badge: Dedicated Process */}
+                <div className="home-about-float-badge float-badge-bottom">
+                  <div className="float-badge-icon blue">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" />
+                    </svg>
+                  </div>
+                  <div className="float-badge-text">
+                    <span className="float-val">100% Dedicated</span>
+                    <span className="float-lbl">Visa Success Process</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Founder Information & Highlights */}
+            <div className="home-about-info-col">
+              <div className="founder-header">
+                <div className="founder-name-wrap">
+                  <h3 className="founder-name">Kaveesh Kapoor</h3>
+                  <div className="founder-verified-chip" title="Verified Founder">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" fill="#2563eb" />
+                      <path d="M8 12L10.5 14.5L16 9" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <span>Founder</span>
+                  </div>
+                </div>
+                <div className="founder-role">
+                  CHAIRMAN &amp; FOUNDER — A VISA EXPERTS
+                </div>
+              </div>
+
+              {/* Founder Quote */}
+              <div className="founder-quote-card">
+                <span className="quote-icon">“</span>
+                <p>
+                  Our mission is simple: to turn your global aspirations into reality with complete transparency, unwavering dedication, and personalized guidance every step of the way.
+                </p>
+              </div>
+
+              {/* Description Body */}
+              <p className="founder-bio">
+                Welcome to <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy. Founded by <strong>Kaveesh Kapoor</strong>, we help individuals, students, and families secure tourist, work, study, and permanent residency visas for the <strong>USA, UK, Canada, Australia, Europe</strong> and beyond — with clear guidance, honest advice, and an exceptional track record of success.
               </p>
-              <div className="about-highlights">
-                <span><i>✓</i> 2 Lakh+ Clients</span>
-                <span><i>✓</i> 100% Success Rate</span>
+
+              {/* 4 Feature Highlights Grid */}
+              <div className="about-features-grid">
+                <div className="about-feature-card">
+                  <div className="feature-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a24b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="2" y1="12" x2="22" y2="12" />
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                  </div>
+                  <div className="feature-card-content">
+                    <span className="feature-card-title">Global Reach</span>
+                    <span className="feature-card-desc">USA, UK, Canada, EU &amp; Aus</span>
+                  </div>
+                </div>
+
+                <div className="about-feature-card">
+                  <div className="feature-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a24b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </div>
+                  <div className="feature-card-content">
+                    <span className="feature-card-title">2 Lakh+ Clients</span>
+                    <span className="feature-card-desc">Successful cases &amp; aspirants</span>
+                  </div>
+                </div>
+
+                <div className="about-feature-card">
+                  <div className="feature-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a24b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                  </div>
+                  <div className="feature-card-content">
+                    <span className="feature-card-title">40+ Legal Advisors</span>
+                    <span className="feature-card-desc">Seasoned visa attorneys</span>
+                  </div>
+                </div>
+
+                <div className="about-feature-card">
+                  <div className="feature-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a24b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                  </div>
+                  <div className="feature-card-content">
+                    <span className="feature-card-title">Fast-Track Filing</span>
+                    <span className="feature-card-desc">End-to-end file preparation</span>
+                  </div>
+                </div>
               </div>
-              <div className="social-icons">
-                <a href="https://www.linkedin.com/company/a-visa-experts" aria-label="Linkedin">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 16 16" fill="none">
-                    <g clipPath="url(#clipLinkedin)">
-                      <path d="M12.25 0H3.75C1.67893 0 0 1.67893 0 3.75V12.25C0 14.3211 1.67893 16 3.75 16H12.25C14.3211 16 16 14.3211 16 12.25V3.75C16 1.67893 14.3211 0 12.25 0Z" fill="white" />
-                      <path d="M12.25 0H3.75C1.67893 0 0 1.67893 0 3.75V12.25C0 14.3211 1.67893 16 3.75 16H12.25C14.3211 16 16 14.3211 16 12.25V3.75C16 1.67893 14.3211 0 12.25 0Z" fill="#0A66C2" />
-                      <path d="M11.5447 13.6053H13.3741C13.4404 13.6053 13.5039 13.579 13.5508 13.5321C13.5977 13.4852 13.624 13.4217 13.6241 13.3554L13.625 9.49025C13.625 7.47006 13.1897 5.91725 10.8289 5.91725C9.93144 5.88388 9.08512 6.3465 8.62844 7.119C8.6262 7.12275 8.62281 7.12567 8.61876 7.12731C8.61471 7.12895 8.61024 7.12922 8.60603 7.12808C8.60181 7.12694 8.59808 7.12445 8.59542 7.12099C8.59275 7.11754 8.59129 7.1133 8.59125 7.10894V6.35375C8.59125 6.28745 8.56491 6.22386 8.51803 6.17697C8.47114 6.13009 8.40755 6.10375 8.34125 6.10375H6.60519C6.53888 6.10375 6.4753 6.13009 6.42841 6.17697C6.38153 6.22386 6.35519 6.28745 6.35519 6.35375V13.355C6.35519 13.4213 6.38153 13.4849 6.42841 13.5318C6.4753 13.5787 6.53888 13.605 6.60519 13.605H8.43444C8.50074 13.605 8.56433 13.5787 8.61121 13.5318C8.6581 13.4849 8.68444 13.4213 8.68444 13.355V9.89419C8.68444 8.91563 8.87006 7.96794 10.0833 7.96794C11.2792 7.96794 11.2947 9.08769 11.2947 9.95756V13.3553C11.2947 13.4216 11.321 13.4852 11.3679 13.5321C11.4148 13.579 11.4784 13.6053 11.5447 13.6053ZM2.375 3.72675C2.375 4.46825 2.98544 5.07837 3.727 5.07837C4.46838 5.07831 5.07844 4.46781 5.07844 3.72644C5.07831 2.98506 4.46819 2.375 3.72675 2.375C2.98512 2.375 2.375 2.98525 2.375 3.72675ZM2.80994 13.6053H4.64162C4.70793 13.6053 4.77152 13.579 4.8184 13.5321C4.86529 13.4852 4.89162 13.4216 4.89162 13.3553V6.35375C4.89162 6.28745 4.86529 6.22386 4.8184 6.17697C4.77152 6.13009 4.70793 6.10375 4.64162 6.10375H2.80994C2.74363 6.10375 2.68004 6.13009 2.63316 6.17697C2.58628 6.22386 2.55994 6.28745 2.55994 6.35375V13.3553C2.55994 13.4216 2.58628 13.4852 2.63316 13.5321C2.68004 13.579 2.74363 13.6053 2.80994 13.6053Z" fill="white" />
-                    </g>
-                    <defs>
-                      <clipPath id="clipLinkedin">
-                        <rect width="16" height="16" fill="white" />
-                      </clipPath>
-                    </defs>
-                  </svg>
-                </a>
-                <a href="https://www.instagram.com/avisa.expert/" aria-label="instagram">
-                  <img src="/images/user/instagram 1.webp" alt="Follow A Visa Experts on Instagram" />
-                </a>
-                <a href="https://www.facebook.com/profile.php?id=61590985693281" aria-label="facebook">
-                  <img src="/images/user/logos_facebook 1.webp" alt="Follow A Visa Experts on Facebook" />
-                </a>
-                <a href="https://www.youtube.com/@avisaexperts" aria-label="you-tube">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 64 45" fill="none">
-                    <g clipPath="url(#clipYoutube)">
-                      <path d="M62.5865 7.01875C62.2195 5.66214 61.5034 4.42536 60.5096 3.43157C59.5159 2.43778 58.2791 1.72165 56.9226 1.3545C51.9561 0 31.9675 0 31.9675 0C31.9675 0 11.978 0.0409999 7.01155 1.3955C5.65492 1.76267 4.41816 2.47884 3.42441 3.47268C2.43066 4.46651 1.7146 5.70334 1.34755 7.06C-0.154702 15.8845 -0.737452 29.331 1.3888 37.8025C1.75589 39.1591 2.47196 40.3959 3.46571 41.3897C4.45946 42.3835 5.6962 43.0996 7.0528 43.4668C12.0193 44.8213 32.0083 44.8213 32.0083 44.8213C32.0083 44.8213 51.997 44.8213 56.9633 43.4668C58.3199 43.0996 59.5567 42.3835 60.5505 41.3897C61.5443 40.3959 62.2604 39.1591 62.6275 37.8025C64.212 28.9655 64.7003 15.5273 62.5865 7.01875Z" fill="#FF0000" />
-                      <path d="M25.6055 32.0137L42.1875 22.4092L25.6055 12.8047V32.0137Z" fill="white" />
-                    </g>
-                    <defs>
-                      <clipPath id="clipYoutube">
-                        <rect width="64" height="45" fill="white" />
-                      </clipPath>
-                    </defs>
-                  </svg>
-                </a>
+
+              {/* Social Connect & Actions */}
+              <div className="about-actions-row">
+                <div className="about-social-group">
+                  <span className="social-label">Follow Us:</span>
+                  <div className="about-social-icons">
+                    <a
+                      href="https://www.linkedin.com/company/a-visa-experts"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="about-social-link linkedin"
+                      aria-label="LinkedIn"
+                    >
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                      </svg>
+                    </a>
+                    <a
+                      href="https://www.instagram.com/avisa.expert/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="about-social-link instagram"
+                      aria-label="Instagram"
+                    >
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                      </svg>
+                    </a>
+                    <a
+                      href="https://www.facebook.com/profile.php?id=61590985693281"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="about-social-link facebook"
+                      aria-label="Facebook"
+                    >
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                    </a>
+                    <a
+                      href="https://www.youtube.com/@avisaexperts"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="about-social-link youtube"
+                      aria-label="YouTube"
+                    >
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="about-buttons-wrapper">
+                  <button className="home-about-cta-btn" onClick={() => navigate('/about')}>
+                    <span>Meet Kaveesh Kapoor</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </button>
+                  <button className="home-about-outline-btn" onClick={() => navigate('/appointment')}>
+                    <span>Book Appointment</span>
+                  </button>
+                </div>
               </div>
-              <button className="about-cta-btn" onClick={() => navigate('/about')}>
-                Meet Kaveesh Kapoor →
-              </button>
             </div>
           </div>
-          <div className="mainstats">
-            <div className="stats">
-              <div className="stat-item">
-                <div className="number">2 Lakh+</div>
-                <div className="business-text">Followers</div>
-              </div>
-              <div className="stat-item">
-                <div className="number">7+ Years</div>
-                <div className="business-text">of Experience</div>
-              </div>
-              <div className="stat-item">
-                <div className="number">40+</div>
-                <div className="business-text">Immigration Lawyers</div>
-              </div>
-              <div className="stat-item" style={{ border: 'none' }}>
-                <div className="number">100%</div>
-                <div className="business-text">Success Rate*</div>
-              </div>
+
+          {/* Stats Bar */}
+          <div className="home-about-stats-container">
+            <div className="home-about-stat-item">
+              <div className="home-about-stat-number">2 Lakh+</div>
+              <div className="home-about-stat-label">Clients &amp; Followers</div>
+            </div>
+            <div className="home-about-stat-divider" />
+            <div className="home-about-stat-item">
+              <div className="home-about-stat-number">7+ Years</div>
+              <div className="home-about-stat-label">Proven Experience</div>
+            </div>
+            <div className="home-about-stat-divider" />
+            <div className="home-about-stat-item">
+              <div className="home-about-stat-number">40+</div>
+              <div className="home-about-stat-label">Legal Visa Experts</div>
+            </div>
+            <div className="home-about-stat-divider" />
+            <div className="home-about-stat-item">
+              <div className="home-about-stat-number">100%</div>
+              <div className="home-about-stat-label">Success Rate*</div>
             </div>
           </div>
         </div>
