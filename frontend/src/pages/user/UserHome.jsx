@@ -623,7 +623,7 @@ const UserHome = () => {
           <div className="home-about-stats-container">
             <div className="home-about-stat-item">
               <div className="home-about-stat-number">2 Lakh+</div>
-              <div className="home-about-stat-label">Clients &amp; Followers</div>
+              <div className="home-about-stat-label">Followers</div>
             </div>
             <div className="home-about-stat-divider" />
             <div className="home-about-stat-item">
