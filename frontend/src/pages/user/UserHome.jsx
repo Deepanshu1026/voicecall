@@ -249,9 +249,6 @@ const UserHome = () => {
         jsonLd={jsonLd}
       />
 
-      {/* Seminar hero + collage sections */}
-      <HomeSeminarSections />
-
       {/* Hero */}
       <section className="outer-hero-new">
         <img src="/images/user/slider4 1.webp" className="background-img" alt="A Visa Experts - Visa and Immigration Consultation" />
@@ -294,6 +291,9 @@ const UserHome = () => {
           </div>
         </div>
       </section>
+
+      {/* Seminar hero + collage sections */}
+      <HomeSeminarSections />
 
       {/* Highlights strip */}
       <section className="outer-strip-sec">
