@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_IS_EMBED } from '../../config/seminarVideo';
 import '../../styles/seminar.css';
 
 const gallery = [
@@ -46,138 +45,85 @@ const HomeSeminarSections = () => {
   };
 
   return (
-    <div className="seminar-page">
-      {/* HERO — autoplay video background */}
-      <section className="seminar-hero home-seminar-hero">
-        {SEMINAR_VIDEO_IS_EMBED ? (
-          <iframe
-            className="seminar-hero-video seminar-hero-embed"
-            src={SEMINAR_VIDEO_URL}
-            title="Seminar highlight video"
-            frameBorder="0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-          />
-        ) : (
-          <video
-            className="seminar-hero-video"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-          >
-            <source src={SEMINAR_VIDEO_URL} type="video/mp4" />
-          </video>
-        )}
-        <div className="seminar-hero-shade" />
-        <div className="seminar-hero-vignette" />
-
-        <div className="seminar-hero-inner">
-          <div className="seminar-eyebrow">A Visa Experts Presents</div>
-          <h1>
-            Global Immigration
-            <span className="light">Success Seminar 2026</span>
-          </h1>
-          <p className="seminar-hero-sub">
-            A landmark gathering of visa experts, industry leaders and ambitious travellers —
-            one powerful day dedicated to turning your migration dreams into reality.
-          </p>
-          <div className="seminar-hero-cta">
-            <button className="seminar-btn" onClick={() => navigate('/appointment')}>Book a Consultation</button>
-            <button className="seminar-btn outline" onClick={() => navigate('/consultants')}>Meet Our Experts</button>
-          </div>
-          <div className="seminar-hero-meta">
-            <span>New Delhi</span>
-            <span>500+ Attendees</span>
-            <span>Sold Out</span>
-          </div>
+    <section className="seminar-collage" onMouseMove={handleMouseMove}>
+      <div className="seminar-collage-inner">
+        <div className="seminar-section-head">
+          <div className="kicker">The Moments</div>
+          <h2>Captured At The Seminar</h2>
+          <p>Move your cursor and watch the moments come alive.</p>
         </div>
+        <div className="seminar-collage-grid">
+          {gallery.map((g, i) =>
+            g.type === 'card' ? (
+              <div
+                className={`g-item ${g.cls}`}
+                key={i}
+                style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
+                onClick={() => {
+                  if (g.arrow === 'down') {
+                    navigate('/seminar');
+                  } else {
+                    document.querySelector('.outer-hero-new')?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
+                <div className="collage-card-glow" />
+                <div className="collage-card-corner tl" />
+                <div className="collage-card-corner br" />
 
-        <div className="seminar-scroll">Scroll</div>
-      </section>
-
-      {/* GALLERY — full-screen mouse-reactive collage */}
-      <section className="seminar-collage" onMouseMove={handleMouseMove}>
-        <div className="seminar-collage-inner">
-          <div className="seminar-section-head">
-            <div className="kicker">The Moments</div>
-            <h2>Captured At The Seminar</h2>
-            <p>Move your cursor and watch the moments come alive.</p>
-          </div>
-          <div className="seminar-collage-grid">
-            {gallery.map((g, i) =>
-              g.type === 'card' ? (
-                <div
-                  className={`g-item ${g.cls}`}
-                  key={i}
-                  style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
-                  onClick={() => {
-                    if (g.arrow === 'down') {
-                      navigate('/seminar');
-                    } else {
-                      document.querySelector('.home-seminar-hero')?.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                >
-                  <div className="collage-card-glow" />
-                  <div className="collage-card-corner tl" />
-                  <div className="collage-card-corner br" />
-
-                  <div>
-                    <div className="collage-card-badge">
-                      <span className="collage-card-dot" />
-                      {g.badge}
-                    </div>
-                    <h3 className="collage-card-title">{g.title}</h3>
-                    <p className="collage-card-desc">{g.desc}</p>
+                <div>
+                  <div className="collage-card-badge">
+                    <span className="collage-card-dot" />
+                    {g.badge}
                   </div>
+                  <h3 className="collage-card-title">{g.title}</h3>
+                  <p className="collage-card-desc">{g.desc}</p>
+                </div>
 
-                  <div className="collage-card-bottom">
-                    <span className="collage-card-action">{g.action}</span>
-                    {g.arrow === 'loop' ? (
-                      <svg className="collage-fancy-arrow arrow-curve-loop" viewBox="0 0 110 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                          <linearGradient id={`goldGradLoop-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#c9a24b" stopOpacity="0.35" />
-                            <stop offset="50%" stopColor="#f7dc99" />
-                            <stop offset="100%" stopColor="#c9a24b" />
-                          </linearGradient>
-                        </defs>
-                        <circle cx="8" cy="34" r="2" fill="#c9a24b" opacity="0.45" />
-                        <circle cx="18" cy="35" r="2.5" fill="#c9a24b" opacity="0.75" />
-                        <path d="M28 35 C 50 36, 62 10, 84 14 C 92 16, 99 23, 106 30" stroke={`url(#goldGradLoop-${i})`} strokeWidth="2.5" strokeLinecap="round" />
-                        <path d="M95 30 L 106 31 L 103 20" stroke={`url(#goldGradLoop-${i})`} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    ) : (
-                      <svg className="collage-fancy-arrow arrow-curve-down" viewBox="0 0 76 58" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                          <linearGradient id={`goldGradDown-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#c9a24b" stopOpacity="0.35" />
-                            <stop offset="50%" stopColor="#f7dc99" />
-                            <stop offset="100%" stopColor="#c9a24b" />
-                          </linearGradient>
-                        </defs>
-                        <path d="M10 10 C 35 4, 68 12, 64 36 C 61 46, 48 50, 36 53" stroke={`url(#goldGradDown-${i})`} strokeWidth="2.5" strokeLinecap="round" strokeDasharray="4 2.5" />
-                        <path d="M47 46 L 35 54 L 38 41" stroke={`url(#goldGradDown-${i})`} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </div>
+                <div className="collage-card-bottom">
+                  <span className="collage-card-action">{g.action}</span>
+                  {g.arrow === 'loop' ? (
+                    <svg className="collage-fancy-arrow arrow-curve-loop" viewBox="0 0 110 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id={`goldGradLoop-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#c9a24b" stopOpacity="0.35" />
+                          <stop offset="50%" stopColor="#f7dc99" />
+                          <stop offset="100%" stopColor="#c9a24b" />
+                        </linearGradient>
+                      </defs>
+                      <circle cx="8" cy="34" r="2" fill="#c9a24b" opacity="0.45" />
+                      <circle cx="18" cy="35" r="2.5" fill="#c9a24b" opacity="0.75" />
+                      <path d="M28 35 C 50 36, 62 10, 84 14 C 92 16, 99 23, 106 30" stroke={`url(#goldGradLoop-${i})`} strokeWidth="2.5" strokeLinecap="round" />
+                      <path d="M95 30 L 106 31 L 103 20" stroke={`url(#goldGradLoop-${i})`} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : (
+                    <svg className="collage-fancy-arrow arrow-curve-down" viewBox="0 0 76 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id={`goldGradDown-${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#c9a24b" stopOpacity="0.35" />
+                          <stop offset="50%" stopColor="#f7dc99" />
+                          <stop offset="100%" stopColor="#c9a24b" />
+                        </linearGradient>
+                      </defs>
+                      <path d="M10 10 C 35 4, 68 12, 64 36 C 61 46, 48 50, 36 53" stroke={`url(#goldGradDown-${i})`} strokeWidth="2.5" strokeLinecap="round" strokeDasharray="4 2.5" />
+                      <path d="M47 46 L 35 54 L 38 41" stroke={`url(#goldGradDown-${i})`} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
                 </div>
-              ) : (
-                <div
-                  className={`g-item ${g.cls}`}
-                  key={i}
-                  style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
-                >
-                  <img src={g.img} alt={`Seminar moment ${i + 1}`} />
-                </div>
-              )
-            )}
-          </div>
+              </div>
+            ) : (
+              <div
+                className={`g-item ${g.cls}`}
+                key={i}
+                style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
+              >
+                <img src={g.img} alt={`Seminar moment ${i + 1}`} />
+              </div>
+            )
+          )}
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   );
 };
 

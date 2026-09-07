@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../../components/user/LandingLayout';
 import AgentChatWidget from '../../components/user/AgentChatWidget';
 import HomeSeminarSections from '../../components/seminar/HomeSeminarSections';
+import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_IS_EMBED } from '../../config/seminarVideo';
 import SEO from '../../components/common/SEO';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -251,7 +252,21 @@ const UserHome = () => {
 
       {/* Hero */}
       <section className="outer-hero-new">
-        <img src="/images/user/slider4 1.webp" className="background-img" alt="A Visa Experts - Visa and Immigration Consultation" />
+        {SEMINAR_VIDEO_IS_EMBED ? (
+          <iframe
+            className="background-img"
+            src={SEMINAR_VIDEO_URL}
+            title="A Visa Experts"
+            frameBorder="0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+          />
+        ) : (
+          <video className="background-img" autoPlay muted loop playsInline preload="auto">
+            <source src={SEMINAR_VIDEO_URL} type="video/mp4" />
+          </video>
+        )}
+        <div className="hero-video-overlay" />
         <div className="new-hero-sec">
           <div className="new-hero-left">
             <h1>
