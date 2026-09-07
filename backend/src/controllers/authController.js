@@ -9,7 +9,7 @@ const { getAccountById } = require('../utils/account');
 const { recordLogin } = require('../services/loginHistoryService');
 
 const register = asyncHandler(async (req, res) => {
-  const { username, email, password, displayName, role, mobile } = req.body;
+  const { username, email, password, displayName, role, mobile, countryCode } = req.body;
 
   const trimmedMobile = mobile ? mobile.trim() : null;
 
@@ -20,6 +20,7 @@ const register = asyncHandler(async (req, res) => {
     displayName: displayName || username,
     role: role || 'user',
     mobile: trimmedMobile,
+    countryCode: countryCode ? countryCode.trim() : null,
   });
 
   const { accessToken, refreshToken } = generateTokens(user._id);

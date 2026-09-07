@@ -10,6 +10,8 @@ const UserRegister = () => {
     fullName: '',
     username: '',
     email: '',
+    countryCode: '+91',
+    phone: '',
     password: '',
     confirmPassword: '',
   });
@@ -39,6 +41,11 @@ const UserRegister = () => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       nextErrors.email = 'Please enter a valid email';
     }
+    if (!form.phone.trim()) {
+      nextErrors.phone = 'Phone number is required';
+    } else if (!/^\d{6,15}$/.test(form.phone.trim())) {
+      nextErrors.phone = 'Please enter a valid phone number';
+    }
     if (!form.password) {
       nextErrors.password = 'Password is required';
     } else if (form.password.length < 6) {
@@ -60,7 +67,7 @@ const UserRegister = () => {
     setErrors({});
     try {
       setLoading(true);
-      await register(form.username, form.email, form.password, form.fullName);
+      await register(form.username, form.email, form.password, form.fullName, 'user', form.phone.trim(), form.countryCode);
       toast.success('Account created successfully!');
     } catch (error) {
       const data = error.response?.data;
@@ -125,6 +132,51 @@ const UserRegister = () => {
               required
             />
             {errors.email && <span className="auth-error">{errors.email}</span>}
+          </div>
+
+          <div className="auth-input-group">
+            <label htmlFor="phone">Phone Number</label>
+            <div className="auth-phone-row">
+              <select
+                id="countryCode"
+                name="countryCode"
+                className="auth-country-select"
+                value={form.countryCode}
+                onChange={handleChange}
+              >
+                <option value="+91">🇮🇳 +91</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+61">🇦🇺 +61</option>
+                <option value="+971">🇦🇪 +971</option>
+                <option value="+974">🇶🇦 +974</option>
+                <option value="+966">🇸🇦 +966</option>
+                <option value="+965">🇰🇼 +965</option>
+                <option value="+968">🇴🇲 +968</option>
+                <option value="+973">🇧🇭 +973</option>
+                <option value="+92">🇵🇰 +92</option>
+                <option value="+880">🇧🇩 +880</option>
+                <option value="+94">🇱🇰 +94</option>
+                <option value="+977">🇳🇵 +977</option>
+                <option value="+86">🇨🇳 +86</option>
+                <option value="+81">🇯🇵 +81</option>
+                <option value="+82">🇰🇷 +82</option>
+                <option value="+65">🇸🇬 +65</option>
+                <option value="+60">🇲🇾 +60</option>
+              </select>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                className={`auth-input ${errors.phone ? 'error' : ''}`}
+                placeholder="Mobile number"
+                value={form.phone}
+                onChange={handleChange}
+                autoComplete="tel"
+                required
+              />
+            </div>
+            {errors.phone && <span className="auth-error">{errors.phone}</span>}
           </div>
 
           <div className="auth-input-group">

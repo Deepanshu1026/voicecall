@@ -92,8 +92,8 @@ export const AuthProvider = ({ children }) => {
     return employeeData;
   };
 
-  const register = async (username, email, password, displayName, role = 'user') => {
-    const res = await authAPI.register({ username, email, password, displayName, role });
+  const register = async (username, email, password, displayName, role = 'user', mobile = '', countryCode = '') => {
+    const res = await authAPI.register({ username, email, password, displayName, role, mobile, countryCode });
     const { user: userData, accessToken, refreshToken } = res.data.data;
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
