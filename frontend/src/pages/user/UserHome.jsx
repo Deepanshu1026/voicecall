@@ -262,7 +262,15 @@ const UserHome = () => {
             allowFullScreen
           />
         ) : (
-          <video className="background-img" autoPlay muted loop playsInline preload="auto">
+          <video
+            className="background-img"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="https://res.cloudinary.com/fniv4k20/image/upload/v1788524351/DSC08782-100kb_ieygmt.jpg"
+          >
             <source src={SEMINAR_VIDEO_URL} type="video/mp4" />
           </video>
         )}
