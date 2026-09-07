@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../../components/user/LandingLayout';
 import AgentChatWidget from '../../components/user/AgentChatWidget';
+import HomeSeminarSections from '../../components/seminar/HomeSeminarSections';
 import SEO from '../../components/common/SEO';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -247,6 +248,10 @@ const UserHome = () => {
         ogImage="/images/user/slider4 1.webp"
         jsonLd={jsonLd}
       />
+
+      {/* Seminar hero + collage sections */}
+      <HomeSeminarSections />
+
       {/* Hero */}
       <section className="outer-hero-new">
         <img src="/images/user/slider4 1.webp" className="background-img" alt="A Visa Experts - Visa and Immigration Consultation" />
