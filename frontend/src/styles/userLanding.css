@@ -833,23 +833,37 @@
 
 /* About us */
 .hero {
-  padding: 60px 0;
-  background: white;
+  padding: 80px 0;
+  background: #050505;
 }
 
 .about-us {
   text-align: center;
   padding: 20px;
-  color: #000;
+  color: #fff;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .about-us>h2 {
-  font-size: 40px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #000;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: #c9a24b;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.about-us>h2::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  background: #c9a24b;
+  margin: 12px auto 0;
+  opacity: 0.7;
 }
 
 .content {
@@ -858,7 +872,7 @@
   align-items: center;
   margin-top: 20px;
   margin-bottom: 20px;
-  gap: 40px;
+  gap: 60px;
   flex-wrap: wrap;
 }
 
@@ -867,33 +881,43 @@
   background: url("/images/user/sirpic 1.webp") no-repeat center center/cover;
   width: 380px;
   height: 500px;
-  border-radius: 106px;
-  box-shadow: 0px 0px 10px brown;
-  background-color: #ccc;
+  border-radius: 24px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(201, 162, 75, 0.45);
   position: relative;
   flex-shrink: 0;
+  filter: none;
 }
 
 .text {
   align-self: flex-start;
-  max-width: 500px;
+  max-width: 520px;
   text-align: left;
   flex: 1;
   min-width: 300px;
 }
 
 .text h2 {
-  color: #000;
-  font-size: 24px;
+  color: #fff;
+  font-size: 28px;
   font-weight: 700;
   margin-bottom: 16px;
 }
 
+.text h2::after {
+  content: '';
+  display: block;
+  width: 52px;
+  height: 3px;
+  background: #c9a24b;
+  margin-top: 12px;
+}
+
 .text p {
-  font-size: 1.1rem;
-  color: #666;
-  font-weight: 500;
-  line-height: 1.5;
+  font-size: 1.05rem;
+  color: #a6a6a6;
+  font-weight: 400;
+  line-height: 1.7;
   text-align: justify;
   margin-bottom: 20px;
 }
@@ -910,29 +934,46 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #121212;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.social-icons a:hover {
+  border-color: rgba(201, 162, 75, 0.6);
+  transform: translateY(-3px);
 }
 
 .social-icons img {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   object-fit: contain;
+}
+
+.social-icons svg {
+  width: 22px;
+  height: 22px;
 }
 
 .mainstats {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
 .stats {
   display: flex;
   margin-top: 20px;
-  background-color: #eee;
+  background-color: #0b0b0b;
   padding: 8px 0;
-  height: 77px;
-  border-radius: 32px;
+  min-height: 90px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   width: 100%;
   max-width: 1018px;
   text-align: center;
@@ -943,8 +984,8 @@
 .stat-item {
   text-align: center;
   flex: 1;
-  border-right: 3px solid black;
-  height: 79px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 79px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -955,13 +996,19 @@
 }
 
 .stat-item .business-text {
-  color: #666;
-  font-size: 14px;
+  color: #7a7a7a;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .stat-item .number {
   font-size: 34px;
-  font-weight: bold;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, #9a9a9a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 @media (max-width: 991px) {
@@ -1001,7 +1048,7 @@
 
   .stat-item {
     border-right: none;
-    border-bottom: 2px solid black;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     height: auto;
     padding-bottom: 10px;
   }
