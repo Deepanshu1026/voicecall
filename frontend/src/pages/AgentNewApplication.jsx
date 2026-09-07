@@ -4,7 +4,7 @@ import { agentPortalAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import '../styles/agentPortal.css';
 
-const VISA_OPTIONS = ['Tourist', 'Student', 'Work', 'PR', 'Business'];
+const VISA_OPTIONS = ['Tourist', 'Work', 'PR', 'Business'];
 
 const initialForm = {
   submission_date: new Date().toISOString().split('T')[0],

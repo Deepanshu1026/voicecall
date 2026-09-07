@@ -31,7 +31,7 @@ const staticConsultants = [
     id: 2,
     name: 'Priya Sharma',
     avatar: '/images/user/avatar.webp',
-    expertise: 'Study Visa Expert • UK, Canada, Australia',
+    expertise: 'Tourist & Work Visa Expert • UK, Canada, Australia',
     language: 'English, Hindi, Punjabi',
     experience: '8',
     status: 'Active',

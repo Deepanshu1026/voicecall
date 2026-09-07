@@ -45,7 +45,7 @@ const gallery = [
 
 const agenda = [
   { time: '10:00 AM', title: 'Opening Keynote', desc: 'The future of global mobility and why 2026 is the year to take the leap.' },
-  { time: '11:30 AM', title: 'Visa Strategy Masterclass', desc: 'Tourist, work and study visas — the complete roadmap from application to approval.' },
+  { time: '11:30 AM', title: 'Visa Strategy Masterclass', desc: 'Tourist and work visas — the complete roadmap from application to approval.' },
   { time: '01:00 PM', title: 'One-on-One Expert Consultations', desc: 'Direct access to immigration lawyers for personalised guidance.' },
   { time: '03:00 PM', title: 'Success Stories & Q&A', desc: 'Real client journeys, common mistakes and live answers to your questions.' },
 ];
@@ -56,7 +56,7 @@ const testimonials = [
   { quote: 'World-class insights delivered with such clarity. Best seminar I have attended in years.', who: 'Attendee — Mumbai' },
 ];
 
-const marqueeItems = ['Global Immigration', 'Visa Success', 'Expert Guidance', '2 Lakh+ Clients', 'Trusted Advisors', 'Study Abroad', 'PR & Work Visas'];
+const marqueeItems = ['Global Immigration', 'Visa Success', 'Expert Guidance', '2 Lakh+ Clients', 'Trusted Advisors', 'PR & Work Visas'];
 
 // Editorial "About" Section Data — Configurable Image URLs & Editorial Narrative
 const editorialAboutData = {

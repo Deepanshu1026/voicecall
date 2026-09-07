@@ -505,7 +505,6 @@ const AgentDashboardHome = () => {
                     <select name="visa_type" value={editForm.visa_type} onChange={handleEditChange}>
                       <option value="">Select visa type</option>
                       <option value="Tourist">Tourist</option>
-                      <option value="Student">Student</option>
                       <option value="Work">Work</option>
                       <option value="PR">PR</option>
                       <option value="Business">Business</option>

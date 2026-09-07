@@ -490,7 +490,7 @@ const UserHome = () => {
 
               {/* Description Body */}
               <p className="founder-bio">
-                Welcome to <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy. Founded by <strong>Kaveesh Kapoor</strong>, we help individuals, students, and families secure tourist, work, study, and permanent residency visas for the <strong>USA, UK, Canada, Australia, Europe</strong> and beyond — with clear guidance, honest advice, and an exceptional track record of success.
+                Welcome to <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy. Founded by <strong>Kaveesh Kapoor</strong>, we help individuals and families secure tourist, work, and permanent residency visas for the <strong>USA, UK, Canada, Australia, Europe</strong> and beyond — with clear guidance, honest advice, and an exceptional track record of success.
               </p>
 
               {/* 4 Feature Highlights Grid */}

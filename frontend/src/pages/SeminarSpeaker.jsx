@@ -13,7 +13,6 @@ const expertise = [
   'Tourist Visas — USA, UK, Canada, Europe, Australia & NZ',
   'Work & Business Visas',
   'Permanent Residency (PR) Applications',
-  'Student & Study Abroad Programs',
   'Refusal Case Appeals & Re-applications',
 ];
 

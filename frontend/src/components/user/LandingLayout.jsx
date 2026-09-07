@@ -188,7 +188,7 @@ const LandingLayout = ({ children }) => {
           <div className="footer-section footer-logo-section">
             <img className="footer-logo" src="/images/user/tmlogo 1.webp" alt="Logo" />
             <p>A Visa Expert helps individuals secure visas for the US, UK, Canada, New Zealand, and Australia. Our experienced team offers
-              personalized guidance, ensuring a smooth application process for tourist, student, and work visas.</p>
+              personalized guidance, ensuring a smooth application process for tourist and work visas.</p>
           </div>
 
           <div className="footer-section footer-second-clm">
