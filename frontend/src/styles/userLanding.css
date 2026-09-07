@@ -881,12 +881,24 @@
   background: url("/images/user/sirpic 1.webp") no-repeat center center/cover;
   width: 380px;
   height: 500px;
-  border-radius: 24px;
+  border-radius: 20px;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(201, 162, 75, 0.45);
   position: relative;
   flex-shrink: 0;
   filter: none;
+}
+
+.image-placeholder::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  left: -16px;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(201, 162, 75, 0.5);
+  border-radius: 20px;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .text {
@@ -920,6 +932,67 @@
   line-height: 1.7;
   text-align: justify;
   margin-bottom: 20px;
+}
+
+.about-role {
+  color: #c9a24b;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: -8px 0 16px;
+}
+
+.about-highlights {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.about-highlights span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #e8e8e8;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.about-highlights i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(201, 162, 75, 0.18);
+  color: #c9a24b;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.about-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 13px 26px;
+  background: transparent;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(201, 162, 75, 0.6);
+  border-radius: 40px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, transform 0.3s;
+}
+
+.about-cta-btn:hover {
+  background: #c9a24b;
+  color: #000;
+  transform: translateY(-2px);
 }
 
 .social-icons {

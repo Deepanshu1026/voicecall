@@ -399,22 +399,17 @@ const UserHome = () => {
             <div className="image-placeholder" />
             <div className="text">
               <h2>Kaveesh Kapoor</h2>
+              <div className="about-role">Chairman &amp; Founder — A Visa Experts</div>
               <p>
-                Welcome to A Visa Experts, your trusted name in visa Immigration Industry. We are proud to be
-                recognized as the Best Visa Immigration Company, helping people with their plans to work, travel, or
-                transit abroad. Founded by Kaveesh Kapoor, our company focuses on providing clear, step-by-step
-                support for all types of visa needs.
-                As Visa Immigration Experts, we offer help with work visas, tourist visas and transit visas.
-                Whether you are applying for the first time or renewing an old visa, we guide you through the process.
-                Our goal is to make your experience simple and stress-free.
-                Every case is handled with attention and care. We understand how important your plans are and our team
-                is always ready to support you. Being the No.1 Visa Immigration Company, we focus on doing the job
-                right and on time.
-                Let the Visa Immigration Experts at A Visa Experts manage the details so you don’t have to worry.
-                Choose the Best Visa Immigration Company for honest service and reliable results. We’re proud to be the
-                No.1 Visa Immigration Company for individuals and families looking to go abroad.
-                Start your journey with A Visa Experts — where your travel plans begin with confidence.
+                Welcome to A Visa Experts — India&apos;s trusted visa &amp; immigration consultancy. Founded by
+                Kaveesh Kapoor, we help individuals and families secure tourist, work, study and PR visas for the
+                USA, UK, Canada, Australia, Europe and beyond — with clear guidance, honest advice and a proven
+                track record of success.
               </p>
+              <div className="about-highlights">
+                <span><i>✓</i> 2 Lakh+ Clients</span>
+                <span><i>✓</i> 100% Success Rate</span>
+              </div>
               <div className="social-icons">
                 <a href="https://www.linkedin.com/company/a-visa-experts" aria-label="Linkedin">
                   <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 16 16" fill="none">
@@ -450,6 +445,9 @@ const UserHome = () => {
                   </svg>
                 </a>
               </div>
+              <button className="about-cta-btn" onClick={() => navigate('/about')}>
+                Meet Kaveesh Kapoor →
+              </button>
             </div>
           </div>
           <div className="mainstats">
