@@ -27,6 +27,7 @@ const adminMenu = [
   { path: '/agent/dashboard/admin/push', label: 'Push Notifications', icon: 'bi bi-bell' },
   { path: '/agent/dashboard/admin/banner', label: 'Offer Banner', icon: 'bi bi-image' },
   { path: '/agent/dashboard/admin/instagram-token', label: 'Instagram Token', icon: 'bi bi-instagram' },
+  { path: '/agent/dashboard/admin/users', label: 'User Details', icon: 'bi bi-person-badge' },
 ];
 
 const AgentLayout = () => {

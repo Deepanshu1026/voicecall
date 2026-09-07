@@ -18,4 +18,8 @@ router.post('/push/broadcast', adminController.sendBroadcastPush);
 router.get('/insta-api-key', adminController.getInstagramToken);
 router.put('/insta-api-key', adminController.updateInstagramToken);
 
+router.get('/users', adminController.searchUsers);
+router.get('/users/:id', adminController.getUserDetail);
+router.post('/users/:id/reset-password', adminController.resetUserPassword);
+
 module.exports = router;

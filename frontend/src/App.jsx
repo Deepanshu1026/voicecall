@@ -18,6 +18,7 @@ import AdminChatDashboard from './pages/AdminChatDashboard';
 import AdminPushNotifications from './pages/AdminPushNotifications';
 import AdminBannerControl from './pages/AdminBannerControl';
 import AdminInstagramToken from './pages/AdminInstagramToken';
+import AdminUserDetails from './pages/AdminUserDetails';
 import BookedAppointments from './pages/BookedAppointments';
 import ApplicationsPage from './pages/ApplicationsPage';
 import Chat from './pages/Chat';
@@ -160,6 +161,7 @@ function App() {
         <Route path="admin/push" element={<AdminPushNotifications />} />
         <Route path="admin/banner" element={<AdminBannerControl />} />
         <Route path="admin/instagram-token" element={<AdminInstagramToken />} />
+        <Route path="admin/users" element={<AdminUserDetails />} />
       </Route>
 
       {/* Default landing */}

@@ -223,6 +223,9 @@ export const adminAPI = {
   broadcastPush: (data) => api.post('/admin/push/broadcast', data, { timeout: 120000 }),
   getInstagramToken: () => api.get('/admin/insta-api-key'),
   updateInstagramToken: (token) => api.put('/admin/insta-api-key', { token }),
+  searchUsers: (search) => api.get('/admin/users', { params: { search } }),
+  getUser: (id) => api.get(`/admin/users/${id}`),
+  resetUserPassword: (id, password) => api.post(`/admin/users/${id}/reset-password`, { password }),
 };
 
 export const blogAPI = {

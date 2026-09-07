@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const ApiKey = require('../models/ApiKey');
+const User = require('../models/User');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const ApiResponse = require('../utils/ApiResponse');
@@ -284,6 +285,48 @@ const updateInstagramToken = asyncHandler(async (req, res) => {
   ApiResponse.success(res, { token: key.key }, 'Instagram token updated');
 });
 
+const searchUsers = asyncHandler(async (req, res) => {
+  const { search = '' } = req.query;
+  const q = String(search).trim();
+  const filter = {};
+  if (q) {
+    const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    filter.$or = [
+      { displayName: re },
+      { username: re },
+      { email: re },
+      { mobile: re },
+    ];
+  }
+  const users = await User.find(filter)
+    .select('displayName username email mobile countryCode role status loginFrom isVerified createdAt')
+    .sort({ createdAt: -1 })
+    .limit(50)
+    .lean();
+  res.json({ success: true, data: users });
+});
+
+const getUserDetail = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const user = await User.findById(id).select('+password').lean();
+  if (!user) throw new AppError('User not found', 404);
+  const { password, ...rest } = user;
+  res.json({ success: true, data: { ...rest, passwordSet: !!password } });
+});
+
+const resetUserPassword = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { password } = req.body;
+  if (!password || String(password).length < 6) {
+    throw new AppError('Password must be at least 6 characters', 400);
+  }
+  const user = await User.findById(id).select('+password');
+  if (!user) throw new AppError('User not found', 404);
+  user.password = String(password);
+  await user.save();
+  res.json({ success: true, message: 'Password updated successfully' });
+});
+
 module.exports = {
   getAllConversations,
   getConversationMessages,
@@ -295,4 +338,7 @@ module.exports = {
   sendBroadcastPush,
   getInstagramToken,
   updateInstagramToken,
+  searchUsers,
+  getUserDetail,
+  resetUserPassword,
 };
