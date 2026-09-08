@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Employee = require('../models/Employee');
+const Conversation = require('../models/Conversation');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const AppError = require('../utils/AppError');
@@ -176,7 +177,37 @@ const getConsultants = asyncHandler(async (req, res) => {
     .sort({ workStatus: 1, createdAt: -1 })
     .limit(100);
 
-  const consultants = employees;
+  // Compute the real number of unique clients each consultant has spoken with
+  const employeeIds = employees.map((e) => e._id);
+  const conversations = await Conversation.find({
+    type: 'direct',
+    participants: { $in: employeeIds },
+  })
+    .select('participants')
+    .lean();
+
+  const clientCountMap = new Map();
+  for (const conv of conversations) {
+    const parts = conv.participants.map((p) => p.toString());
+    for (const id of employeeIds) {
+      const idStr = id.toString();
+      if (parts.includes(idStr)) {
+        for (const p of parts) {
+          if (p !== idStr) {
+            if (!clientCountMap.has(idStr)) clientCountMap.set(idStr, new Set());
+            clientCountMap.get(idStr).add(p);
+          }
+        }
+      }
+    }
+  }
+
+  const consultants = employees.map((e) => {
+    const obj = e.toObject();
+    const realClients = clientCountMap.get(e._id.toString());
+    obj.clients = realClients ? realClients.size : e.totalOrder || 0;
+    return obj;
+  });
 
   ApiResponse.success(res, consultants);
 });

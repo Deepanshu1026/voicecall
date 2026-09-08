@@ -126,7 +126,8 @@ const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall, f
   const expertise = consultant.expertise || consultant.bio || 'Visa Consultant';
   const language = consultant.languages || consultant.language || 'English, Hindi';
   const experience = consultant.experience || '5';
-  const clients = consultant.clients || '100';
+  const rawClients = consultant.clients != null && consultant.clients !== '' ? consultant.clients : '100';
+  const clients = typeof rawClients === 'number' ? rawClients.toLocaleString('en-IN') : rawClients;
   const rating = consultant.rating || 4.8;
   const tier = getTier(experience);
 
