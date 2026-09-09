@@ -27,7 +27,7 @@ const gallery = [
     badge: 'WHAT LIES AHEAD',
     title: 'Your Global Future',
     desc: 'Personalized legal advisory to turn migration dreams into reality.',
-    action: 'Discover Agenda',
+    action: 'Explore Services',
     arrow: 'down',
   },
 ];
@@ -61,7 +61,7 @@ const HomeSeminarSections = () => {
                 style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
                 onClick={() => {
                   if (g.arrow === 'down') {
-                    navigate('/seminar');
+                    navigate('/services');
                   } else {
                     document.querySelector('.outer-hero-new')?.scrollIntoView({ behavior: 'smooth' });
                   }
