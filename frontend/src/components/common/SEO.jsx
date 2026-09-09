@@ -3,7 +3,8 @@ import { Helmet } from 'react-helmet-async';
 const SEO = ({ title, description, keywords, ogImage, ogType = 'website', canonicalPath, jsonLd }) => {
   const baseUrl = 'https://avisaexperts.com';
   const canonical = canonicalPath ? `${baseUrl}${canonicalPath}` : baseUrl;
-  const image = ogImage || `${baseUrl}/images/user/tmlogo 1.webp`;
+  const rawImage = ogImage || `${baseUrl}/images/user/tmlogo%201.webp`;
+  const image = rawImage.startsWith('http') ? rawImage : `${baseUrl}${rawImage}`.replace(/\s/g, '%20');
   const defaultKeywords = 'A Visa Experts, Best Visa Immigration Company, Visa Immigration Experts, No.1 Visa Immigration Company, best immigration consultants, best visa consultants, top immigration consultants, PR consultants, tourist visa consultants, immigration agents, apply for PR visa, best immigration services, permanent residency application, PR visa, permanent resident Visa, visa consultant, immigration experts, visa agent, visa immigration consultants, immigration agent';
 
   return (
