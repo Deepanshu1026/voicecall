@@ -35,7 +35,7 @@ const login = asyncHandler(async (req, res) => {
   const cleanEmail = (email || '').trim().toLowerCase();
   const cleanPassword = (password || '').trim();
 
-  const employee = await Employee.findOne({ email: cleanEmail }).select('+password');
+  const employee = await Employee.findOne({ email: cleanEmail }).select('+password').sort({ createdAt: -1 });
   if (!employee || !(await employee.comparePassword(cleanPassword))) {
     throw new AppError('Invalid email or password', 401);
   }

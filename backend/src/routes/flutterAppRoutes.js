@@ -103,10 +103,10 @@ router.post('/login', asyncHandler(async (req, res) => {
 
   let user;
   if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login_input)) {
-    user = await User.findOne({ email: login_input.toLowerCase().trim(), role: 'user' }).select('+password');
+    user = await User.findOne({ email: login_input.toLowerCase().trim(), role: 'user' }).select('+password').sort({ createdAt: -1 });
   } else if (/^\d+$/.test(login_input)) {
     if (!country_code) throw new AppError('Country code is required for phone login', 400);
-    user = await User.findOne({ mobile: login_input.trim(), role: 'user' }).select('+password');
+    user = await User.findOne({ mobile: login_input.trim(), role: 'user' }).select('+password').sort({ createdAt: -1 });
   } else {
     throw new AppError('Please provide a valid email or phone number', 400);
   }
@@ -273,7 +273,7 @@ router.get('/agent-login', asyncHandler(async (req, res) => {
   const cleanEmail = useremail.toString().trim().toLowerCase();
   const cleanPassword = password.toString().trim();
 
-  const employee = await Employee.findOne({ email: cleanEmail }).select('+password');
+  const employee = await Employee.findOne({ email: cleanEmail }).select('+password').sort({ createdAt: -1 });
   if (!employee) {
     throw new AppError('User not found', 404);
   }
@@ -321,7 +321,7 @@ router.post('/forgot-password', asyncHandler(async (req, res) => {
   const { email } = req.body;
   if (!email) throw new AppError('Email is required', 400);
 
-  const user = await User.findOne({ email: email.toLowerCase().trim() });
+  const user = await User.findOne({ email: email.toLowerCase().trim() }).sort({ createdAt: -1 });
   if (!user) throw new AppError('No account found with this email', 404);
 
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
