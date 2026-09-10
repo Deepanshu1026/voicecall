@@ -6,6 +6,7 @@ import { useCall } from '../context/CallContext';
 import { useChat } from '../hooks/useChat';
 import LandingLayout from '../components/user/LandingLayout';
 import ChatArea from '../components/chat/ChatArea';
+import SEO from '../components/common/SEO';
 import { userAPI, chatAPI } from '../services/api';
 import api from '../services/api';
 import { initiateWalletRecharge } from '../utils/razorpay';
@@ -475,6 +476,13 @@ const Consultants = () => {
 
   return (
     <LandingLayout>
+      <SEO
+        title="Visa Consultants & Immigration Experts | A Visa Experts"
+        description="Connect with India's top visa consultants and immigration experts for tourist, work, transit and PR visas. Free consultation for USA, UK, Canada, Australia, Europe & New Zealand."
+        keywords="visa consultants, immigration experts, tourist visa consultant, work visa consultant, PR consultant, best visa consultants India, A Visa Experts"
+        canonicalPath="/consultants"
+        ogImage="/images/user/sirpic 1.webp"
+      />
       <div className="consultants-page">
         <div className="margin-from-bottom">
           {/* Reference-style navbar with search and profile/login */}
