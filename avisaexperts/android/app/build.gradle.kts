@@ -50,6 +50,15 @@ android {
             )
         }
     }
+
+    packaging {
+        jniLibs {
+            // DataStore's shared_counter native library is compiled without 16 KB
+            // page-size alignment and can crash on 16 KB-page Android devices.
+            // DataStore safely falls back to its JVM counter when this is absent.
+            excludes += setOf("**/libdatastore_shared_counter.so")
+        }
+    }
 }
 
 flutter {
