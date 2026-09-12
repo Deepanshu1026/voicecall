@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../../components/user/LandingLayout';
 import AgentChatWidget from '../../components/user/AgentChatWidget';
@@ -20,14 +20,11 @@ const DEFAULT_CONTACT = {
 
 const UserHome = () => {
   const navigate = useNavigate();
-  const [position, setPosition] = useState(0);
   const [reviews, setReviews] = useState([]);
   const [contactSettings, setContactSettings] = useState(DEFAULT_CONTACT);
 
   const applyReviews = useCallback((list) => {
-    animateRef.current = false;
     setReviews(list);
-    setPosition(list.length > 1 ? list.length : 0);
   }, []);
 
   useEffect(() => {
@@ -58,7 +55,6 @@ const UserHome = () => {
       })
       .catch(() => { /* use defaults */ });
   }, []);
-  const reviewsWrapperRef = useRef(null);
 
   const heroCards = [
     {
@@ -160,85 +156,17 @@ const UserHome = () => {
     },
   ];
 
-  const [isPaused, setIsPaused] = useState(false);
-  const autoPlayRef = useRef(null);
-  const animateRef = useRef(true);
-  const positionRef = useRef(0);
-
-  const count = reviews.length;
-  const isLooping = count > 1;
-
-  const loopReviews = useMemo(
-    () => (isLooping ? [...reviews, ...reviews, ...reviews] : reviews),
-    [reviews, isLooping]
+  const trackReviews = useMemo(
+    () => (reviews.length > 1 ? [...reviews, ...reviews] : reviews),
+    [reviews]
   );
 
-  const activeIndex = count > 0 ? ((position % count) + count) % count : 0;
+  const marqueeDuration = Math.max(30, reviews.length * 6);
 
-  useEffect(() => {
-    positionRef.current = position;
-  }, [position]);
-
-  const applyTransform = useCallback((index, animate) => {
-    const container = reviewsWrapperRef.current;
-    if (!container) return;
-    const first = container.children[0];
-    if (!first) return;
-    const second = container.children[1];
-    const step = second ? second.offsetLeft - first.offsetLeft : first.offsetWidth + 24;
-    const wrapperWidth = container.parentElement?.offsetWidth || 0;
-    const offset = Math.max(0, (wrapperWidth - first.offsetWidth) / 2) - index * step;
-    if (!animate) container.style.transition = 'none';
-    container.style.transform = `translateX(${offset}px)`;
-    if (!animate) {
-      void container.offsetWidth;
-      container.style.transition = '';
-    }
-  }, []);
-
-  useEffect(() => {
-    applyTransform(position, animateRef.current);
-    animateRef.current = true;
-  }, [position, reviews.length, applyTransform]);
-
-  useEffect(() => {
-    const onResize = () => applyTransform(positionRef.current, false);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [applyTransform]);
-
-  const goNext = useCallback(() => setPosition((p) => (reviews.length > 1 ? p + 1 : p)), [reviews.length]);
-  const goPrev = useCallback(() => setPosition((p) => (reviews.length > 1 ? p - 1 : p)), [reviews.length]);
-
-  const goToReview = useCallback((idx) => {
-    setPosition(reviews.length > 1 ? reviews.length + idx : idx);
-  }, [reviews.length]);
-
-  const handleTransitionEnd = useCallback((e) => {
-    if (e.target !== e.currentTarget || e.propertyName !== 'transform') return;
-    const n = reviews.length;
-    if (n <= 1) return;
-    if (position >= 2 * n) {
-      animateRef.current = false;
-      setPosition(position - n);
-    } else if (position < n) {
-      animateRef.current = false;
-      setPosition(position + n);
-    }
-  }, [position, reviews.length]);
-
-  useEffect(() => {
-    if (isPaused || reviews.length <= 1) return;
-    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-    if (reduceMotion) return;
-    autoPlayRef.current = setInterval(goNext, 5000);
-    return () => clearInterval(autoPlayRef.current);
-  }, [isPaused, reviews.length, goNext]);
-
-  const renderStars = (count) => {
+  const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
-      stars.push(<span key={i}>{i < count ? '★' : '☆'}</span>);
+      stars.push(<span key={i}>{i < rating ? '★' : '☆'}</span>);
     }
     return stars;
   };
@@ -974,14 +902,7 @@ const UserHome = () => {
       <AgentChatWidget />
 
       {/* Client Reviews */}
-      <section
-        className="reviews-section"
-        aria-labelledby="reviews-heading"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onFocusCapture={() => setIsPaused(true)}
-        onBlurCapture={() => setIsPaused(false)}
-      >
+      <section className="reviews-section" aria-labelledby="reviews-heading">
         <div className="reviews-header">
           <span className="reviews-badge">
             <span className="reviews-badge-stars" aria-hidden="true">★★★★★</span>
@@ -993,20 +914,19 @@ const UserHome = () => {
 
         <div className="reviews-wrapper">
           <div
-            className="reviews-container"
-            ref={reviewsWrapperRef}
-            onTransitionEnd={handleTransitionEnd}
+            className="reviews-track"
+            style={reviews.length > 1 ? { animationDuration: `${marqueeDuration}s` } : { animation: 'none' }}
           >
-            {loopReviews.map((review, idx) => {
+            {trackReviews.map((review, idx) => {
               const visa = review.visa || review.title;
               const name = review.name;
               const label = name || visa || 'Client';
-              const isClone = isLooping && (idx < count || idx >= 2 * count);
+              const isDuplicate = reviews.length > 1 && idx >= reviews.length;
               return (
                 <article
-                  className={`review-card ${idx === position ? 'review-active' : ''}`}
+                  className="review-card"
                   key={`${review.id ?? idx}-${idx}`}
-                  aria-hidden={isClone || undefined}
+                  aria-hidden={isDuplicate || undefined}
                 >
                   <div
                     className="review-media"
@@ -1041,33 +961,6 @@ const UserHome = () => {
               );
             })}
           </div>
-        </div>
-
-        <div className="reviews-dots" role="tablist" aria-label="Choose a review">
-          {reviews.map((_, idx) => (
-            <button
-              key={idx}
-              type="button"
-              role="tab"
-              className={`review-dot ${idx === activeIndex ? 'review-dot-active' : ''}`}
-              onClick={() => goToReview(idx)}
-              aria-label={`Go to review ${idx + 1}`}
-              aria-selected={idx === activeIndex}
-            />
-          ))}
-        </div>
-
-        <div className="reviews-navigation">
-          <button type="button" className="nav-button" aria-label="Previous review" onClick={goPrev}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-          <button type="button" className="nav-button" aria-label="Next review" onClick={goNext}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
         </div>
       </section>
 
