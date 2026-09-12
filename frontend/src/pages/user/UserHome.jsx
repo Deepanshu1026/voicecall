@@ -31,8 +31,9 @@ const UserHome = () => {
         if (Array.isArray(list) && list.length > 0) {
           setReviews(list.map((r, i) => ({
             id: r.id || r._id || i,
-            img: r.user_image || '/images/user/review1.webp',
-            title: r.visa_type || r.user_name || 'Visa Approved',
+            img: r.user_image || '',
+            name: r.user_name || '',
+            visa: r.visa_type || '',
             text: r.story || '',
             stars: Number(r.rating) || 5,
           })));
@@ -168,18 +169,29 @@ const UserHome = () => {
   }, []);
 
   useEffect(() => {
-    if (reviewsWrapperRef.current) {
-      const cardWidth = reviewsWrapperRef.current.children[0]?.offsetWidth || 350;
-      const gap = 100;
-      reviewsWrapperRef.current.style.transform = `translateX(-${reviewIndex * (cardWidth + gap)}px)`;
-    }
-  }, [reviewIndex]);
+    const position = () => {
+      const container = reviewsWrapperRef.current;
+      if (!container) return;
+      const first = container.children[0];
+      const second = container.children[1];
+      if (!first) return;
+      const step = second ? second.offsetLeft - first.offsetLeft : first.offsetWidth + 24;
+      const wrapperWidth = container.parentElement?.offsetWidth || 0;
+      const offset = Math.max(0, (wrapperWidth - first.offsetWidth) / 2) - reviewIndex * step;
+      container.style.transform = `translateX(${offset}px)`;
+    };
+    position();
+    window.addEventListener('resize', position);
+    return () => window.removeEventListener('resize', position);
+  }, [reviewIndex, reviews.length]);
 
   useEffect(() => {
     if (isPaused) return;
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    if (reduceMotion) return;
     autoPlayRef.current = setInterval(() => {
       scrollReviews('next');
-    }, 4000);
+    }, 5000);
     return () => clearInterval(autoPlayRef.current);
   }, [isPaused, scrollReviews]);
 
@@ -924,60 +936,85 @@ const UserHome = () => {
       {/* Client Reviews */}
       <section
         className="reviews-section"
+        aria-labelledby="reviews-heading"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onFocusCapture={() => setIsPaused(true)}
+        onBlurCapture={() => setIsPaused(false)}
       >
         <div className="reviews-header">
-          <span className="reviews-badge">★★★★★ 4.9 Rating</span>
-          <h2>What Our Clients Say</h2>
+          <span className="reviews-badge">
+            <span className="reviews-badge-stars" aria-hidden="true">★★★★★</span>
+            4.9 Rating
+          </span>
+          <h2 id="reviews-heading">What Our Clients Say</h2>
           <p className="reviews-subtitle">Real stories from real people we&apos;ve helped</p>
         </div>
+
         <div className="reviews-wrapper">
           <div className="reviews-container" ref={reviewsWrapperRef}>
-            {reviews.map((review, idx) => (
-              <div className={`review-card ${idx === reviewIndex ? 'review-active' : ''}`} key={idx}>
-                <div className="review-image" style={{ backgroundImage: `url('${review.img}')` }} />
-                <div className="review-content">
-                  <div className="review-quote-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M10 11H6.414L9.707 7.707L8.293 6.293L3.586 11L8.293 15.707L9.707 14.293L6.414 11H10V11ZM20.414 11H17V11H13.586L16.879 7.707L15.465 6.293L10.758 11L15.465 15.707L16.879 14.293L13.586 11H20.414Z" fill="#f58634" fillOpacity="0.3" />
-                    </svg>
+            {reviews.map((review, idx) => {
+              const visa = review.visa || review.title;
+              const name = review.name;
+              const label = name || visa || 'Client';
+              return (
+                <article
+                  className={`review-card ${idx === reviewIndex ? 'review-active' : ''}`}
+                  key={review.id ?? idx}
+                >
+                  <div className="review-stars" aria-label={`Rated ${review.stars} out of 5`}>
+                    {renderStars(review.stars)}
                   </div>
-                  <h3>{review.title}</h3>
-                  <div className="review-stars">{renderStars(review.stars)}</div>
-                  <p className="secondreviewdiv">{review.text}</p>
-                </div>
-                <div className="review-tag">WHAT OUR CLIENT SAY ABOUT US?</div>
-              </div>
-            ))}
+                  <p className="review-text">{review.text}</p>
+                  <div className="review-footer">
+                    {review.img ? (
+                      <img
+                        className="review-avatar"
+                        src={review.img}
+                        alt={label}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="review-avatar review-avatar-fallback" aria-hidden="true">
+                        {label.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <div className="review-meta">
+                      {name && <h3 className="review-name">{name}</h3>}
+                      {visa && <span className="review-visa">{visa}</span>}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </div>
-        <div className="reviews-dots">
+
+        <div className="reviews-dots" role="tablist" aria-label="Choose a review">
           {reviews.map((_, idx) => (
             <button
               key={idx}
+              type="button"
+              role="tab"
               className={`review-dot ${idx === reviewIndex ? 'review-dot-active' : ''}`}
               onClick={() => goToReview(idx)}
               aria-label={`Go to review ${idx + 1}`}
+              aria-selected={idx === reviewIndex}
             />
           ))}
         </div>
+
         <div className="reviews-navigation">
-          <button className="nav-button" aria-label="Previous Review" onClick={() => scrollReviews('prev')}>
+          <button type="button" className="nav-button" aria-label="Previous review" onClick={() => scrollReviews('prev')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-          <button className="nav-button" aria-label="Next Review" onClick={() => scrollReviews('next')}>
+          <button type="button" className="nav-button" aria-label="Next review" onClick={() => scrollReviews('next')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-        </div>
-        <div className="quote-background">"</div>
-        <div className="background-decor">
-          <div className="background-shape"></div>
-          <div className="background-shape"></div>
         </div>
       </section>
 
