@@ -228,6 +228,7 @@ export const adminAPI = {
   resetUserPassword: (id, password) => api.post(`/admin/users/${id}/reset-password`, { password }),
   getReviews: () => api.get('/admin/reviews'),
   createReview: (data) => api.post('/admin/reviews', data),
+  updateReview: (id, data) => api.put(`/admin/reviews/${id}`, data),
   deleteReview: (id) => api.delete(`/admin/reviews/${id}`),
 };
 

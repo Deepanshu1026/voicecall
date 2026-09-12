@@ -268,25 +268,51 @@
   word-break: break-word;
 }
 
+.review-item-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+
+.review-item-edit,
 .review-item-delete {
-  background: #fff;
-  border: 1px solid #fed7d7;
-  color: #e53e3e;
-  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 94px;
   padding: 8px 13px;
+  border-radius: 9px;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  align-self: flex-start;
-  flex-shrink: 0;
+  background: #fff;
   transition: background 0.15s ease;
+}
+
+.review-item-edit {
+  border: 1px solid #c7d2fe;
+  color: #4338ca;
+}
+
+.review-item-edit:hover {
+  background: #eef2ff;
+}
+
+.review-item-delete {
+  border: 1px solid #fed7d7;
+  color: #e53e3e;
 }
 
 .review-item-delete:hover {
   background: #fff5f5;
+}
+
+.review-item-editing {
+  border-color: #a5b4fc;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 
 .reviews-empty {
@@ -323,7 +349,8 @@
     flex-direction: column;
   }
 
-  .review-item-delete {
+  .review-item-actions {
+    flex-direction: row;
     align-self: flex-end;
   }
 }

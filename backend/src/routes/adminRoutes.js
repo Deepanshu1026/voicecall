@@ -24,6 +24,7 @@ router.post('/users/:id/reset-password', adminController.resetUserPassword);
 
 router.get('/reviews', adminController.getReviews);
 router.post('/reviews', adminController.createReview);
+router.put('/reviews/:id', adminController.updateReview);
 router.delete('/reviews/:id', adminController.deleteReview);
 
 module.exports = router;

@@ -352,6 +352,25 @@ const createReview = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, data: review });
 });
 
+const updateReview = asyncHandler(async (req, res) => {
+  const review = await Review.findById(req.params.id);
+  if (!review) throw new AppError('Review not found', 404);
+  const { user_name, visa_type, rating, story, user_image } = req.body;
+  if (user_name !== undefined) {
+    if (!String(user_name).trim()) throw new AppError('Client name is required', 400);
+    review.user_name = String(user_name).trim();
+  }
+  if (story !== undefined) {
+    if (!String(story).trim()) throw new AppError('Review text is required', 400);
+    review.story = String(story).trim();
+  }
+  if (visa_type !== undefined) review.visa_type = String(visa_type).trim();
+  if (user_image !== undefined) review.user_image = String(user_image).trim();
+  if (rating !== undefined) review.rating = Math.min(Math.max(Number(rating) || 5, 1), 5);
+  await review.save();
+  res.json({ success: true, data: review });
+});
+
 const deleteReview = asyncHandler(async (req, res) => {
   const review = await Review.findByIdAndDelete(req.params.id);
   if (!review) throw new AppError('Review not found', 404);
@@ -374,5 +393,6 @@ module.exports = {
   resetUserPassword,
   getReviews,
   createReview,
+  updateReview,
   deleteReview,
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { adminAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import '../styles/adminReviews.css';
@@ -16,6 +16,8 @@ const AdminReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const formCardRef = useRef(null);
 
   const fetchReviews = async () => {
     try {
@@ -39,26 +41,49 @@ const AdminReviews = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const resetForm = () => {
+    setForm(initialForm);
+    setEditingId(null);
+  };
+
+  const handleEdit = (review) => {
+    setEditingId(review._id);
+    setForm({
+      user_name: review.user_name || '',
+      visa_type: review.visa_type || review.subtitle || '',
+      rating: String(review.rating ?? review.stars ?? 5),
+      story: review.story || review.description || review.content || '',
+      user_image: review.user_image || '',
+    });
+    formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.user_name.trim() || !form.story.trim()) {
       toast.error('Client name and review text are required');
       return;
     }
+    const payload = {
+      user_name: form.user_name.trim(),
+      visa_type: form.visa_type.trim(),
+      rating: Number(form.rating),
+      story: form.story.trim(),
+      user_image: form.user_image.trim(),
+    };
     try {
       setSaving(true);
-      await adminAPI.createReview({
-        user_name: form.user_name.trim(),
-        visa_type: form.visa_type.trim(),
-        rating: Number(form.rating),
-        story: form.story.trim(),
-        user_image: form.user_image.trim(),
-      });
-      toast.success('Review added successfully');
-      setForm(initialForm);
+      if (editingId) {
+        await adminAPI.updateReview(editingId, payload);
+        toast.success('Review updated successfully');
+      } else {
+        await adminAPI.createReview(payload);
+        toast.success('Review added successfully');
+      }
+      resetForm();
       fetchReviews();
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to add review');
+      toast.error(err.response?.data?.error || `Failed to ${editingId ? 'update' : 'add'} review`);
     } finally {
       setSaving(false);
     }
@@ -70,6 +95,7 @@ const AdminReviews = () => {
       await adminAPI.deleteReview(id);
       toast.success('Review deleted');
       setReviews((prev) => prev.filter((r) => r._id !== id));
+      if (editingId === id) resetForm();
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to delete review');
     }
@@ -95,10 +121,11 @@ const AdminReviews = () => {
         <p>Add client success stories that appear on the website.</p>
       </div>
 
-      {/* Add review form */}
-      <div className="review-form-card">
+      {/* Add / Edit review form */}
+      <div className="review-form-card" ref={formCardRef}>
         <h3 className="review-form-title">
-          <i className="bi bi-plus-circle" /> Add Review
+          <i className={editingId ? 'bi bi-pencil-square' : 'bi bi-plus-circle'} />
+          {editingId ? 'Edit Review' : 'Add Review'}
         </h3>
         <form onSubmit={handleSubmit}>
           <div className="review-form-grid">
@@ -164,12 +191,13 @@ const AdminReviews = () => {
                 </>
               ) : (
                 <>
-                  <i className="bi bi-check-lg" /> Add Review
+                  <i className={editingId ? 'bi bi-check-lg' : 'bi bi-plus-lg'} />
+                  {editingId ? 'Update Review' : 'Add Review'}
                 </>
               )}
             </button>
-            <button type="button" className="review-clear-btn" onClick={() => setForm(initialForm)}>
-              Clear
+            <button type="button" className="review-clear-btn" onClick={resetForm}>
+              {editingId ? 'Cancel' : 'Clear'}
             </button>
           </div>
         </form>
@@ -202,7 +230,7 @@ const AdminReviews = () => {
             const text = r.story || r.description || r.content || '';
             const stars = r.rating ?? r.stars;
             return (
-              <div className="review-item" key={r._id}>
+              <div className={`review-item ${editingId === r._id ? 'review-item-editing' : ''}`} key={r._id}>
                 {r.user_image ? (
                   <img className="review-item-avatar" src={r.user_image} alt={name} />
                 ) : (
@@ -216,13 +244,22 @@ const AdminReviews = () => {
                   {visa && <span className="review-item-visa">{visa}</span>}
                   {text && <p className="review-item-text">{text}</p>}
                 </div>
-                <button
-                  className="review-item-delete"
-                  onClick={() => handleDelete(r._id)}
-                  title="Delete review"
-                >
-                  <i className="bi bi-trash" /> Delete
-                </button>
+                <div className="review-item-actions">
+                  <button
+                    className="review-item-edit"
+                    onClick={() => handleEdit(r)}
+                    title="Edit review"
+                  >
+                    <i className="bi bi-pencil" /> Edit
+                  </button>
+                  <button
+                    className="review-item-delete"
+                    onClick={() => handleDelete(r._id)}
+                    title="Delete review"
+                  >
+                    <i className="bi bi-trash" /> Delete
+                  </button>
+                </div>
               </div>
             );
           })}
