@@ -3,6 +3,7 @@ const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const ApiKey = require('../models/ApiKey');
 const User = require('../models/User');
+const Review = require('../models/Review');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const ApiResponse = require('../utils/ApiResponse');
@@ -327,6 +328,36 @@ const resetUserPassword = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Password updated successfully' });
 });
 
+const getReviews = asyncHandler(async (req, res) => {
+  const reviews = await Review.find().sort({ createdAt: -1 }).lean();
+  res.json({ success: true, data: reviews });
+});
+
+const createReview = asyncHandler(async (req, res) => {
+  const { user_name, visa_type, rating, story, user_image } = req.body;
+  if (!user_name || !String(user_name).trim()) {
+    throw new AppError('Client name is required', 400);
+  }
+  if (!story || !String(story).trim()) {
+    throw new AppError('Review text is required', 400);
+  }
+  const review = await Review.create({
+    user_name: String(user_name).trim(),
+    visa_type: visa_type ? String(visa_type).trim() : '',
+    rating: Math.min(Math.max(Number(rating) || 5, 1), 5),
+    story: String(story).trim(),
+    user_image: user_image ? String(user_image).trim() : '',
+    createdAt: new Date(),
+  });
+  res.status(201).json({ success: true, data: review });
+});
+
+const deleteReview = asyncHandler(async (req, res) => {
+  const review = await Review.findByIdAndDelete(req.params.id);
+  if (!review) throw new AppError('Review not found', 404);
+  res.json({ success: true, message: 'Review deleted' });
+});
+
 module.exports = {
   getAllConversations,
   getConversationMessages,
@@ -341,4 +372,7 @@ module.exports = {
   searchUsers,
   getUserDetail,
   resetUserPassword,
+  getReviews,
+  createReview,
+  deleteReview,
 };

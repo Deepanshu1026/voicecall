@@ -226,6 +226,9 @@ export const adminAPI = {
   searchUsers: (search) => api.get('/admin/users', { params: { search } }),
   getUser: (id) => api.get(`/admin/users/${id}`),
   resetUserPassword: (id, password) => api.post(`/admin/users/${id}/reset-password`, { password }),
+  getReviews: () => api.get('/admin/reviews'),
+  createReview: (data) => api.post('/admin/reviews', data),
+  deleteReview: (id) => api.delete(`/admin/reviews/${id}`),
 };
 
 export const blogAPI = {

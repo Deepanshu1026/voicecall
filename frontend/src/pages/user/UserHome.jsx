@@ -21,7 +21,27 @@ const DEFAULT_CONTACT = {
 const UserHome = () => {
   const navigate = useNavigate();
   const [reviewIndex, setReviewIndex] = useState(0);
+  const [reviews, setReviews] = useState([]);
   const [contactSettings, setContactSettings] = useState(DEFAULT_CONTACT);
+
+  useEffect(() => {
+    api.get('/app/reviews')
+      .then((res) => {
+        const list = res.data?.data;
+        if (Array.isArray(list) && list.length > 0) {
+          setReviews(list.map((r, i) => ({
+            id: r.id || r._id || i,
+            img: r.user_image || '/images/user/review1.webp',
+            title: r.visa_type || r.user_name || 'Visa Approved',
+            text: r.story || '',
+            stars: Number(r.rating) || 5,
+          })));
+        } else {
+          setReviews(fallbackReviews);
+        }
+      })
+      .catch(() => setReviews(fallbackReviews));
+  }, []);
 
   useEffect(() => {
     api.get('/settings/contact')
@@ -54,7 +74,7 @@ const UserHome = () => {
     },
   ];
 
-  const reviews = [
+  const fallbackReviews = [
     {
       img: '/images/user/review1.webp',
       title: 'Uk Visitor Visa Approved',
@@ -141,7 +161,7 @@ const UserHome = () => {
       if (dir === 'next') return prev >= reviews.length - 1 ? 0 : prev + 1;
       return prev <= 0 ? reviews.length - 1 : prev - 1;
     });
-  }, []);
+  }, [reviews.length]);
 
   const goToReview = useCallback((idx) => {
     setReviewIndex(idx);
