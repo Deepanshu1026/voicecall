@@ -1008,7 +1008,10 @@ const UserHome = () => {
                   key={`${review.id ?? idx}-${idx}`}
                   aria-hidden={isClone || undefined}
                 >
-                  <div className="review-media">
+                  <div
+                    className="review-media"
+                    style={review.img ? { backgroundImage: `url("${review.img}")` } : undefined}
+                  >
                     {review.img ? (
                       <img
                         className="review-photo"
