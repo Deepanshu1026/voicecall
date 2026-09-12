@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../../components/user/LandingLayout';
 import AgentChatWidget from '../../components/user/AgentChatWidget';
@@ -20,16 +20,22 @@ const DEFAULT_CONTACT = {
 
 const UserHome = () => {
   const navigate = useNavigate();
-  const [reviewIndex, setReviewIndex] = useState(0);
+  const [position, setPosition] = useState(0);
   const [reviews, setReviews] = useState([]);
   const [contactSettings, setContactSettings] = useState(DEFAULT_CONTACT);
+
+  const applyReviews = useCallback((list) => {
+    animateRef.current = false;
+    setReviews(list);
+    setPosition(list.length > 1 ? list.length : 0);
+  }, []);
 
   useEffect(() => {
     api.get('/app/reviews')
       .then((res) => {
         const list = res.data?.data;
         if (Array.isArray(list) && list.length > 0) {
-          setReviews(list.map((r, i) => ({
+          applyReviews(list.map((r, i) => ({
             id: r.id || r._id || i,
             img: r.user_image || '',
             name: r.user_name || '',
@@ -38,11 +44,11 @@ const UserHome = () => {
             stars: Number(r.rating) || 5,
           })));
         } else {
-          setReviews(fallbackReviews);
+          applyReviews(fallbackReviews);
         }
       })
-      .catch(() => setReviews(fallbackReviews));
-  }, []);
+      .catch(() => applyReviews(fallbackReviews));
+  }, [applyReviews]);
 
   useEffect(() => {
     api.get('/settings/contact')
@@ -156,44 +162,78 @@ const UserHome = () => {
 
   const [isPaused, setIsPaused] = useState(false);
   const autoPlayRef = useRef(null);
+  const animateRef = useRef(true);
+  const positionRef = useRef(0);
 
-  const scrollReviews = useCallback((dir) => {
-    setReviewIndex((prev) => {
-      if (dir === 'next') return prev >= reviews.length - 1 ? 0 : prev + 1;
-      return prev <= 0 ? reviews.length - 1 : prev - 1;
-    });
-  }, [reviews.length]);
+  const count = reviews.length;
+  const isLooping = count > 1;
 
-  const goToReview = useCallback((idx) => {
-    setReviewIndex(idx);
+  const loopReviews = useMemo(
+    () => (isLooping ? [...reviews, ...reviews, ...reviews] : reviews),
+    [reviews, isLooping]
+  );
+
+  const activeIndex = count > 0 ? ((position % count) + count) % count : 0;
+
+  useEffect(() => {
+    positionRef.current = position;
+  }, [position]);
+
+  const applyTransform = useCallback((index, animate) => {
+    const container = reviewsWrapperRef.current;
+    if (!container) return;
+    const first = container.children[0];
+    if (!first) return;
+    const second = container.children[1];
+    const step = second ? second.offsetLeft - first.offsetLeft : first.offsetWidth + 24;
+    const wrapperWidth = container.parentElement?.offsetWidth || 0;
+    const offset = Math.max(0, (wrapperWidth - first.offsetWidth) / 2) - index * step;
+    if (!animate) container.style.transition = 'none';
+    container.style.transform = `translateX(${offset}px)`;
+    if (!animate) {
+      void container.offsetWidth;
+      container.style.transition = '';
+    }
   }, []);
 
   useEffect(() => {
-    const position = () => {
-      const container = reviewsWrapperRef.current;
-      if (!container) return;
-      const first = container.children[0];
-      const second = container.children[1];
-      if (!first) return;
-      const step = second ? second.offsetLeft - first.offsetLeft : first.offsetWidth + 24;
-      const wrapperWidth = container.parentElement?.offsetWidth || 0;
-      const offset = Math.max(0, (wrapperWidth - first.offsetWidth) / 2) - reviewIndex * step;
-      container.style.transform = `translateX(${offset}px)`;
-    };
-    position();
-    window.addEventListener('resize', position);
-    return () => window.removeEventListener('resize', position);
-  }, [reviewIndex, reviews.length]);
+    applyTransform(position, animateRef.current);
+    animateRef.current = true;
+  }, [position, reviews.length, applyTransform]);
 
   useEffect(() => {
-    if (isPaused) return;
+    const onResize = () => applyTransform(positionRef.current, false);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [applyTransform]);
+
+  const goNext = useCallback(() => setPosition((p) => (reviews.length > 1 ? p + 1 : p)), [reviews.length]);
+  const goPrev = useCallback(() => setPosition((p) => (reviews.length > 1 ? p - 1 : p)), [reviews.length]);
+
+  const goToReview = useCallback((idx) => {
+    setPosition(reviews.length > 1 ? reviews.length + idx : idx);
+  }, [reviews.length]);
+
+  const handleTransitionEnd = useCallback((e) => {
+    if (e.target !== e.currentTarget || e.propertyName !== 'transform') return;
+    const n = reviews.length;
+    if (n <= 1) return;
+    if (position >= 2 * n) {
+      animateRef.current = false;
+      setPosition(position - n);
+    } else if (position < n) {
+      animateRef.current = false;
+      setPosition(position + n);
+    }
+  }, [position, reviews.length]);
+
+  useEffect(() => {
+    if (isPaused || reviews.length <= 1) return;
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     if (reduceMotion) return;
-    autoPlayRef.current = setInterval(() => {
-      scrollReviews('next');
-    }, 5000);
+    autoPlayRef.current = setInterval(goNext, 5000);
     return () => clearInterval(autoPlayRef.current);
-  }, [isPaused, scrollReviews]);
+  }, [isPaused, reviews.length, goNext]);
 
   const renderStars = (count) => {
     const stars = [];
@@ -952,36 +992,46 @@ const UserHome = () => {
         </div>
 
         <div className="reviews-wrapper">
-          <div className="reviews-container" ref={reviewsWrapperRef}>
-            {reviews.map((review, idx) => {
+          <div
+            className="reviews-container"
+            ref={reviewsWrapperRef}
+            onTransitionEnd={handleTransitionEnd}
+          >
+            {loopReviews.map((review, idx) => {
               const visa = review.visa || review.title;
               const name = review.name;
               const label = name || visa || 'Client';
+              const isClone = isLooping && (idx < count || idx >= 2 * count);
               return (
                 <article
-                  className={`review-card ${idx === reviewIndex ? 'review-active' : ''}`}
-                  key={review.id ?? idx}
+                  className={`review-card ${idx === position ? 'review-active' : ''}`}
+                  key={`${review.id ?? idx}-${idx}`}
+                  aria-hidden={isClone || undefined}
                 >
-                  <div className="review-stars" aria-label={`Rated ${review.stars} out of 5`}>
-                    {renderStars(review.stars)}
-                  </div>
-                  <p className="review-text">{review.text}</p>
-                  <div className="review-footer">
+                  <div className="review-media">
                     {review.img ? (
                       <img
-                        className="review-avatar"
+                        className="review-photo"
                         src={review.img}
                         alt={label}
                         loading="lazy"
                       />
                     ) : (
-                      <div className="review-avatar review-avatar-fallback" aria-hidden="true">
+                      <div className="review-photo review-photo-fallback" aria-hidden="true">
                         {label.charAt(0).toUpperCase()}
                       </div>
                     )}
-                    <div className="review-meta">
-                      {name && <h3 className="review-name">{name}</h3>}
-                      {visa && <span className="review-visa">{visa}</span>}
+                  </div>
+                  <div className="review-body">
+                    <div className="review-stars" aria-label={`Rated ${review.stars} out of 5`}>
+                      {renderStars(review.stars)}
+                    </div>
+                    <p className="review-text">{review.text}</p>
+                    <div className="review-footer">
+                      <div className="review-meta">
+                        {name && <h3 className="review-name">{name}</h3>}
+                        {visa && <span className="review-visa">{visa}</span>}
+                      </div>
                     </div>
                   </div>
                 </article>
@@ -996,21 +1046,21 @@ const UserHome = () => {
               key={idx}
               type="button"
               role="tab"
-              className={`review-dot ${idx === reviewIndex ? 'review-dot-active' : ''}`}
+              className={`review-dot ${idx === activeIndex ? 'review-dot-active' : ''}`}
               onClick={() => goToReview(idx)}
               aria-label={`Go to review ${idx + 1}`}
-              aria-selected={idx === reviewIndex}
+              aria-selected={idx === activeIndex}
             />
           ))}
         </div>
 
         <div className="reviews-navigation">
-          <button type="button" className="nav-button" aria-label="Previous review" onClick={() => scrollReviews('prev')}>
+          <button type="button" className="nav-button" aria-label="Previous review" onClick={goPrev}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
-          <button type="button" className="nav-button" aria-label="Next review" onClick={() => scrollReviews('next')}>
+          <button type="button" className="nav-button" aria-label="Next review" onClick={goNext}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
