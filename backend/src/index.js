@@ -42,7 +42,12 @@ const io = new Server(server, {
 
 app.set('trust proxy', 1);
 
-app.use(helmet());
+// Helmet defaults set `Cross-Origin-Resource-Policy: same-origin`, which blocks
+// the separate frontend origin (avisaexperts.com) from loading images/uploads
+// served by this API. Allow cross-origin so `<img>` tags work.
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 const corsOptions = {
   origin: (origin, callback) => {
     if (!origin || config.nodeEnv === 'development') return callback(null, true);

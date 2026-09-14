@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { adminAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import { resolveImageUrl } from '../utils/imageUrl';
 import '../styles/adminReviews.css';
 
 const initialForm = {
@@ -232,7 +233,7 @@ const AdminReviews = () => {
             return (
               <div className={`review-item ${editingId === r._id ? 'review-item-editing' : ''}`} key={r._id}>
                 {r.user_image ? (
-                  <img className="review-item-avatar" src={r.user_image} alt={name} />
+                  <img className="review-item-avatar" src={resolveImageUrl(r.user_image)} alt={name} />
                 ) : (
                   <div className="review-item-avatar-fallback">{initials(name)}</div>
                 )}

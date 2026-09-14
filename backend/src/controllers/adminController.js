@@ -14,6 +14,19 @@ const {
 } = require('../utils/populate');
 const { sendToToken, sendMulticast, sendBroadcast, isConfigured } = require('../services/pushNotificationService');
 const FcmToken = require('../models/FcmToken');
+const config = require('../config');
+
+// Resolve a stored review image into a browser-loadable URL.
+const resolveReviewImage = (value) => {
+  if (!value || typeof value !== 'string') return '';
+  const v = value.trim().replace(/\\/g, '/');
+  if (!v) return '';
+  if (/^https?:\/\//i.test(v)) return v;
+  if (v.startsWith('img/') || v.startsWith('/img/')) {
+    return `${config.serverUrl}/images/user/${v.replace(/^\/?img\//, '')}`;
+  }
+  return v.startsWith('/') ? `${config.serverUrl}${v}` : `${config.serverUrl}/${v}`;
+};
 
 const getAllConversations = asyncHandler(async (req, res) => {
   const { page = 1, limit = 30, search = '' } = req.query;
@@ -330,7 +343,10 @@ const resetUserPassword = asyncHandler(async (req, res) => {
 
 const getReviews = asyncHandler(async (req, res) => {
   const reviews = await Review.find().sort({ createdAt: -1 }).lean();
-  res.json({ success: true, data: reviews });
+  res.json({
+    success: true,
+    data: reviews.map((r) => ({ ...r, user_image: resolveReviewImage(r.user_image) })),
+  });
 });
 
 const createReview = asyncHandler(async (req, res) => {

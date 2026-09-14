@@ -7,6 +7,7 @@ import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_IS_EMBED } from '../../config/seminarV
 import SEO from '../../components/common/SEO';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
+import { resolveImageUrl } from '../../utils/imageUrl';
 import '../../styles/userLanding.css';
 
 const DEFAULT_CONTACT = {
@@ -34,7 +35,7 @@ const UserHome = () => {
         if (Array.isArray(list) && list.length > 0) {
           applyReviews(list.map((r, i) => ({
             id: r.id || r._id || i,
-            img: r.user_image || '',
+            img: resolveImageUrl(r.user_image),
             name: r.user_name || '',
             visa: r.visa_type || '',
             text: r.story || '',
@@ -937,7 +938,7 @@ const UserHome = () => {
                         className="review-photo"
                         src={review.img}
                         alt={label}
-                        loading="lazy"
+                        onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
                       />
                     ) : (
                       <div className="review-photo review-photo-fallback" aria-hidden="true">
