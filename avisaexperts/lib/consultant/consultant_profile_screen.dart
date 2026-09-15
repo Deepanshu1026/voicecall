@@ -10,7 +10,7 @@ import '../nested_screen/privacy_policy_page.dart';
 import '../nested_screen/term_condition.dart';
 import '../nested_screen/help_support_screen.dart';
 import '../nested_screen/about.dart';
-import '../config/app_config.dart';
+// import '../config/app_config.dart';
 
 class ConsultantProfileScreen extends StatefulWidget {
   const ConsultantProfileScreen({super.key});

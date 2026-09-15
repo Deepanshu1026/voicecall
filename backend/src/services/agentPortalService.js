@@ -279,6 +279,41 @@ async function getDailyLogins(page = 1, date = null, search = '', limit = 10) {
   };
 }
 
+async function getNewUsersForExport(date = null, search = '') {
+  const filter = {
+    role: 'user',
+    username: { $nin: [null, ''], $not: /^guest/i },
+    email: { $nin: [null, ''], $not: /@auto\.example$/i },
+    mobile: { $nin: [null, ''] },
+  };
+
+  if (date) {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+    filter.createdAt = { $gte: start, $lte: end };
+  }
+
+  if (search && search.trim()) {
+    const q = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(q, 'i');
+    filter.$or = [
+      { displayName: regex },
+      { username: regex },
+      { email: regex },
+      { mobile: regex },
+    ];
+  }
+
+  const rows = await User.find(filter)
+    .select('displayName username email countryCode mobile loginFrom createdAt')
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return rows;
+}
+
 module.exports = {
   resolveSqlId,
   getApplications,
@@ -290,4 +325,5 @@ module.exports = {
   checkContactHistory,
   getPendingRemarks,
   getDailyLogins,
+  getNewUsersForExport,
 };

@@ -5,6 +5,7 @@ const Application = require('../models/Application');
 const Employee = require('../models/Employee');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
+const { buildXlsx } = require('../utils/xlsx');
 
 async function resolveContext(req, { allowAdmin = false } = {}) {
   if (allowAdmin && req.employee.role === 'admin') {
@@ -185,6 +186,56 @@ exports.getNewUsers = asyncHandler(async (req, res) => {
   const search = req.query.search || '';
   const data = await agentPortalService.getDailyLogins(page, date, search);
   res.status(200).json({ success: true, ...data });
+});
+
+const formatExportDateTime = (value) => {
+  if (!value) return '';
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+    .formatToParts(d)
+    .reduce((acc, p) => {
+      acc[p.type] = p.value;
+      return acc;
+    }, {});
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}`;
+};
+
+// Export non-guest registered users (with username, email, mobile) to Excel.
+exports.exportNewUsers = asyncHandler(async (req, res) => {
+  if (!req.employee || req.employee.role !== 'admin') {
+    throw new AppError('Admin access required', 403);
+  }
+  const date = req.query.date || null;
+  const search = req.query.search || '';
+  const users = await agentPortalService.getNewUsersForExport(date, search);
+
+  const headers = ['#', 'Username', 'Display Name', 'Email', 'Country Code', 'Mobile', 'Login From', 'Registered At'];
+  const rows = users.map((u, i) => [
+    i + 1,
+    u.username || '',
+    u.displayName || '',
+    u.email || '',
+    u.countryCode ? `+${u.countryCode}` : '',
+    u.mobile || '',
+    u.loginFrom || 'web',
+    formatExportDateTime(u.createdAt),
+  ]);
+
+  const buffer = buildXlsx({ sheetName: 'New Users', headers, rows });
+  const stamp = date || new Date().toISOString().split('T')[0];
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader('Content-Disposition', `attachment; filename="new-users-${stamp}.xlsx"`);
+  res.setHeader('Content-Length', buffer.length);
+  res.send(buffer);
 });
 
 const formatDate = (dateValue) => {

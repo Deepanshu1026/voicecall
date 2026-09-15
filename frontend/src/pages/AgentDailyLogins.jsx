@@ -15,6 +15,7 @@ const AgentDailyLogins = () => {
   const [pagination, setPagination] = useState({ current_page: 1, total_pages: 1, total_records: 0 });
   const [date, setDate] = useState(isAdmin ? '' : new Date().toISOString().split('T')[0]);
   const [search, setSearch] = useState('');
+  const [exporting, setExporting] = useState(false);
 
   const fetchLogins = async (p, d, s) => {
     try {
@@ -56,6 +57,30 @@ const AgentDailyLogins = () => {
     const d = new Date(date);
     return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) +
       ' • ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const res = await agentPortalAPI.exportNewUsers(date, search);
+      const blob = new Blob([res.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `new-users-${date || new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success('Excel export downloaded');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to export to Excel');
+    } finally {
+      setExporting(false);
+    }
   };
 
   const renderPagination = () => {
@@ -109,9 +134,29 @@ const AgentDailyLogins = () => {
             {isAdmin ? 'All newly registered users with details.' : 'Agent login history.'}
           </p>
         </div>
-        <button className="agent-btn agent-btn-outline-dark" onClick={() => navigate('/agent/dashboard')}>
-          <i className="bi bi-arrow-left" /> Back to Dashboard
-        </button>
+        <div className="d-flex align-items-center gap-2">
+          {isAdmin && (
+            <button
+              className="agent-btn agent-btn-primary"
+              onClick={handleExport}
+              disabled={exporting}
+              title="Export non-guest users with contact details to Excel"
+            >
+              {exporting ? (
+                <>
+                  <span className="spinner-border spinner-border-sm" /> Exporting...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-file-earmark-excel" /> Export to Excel
+                </>
+              )}
+            </button>
+          )}
+          <button className="agent-btn agent-btn-outline-dark" onClick={() => navigate('/agent/dashboard')}>
+            <i className="bi bi-arrow-left" /> Back to Dashboard
+          </button>
+        </div>
       </div>
 
       {/* Filter */}
