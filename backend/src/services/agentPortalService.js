@@ -282,8 +282,12 @@ async function getDailyLogins(page = 1, date = null, search = '', limit = 10) {
 async function getNewUsersForExport(date = null, search = '') {
   const filter = {
     role: 'user',
-    username: { $nin: [null, ''], $not: /^guest/i },
-    email: { $nin: [null, ''], $not: /@auto\.example$/i },
+    username: { $nin: [null, ''], $not: /guest/i },
+    email: {
+      $nin: [null, ''],
+      // Exclude auto-generated guest / placeholder accounts.
+      $not: /guest|example\.com$|placeholder\.local$/i,
+    },
     mobile: { $nin: [null, ''] },
   };
 
