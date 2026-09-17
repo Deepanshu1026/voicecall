@@ -2,6 +2,7 @@ const Application = require('../models/Application');
 const ApplicationLog = require('../models/ApplicationLog');
 const Employee = require('../models/Employee');
 const User = require('../models/User');
+const { buildDateFilter } = require('../utils/dateRange');
 
 function mapApplication(row) {
   return {
@@ -225,16 +226,11 @@ async function getPendingRemarks(sqlId) {
     }));
 }
 
-async function getDailyLogins(page = 1, date = null, search = '', limit = 10) {
+async function getDailyLogins(page = 1, date = null, search = '', limit = 10, from = null, to = null) {
   const filter = { role: 'user' };
 
-  if (date) {
-    const start = new Date(date);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(date);
-    end.setHours(23, 59, 59, 999);
-    filter.createdAt = { $gte: start, $lte: end };
-  }
+  const range = buildDateFilter({ from, to, date });
+  if (range) filter.createdAt = range;
 
   if (search.trim()) {
     const q = search.trim();
@@ -279,7 +275,7 @@ async function getDailyLogins(page = 1, date = null, search = '', limit = 10) {
   };
 }
 
-async function getNewUsersForExport(date = null, search = '') {
+async function getNewUsersForExport(from = null, to = null, search = '') {
   const filter = {
     role: 'user',
     username: { $nin: [null, ''], $not: /guest/i },
@@ -291,13 +287,8 @@ async function getNewUsersForExport(date = null, search = '') {
     mobile: { $nin: [null, ''] },
   };
 
-  if (date) {
-    const start = new Date(date);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(date);
-    end.setHours(23, 59, 59, 999);
-    filter.createdAt = { $gte: start, $lte: end };
-  }
+  const range = buildDateFilter({ from, to });
+  if (range) filter.createdAt = range;
 
   if (search && search.trim()) {
     const q = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

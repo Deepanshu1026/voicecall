@@ -1,4 +1,5 @@
 const LoginHistory = require('../models/LoginHistory');
+const { buildDateFilter } = require('../utils/dateRange');
 
 async function recordLogin(user, req = {}) {
   if (!user || !user._id) return;
@@ -17,16 +18,11 @@ async function recordLogin(user, req = {}) {
   });
 }
 
-async function getLoginHistory({ page = 1, limit = 10, date = null, search = '' } = {}) {
+async function getLoginHistory({ page = 1, limit = 10, date = null, search = '', from = null, to = null } = {}) {
   const filter = {};
 
-  if (date) {
-    const start = new Date(date);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(date);
-    end.setHours(23, 59, 59, 999);
-    filter.createdAt = { $gte: start, $lte: end };
-  }
+  const range = buildDateFilter({ from, to, date });
+  if (range) filter.createdAt = range;
 
   if (search.trim()) {
     const q = search.trim();

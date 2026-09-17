@@ -202,9 +202,9 @@ export const agentPortalAPI = {
   updateApplication: (id, data) => api.put(`/agent-portal/applications/${id}`, data),
   checkContactHistory: (contact) => api.get('/agent-portal/contact-history', { params: { contact } }),
   getPendingRemarks: () => api.get('/agent-portal/pending-remarks'),
-  getDailyLogins: (page, date, search) => api.get('/agent-portal/daily-logins', { params: { page, date, search } }),
-  getNewUsers: (page, date, search) => api.get('/agent-portal/new-users', { params: { page, date, search } }),
-  exportNewUsers: (date, search) => api.get('/agent-portal/new-users/export', { params: { date, search }, responseType: 'blob' }),
+  getDailyLogins: (page, from, to, search) => api.get('/agent-portal/daily-logins', { params: { page, from, to, search } }),
+  getNewUsers: (page, from, to, search) => api.get('/agent-portal/new-users', { params: { page, from, to, search } }),
+  exportNewUsers: (from, to, search) => api.get('/agent-portal/new-users/export', { params: { from, to, search }, responseType: 'blob' }),
   getAppointments: (page, date, search) => api.get('/agent-portal/appointments', { params: { page, date, search } }),
   getApplicationsList: (page, date, search) => api.get('/agent-portal/applications-list', { params: { page, date, search } }),
 };

@@ -5,6 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import '../styles/agentPortal.css';
 
+const todayStr = () => new Date().toISOString().split('T')[0];
+
 const AgentDailyLogins = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -13,18 +15,20 @@ const AgentDailyLogins = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ current_page: 1, total_pages: 1, total_records: 0 });
-  const [date, setDate] = useState(isAdmin ? '' : new Date().toISOString().split('T')[0]);
+  const [fromDate, setFromDate] = useState(isAdmin ? '' : todayStr());
+  const [toDate, setToDate] = useState(isAdmin ? '' : todayStr());
   const [search, setSearch] = useState('');
   const [exporting, setExporting] = useState(false);
 
-  const fetchLogins = async (p, d, s) => {
+  const fetchLogins = async (p, from, to, s) => {
     try {
       setLoading(true);
       const pageNum = p || page;
-      const dateStr = d || date;
-      const searchStr = isAdmin ? s || search : '';
+      const fromStr = from === undefined ? fromDate : from;
+      const toStr = to === undefined ? toDate : to;
+      const searchStr = isAdmin ? (s === undefined ? search : s) : '';
       const apiCall = isAdmin ? agentPortalAPI.getNewUsers : agentPortalAPI.getDailyLogins;
-      const res = await apiCall(pageNum, dateStr, searchStr);
+      const res = await apiCall(pageNum, fromStr, toStr, searchStr);
       setLogins(res.data.data || []);
       setPagination(res.data.pagination || { current_page: pageNum, total_pages: 1, total_records: 0 });
     } catch (err) {
@@ -36,21 +40,28 @@ const AgentDailyLogins = () => {
   };
 
   useEffect(() => {
-    fetchLogins(1, date, search);
+    fetchLogins(1, fromDate, toDate, search);
   }, []);
 
-  const handleDateChange = (e) => {
-    const d = e.target.value;
-    setDate(d);
+  const handleFromChange = (e) => {
+    const v = e.target.value;
+    setFromDate(v);
     setPage(1);
-    fetchLogins(1, d, isAdmin ? search : '');
+    fetchLogins(1, v, toDate, isAdmin ? search : '');
+  };
+
+  const handleToChange = (e) => {
+    const v = e.target.value;
+    setToDate(v);
+    setPage(1);
+    fetchLogins(1, fromDate, v, isAdmin ? search : '');
   };
 
   const handleSearchChange = (e) => {
     const s = e.target.value;
     setSearch(s);
     setPage(1);
-    fetchLogins(1, date, s);
+    fetchLogins(1, fromDate, toDate, s);
   };
 
   const logTime = (date) => {
@@ -60,16 +71,21 @@ const AgentDailyLogins = () => {
   };
 
   const handleExport = async () => {
+    if (fromDate && toDate && fromDate > toDate) {
+      toast.error('"From" date cannot be after "To" date');
+      return;
+    }
     try {
       setExporting(true);
-      const res = await agentPortalAPI.exportNewUsers(date, search);
+      const res = await agentPortalAPI.exportNewUsers(fromDate, toDate, search);
       const blob = new Blob([res.data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `new-users-${date || new Date().toISOString().split('T')[0]}.xlsx`;
+      const range = fromDate && toDate ? `${fromDate}_to_${toDate}` : (fromDate || toDate || todayStr());
+      link.download = `new-users-${range}.xlsx`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -86,7 +102,7 @@ const AgentDailyLogins = () => {
   const renderPagination = () => {
     const total = pagination.total_pages || 1;
     const current = pagination.current_page || 1;
-    const go = (p) => { setPage(p); fetchLogins(p, date, isAdmin ? search : ''); };
+    const go = (p) => { setPage(p); fetchLogins(p, fromDate, toDate, isAdmin ? search : ''); };
 
     const pages = [];
     const range = 2;
@@ -163,15 +179,37 @@ const AgentDailyLogins = () => {
       <div className="agent-card" style={{ padding: '16px 24px', marginBottom: '24px' }}>
         <div className="d-flex align-items-center gap-3 flex-wrap">
           <label style={{ fontWeight: 500, fontSize: '0.9rem', color: '#64748b', whiteSpace: 'nowrap' }}>
-            <i className="bi bi-calendar3 me-2" />Date:
+            <i className="bi bi-calendar3 me-2" />From:
           </label>
           <input
             type="date"
             className="form-control"
-            style={{ maxWidth: '250px', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '0.5rem 1rem' }}
-            value={date}
-            onChange={handleDateChange}
+            style={{ maxWidth: '200px', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '0.5rem 1rem' }}
+            value={fromDate}
+            max={toDate || undefined}
+            onChange={handleFromChange}
           />
+          <label style={{ fontWeight: 500, fontSize: '0.9rem', color: '#64748b', whiteSpace: 'nowrap' }}>
+            To:
+          </label>
+          <input
+            type="date"
+            className="form-control"
+            style={{ maxWidth: '200px', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '0.5rem 1rem' }}
+            value={toDate}
+            min={fromDate || undefined}
+            onChange={handleToChange}
+          />
+          {(fromDate || toDate) && (
+            <button
+              type="button"
+              className="agent-btn agent-btn-outline-dark"
+              style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
+              onClick={() => { setFromDate(''); setToDate(''); setPage(1); fetchLogins(1, '', '', isAdmin ? search : ''); }}
+            >
+              <i className="bi bi-x-lg" /> Clear
+            </button>
+          )}
           {isAdmin && (
             <>
               <label style={{ fontWeight: 500, fontSize: '0.9rem', color: '#64748b', whiteSpace: 'nowrap' }}>

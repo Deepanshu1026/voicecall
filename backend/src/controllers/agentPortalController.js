@@ -174,8 +174,10 @@ exports.getDailyLogins = asyncHandler(async (req, res) => {
   await resolveContext(req, { allowAdmin: true });
   const page = parseInt(req.query.page, 10) || 1;
   const date = req.query.date || null;
+  const from = req.query.from || null;
+  const to = req.query.to || null;
   const search = req.query.search || '';
-  const data = await getLoginHistory({ page, date, search });
+  const data = await getLoginHistory({ page, date, search, from, to });
   res.status(200).json({ success: true, ...data });
 });
 
@@ -183,8 +185,10 @@ exports.getNewUsers = asyncHandler(async (req, res) => {
   await resolveContext(req, { allowAdmin: true });
   const page = parseInt(req.query.page, 10) || 1;
   const date = req.query.date || null;
+  const from = req.query.from || null;
+  const to = req.query.to || null;
   const search = req.query.search || '';
-  const data = await agentPortalService.getDailyLogins(page, date, search);
+  const data = await agentPortalService.getDailyLogins(page, date, search, 10, from, to);
   res.status(200).json({ success: true, ...data });
 });
 
@@ -214,9 +218,10 @@ exports.exportNewUsers = asyncHandler(async (req, res) => {
   if (!req.employee || req.employee.role !== 'admin') {
     throw new AppError('Admin access required', 403);
   }
-  const date = req.query.date || null;
+  const from = req.query.from || null;
+  const to = req.query.to || null;
   const search = req.query.search || '';
-  const users = await agentPortalService.getNewUsersForExport(date, search);
+  const users = await agentPortalService.getNewUsersForExport(from, to, search);
 
   const headers = ['#', 'Username', 'Display Name', 'Email', 'Country Code', 'Mobile', 'Login From', 'Registered At'];
   const rows = users.map((u, i) => [
@@ -231,7 +236,7 @@ exports.exportNewUsers = asyncHandler(async (req, res) => {
   ]);
 
   const buffer = buildXlsx({ sheetName: 'New Users', headers, rows });
-  const stamp = date || new Date().toISOString().split('T')[0];
+  const stamp = from && to ? `${from}_to_${to}` : (from || to || new Date().toISOString().split('T')[0]);
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader('Content-Disposition', `attachment; filename="new-users-${stamp}.xlsx"`);
   res.setHeader('Content-Length', buffer.length);
