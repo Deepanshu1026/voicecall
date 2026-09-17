@@ -163,7 +163,7 @@ function App() {
       </Route>
 
       {/* Default landing */}
-      <Route path="/" element={<Navigate to="/home" replace />} />
+      <Route path="/" element={<UserHome />} />
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );

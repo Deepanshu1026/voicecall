@@ -243,10 +243,10 @@ const UserHome = () => {
   return (
     <LandingLayout>
       <SEO
-        title="A Visa Experts | Trusted Visa & Immigration Consultants"
-        description="A Visa Experts helps individuals and families secure tourist, work, transit, and permanent residency visas for the USA, UK, Canada, Australia, and Europe."
+        title="A Visa Experts | No.1 Visa Immigration Company in India"
+        description="A Visa Experts is India's trusted No.1 Visa Immigration Company. We help with tourist, work, transit and PR visas for USA, UK, Canada, Australia, Europe & NZ."
         keywords="visa consultants, immigration experts, tourist visa, work visa, Canada visa, UK visa, USA visa, Australia visa, Kaveesh Kapoor"
-        canonicalPath="/home"
+        canonicalPath="/"
         ogImage="/images/user/slider4 1.webp"
         jsonLd={jsonLd}
       />

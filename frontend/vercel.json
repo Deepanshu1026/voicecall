@@ -3,6 +3,15 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/services", "destination": "/services.html" },
+    { "source": "/tourist-visa", "destination": "/tourist-visa.html" },
+    { "source": "/work-visa", "destination": "/work-visa.html" },
+    { "source": "/transit-visa", "destination": "/transit-visa.html" },
+    { "source": "/blogs", "destination": "/blogs.html" },
+    { "source": "/consultants", "destination": "/consultants.html" },
+    { "source": "/appointment", "destination": "/appointment.html" },
+    { "source": "/home", "destination": "/home.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
