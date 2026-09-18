@@ -304,6 +304,7 @@ const AgentNewApplication = () => {
                     {history.map((h) => {
                       const d = h.details || {};
                       const fields = [
+                        { label: 'Phone', value: h.contact_number },
                         { label: 'Visa', value: h.visa_type !== 'N/A' ? h.visa_type : null },
                         { label: 'Gender', value: d.gender },
                         { label: 'Age', value: d.age },
@@ -333,7 +334,14 @@ const AgentNewApplication = () => {
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', fontSize: '0.73rem', color: '#475569', background: '#f1f5f9', padding: '6px 8px', borderRadius: '6px' }}>
                               {fields.map((f) => (
                                 <span key={f.label} style={{ color: f.color }}>
-                                  <strong>{f.label}:</strong> {f.value}
+                                  <strong>{f.label}:</strong>{' '}
+                                  {f.label === 'Phone' && f.value ? (
+                                    <a href={`tel:${f.value}`} style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}>
+                                      {f.value}
+                                    </a>
+                                  ) : (
+                                    f.value
+                                  )}
                                 </span>
                               ))}
                             </div>

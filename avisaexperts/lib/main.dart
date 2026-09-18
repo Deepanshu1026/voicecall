@@ -92,10 +92,10 @@ Future<void> checkAppUsageForReview() async {
         await inAppReview.requestReview();
         debugPrint('⭐ In-App Review dialog shown');
       } else {
-        await inAppReview.openStoreListing(
-          appStoreId: '1234567890', // Get this from App Store Connect
-        );
-        debugPrint('📦 Opened Play Store fallback');
+        // await inAppReview.openStoreListing(
+        //   appStoreId: '1234567890', // Get this from App Store Connect
+        // );
+        // debugPrint('📦 Opened Play Store fallback');
       }
     }
   } catch (e) {
