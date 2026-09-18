@@ -196,6 +196,7 @@ async function checkContactHistory(contactNumber) {
     return {
       id: row.sqlId,
       client_name: row.clientName,
+      contact_number: row.contactNumber,
       created_at: row.createdAt,
       status: row.status,
       details,
