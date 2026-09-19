@@ -1039,7 +1039,7 @@ router.get('/chat/messages', asyncHandler(async (req, res) => {
 
   if (!conv) return res.json({ success: true, data: [] });
 
-  const messages = await Message.find({ conversation: conv._id })
+  const messages = await Message.find({ conversation: conv._id, deletedFor: { $ne: sId } })
     .sort({ createdAt: 1 })
     .lean();
 
@@ -1055,6 +1055,10 @@ router.get('/chat/messages', asyncHandler(async (req, res) => {
     is_read: m.status === 'seen' ? 'Yes' : 'No',
     created_at: m.createdAt,
     reply_to_id: m.replyTo?.toString() || null,
+    is_deleted: !!m.isDeleted,
+    is_edited: !!m.isEdited,
+    edited_at: m.editedAt || null,
+    deleted_by_role: m.deletedByRole || null,
   }));
 
   res.json({ success: true, data, messages: data, conversation: { id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: conv.participants.map((p) => p.toString()), isActive: conv.isActive } });
@@ -1177,6 +1181,87 @@ router.post('/chat/send', multerUpload.single('file'), handleMulterError, asyncH
   }).catch((err) => console.error('[MessageNotification] push failed:', err.message));
 
   res.json({ success: true, message_id: msg._id, created_at: msg.createdAt, fileUrl });
+}));
+
+// Edit a message (app + agent)
+router.post('/chat/edit', asyncHandler(async (req, res) => {
+  const { message_id, sender_id, message } = req.body;
+  if (!message_id || !sender_id || typeof message !== 'string' || !message.trim()) {
+    return res.json({ success: false, message: 'message_id, sender_id and message are required' });
+  }
+  const Message = require('../models/Message');
+  const sId = await resolveId(sender_id);
+  if (!sId) return res.json({ success: false, message: 'Invalid sender_id' });
+
+  const msg = await Message.findOne({ _id: message_id, sender: sId, isDeleted: false });
+  if (!msg) return res.json({ success: false, message: 'Message not found or not authorized' });
+  if (msg.type !== 'text') return res.json({ success: false, message: 'Only text messages can be edited' });
+
+  msg.content = message.trim();
+  msg.isEdited = true;
+  msg.editedAt = new Date();
+  await msg.save();
+
+  if (req.io) {
+    const payload = {
+      messageId: msg._id,
+      content: msg.content,
+      isEdited: true,
+      editedAt: msg.editedAt,
+      conversation: msg.conversation.toString(),
+    };
+    const targets = new Set([msg.sender?.toString(), msg.recipient?.toString()].filter(Boolean));
+    targets.forEach((pid) => req.io.to(`user:${pid}`).emit('message:edited', payload));
+    req.io.to('admin:room').emit('admin:message:edited', { ...payload, message: msg });
+  }
+
+  res.json({ success: true, message_id: msg._id, message: msg.content, is_edited: true, edited_at: msg.editedAt });
+}));
+
+// Delete a message (app + agent). Soft-deletes for everyone so the customer sees a placeholder.
+router.post('/chat/delete', asyncHandler(async (req, res) => {
+  const { message_id, sender_id, delete_for_everyone } = req.body;
+  if (!message_id || !sender_id) {
+    return res.json({ success: false, message: 'message_id and sender_id are required' });
+  }
+  const Message = require('../models/Message');
+  const Employee = require('../models/Employee');
+  const sId = await resolveId(sender_id);
+  if (!sId) return res.json({ success: false, message: 'Invalid sender_id' });
+
+  const msg = await Message.findById(message_id);
+  if (!msg) return res.json({ success: false, message: 'Message not found' });
+
+  const isSender = msg.sender && msg.sender.toString() === sId.toString();
+  const wantsEveryone = delete_for_everyone !== false && delete_for_everyone !== 'false';
+  const forEveryone = isSender && wantsEveryone;
+
+  if (forEveryone) {
+    const isEmployee = await Employee.exists({ _id: sId });
+    msg.isDeleted = true;
+    msg.content = 'This message was deleted';
+    msg.deletedBy = sId;
+    msg.deletedByRole = isEmployee ? 'agent' : 'user';
+    msg.deletedAt = new Date();
+  } else if (!msg.deletedFor.map((x) => x.toString()).includes(sId.toString())) {
+    msg.deletedFor.push(sId);
+  }
+  await msg.save();
+
+  if (req.io && forEveryone) {
+    const payload = {
+      messageId: msg._id,
+      forEveryone: true,
+      isDeleted: true,
+      deletedByRole: msg.deletedByRole,
+      conversation: msg.conversation.toString(),
+    };
+    const targets = new Set([msg.sender?.toString(), msg.recipient?.toString()].filter(Boolean));
+    targets.forEach((pid) => req.io.to(`user:${pid}`).emit('message:deleted', payload));
+    req.io.to('admin:room').emit('admin:message:deleted', payload);
+  }
+
+  res.json({ success: true, message_id: msg._id, is_deleted: !!msg.isDeleted, deleted_by_role: msg.deletedByRole || null });
 }));
 
 // Get users that have a chat history with the given agent/consultant

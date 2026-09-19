@@ -37,6 +37,8 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
   const { startCall } = useCall();
   const [showInfo, setShowInfo] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [editText, setEditText] = useState('');
   const messagesEndRef = useRef(null);
   const messagesContainerRef = useRef(null);
   const [isNearBottom, setIsNearBottom] = useState(true);
@@ -330,6 +332,20 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
     }
   };
 
+  const cancelEdit = () => {
+    setEditingMessage(null);
+    setEditText('');
+  };
+
+  const saveEdit = () => {
+    if (!editingMessage) return;
+    const next = editText.trim();
+    if (next && next !== editingMessage.content) {
+      handleEditMessage(editingMessage._id, next);
+    }
+    cancelEdit();
+  };
+
   const handleBlockUser = async () => {
     if (!otherParticipant?._id) return;
     try {
@@ -560,9 +576,13 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
                 message={msg}
                 isOwn={msg.sender?._id === user?._id || msg.sender === user?._id}
                 variant={isUser ? 'user' : 'default'}
-                onDelete={(deleteForEveryone) => handleDeleteMessage(msg._id, deleteForEveryone)}
+                onDelete={(msg) => {
+                  if (window.confirm('Delete this message for everyone? The client will no longer see it.')) {
+                    handleDeleteMessage(msg._id, true);
+                  }
+                }}
                 onReaction={(emoji) => handleReaction(msg._id, emoji)}
-                onEdit={(newContent) => handleEditMessage(msg._id, newContent)}
+                onEdit={(msg) => { setEditingMessage(msg); setEditText(msg.content || ''); }}
                 onReply={() => setReplyingTo(msg)}
               />
             </Fragment>
@@ -660,14 +680,40 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
           )}
         </div>
       ) : (
-        <MessageInput
-          conversation={conversation}
-          chat={chat}
-          replyingTo={replyingTo}
-          onCancelReply={() => setReplyingTo(null)}
-          recipientId={otherParticipant?._id}
-          variant={isUser ? 'user' : 'default'}
-        />
+        <>
+          {editingMessage && (
+            <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50 border-t border-indigo-100">
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-semibold text-indigo-700">Editing message</p>
+                <input
+                  type="text"
+                  value={editText}
+                  onChange={(e) => setEditText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') saveEdit();
+                    if (e.key === 'Escape') cancelEdit();
+                  }}
+                  autoFocus
+                  className="w-full mt-1 px-3 py-1.5 text-sm rounded-md border border-indigo-200 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                />
+              </div>
+              <button onClick={saveEdit} className="px-3 py-1.5 rounded-md bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700">
+                Save
+              </button>
+              <button onClick={cancelEdit} className="px-3 py-1.5 rounded-md text-gray-600 text-xs font-semibold hover:bg-gray-100">
+                Cancel
+              </button>
+            </div>
+          )}
+          <MessageInput
+            conversation={conversation}
+            chat={chat}
+            replyingTo={replyingTo}
+            onCancelReply={() => setReplyingTo(null)}
+            recipientId={otherParticipant?._id}
+            variant={isUser ? 'user' : 'default'}
+          />
+        </>
       )}
     </div>
   );

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { formatMessageTime, formatFileSize, downloadFile } from '../../utils/helpers';
-import { HiOutlineArrowUturnLeft, HiPhone, HiVideoCamera } from 'react-icons/hi2';
+import { HiOutlineArrowUturnLeft, HiPhone, HiVideoCamera, HiOutlinePencil, HiOutlineTrash } from 'react-icons/hi2';
 import ImageLightbox from '../common/ImageLightbox';
 
-const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
+const MessageBubble = ({ message, isOwn, onReply, onEdit, onDelete, variant = 'default' }) => {
   const { user } = useAuth();
   const currentUserId = user?._id;
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -16,11 +16,12 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
 
   if (deletedForMe) return null;
 
-  if (message.isDeleted && !isOwn) {
+  if (message.isDeleted) {
     return (
-      <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-2`}>
-        <div className="text-xs text-gray-400 italic bg-gray-100 px-3 py-1.5 rounded-lg">
-          This message was deleted
+      <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mx-1 mb-2`}>
+        <div className="inline-flex items-center gap-1.5 text-xs text-gray-400 italic bg-gray-100 border border-dashed border-gray-300 px-3 py-1.5 rounded-lg">
+          <HiOutlineTrash className="w-3.5 h-3.5" />
+          {isOwn ? 'You deleted this message' : 'This message was deleted'}
         </div>
       </div>
     );
@@ -127,7 +128,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
 
   return (
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} items-end gap-1.5 mx-1 mb-1 group relative`}>
-      <div className={`${isOwn ? 'order-first' : 'order-last'} opacity-100 flex-shrink-0`}>
+      <div className={`${isOwn ? 'order-first' : 'order-last'} flex-shrink-0 flex items-center gap-0.5`}>
         <button
           onClick={() => onReply()}
           className="p-1 rounded-full text-gray-300 hover:text-gray-600 transition-colors"
@@ -135,6 +136,24 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
         >
           <HiOutlineArrowUturnLeft className="w-4 h-4" />
         </button>
+        {isOwn && onEdit && message.type === 'text' && (
+          <button
+            onClick={() => onEdit(message)}
+            className="p-1 rounded-full text-gray-300 hover:text-[#6138d8] transition-colors"
+            title="Edit message"
+          >
+            <HiOutlinePencil className="w-4 h-4" />
+          </button>
+        )}
+        {isOwn && onDelete && (
+          <button
+            onClick={() => onDelete(message)}
+            className="p-1 rounded-full text-gray-300 hover:text-red-500 transition-colors"
+            title="Delete message"
+          >
+            <HiOutlineTrash className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       <div className={`max-w-[72%] ${bubbleBg} ${bubbleRound} px-3.5 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.08)]`}>
@@ -165,7 +184,7 @@ const MessageBubble = ({ message, isOwn, onReply, variant = 'default' }) => {
 
         <div className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-end'}`}>
           <span className={`text-[11px] leading-tight ${isOwn ? 'text-white/60' : 'text-gray-400'}`}>
-            {formatMessageTime(message.createdAt)}
+            {message.isEdited ? 'edited · ' : ''}{formatMessageTime(message.createdAt)}
           </span>
           {isOwn && (
             <span className="flex-shrink-0 flex items-center leading-none">

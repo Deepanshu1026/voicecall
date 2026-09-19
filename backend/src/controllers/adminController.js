@@ -161,12 +161,17 @@ const deleteMessage = asyncHandler(async (req, res) => {
 
   message.isDeleted = true;
   message.content = 'This message was deleted';
+  message.deletedBy = req.employee?._id || message.deletedBy;
+  message.deletedByRole = 'admin';
+  message.deletedAt = new Date();
   await message.save();
 
   if (req.io) {
     const payload = {
       messageId: message._id,
       forEveryone: true,
+      isDeleted: true,
+      deletedByRole: 'admin',
       conversation: message.conversation.toString(),
     };
     for (const participantId of (message.recipient ? [message.sender, message.recipient] : [message.sender])) {

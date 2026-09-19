@@ -235,7 +235,7 @@ const AdminChatDashboard = () => {
       setMessages((prev) =>
         prev.map((m) =>
           m._id === data.messageId || m._id?.toString() === data.messageId?.toString()
-            ? { ...m, isDeleted: true, content: 'This message was deleted' }
+            ? { ...m, isDeleted: true, content: 'This message was deleted', deletedByRole: data.deletedByRole || m.deletedByRole }
             : m
         )
       );
@@ -401,7 +401,25 @@ const AdminChatDashboard = () => {
             ) : (
               <div className={`admin-chat-message-content ${isDeleted ? 'deleted' : ''}`}>
                 {isDeleted ? (
-                  <em>{message.content}</em>
+                  <em>
+                    {message.content}
+                    {message.deletedByRole && (
+                      <span
+                        style={{
+                          marginLeft: '8px',
+                          fontSize: '0.68rem',
+                          fontStyle: 'normal',
+                          padding: '1px 7px',
+                          borderRadius: '6px',
+                          background: message.deletedByRole === 'admin' ? '#e0e7ff' : '#fee2e2',
+                          color: message.deletedByRole === 'admin' ? '#3730a3' : '#b91c1c',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {message.deletedByRole === 'agent' ? 'Deleted by agent' : message.deletedByRole === 'admin' ? 'Deleted by admin' : 'Deleted by user'}
+                      </span>
+                    )}
+                  </em>
                 ) : (
                   <>
                     {message.fileUrl && message.type !== 'text' && (

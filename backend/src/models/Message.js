@@ -68,6 +68,9 @@ const messageSchema = new mongoose.Schema(
     isEdited: { type: Boolean, default: false },
     editedAt: Date,
     isDeleted: { type: Boolean, default: false },
+    deletedAt: Date,
+    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    deletedByRole: { type: String, enum: ['user', 'agent', 'admin'], default: null },
     deletedFor: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     metadata: {
       type: Map,

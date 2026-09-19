@@ -178,7 +178,9 @@ const getMessages = asyncHandler(async (req, res) => {
 
   const query = {
     conversation: conversationId,
-    isDeleted: false,
+    // Include messages soft-deleted for everyone (clients render a "deleted" placeholder)
+    // but exclude messages the current user deleted only for themselves.
+    deletedFor: { $ne: req.userId },
   };
 
   if (before) {
@@ -357,14 +359,19 @@ const editMessage = asyncHandler(async (req, res) => {
   message.editedAt = new Date();
   await message.save();
 
-  if (req.io && message.recipient) {
-    req.io.to(`user:${message.recipient.toString()}`).emit('message:edited', {
+  if (req.io) {
+    const payload = {
       messageId: message._id,
       content,
       isEdited: true,
       editedAt: message.editedAt,
       conversation: message.conversation.toString(),
-    });
+    };
+    const targets = new Set();
+    if (message.sender) targets.add(message.sender.toString());
+    if (message.recipient) targets.add(message.recipient.toString());
+    targets.forEach((participantId) => req.io.to(`user:${participantId}`).emit('message:edited', payload));
+    req.io.to('admin:room').emit('admin:message:edited', { ...payload, message });
   }
 
   ApiResponse.success(res, message, 'Message edited');
@@ -387,21 +394,33 @@ const deleteMessage = asyncHandler(async (req, res) => {
     return ApiResponse.success(res, null, 'Message deleted for you');
   }
 
+  let deletedByRole = null;
   if (deleteForEveryone) {
+    deletedByRole = req.accountType === 'employee' ? 'agent' : 'user';
     message.isDeleted = true;
     message.content = 'This message was deleted';
+    message.deletedBy = req.userId;
+    message.deletedByRole = deletedByRole;
+    message.deletedAt = new Date();
   } else {
     message.deletedFor.push(req.userId);
   }
 
   await message.save();
 
-  if (req.io && deleteForEveryone && message.recipient) {
-    req.io.to(`user:${message.recipient.toString()}`).emit('message:deleted', {
+  if (req.io && deleteForEveryone) {
+    const payload = {
       messageId: message._id,
       forEveryone: true,
+      isDeleted: true,
+      deletedByRole,
       conversation: message.conversation.toString(),
-    });
+    };
+    const targets = new Set();
+    if (message.sender) targets.add(message.sender.toString());
+    if (message.recipient) targets.add(message.recipient.toString());
+    targets.forEach((participantId) => req.io.to(`user:${participantId}`).emit('message:deleted', payload));
+    req.io.to('admin:room').emit('admin:message:deleted', payload);
   }
 
   ApiResponse.success(res, null, 'Message deleted');

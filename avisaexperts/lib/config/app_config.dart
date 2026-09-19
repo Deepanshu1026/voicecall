@@ -38,6 +38,8 @@ class AppConfig {
   static String get inbox => '$flutterApiBase/inbox';                        // was allMessages.php
   static String get chatMessages => '$flutterApiBase/chat/messages';        // was getMessages.php
   static String get chatSend => '$flutterApiBase/chat/send';                  // was sendMessage.php
+  static String get chatEdit => '$flutterApiBase/chat/edit';                  // edit own message
+  static String get chatDelete => '$flutterApiBase/chat/delete';              // delete own message
   static String get chatConversation => '$flutterApiBase/chat/conversation';  // React chat parity
   static String get chatGreet => '$flutterApiBase/chat/greet';                  // React chat parity
   static String get chatPay => '$flutterApiBase/chat/pay';                    // React chat parity

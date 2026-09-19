@@ -176,6 +176,7 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50' }) => {
         chat.updateMessage(data.conversation || activeConversation?._id, data.messageId, {
           isDeleted: true,
           content: 'This message was deleted',
+          deletedByRole: data.deletedByRole || null,
         });
       }
     };

@@ -117,6 +117,9 @@ class ChatMessage {
   final String? filePath;
   final bool isDelivered;
   final bool isRead;
+  final bool isEdited;
+  final bool isDeleted;
+  final String? deletedByRole;
   // Reply metadata
   final String? replyToId;
   final String? replyToContent;
@@ -139,6 +142,9 @@ class ChatMessage {
     this.filePath,
     this.isDelivered = true,
     this.isRead = false,
+    this.isEdited = false,
+    this.isDeleted = false,
+    this.deletedByRole,
     this.replyToId,
     this.replyToContent,
     this.replyToSenderName,
@@ -161,6 +167,9 @@ class ChatMessage {
     String? filePath,
     bool? isDelivered,
     bool? isRead,
+    bool? isEdited,
+    bool? isDeleted,
+    String? deletedByRole,
     String? replyToId,
     String? replyToContent,
     String? replyToSenderName,
@@ -183,6 +192,9 @@ class ChatMessage {
       filePath: filePath ?? this.filePath,
       isDelivered: isDelivered ?? this.isDelivered,
       isRead: isRead ?? this.isRead,
+      isEdited: isEdited ?? this.isEdited,
+      isDeleted: isDeleted ?? this.isDeleted,
+      deletedByRole: deletedByRole ?? this.deletedByRole,
       replyToId: (clearReplyTo == true) ? null : (replyToId ?? this.replyToId),
       replyToContent: (clearReplyTo == true) ? null : (replyToContent ?? this.replyToContent),
       replyToSenderName: (clearReplyTo == true) ? null : (replyToSenderName ?? this.replyToSenderName),
@@ -533,6 +545,7 @@ class _ChatScreenState extends State<ChatScreen>
   Timer? _typingTimer;
 
   void Function()? _removeSocketListener;
+  void Function()? _removeStatusListener;
 
   // Colors
   final Color _primaryOrange = const Color(0xFFFF9500);
@@ -597,6 +610,7 @@ class _ChatScreenState extends State<ChatScreen>
     _messageRefreshTimer?.cancel();
     _typingTimer?.cancel();
     _removeSocketListener?.call();
+    _removeStatusListener?.call();
     clearCurrentChatReceiver();
     super.dispose();
   }
@@ -1000,6 +1014,9 @@ class _ChatScreenState extends State<ChatScreen>
                 isDelivered: true,
                 isRead: messageData['is_read'] == 'Yes' ||
                     messageData['status'] == 'Read',
+                isEdited: messageData['is_edited'] == true,
+                isDeleted: messageData['is_deleted'] == true,
+                deletedByRole: messageData['deleted_by_role']?.toString(),
                 replyToId: messageData['reply_to_id']?.toString(),
               );
             }).toList();
@@ -1242,6 +1259,36 @@ class _ChatScreenState extends State<ChatScreen>
     _removeSocketListener = ChatSocketService().onNewMessage((data) {
       _handleSocketMessage(data);
     });
+
+    _removeStatusListener?.call();
+    _removeStatusListener = ChatSocketService().onMessageStatus((data) {
+      _handleMessageStatusEvent(data);
+    });
+  }
+
+  void _handleMessageStatusEvent(Map<String, dynamic> data) {
+    if (!mounted) return;
+    final messageId = data['messageId']?.toString() ?? data['_id']?.toString();
+    if (messageId == null || messageId.isEmpty) return;
+    final index = _messages.indexWhere((m) => m.id == messageId);
+    if (index == -1) return;
+
+    if (data['isDeleted'] == true || data['forEveryone'] == true) {
+      setState(() {
+        _messages[index] = _messages[index].copyWith(
+          isDeleted: true,
+          message: 'This message was deleted',
+          deletedByRole: data['deletedByRole']?.toString(),
+        );
+      });
+    } else if (data['isEdited'] == true) {
+      setState(() {
+        _messages[index] = _messages[index].copyWith(
+          message: data['content']?.toString() ?? _messages[index].message,
+          isEdited: true,
+        );
+      });
+    }
   }
 
   void _handleSocketMessage(Map<String, dynamic> data) {
@@ -2561,6 +2608,34 @@ class _ChatScreenState extends State<ChatScreen>
   }
 
   Widget _buildMessageContent(ChatMessage message) {
+    if (message.isDeleted) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.block,
+              size: 14,
+              color: message.isFromCurrentUser ? Colors.white70 : Colors.grey,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              message.isFromCurrentUser
+                  ? 'You deleted this message'
+                  : 'This message was deleted',
+              style: TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                color: message.isFromCurrentUser
+                    ? Colors.white70
+                    : Colors.grey[600],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     switch (message.type) {
       case MessageType.image:
         return _buildImageMessage(message);
@@ -2938,6 +3013,19 @@ class _ChatScreenState extends State<ChatScreen>
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          if (message.isEdited && !message.isDeleted) ...[
+            Text(
+              'edited',
+              style: TextStyle(
+                fontSize: 10,
+                fontStyle: FontStyle.italic,
+                color: message.isFromCurrentUser
+                    ? Colors.white70
+                    : Colors.grey[600],
+              ),
+            ),
+            const SizedBox(width: 6),
+          ],
           Text(
             _formatMessageTime(message.timestamp),
             style: TextStyle(
@@ -3008,14 +3096,25 @@ class _ChatScreenState extends State<ChatScreen>
                 );
               },
             ),
-            if (message.isFromCurrentUser)
+            if (message.isFromCurrentUser &&
+                !message.isDeleted &&
+                message.type == MessageType.text)
+              ListTile(
+                leading: Icon(Icons.edit, color: _primaryOrange),
+                title: const Text('Edit'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _editMessageDialog(message);
+                },
+              ),
+            if (message.isFromCurrentUser && !message.isDeleted)
               ListTile(
                 leading: const Icon(Icons.delete, color: Colors.red),
                 title:
                     const Text('Delete', style: TextStyle(color: Colors.red)),
                 onTap: () {
                   Navigator.pop(context);
-                  // Implement delete functionality
+                  _deleteMessage(message);
                 },
               ),
             const SizedBox(height: 20),
@@ -3023,6 +3122,116 @@ class _ChatScreenState extends State<ChatScreen>
         ),
       ),
     );
+  }
+
+  Future<void> _editMessageDialog(ChatMessage message) async {
+    final controller = TextEditingController(text: message.message);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Edit message'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          maxLines: null,
+          decoration: const InputDecoration(hintText: 'Enter message'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    if (result == null || result.isEmpty || result == message.message) return;
+    try {
+      final dio = Dio();
+      final res = await dio.post(
+        AppConfig.chatEdit,
+        data: {
+          'message_id': message.id,
+          'sender_id': _currentUserId,
+          'message': result,
+        },
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+      if (res.data is Map && res.data['success'] == true) {
+        final idx = _messages.indexWhere((m) => m.id == message.id);
+        if (idx != -1) {
+          setState(() {
+            _messages[idx] =
+                _messages[idx].copyWith(message: result, isEdited: true);
+          });
+        }
+      } else {
+        throw Exception(res.data?['message'] ?? 'Edit failed');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to edit message: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteMessage(ChatMessage message) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete message'),
+        content: const Text(
+            'Delete this message for everyone? The client will no longer see it.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true) return;
+    try {
+      final dio = Dio();
+      final res = await dio.post(
+        AppConfig.chatDelete,
+        data: {
+          'message_id': message.id,
+          'sender_id': _currentUserId,
+          'delete_for_everyone': true,
+        },
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+      if (res.data is Map && res.data['success'] == true) {
+        final idx = _messages.indexWhere((m) => m.id == message.id);
+        if (idx != -1) {
+          setState(() {
+            _messages[idx] = _messages[idx].copyWith(
+              isDeleted: true,
+              message: 'This message was deleted',
+              deletedByRole: res.data['deleted_by_role']?.toString(),
+            );
+          });
+        }
+      } else {
+        throw Exception(res.data?['message'] ?? 'Delete failed');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to delete message: $e')),
+        );
+      }
+    }
   }
 
   Widget _buildConsultationBanner() {
