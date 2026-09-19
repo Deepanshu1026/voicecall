@@ -413,13 +413,43 @@ const Consultants = () => {
     openChatById(userId);
   }, [searchParams, isAuthenticated, openChatById]);
 
-  // Listen for incoming messages in the chat popup
+  // Listen for incoming messages + edits/deletes in the chat popup
   useEffect(() => {
     const handleNewMessage = (message) => {
       chat.addMessage(message.conversation, message);
     };
-    const cleanup = on('message:new', handleNewMessage);
-    return cleanup;
+    const cleanupNew = on('message:new', handleNewMessage);
+
+    const handleEdited = (data) => {
+      const convId = data.conversation || data.conversationId;
+      chat.updateMessage(convId, data.messageId, {
+        content: data.content,
+        isEdited: true,
+        editedAt: data.editedAt,
+      });
+    };
+    const cleanupEdit = on('message:edited', handleEdited);
+
+    const handleDeleted = (data) => {
+      if (!data.forEveryone) return;
+      const convId = data.conversation || data.conversationId;
+      const existing = (chat.messages[convId] || []).find(
+        (m) => m._id === data.messageId || m._id?.toString() === data.messageId?.toString()
+      );
+      chat.updateMessage(convId, data.messageId, {
+        isDeleted: true,
+        content: 'This message was deleted',
+        deletedByRole: data.deletedByRole || null,
+        originalContent: data.originalContent || existing?.content,
+      });
+    };
+    const cleanupDelete = on('message:deleted', handleDeleted);
+
+    return () => {
+      cleanupNew();
+      cleanupEdit();
+      cleanupDelete();
+    };
   }, [on, chat]);
 
   // Close profile card when clicking outside
