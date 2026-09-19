@@ -1043,6 +1043,9 @@ router.get('/chat/messages', asyncHandler(async (req, res) => {
     .sort({ createdAt: 1 })
     .lean();
 
+  const Employee = require('../models/Employee');
+  const requesterIsEmployee = !!(await Employee.exists({ _id: sId }));
+
   const data = messages.map((m) => ({
     id: m._id,
     sender_id: m.sender?.toString(),
@@ -1059,6 +1062,7 @@ router.get('/chat/messages', asyncHandler(async (req, res) => {
     is_edited: !!m.isEdited,
     edited_at: m.editedAt || null,
     deleted_by_role: m.deletedByRole || null,
+    original_message: requesterIsEmployee ? (m.originalContent || null) : null,
   }));
 
   res.json({ success: true, data, messages: data, conversation: { id: conv._id, freeUntil: conv.freeUntil, isPaid: conv.isPaid, paymentAmount: conv.paymentAmount, lockedToAgent: conv.lockedToAgent?.toString() || null, participants: conv.participants.map((p) => p.toString()), isActive: conv.isActive } });
@@ -1197,6 +1201,7 @@ router.post('/chat/edit', asyncHandler(async (req, res) => {
   if (!msg) return res.json({ success: false, message: 'Message not found or not authorized' });
   if (msg.type !== 'text') return res.json({ success: false, message: 'Only text messages can be edited' });
 
+  if (!msg.originalContent) msg.originalContent = msg.content;
   msg.content = message.trim();
   msg.isEdited = true;
   msg.editedAt = new Date();
@@ -1210,7 +1215,10 @@ router.post('/chat/edit', asyncHandler(async (req, res) => {
       editedAt: msg.editedAt,
       conversation: msg.conversation.toString(),
     };
+    const Conversation = require('../models/Conversation');
     const targets = new Set([msg.sender?.toString(), msg.recipient?.toString()].filter(Boolean));
+    const conv = await Conversation.findById(msg.conversation).select('participants').lean();
+    (conv?.participants || []).forEach((p) => targets.add(p.toString()));
     targets.forEach((pid) => req.io.to(`user:${pid}`).emit('message:edited', payload));
     req.io.to('admin:room').emit('admin:message:edited', { ...payload, message: msg });
   }
@@ -1238,6 +1246,7 @@ router.post('/chat/delete', asyncHandler(async (req, res) => {
 
   if (forEveryone) {
     const isEmployee = await Employee.exists({ _id: sId });
+    if (!msg.originalContent) msg.originalContent = msg.content;
     msg.isDeleted = true;
     msg.content = 'This message was deleted';
     msg.deletedBy = sId;
@@ -1256,7 +1265,10 @@ router.post('/chat/delete', asyncHandler(async (req, res) => {
       deletedByRole: msg.deletedByRole,
       conversation: msg.conversation.toString(),
     };
+    const Conversation = require('../models/Conversation');
     const targets = new Set([msg.sender?.toString(), msg.recipient?.toString()].filter(Boolean));
+    const conv = await Conversation.findById(msg.conversation).select('participants').lean();
+    (conv?.participants || []).forEach((p) => targets.add(p.toString()));
     targets.forEach((pid) => req.io.to(`user:${pid}`).emit('message:deleted', payload));
     req.io.to('admin:room').emit('admin:message:deleted', payload);
   }

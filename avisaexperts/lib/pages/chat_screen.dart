@@ -120,6 +120,7 @@ class ChatMessage {
   final bool isEdited;
   final bool isDeleted;
   final String? deletedByRole;
+  final String? originalContent;
   // Reply metadata
   final String? replyToId;
   final String? replyToContent;
@@ -145,6 +146,7 @@ class ChatMessage {
     this.isEdited = false,
     this.isDeleted = false,
     this.deletedByRole,
+    this.originalContent,
     this.replyToId,
     this.replyToContent,
     this.replyToSenderName,
@@ -170,6 +172,7 @@ class ChatMessage {
     bool? isEdited,
     bool? isDeleted,
     String? deletedByRole,
+    String? originalContent,
     String? replyToId,
     String? replyToContent,
     String? replyToSenderName,
@@ -195,6 +198,7 @@ class ChatMessage {
       isEdited: isEdited ?? this.isEdited,
       isDeleted: isDeleted ?? this.isDeleted,
       deletedByRole: deletedByRole ?? this.deletedByRole,
+      originalContent: originalContent ?? this.originalContent,
       replyToId: (clearReplyTo == true) ? null : (replyToId ?? this.replyToId),
       replyToContent: (clearReplyTo == true) ? null : (replyToContent ?? this.replyToContent),
       replyToSenderName: (clearReplyTo == true) ? null : (replyToSenderName ?? this.replyToSenderName),
@@ -1017,6 +1021,7 @@ class _ChatScreenState extends State<ChatScreen>
                 isEdited: messageData['is_edited'] == true,
                 isDeleted: messageData['is_deleted'] == true,
                 deletedByRole: messageData['deleted_by_role']?.toString(),
+                originalContent: messageData['original_message']?.toString(),
                 replyToId: messageData['reply_to_id']?.toString(),
               );
             }).toList();
@@ -1279,6 +1284,9 @@ class _ChatScreenState extends State<ChatScreen>
           isDeleted: true,
           message: 'This message was deleted',
           deletedByRole: data['deletedByRole']?.toString(),
+          originalContent: data['originalContent']?.toString() ??
+              _messages[index].originalContent ??
+              _messages[index].message,
         );
       });
     } else if (data['isEdited'] == true) {
@@ -2609,6 +2617,51 @@ class _ChatScreenState extends State<ChatScreen>
 
   Widget _buildMessageContent(ChatMessage message) {
     if (message.isDeleted) {
+      final showOriginal = _isCurrentUserConsultant &&
+          message.originalContent != null &&
+          message.originalContent!.isNotEmpty;
+      if (showOriginal) {
+        final label = message.deletedByRole == 'admin'
+            ? 'Deleted by admin'
+            : message.deletedByRole == 'agent'
+                ? 'Deleted by agent'
+                : 'Deleted';
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                message.originalContent!,
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.3,
+                  decoration: TextDecoration.lineThrough,
+                  color: message.isFromCurrentUser
+                      ? Colors.white60
+                      : Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.block, size: 12, color: Colors.redAccent),
+                  const SizedBox(width: 4),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      }
       return Padding(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
         child: Row(
@@ -2621,9 +2674,7 @@ class _ChatScreenState extends State<ChatScreen>
             ),
             const SizedBox(width: 6),
             Text(
-              message.isFromCurrentUser
-                  ? 'You deleted this message'
-                  : 'This message was deleted',
+              'This message was deleted',
               style: TextStyle(
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
@@ -3219,6 +3270,8 @@ class _ChatScreenState extends State<ChatScreen>
               isDeleted: true,
               message: 'This message was deleted',
               deletedByRole: res.data['deleted_by_role']?.toString(),
+              originalContent:
+                  _messages[idx].originalContent ?? _messages[idx].message,
             );
           });
         }

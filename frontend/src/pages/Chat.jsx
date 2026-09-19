@@ -173,10 +173,15 @@ const Chat = ({ className = 'h-screen flex overflow-hidden bg-gray-50' }) => {
 
     const handleDelete = (data) => {
       if (data.forEveryone) {
-        chat.updateMessage(data.conversation || activeConversation?._id, data.messageId, {
+        const convId = data.conversation || activeConversation?._id;
+        const existing = (chat.messages[convId] || []).find(
+          (m) => m._id === data.messageId || m._id?.toString() === data.messageId?.toString()
+        );
+        chat.updateMessage(convId, data.messageId, {
           isDeleted: true,
           content: 'This message was deleted',
           deletedByRole: data.deletedByRole || null,
+          originalContent: data.originalContent || existing?.content,
         });
       }
     };

@@ -235,7 +235,7 @@ const AdminChatDashboard = () => {
       setMessages((prev) =>
         prev.map((m) =>
           m._id === data.messageId || m._id?.toString() === data.messageId?.toString()
-            ? { ...m, isDeleted: true, content: 'This message was deleted', deletedByRole: data.deletedByRole || m.deletedByRole }
+            ? { ...m, isDeleted: true, content: 'This message was deleted', deletedByRole: data.deletedByRole || m.deletedByRole, originalContent: data.originalContent || m.originalContent || m.content }
             : m
         )
       );
@@ -293,7 +293,9 @@ const AdminChatDashboard = () => {
       toast.success('Message deleted');
       setMessages((prev) =>
         prev.map((m) =>
-          m._id === messageId ? { ...m, isDeleted: true, content: 'This message was deleted' } : m
+          m._id === messageId
+            ? { ...m, isDeleted: true, content: 'This message was deleted', deletedByRole: 'admin', originalContent: m.originalContent || m.content }
+            : m
         )
       );
     } catch (err) {
@@ -402,7 +404,9 @@ const AdminChatDashboard = () => {
               <div className={`admin-chat-message-content ${isDeleted ? 'deleted' : ''}`}>
                 {isDeleted ? (
                   <em>
-                    {message.content}
+                    <span style={{ textDecoration: 'line-through' }}>
+                      {message.originalContent || message.content}
+                    </span>
                     {message.deletedByRole && (
                       <span
                         style={{

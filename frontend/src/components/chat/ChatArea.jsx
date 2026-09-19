@@ -300,10 +300,12 @@ const ChatArea = ({ conversation, chat, onBack, onEndChat, onClose }) => {
 
   const handleDeleteMessage = async (messageId, deleteForEveryone) => {
     try {
+      const existing = messages.find((m) => m._id === messageId);
+      const originalContent = existing?.content;
       await chatAPI.deleteMessage(messageId, deleteForEveryone);
       chat.updateMessage(conversation._id, messageId, deleteForEveryone
-        ? { isDeleted: true, content: 'This message was deleted' }
-        : { deletedFor: [...(messages.find(m => m._id === messageId)?.deletedFor || []), user._id] }
+        ? { isDeleted: true, content: 'This message was deleted', originalContent }
+        : { deletedFor: [...(existing?.deletedFor || []), user._id] }
       );
     } catch {
       toast.error('Failed to delete message');

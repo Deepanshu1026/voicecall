@@ -17,11 +17,37 @@ const MessageBubble = ({ message, isOwn, onReply, onEdit, onDelete, variant = 'd
   if (deletedForMe) return null;
 
   if (message.isDeleted) {
+    const original = message.originalContent || message.original_content;
+    const isPrivileged = !!user?.role && user.role !== 'user';
+    const deletedLabel =
+      message.deletedByRole === 'admin'
+        ? 'Deleted by admin'
+        : message.deletedByRole === 'agent'
+          ? 'Deleted by agent'
+          : 'Deleted';
+
+    if (isPrivileged && original) {
+      // Agents/admins keep seeing the original text (struck through) so nothing can be hidden.
+      return (
+        <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mx-1 mb-2`}>
+          <div className="max-w-[72%] rounded-[18px] px-3.5 py-2 bg-gray-100 border border-dashed border-gray-300">
+            <p className="text-[15px] leading-[1.35] whitespace-pre-wrap break-words text-gray-400 line-through">
+              {original}
+            </p>
+            <div className="flex items-center gap-1 mt-1">
+              <HiOutlineTrash className="w-3 h-3 text-red-500" />
+              <span className="text-[10px] font-semibold text-red-500">{deletedLabel}</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mx-1 mb-2`}>
         <div className="inline-flex items-center gap-1.5 text-xs text-gray-400 italic bg-gray-100 border border-dashed border-gray-300 px-3 py-1.5 rounded-lg">
           <HiOutlineTrash className="w-3.5 h-3.5" />
-          {isOwn ? 'You deleted this message' : 'This message was deleted'}
+          This message was deleted
         </div>
       </div>
     );

@@ -699,28 +699,27 @@ const setupSocket = (io) => {
         const message = await Message.findOne({ _id: messageId, sender: userId, isDeleted: false });
         if (!message) return;
 
+        if (!message.originalContent) message.originalContent = message.content;
         message.content = content;
         message.isEdited = true;
         message.editedAt = new Date();
         await message.save();
 
-        if (message.recipient) {
-          io.to(`user:${message.recipient}`).emit('message:edited', {
-            messageId,
-            content,
-            isEdited: true,
-            editedAt: message.editedAt,
-            conversation: message.conversation.toString(),
-          });
-        }
-
-        socket.emit('message:edited', {
+        const payload = {
           messageId,
           content,
           isEdited: true,
           editedAt: message.editedAt,
           conversation: message.conversation.toString(),
-        });
+        };
+        const Conversation = require('../models/Conversation');
+        const targets = new Set();
+        if (message.sender) targets.add(message.sender.toString());
+        if (message.recipient) targets.add(message.recipient.toString());
+        const conv = await Conversation.findById(message.conversation).select('participants').lean();
+        (conv?.participants || []).forEach((p) => targets.add(p.toString()));
+        targets.forEach((pid) => io.to(`user:${pid}`).emit('message:edited', payload));
+        io.to('admin:room').emit('admin:message:edited', { ...payload, message });
       } catch (error) {
         console.error('Edit message error:', error);
       }
@@ -738,24 +737,42 @@ const setupSocket = (io) => {
           return;
         }
 
+        let deletedByRole = null;
         if (deleteForEveryone) {
+          const Employee = require('../models/Employee');
+          const isEmployee = await Employee.exists({ _id: userId });
+          deletedByRole = isEmployee ? 'agent' : 'user';
+          if (!message.originalContent) message.originalContent = message.content;
           message.isDeleted = true;
           message.content = 'This message was deleted';
+          message.deletedBy = userId;
+          message.deletedByRole = deletedByRole;
+          message.deletedAt = new Date();
         } else {
           message.deletedFor.push(userId);
         }
 
         await message.save();
 
-        if (deleteForEveryone && message.recipient) {
-          io.to(`user:${message.recipient}`).emit('message:deleted', {
+        if (deleteForEveryone) {
+          const payload = {
             messageId,
             forEveryone: true,
+            isDeleted: true,
+            deletedByRole,
             conversation: message.conversation.toString(),
-          });
+          };
+          const Conversation = require('../models/Conversation');
+          const targets = new Set();
+          if (message.sender) targets.add(message.sender.toString());
+          if (message.recipient) targets.add(message.recipient.toString());
+          const conv = await Conversation.findById(message.conversation).select('participants').lean();
+          (conv?.participants || []).forEach((p) => targets.add(p.toString()));
+          targets.forEach((pid) => io.to(`user:${pid}`).emit('message:deleted', payload));
+          io.to('admin:room').emit('admin:message:deleted', payload);
+        } else {
+          socket.emit('message:deleted', { messageId, forEveryone: false, conversation: message.conversation.toString() });
         }
-
-        socket.emit('message:deleted', { messageId, forEveryone: deleteForEveryone, conversation: message.conversation.toString() });
       } catch (error) {
         console.error('Delete message error:', error);
       }

@@ -67,6 +67,7 @@ const messageSchema = new mongoose.Schema(
     deliveredTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     isEdited: { type: Boolean, default: false },
     editedAt: Date,
+    originalContent: { type: String, default: '' },
     isDeleted: { type: Boolean, default: false },
     deletedAt: Date,
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

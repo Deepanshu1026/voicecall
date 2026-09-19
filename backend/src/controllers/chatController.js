@@ -222,7 +222,15 @@ const getMessages = asyncHandler(async (req, res) => {
 
   const total = await Message.countDocuments(query);
 
-  ApiResponse.paginated(res, populatedMessages.reverse(), {
+  const viewerIsPrivileged = req.accountType === 'employee';
+  const serialized = populatedMessages.reverse().map((msg) => {
+    const obj = typeof msg.toObject === 'function' ? msg.toObject() : { ...msg };
+    // Only agents/admins may see the original text of edited/deleted messages.
+    if (!viewerIsPrivileged) delete obj.originalContent;
+    return obj;
+  });
+
+  ApiResponse.paginated(res, serialized, {
     page: parseInt(page),
     limit: parseInt(limit),
     total,
@@ -354,6 +362,7 @@ const editMessage = asyncHandler(async (req, res) => {
   if (!message) throw new AppError('Message not found or not authorized', 404);
   if (message.type !== 'text') throw new AppError('Only text messages can be edited', 400);
 
+  if (!message.originalContent) message.originalContent = message.content;
   message.content = content;
   message.isEdited = true;
   message.editedAt = new Date();
@@ -370,6 +379,8 @@ const editMessage = asyncHandler(async (req, res) => {
     const targets = new Set();
     if (message.sender) targets.add(message.sender.toString());
     if (message.recipient) targets.add(message.recipient.toString());
+    const conv = await Conversation.findById(message.conversation).select('participants').lean();
+    (conv?.participants || []).forEach((p) => targets.add(p.toString()));
     targets.forEach((participantId) => req.io.to(`user:${participantId}`).emit('message:edited', payload));
     req.io.to('admin:room').emit('admin:message:edited', { ...payload, message });
   }
@@ -397,6 +408,8 @@ const deleteMessage = asyncHandler(async (req, res) => {
   let deletedByRole = null;
   if (deleteForEveryone) {
     deletedByRole = req.accountType === 'employee' ? 'agent' : 'user';
+    // Preserve the original text so admins and agents can still audit it.
+    if (!message.originalContent) message.originalContent = message.content;
     message.isDeleted = true;
     message.content = 'This message was deleted';
     message.deletedBy = req.userId;
@@ -416,9 +429,13 @@ const deleteMessage = asyncHandler(async (req, res) => {
       deletedByRole,
       conversation: message.conversation.toString(),
     };
+    // Emit to every participant of the conversation (not just sender/recipient)
+    // so all connected clients update in real time.
     const targets = new Set();
     if (message.sender) targets.add(message.sender.toString());
     if (message.recipient) targets.add(message.recipient.toString());
+    const conv = await Conversation.findById(message.conversation).select('participants').lean();
+    (conv?.participants || []).forEach((p) => targets.add(p.toString()));
     targets.forEach((participantId) => req.io.to(`user:${participantId}`).emit('message:deleted', payload));
     req.io.to('admin:room').emit('admin:message:deleted', payload);
   }
