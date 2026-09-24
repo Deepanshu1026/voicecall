@@ -72,24 +72,6 @@ const About = () => {
     { img: '/images/user/shivalikamam.webp', name: 'Shivalika Bharti', role: 'UK immigration Expert' },
   ];
 
-  const blogs = [
-    {
-      img: '/images/user/blog1 1.webp',
-      title: 'UK Visitor Visa Guide',
-      text: 'Step-by-step guidance to apply for a UK visitor visa with expert tips and document checklist.',
-    },
-    {
-      img: '/images/user/blog2 1.webp',
-      title: 'Work Visa for Europe',
-      text: 'Learn how to secure a Europe work visa, eligibility criteria, and required paperwork.',
-    },
-    {
-      img: '/images/user/blog3 1.webp',
-      title: 'Transit Visa Essentials',
-      text: 'Everything you need to know about transit visas for smooth international travel.',
-    },
-  ];
-
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
@@ -203,24 +185,6 @@ const About = () => {
 
         {/* Captured At The Seminar */}
         <HomeSeminarSections />
-
-        <section className="about-blog-section">
-          <div className="about-blog-container">
-            <h2 className="about-blog-header">Recent Articles</h2>
-            <div className="about-blog-cards">
-              {blogs.map((blog, idx) => (
-                <div className="about-blog-card" key={idx}>
-                  <img src={blog.img} alt={blog.title} />
-                  <div className="about-blog-content">
-                    <h3>{blog.title}</h3>
-                    <p>{blog.text}</p>
-                    <button>Read More</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
         <section className="about-contact-section">
           <div className="about-contact-container">
