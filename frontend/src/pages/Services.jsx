@@ -20,7 +20,7 @@ const Services = () => {
     {
       name: 'United States',
       img: '/images/user/popularplace3 1.webp',
-      text: 'Expert visa and immigration advisory services through chat, video, or calls for a smooth process. Our skilled Visa Immigration Experts help you achieve your global goals.',
+      text: 'Expert visa and immigration advisory through chat, video, or calls for a smooth process. Our skilled visa consultants in Noida & Delhi help you achieve your global goals.',
     },
     {
       name: 'Canada',
@@ -62,7 +62,7 @@ const Services = () => {
         { title: 'Transit Visa', text: 'Issued for short stops while traveling to another destination.' },
         { title: 'E-Visa', text: 'A convenient electronic visa that can be applied for online, simplifying the process.' },
       ],
-      closing: 'At A Visa Experts, our experienced Visa Immigration Experts offer complete support in choosing the right tourist visa for your needs. We carefully handle your entire application, provide updates, clarity, and confidence—because we guide every step of your journey.',
+      closing: 'At A Visa Experts, our experienced visa consultants offer complete support in choosing the right tourist visa for your needs. We carefully handle your entire application, provide updates, clarity, and confidence—because we guide every step of your journey.',
       docs: [
         'Valid passport with at least six months validity',
         'Recent passport-size photographs',
@@ -77,14 +77,14 @@ const Services = () => {
       title: 'Work Visa',
       shortText: 'Live and work abroad with a permit for skilled employment, contract jobs, or sponsored roles.',
       fullImg: '/images/user/workvisa_full 1.webp',
-      intro: 'A work visa is an official document that permits a foreign national to live and work in another country for a specific period. It\u2019s typically issued for skilled employment, contract jobs, or sponsored roles. Our experienced Visa Immigration Experts guide applicants through every step of the process with clarity and professionalism.',
+      intro: 'A work visa is an official document that permits a foreign national to live and work in another country for a specific period. It\u2019s typically issued for skilled employment, contract jobs, or sponsored roles. Our experienced immigration experts guide applicants through every step of the process with clarity and professionalism.',
       types: [
         { title: 'Skilled Worker Visa', text: 'For individuals with in-demand professional skills.' },
         { title: 'Temporary Work Visa', text: 'For seasonal or contract-based employment.' },
         { title: 'Employer-Sponsored Visa', text: 'Issued when a company sponsors a foreign employee.' },
         { title: 'Working Holiday Visa', text: 'Allows travel and short-term work, mostly for young adults.' },
       ],
-      closing: 'Trust the No.1 Visa Immigration Company to help you secure the right visa and simplify your international employment journey. We make sure your application meets every requirement.',
+      closing: 'Trust our Delhi & Noida visa experts to help you secure the right visa and simplify your international employment journey. We make sure your application meets every requirement.',
       docs: [
         'Valid passport and photographs',
         'Employment offer letter or contract',
@@ -99,14 +99,14 @@ const Services = () => {
       title: 'Transit Visa',
       shortText: 'Pass through a country smoothly during airport layovers, connecting flights, or land travel.',
       fullImg: '/images/user/transitimg 1.webp',
-      intro: 'A transit visa allows travelers to pass through a country on their way to another destination. It\u2019s typically required for short stays, even if you\'re only in the airport for a few hours. Our Visa Immigration Experts provide clear guidance on transit visa requirements for different countries.',
+      intro: 'A transit visa allows travelers to pass through a country on their way to another destination. It\u2019s typically required for short stays, even if you\'re only in the airport for a few hours. Our visa experts provide clear guidance on transit visa requirements for different countries.',
       types: [
         { title: 'Short Duration', text: 'Valid typically for 24 to 72 hours, depending on the country\u2019s rules.' },
         { title: 'Limited Access', text: 'Usually permits stay within the airport transit area, with some visas allowing brief exits.' },
         { title: 'Purpose', text: 'Meant only for passing through a country\u2014not for tourism or business.' },
         { title: 'Requirements', text: 'Applicants must show proof of onward travel, a valid visa for the final destination if needed, and adequate funds.' },
       ],
-      closing: 'Trust the No.1 Visa Immigration Company to ensure your journey continues smoothly without unexpected complications. We handle every detail with care.',
+      closing: 'Trust our immigration consultants to ensure your journey continues smoothly without unexpected complications. We handle every detail with care.',
       docs: [
         'Valid passport',
         'Confirmed onward travel ticket',
@@ -125,11 +125,11 @@ const Services = () => {
     },
     {
       title: 'One Stop Solution',
-      text: 'From consultation to documentation and filing, we provide complete visa support under one roof. Our Visa Immigration Experts handle every step with attention to detail.',
+      text: 'From consultation to documentation and filing, we provide complete visa support under one roof. Our visa consultants in Noida & Delhi handle every step with attention to detail.',
     },
     {
       title: 'Expert Services',
-      text: 'We thoroughly examine every application, ensuring accuracy and completeness. As the Best Visa Immigration Company, we work diligently to meet all requirements for successful approval.',
+      text: 'We thoroughly examine every application, ensuring accuracy and completeness. As a trusted visa consultancy in Delhi NCR, we work diligently to meet all requirements for successful approval.',
     },
   ];
 
@@ -142,7 +142,7 @@ const Services = () => {
     },
     {
       q: 'Is the initial consultation with your experts free?',
-      a: 'Yes. You can book a free consultation with our Visa Immigration Experts through chat, a call or a video meeting to discuss your profile and the right visa option for you.',
+      a: 'Yes. You can book a free consultation with our visa consultants in Noida & Delhi through chat, a call or a video meeting to discuss your profile and the right visa option for you.',
     },
     {
       q: 'What documents are required to apply for a visa?',
@@ -169,16 +169,16 @@ const Services = () => {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Service',
-    name: 'A Visa Experts Immigration Services',
+    name: 'Visa Consulting Services',
     provider: {
       '@type': 'Organization',
       name: 'A Visa Experts',
       url: 'https://avisaexperts.com',
     },
     description:
-      'Expert visa and immigration services for tourist, work, and transit visas. Serving clients across India, USA, UK, and Europe.',
+      'Trusted visa consultancy in Noida & Delhi for tourist, work, and transit visas. Serving clients across Delhi NCR, India, USA, UK, Canada, Australia and Europe.',
     serviceType: 'Visa and Immigration Consulting',
-    areaServed: ['IN', 'US', 'GB', 'CA', 'AU', 'EU'],
+    areaServed: ['Noida', 'Delhi', 'Delhi NCR', 'IN', 'US', 'GB', 'CA', 'AU', 'EU'],
   };
 
   const faqJsonLd = {
@@ -194,9 +194,9 @@ const Services = () => {
   return (
     <LandingLayout>
       <SEO
-        title="Visa & Immigration Services | A Visa Experts"
-        description="Explore expert visa and immigration services for tourist, work, and transit visas. Trusted consultants for USA, UK, Canada, Australia, and Europe."
-        keywords="visa services, immigration services, tourist visa, work visa, transit visa, visa consultant, immigration expert"
+        title="Visa Consultants in Noida & Delhi | Visa Services | A Visa Experts"
+        description="Trusted visa consultants in Noida & Delhi for tourist, work and transit visas. Expert guidance for USA, UK, Canada, Australia and Europe. Book a free consultation."
+        keywords="visa consultants in Noida, visa agents in Delhi, immigration consultants Delhi NCR, visa consultancy near me, tourist visa consultant Noida, work visa consultants Delhi, visa services Noida, best visa consultant Delhi"
         canonicalPath="/services"
         ogImage="/images/user/touristvisa_full 1.webp"
         jsonLd={[jsonLd, faqJsonLd]}
@@ -216,11 +216,11 @@ const Services = () => {
           </div>
           <div className="services-hero-overlay" />
           <div className="services-hero-content">
-            <span className="services-hero-badge">Visa Immigration Services</span>
+            <span className="services-hero-badge">Trusted Visa Consultants in Delhi NCR</span>
             <h1>Your Gateway to Global Opportunities</h1>
             <p>
-              Tourist, work, or transit — we simplify every visa journey with expert guidance, clear documentation, and
-              dedicated support.
+              Tourist, work, or transit — as visa consultants in Noida &amp; Delhi, we simplify every visa journey with
+              expert guidance, clear documentation, and dedicated support.
             </p>
             <div className="services-hero-buttons">
               <button className="services-hero-primary" onClick={() => navigate('/appointment')}>

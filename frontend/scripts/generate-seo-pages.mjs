@@ -48,9 +48,9 @@ const pages = [
   {
     path: '/services',
     file: 'services.html',
-    title: 'Visa & Immigration Services | A Visa Experts',
+    title: 'Visa Consultants in Noida & Delhi | Visa Services | A Visa Experts',
     description:
-      'Explore expert visa and immigration services for tourist, work, and transit visas. Trusted consultants for USA, UK, Canada, Australia, and Europe.',
+      'Trusted visa consultants in Noida & Delhi for tourist, work and transit visas. Expert guidance for USA, UK, Canada, Australia and Europe. Book a free consultation.',
     priority: '0.9',
     changefreq: 'monthly',
     includeInSitemap: true,
