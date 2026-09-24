@@ -135,6 +135,37 @@ const Services = () => {
 
   const activeService = visaServices.find((s) => s.id === activeDocTab);
 
+  const faqs = [
+    {
+      q: 'Which visa types does A Visa Experts help with?',
+      a: 'We assist with tourist visas, work visas, transit visas and permanent residency (PR) applications for destinations including the USA, UK, Canada, Australia, Europe and New Zealand.',
+    },
+    {
+      q: 'Is the initial consultation with your experts free?',
+      a: 'Yes. You can book a free consultation with our Visa Immigration Experts through chat, a call or a video meeting to discuss your profile and the right visa option for you.',
+    },
+    {
+      q: 'What documents are required to apply for a visa?',
+      a: 'Requirements vary by country and visa type, but typically include a valid passport, photographs, proof of funds, travel itinerary and accommodation. We share a personalised document checklist after reviewing your case.',
+    },
+    {
+      q: 'How long does the visa process take?',
+      a: 'Processing times depend on the destination country and visa category. After assessing your profile, our experts give you a realistic timeline and keep you updated at every stage.',
+    },
+    {
+      q: 'Can you help if my visa was previously rejected or refused?',
+      a: 'Absolutely. We handle complex and refusal cases by analysing the refusal reasons, strengthening your documentation and preparing a stronger, compliant re-application.',
+    },
+    {
+      q: 'Can I apply for a visa for my family members?',
+      a: 'Yes. We assist with dependent, spouse and family visas and can manage applications for multiple family members together with a coordinated documentation plan.',
+    },
+    {
+      q: 'How do I start my visa application?',
+      a: 'Simply book an appointment or talk to a consultant from this page. Our team reviews your goals, recommends the right visa, and guides you through documentation and submission.',
+    },
+  ];
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Service',
@@ -150,6 +181,16 @@ const Services = () => {
     areaServed: ['IN', 'US', 'GB', 'CA', 'AU', 'EU'],
   };
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: { '@type': 'Answer', text: faq.a },
+    })),
+  };
+
   return (
     <LandingLayout>
       <SEO
@@ -158,7 +199,7 @@ const Services = () => {
         keywords="visa services, immigration services, tourist visa, work visa, transit visa, visa consultant, immigration expert"
         canonicalPath="/services"
         ogImage="/images/user/touristvisa_full 1.webp"
-        jsonLd={jsonLd}
+        jsonLd={[jsonLd, faqJsonLd]}
       />
       <div className="services-page">
         <section className="services-hero">
@@ -329,6 +370,29 @@ const Services = () => {
                   <h3>{feature.title}</h3>
                   <p>{feature.text}</p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="services-section services-light">
+          <div className="services-container">
+            <div className="services-section-header">
+              <span className="services-label">FAQ</span>
+              <h2>Frequently Asked Questions</h2>
+              <p>Answers to the questions our clients ask most about visa and immigration services.</p>
+            </div>
+            <div className="services-faq">
+              {faqs.map((faq, idx) => (
+                <details className="services-faq-item" key={idx}>
+                  <summary>
+                    <span className="services-faq-question">{faq.q}</span>
+                    <span className="services-faq-icon" aria-hidden="true" />
+                  </summary>
+                  <div className="services-faq-answer">
+                    <p>{faq.a}</p>
+                  </div>
+                </details>
               ))}
             </div>
           </div>
