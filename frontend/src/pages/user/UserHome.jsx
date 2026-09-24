@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../../components/user/LandingLayout';
 import AgentChatWidget from '../../components/user/AgentChatWidget';
-import HomeSeminarSections from '../../components/seminar/HomeSeminarSections';
 import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_IS_EMBED } from '../../config/seminarVideo';
 import SEO from '../../components/common/SEO';
 import toast from 'react-hot-toast';
@@ -315,9 +314,6 @@ const UserHome = () => {
           </div>
         </div>
       </section>
-
-      {/* Seminar hero + collage sections */}
-      <HomeSeminarSections />
 
       {/* Highlights strip */}
       <section className="outer-strip-sec">

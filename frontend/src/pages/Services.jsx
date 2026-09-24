@@ -138,7 +138,7 @@ const Services = () => {
   const faqs = [
     {
       q: 'Which visa types does A Visa Experts help with?',
-      a: 'We assist with tourist visas, work visas, transit visas and permanent residency (PR) applications for destinations including the USA, UK, Canada, Australia, Europe and New Zealand.',
+      a: 'We assist with tourist visas, transit visas and permanent residency (PR) applications for destinations including the USA, UK, Canada, Australia, Europe and New Zealand.',
     },
     {
       q: 'Is the initial consultation with your experts free?',

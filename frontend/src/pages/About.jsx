@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../components/user/LandingLayout';
+import HomeSeminarSections from '../components/seminar/HomeSeminarSections';
 import SEO from '../components/common/SEO';
 import toast from 'react-hot-toast';
 import api from '../services/api';
@@ -199,6 +200,9 @@ const About = () => {
             ))}
           </div>
         </section>
+
+        {/* Captured At The Seminar */}
+        <HomeSeminarSections />
 
         <section className="about-blog-section">
           <div className="about-blog-container">

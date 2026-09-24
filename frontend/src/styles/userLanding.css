@@ -96,12 +96,12 @@
 @media (max-width: 640px) {
   .landing-top-bar {
     height: 42px;
-    padding: 0 10px;
+    padding: 0 8px;
   }
 
   .landing-top-bar-inner {
     flex-wrap: nowrap;
-    gap: 6px 10px;
+    gap: 8px;
     justify-content: center;
     padding: 0;
     max-width: 100%;
@@ -121,9 +121,18 @@
   }
 }
 
-@media (max-width: 380px) {
-  .landing-top-bar-inner a:last-of-type {
+/* Keep BOTH phone numbers visible on small screens (drop only the "Call us on" label) */
+@media (max-width: 480px) {
+  .landing-top-bar-label {
     display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .landing-top-bar-phone {
+    font-size: 10px;
+    padding: 2px 6px;
+    gap: 4px;
   }
 }
 
