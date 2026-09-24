@@ -1,6 +1,6 @@
 <?php require 'header.php'; ?>
 <link  rel="stylesheet" href="css/style.css">
-<link rel="canonical" href="https://avisaexperts.com/index.php" />
+<link rel="canonical" href="https://avisaexperts.com/" />
 <title>Best Visa Immigration Company –-  A Visa Experts</title>
 <meta name="description" content="Trusted as the No.1 Visa Immigration Company, our Visa Immigration Experts help with tourist, work and transit visas globally.">
 <meta name="keywords" content="A Visa Experts, Best Visa Immigration Company, Visa Immigration Experts, No.1 Visa Immigration Company, best immigration consultants, best visa consultants, top immigration consultants,  PR consultants, tourist visa consultants, immigration agents, apply for PR visa, best immigration services, permanent residency application, PR visa, permanent resident Visa, visa consultant, immigration experts, visa agent, visa immigration consultants, immigration agent">

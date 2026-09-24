@@ -763,6 +763,35 @@
   }
 }
 
+/* Mobile / small devices: hide the hero video and use a clean white background */
+@media (max-width: 768px) {
+  .outer-hero-new {
+    background: #ffffff;
+  }
+
+  .outer-hero-new .background-img,
+  .outer-hero-new .hero-video-overlay {
+    display: none;
+  }
+
+  .new-hero-sec {
+    color: #0f172a;
+  }
+
+  .new-hero-left h1 {
+    color: #0f172a;
+    text-shadow: none;
+  }
+
+  .herobtn.outlined-herobtn {
+    background: #ffffff;
+    border: 2px solid #170b39;
+    color: #170b39;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 /* Highlights Strip */
 .outer-strip-sec {
   font-family: "Open Sans", Arial, sans-serif;
