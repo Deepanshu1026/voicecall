@@ -1,0 +1,1586 @@
+/* Fonts are loaded globally in index.html */
+
+:root {
+  --sm-black: #050505;
+  --sm-black-2: #0b0b0b;
+  --sm-black-3: #121212;
+  --sm-white: #ffffff;
+  --sm-silver: #c9c9c9;
+  --sm-platinum: #e8e8e8;
+  --sm-grey: #7a7a7a;
+  --sm-gold: #c9a24b;
+  --sm-border: rgba(255, 255, 255, 0.08);
+}
+
+.seminar-page {
+  background: var(--sm-black);
+  color: var(--sm-white);
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ MINIMAL SEMINAR NAV ============ */
+.seminar-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.seminar-nav-logo {
+  display: flex;
+  align-items: center;
+}
+
+.seminar-nav-logo img {
+  height: 42px;
+  width: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
+}
+
+.seminar-nav-back {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+
+.seminar-nav-back:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ============ HERO (VIDEO) ============ */
+.seminar-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 100px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #000;
+}
+
+.seminar-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -3;
+  transform: scale(1.06);
+  animation: heroZoom 28s ease-in-out infinite alternate;
+}
+
+.seminar-hero-embed {
+  border: none;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+@keyframes heroZoom {
+  0% {
+    transform: scale(1.02);
+  }
+
+  100% {
+    transform: scale(1.18);
+  }
+}
+
+.seminar-hero-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.62) 40%, rgba(0, 0, 0, 0.74) 100%);
+}
+
+.seminar-hero-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(ellipse 55% 45% at 50% 50%, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.05) 60%, rgba(0, 0, 0, 0.82) 100%);
+}
+
+.seminar-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.seminar-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.42em;
+  font-size: 0.72rem;
+  color: var(--sm-gold);
+  margin-bottom: 26px;
+  animation: fadeUp 0.8s ease both;
+}
+
+.seminar-eyebrow::before,
+.seminar-eyebrow::after {
+  content: '';
+  width: 40px;
+  height: 1px;
+  background: var(--sm-gold);
+  opacity: 0.8;
+}
+
+.seminar-hero h1 {
+  font-size: clamp(2.5rem, 6.5vw, 5.2rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin: 0 0 24px;
+  color: #fff;
+  filter: drop-shadow(0 3px 18px rgba(0, 0, 0, 0.55));
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+.seminar-hero h1 .light {
+  display: block;
+  background: linear-gradient(120deg, #ffffff 0%, #e2e2e2 45%, #9a9a9a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+.seminar-hero-sub {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1.05rem;
+  max-width: 620px;
+  margin: 0 auto 34px;
+  line-height: 1.7;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+
+.seminar-hero-cta {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeUp 0.8s 0.3s ease both;
+}
+
+.seminar-hero-meta {
+  display: flex;
+  justify-content: center;
+  gap: 36px;
+  flex-wrap: wrap;
+  margin-top: 48px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  animation: fadeUp 0.8s 0.4s ease both;
+}
+
+.seminar-hero-meta span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.seminar-hero-meta span::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--sm-gold);
+  box-shadow: 0 0 8px var(--sm-gold);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============ SCROLL CUE ============ */
+.seminar-scroll {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--sm-grey);
+  font-size: 0.68rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 3;
+}
+
+.seminar-scroll::after {
+  content: '';
+  width: 1px;
+  height: 44px;
+  background: linear-gradient(var(--sm-gold), transparent);
+  animation: scrollPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ============ MARQUEE ============ */
+.seminar-marquee {
+  overflow: hidden;
+  white-space: nowrap;
+  border-top: 1px solid var(--sm-border);
+  border-bottom: 1px solid var(--sm-border);
+  background: var(--sm-black-2);
+  padding: 18px 0;
+}
+
+.seminar-marquee-track {
+  display: inline-block;
+  animation: marquee 32s linear infinite;
+}
+
+.seminar-marquee span {
+  font-size: 1rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--sm-silver);
+  padding: 0 24px;
+}
+
+.seminar-marquee span b {
+  color: var(--sm-gold);
+  font-weight: 600;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ============ VIDEO FEATURE ============ */
+.seminar-video-section {
+  position: relative;
+  padding: 90px 24px;
+  background: var(--sm-black-2);
+}
+
+.seminar-container {
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.seminar-video-wrap {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--sm-border);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+  background: #000;
+}
+
+.seminar-video-wrap video,
+.seminar-video-wrap img {
+  width: 100%;
+  height: 100%;
+  max-height: 600px;
+  object-fit: cover;
+  display: block;
+}
+
+.seminar-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.65) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 34px;
+}
+
+.seminar-video-overlay h3 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* ============ STATS ============ */
+.seminar-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.seminar-stat {
+  position: relative;
+  padding: 42px 24px;
+  text-align: center;
+  background: linear-gradient(160deg, #141414 0%, #0d0d0d 100%);
+  border: 1px solid var(--sm-border);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform 0.35s ease, border-color 0.35s ease;
+}
+
+.seminar-stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 2px;
+  background: var(--sm-gold);
+  opacity: 0.6;
+}
+
+.seminar-stat:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 162, 75, 0.4);
+}
+
+.seminar-stat-num {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, #d9d9d9 50%, #8f8f8f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+}
+
+.seminar-stat-label {
+  color: var(--sm-grey);
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-top: 12px;
+}
+
+/* ============ SECTION HEAD ============ */
+.seminar-section-head {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 68px;
+}
+
+.seminar-section-head .kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--sm-gold);
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.seminar-section-head .kicker::before,
+.seminar-section-head .kicker::after {
+  content: '';
+  width: 38px;
+  height: 1px;
+  background: var(--sm-gold);
+  opacity: 0.6;
+}
+
+.seminar-section-head h2 {
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  font-weight: 700;
+  margin: 18px auto 14px;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  color: #ffffff;
+}
+
+.seminar-section-head p {
+  color: #9ca3af;
+  line-height: 1.75;
+  font-size: 1rem;
+}
+
+/* ============ SPEAKERS ============ */
+.seminar-speakers {
+  padding: 110px 24px;
+  background: var(--sm-black);
+}
+
+.seminar-speakers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 480px));
+  gap: 28px;
+  max-width: 940px;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.seminar-speaker {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--sm-border);
+  background: #0d0d0d;
+  cursor: pointer;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s, box-shadow 0.4s;
+}
+
+.seminar-speaker:hover {
+  transform: translateY(-10px);
+  border-color: rgba(201, 162, 75, 0.5);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7);
+}
+
+.seminar-speaker-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.seminar-speaker-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.06) brightness(0.9);
+  transition: filter 0.6s ease, transform 0.6s ease;
+}
+
+.seminar-speaker:hover .seminar-speaker-img {
+  filter: grayscale(0%) contrast(1.02) brightness(1);
+  transform: scale(1.05);
+}
+
+.seminar-speaker-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.75) 100%);
+  pointer-events: none;
+}
+
+.seminar-speaker-view {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  z-index: 2;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  border-radius: 30px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+.seminar-speaker:hover .seminar-speaker-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.seminar-speaker-body {
+  padding: 22px 24px 26px;
+}
+
+.seminar-speaker-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.seminar-speaker-index {
+  font-size: 1.8rem;
+  font-weight: 200;
+  color: rgba(255, 255, 255, 0.14);
+  letter-spacing: -0.02em;
+  min-width: 40px;
+}
+
+.seminar-speaker-body h3 {
+  font-size: 1.3rem;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.seminar-speaker-body .role {
+  color: var(--sm-gold);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.seminar-speaker-body p {
+  color: var(--sm-grey);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 14px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--sm-border);
+}
+
+/* ============ KEYNOTE / THE VISIONARY ============ */
+.seminar-visionary {
+  padding: 110px 24px;
+  background: var(--sm-black);
+}
+
+.seminar-visionary-inner {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 64px;
+  align-items: center;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.seminar-visionary-media {
+  position: relative;
+}
+
+.seminar-visionary-frame {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  max-width: 420px;
+  border: 1px solid var(--sm-border);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.65);
+}
+
+.seminar-visionary-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  transform: translate(16px, 16px);
+  z-index: -1;
+}
+
+.seminar-visionary-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.06);
+  transition: filter 0.6s ease;
+}
+
+.seminar-visionary-media:hover .seminar-visionary-frame img {
+  filter: grayscale(0%);
+}
+
+.seminar-visionary-badge {
+  position: absolute;
+  bottom: 24px;
+  left: -20px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #c9a24b, #8a6d2f);
+  color: #000;
+  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(201, 162, 75, 0.35);
+}
+
+.seminar-visionary-content .kicker {
+  color: var(--sm-gold);
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.seminar-visionary-content h2 {
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+  line-height: 1.05;
+}
+
+.seminar-visionary-role {
+  color: var(--sm-grey);
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  margin-bottom: 24px;
+}
+
+.seminar-visionary-quote {
+  font-size: 1.35rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--sm-platinum);
+  border-left: 2px solid var(--sm-gold);
+  padding-left: 20px;
+  margin: 0 0 22px;
+  font-style: italic;
+}
+
+.seminar-visionary-desc {
+  color: var(--sm-grey);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  margin: 0 0 30px;
+}
+
+.seminar-visionary-stats {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 30px;
+  padding: 20px 0;
+  border-top: 1px solid var(--sm-border);
+  border-bottom: 1px solid var(--sm-border);
+}
+
+.seminar-visionary-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.seminar-visionary-stat strong {
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, #9a9a9a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.seminar-visionary-stat span {
+  color: var(--sm-grey);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ============ COLLAGE (full-bleed, mouse-reactive) ============ */
+.seminar-collage {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 90px 0 0;
+  background: radial-gradient(ellipse at 50% 50%, #101010 0%, #050505 70%);
+  overflow: hidden;
+}
+
+.seminar-collage-inner {
+  width: 100%;
+  margin: 0;
+}
+
+.seminar-collage .seminar-section-head {
+  padding: 0 24px 60px;
+  margin-bottom: 0;
+}
+
+.seminar-collage-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 220px;
+  gap: 0;
+  perspective: 1200px;
+  width: 100%;
+}
+
+.seminar-collage-grid .g-item {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  cursor: pointer;
+  will-change: transform;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: none;
+}
+
+.seminar-collage-grid .g-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) brightness(0.85);
+  transition: transform 0.7s ease, filter 0.5s ease;
+}
+
+.seminar-collage-grid .g-item:hover img {
+  scale: 1.08;
+  filter: grayscale(0%) brightness(1);
+}
+
+.seminar-collage-grid .g-item.wide {
+  grid-column: span 2;
+}
+
+.seminar-collage-grid .g-item.tall {
+  grid-row: span 2;
+}
+
+/* ============ COLLAGE FEATURE CARDS (EMPTY SPACES FILL) ============ */
+.seminar-collage-grid .g-item.collage-feature-card {
+  background: linear-gradient(145deg, #121217 0%, #09090b 60%, #17130b 100%);
+  border: 1px solid rgba(201, 162, 75, 0.28);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 22px 24px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  text-align: left;
+  user-select: none;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+}
+
+.seminar-collage-grid .g-item.collage-feature-card:hover {
+  border-color: rgba(201, 162, 75, 0.7);
+  background: linear-gradient(145deg, #171720 0%, #0c0c10 60%, #20190d 100%);
+  box-shadow: inset 0 0 32px rgba(201, 162, 75, 0.08), 0 16px 36px rgba(0, 0, 0, 0.75);
+  z-index: 5;
+}
+
+.collage-card-glow {
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(201, 162, 75, 0.24) 0%, transparent 70%);
+  pointer-events: none;
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+.seminar-collage-grid .g-item.collage-feature-card:hover .collage-card-glow {
+  transform: scale(1.4);
+  opacity: 1;
+}
+
+.collage-card-corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  pointer-events: none;
+  border-color: rgba(201, 162, 75, 0.45);
+}
+
+.collage-card-corner.tl {
+  top: 10px;
+  left: 10px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.collage-card-corner.br {
+  bottom: 10px;
+  right: 10px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+.collage-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sm-gold);
+  margin-bottom: 8px;
+}
+
+.collage-card-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--sm-gold);
+  box-shadow: 0 0 8px var(--sm-gold);
+  animation: dotPulse 2s infinite ease-in-out;
+}
+
+@keyframes dotPulse {
+
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+.collage-card-title {
+  font-size: clamp(1.1rem, 1.35vw, 1.3rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  line-height: 1.22;
+  margin: 0 0 6px;
+}
+
+.collage-card-desc {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.62);
+  margin: 0;
+  max-width: 96%;
+}
+
+.collage-card-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.collage-card-action {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sm-gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.seminar-collage-grid .g-item.collage-feature-card:hover .collage-card-action {
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+/* Fancy Arrow SVG Styling */
+.collage-fancy-arrow {
+  overflow: visible;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  filter: drop-shadow(0 0 8px rgba(201, 162, 75, 0.35));
+}
+
+.collage-fancy-arrow.arrow-curve-loop {
+  width: 90px;
+  height: 38px;
+}
+
+.collage-fancy-arrow.arrow-curve-down {
+  width: 62px;
+  height: 48px;
+}
+
+.seminar-collage-grid .g-item.card-1:hover .collage-fancy-arrow.arrow-curve-loop {
+  transform: translateX(8px) rotate(-3deg) scale(1.08);
+}
+
+.seminar-collage-grid .g-item.card-2:hover .collage-fancy-arrow.arrow-curve-down {
+  transform: translateY(6px) scale(1.08);
+}
+
+/* ============ HIGHLIGHTS (AGENDA) ============ */
+.seminar-highlights {
+  padding: 110px 24px;
+  background: var(--sm-black);
+}
+
+.seminar-timeline {
+  max-width: 760px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.seminar-timeline::before {
+  content: '';
+  position: absolute;
+  left: 23px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: linear-gradient(180deg, var(--sm-gold), var(--sm-border), var(--sm-border));
+}
+
+.seminar-tl-item {
+  position: relative;
+  padding: 0 0 30px 70px;
+}
+
+.seminar-tl-item:last-child {
+  padding-bottom: 0;
+}
+
+.seminar-tl-dot {
+  position: absolute;
+  left: 14px;
+  top: 4px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 2px solid var(--sm-gold);
+  background: #050505;
+  box-shadow: 0 0 12px rgba(201, 162, 75, 0.55);
+}
+
+.seminar-tl-item time {
+  color: var(--sm-gold);
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 7px;
+  font-weight: 600;
+}
+
+.seminar-tl-item h4 {
+  font-size: 1.22rem;
+  margin: 0 0 7px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.seminar-tl-item p {
+  color: var(--sm-grey);
+  font-size: 0.93rem;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 560px;
+}
+
+/* ============ TESTIMONIALS ============ */
+.seminar-testimonials {
+  padding: 110px 24px;
+  background: var(--sm-black-2);
+}
+
+.seminar-quotes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.seminar-quote {
+  position: relative;
+  background: linear-gradient(165deg, #141414 0%, #0c0c0c 100%);
+  border: 1px solid var(--sm-border);
+  border-radius: 18px;
+  padding: 30px 28px;
+  transition: transform 0.35s ease, border-color 0.35s ease;
+}
+
+.seminar-quote:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 162, 75, 0.35);
+}
+
+.seminar-quote .mark {
+  position: absolute;
+  top: 6px;
+  right: 18px;
+  color: white;
+  font-size: 5rem;
+  line-height: 1;
+  font-family: Georgia, serif;
+  pointer-events: none;
+  background-color: transparent !important;
+}
+
+.seminar-quote p {
+  color: var(--sm-platinum);
+  line-height: 1.75;
+  font-size: 0.94rem;
+  margin: 10px 0 22px;
+  position: relative;
+}
+
+.seminar-quote .who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--sm-grey);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  padding-top: 16px;
+  border-top: 1px solid var(--sm-border);
+}
+
+.seminar-quote .who::before {
+  content: '';
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c9a24b, #6a5526);
+  flex-shrink: 0;
+}
+
+/* ============ CTA ============ */
+.seminar-cta {
+  padding: 130px 24px;
+  text-align: center;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(201, 162, 75, 0.22), transparent 60%),
+    var(--sm-black);
+  overflow: hidden;
+}
+
+.seminar-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: var(--sm-gold);
+  opacity: 0.6;
+}
+
+.seminar-cta h2 {
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 800;
+  margin: 0 0 18px;
+  letter-spacing: -0.02em;
+}
+
+.seminar-cta p {
+  color: var(--sm-grey);
+  max-width: 540px;
+  margin: 0 auto 38px;
+  line-height: 1.75;
+  font-size: 1.02rem;
+}
+
+.seminar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 17px 36px;
+  background: #fff;
+  color: #000;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: 44px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.seminar-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 46px rgba(255, 255, 255, 0.16);
+}
+
+.seminar-btn.outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.seminar-btn.outline:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+/* ============ SPEAKER DETAIL PAGE ============ */
+.speaker-hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 130px 24px 90px;
+  background:
+    radial-gradient(ellipse at 85% 20%, rgba(201, 162, 75, 0.12), transparent 45%),
+    var(--sm-black);
+}
+
+.speaker-hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.speaker-photo {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  border: 1px solid var(--sm-border);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+}
+
+.speaker-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.05);
+  transition: filter 0.6s ease;
+}
+
+.speaker-photo:hover img {
+  filter: grayscale(0%);
+}
+
+.speaker-photo-badge {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  padding: 9px 18px;
+  background: rgba(201, 162, 75, 0.9);
+  color: #000;
+  font-weight: 600;
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: 30px;
+}
+
+.speaker-intro h1 {
+  font-size: clamp(2.6rem, 6vw, 4.2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 20px 0 10px;
+  line-height: 1.05;
+}
+
+.speaker-role {
+  color: var(--sm-gold);
+  font-size: 0.88rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.speaker-description {
+  color: var(--sm-grey);
+  line-height: 1.75;
+  font-size: 0.98rem;
+  margin: 0 0 16px;
+}
+
+.speaker-description strong {
+  color: var(--sm-white);
+  font-weight: 600;
+}
+
+.speaker-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.speaker-stat {
+  text-align: center;
+  padding: 20px 10px;
+  border: 1px solid var(--sm-border);
+  border-radius: 14px;
+  background: #0d0d0d;
+}
+
+.speaker-stat-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff, #9a9a9a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.speaker-stat-label {
+  color: var(--sm-grey);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.speaker-expertise {
+  padding: 100px 24px;
+  background: var(--sm-black-2);
+}
+
+.speaker-expertise-list {
+  max-width: 760px;
+  margin: 0 auto;
+  display: grid;
+  gap: 14px;
+}
+
+.speaker-expertise-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+  background: #0d0d0d;
+  border: 1px solid var(--sm-border);
+  border-radius: 14px;
+  color: var(--sm-platinum);
+  font-size: 0.98rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.speaker-expertise-item:hover {
+  border-color: rgba(201, 162, 75, 0.4);
+  transform: translateX(6px);
+}
+
+.speaker-expertise-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sm-gold);
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(201, 162, 75, 0.5);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 960px) {
+  .seminar-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .seminar-visionary-inner {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .seminar-visionary-frame {
+    max-width: 100%;
+  }
+
+  .seminar-speakers-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+
+  .seminar-collage-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 180px;
+  }
+
+  .seminar-collage-grid .g-item.wide {
+    grid-column: span 2;
+  }
+
+  .seminar-quotes {
+    grid-template-columns: 1fr;
+  }
+
+  .speaker-hero-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .speaker-photo {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .speaker-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .seminar-nav {
+    padding: 12px 18px;
+  }
+
+  .seminar-nav-logo img {
+    height: 34px;
+  }
+
+  .seminar-nav-back {
+    font-size: 0.78rem;
+    padding: 7px 13px;
+  }
+
+  .seminar-hero {
+    padding: 96px 20px 80px;
+  }
+
+  .seminar-eyebrow {
+    letter-spacing: 0.28em;
+    font-size: 0.62rem;
+    gap: 10px;
+  }
+
+  .seminar-eyebrow::before,
+  .seminar-eyebrow::after {
+    width: 22px;
+  }
+
+  .seminar-hero h1 {
+    font-size: clamp(2.1rem, 9vw, 3rem);
+  }
+
+  .seminar-hero-sub {
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  .seminar-hero-cta {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .seminar-hero-cta .seminar-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .seminar-hero-meta {
+    gap: 12px;
+    font-size: 0.72rem;
+    justify-content: center;
+  }
+
+  .seminar-marquee span {
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    padding: 0 16px;
+  }
+
+  .seminar-speakers,
+  .seminar-testimonials,
+  .seminar-highlights,
+  .seminar-expertise {
+    padding: 70px 18px;
+  }
+
+  .seminar-section-head {
+    margin-bottom: 44px;
+  }
+
+  .seminar-section-head .kicker {
+    font-size: 0.62rem;
+    letter-spacing: 0.24em;
+    gap: 10px;
+  }
+
+  .seminar-section-head h2 {
+    font-size: 1.7rem;
+    margin: 14px 0 10px;
+  }
+
+  .seminar-section-head p {
+    font-size: 0.9rem;
+  }
+
+  .seminar-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .seminar-stat {
+    padding: 28px 12px;
+    border-radius: 14px;
+  }
+
+  .seminar-stat-num {
+    font-size: 1.8rem;
+  }
+
+  .seminar-stat-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+  }
+
+  .seminar-visionary {
+    padding: 80px 18px;
+  }
+
+  .seminar-visionary-inner {
+    gap: 36px;
+  }
+
+  .seminar-visionary-content h2 {
+    font-size: 2.1rem;
+  }
+
+  .seminar-visionary-quote {
+    font-size: 1.15rem;
+    padding-left: 16px;
+  }
+
+  .seminar-visionary-stats {
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  .seminar-visionary-badge {
+    left: 0;
+  }
+
+  .seminar-speaker-body {
+    padding: 18px;
+  }
+
+  .seminar-speaker-body h3 {
+    font-size: 1.15rem;
+  }
+
+  .seminar-collage {
+    padding: 70px 0 0;
+  }
+
+  .seminar-collage .seminar-section-head {
+    padding: 0 18px 40px;
+  }
+
+  .seminar-collage-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 140px;
+  }
+
+  .seminar-collage-grid .g-item.wide,
+  .seminar-collage-grid .g-item.tall {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .seminar-timeline::before {
+    left: 14px;
+  }
+
+  .seminar-tl-item {
+    padding: 0 0 26px 42px;
+  }
+
+  .seminar-tl-dot {
+    left: 6px;
+    width: 16px;
+    height: 16px;
+  }
+
+  .seminar-tl-item h4 {
+    font-size: 1.05rem;
+  }
+
+  .seminar-tl-item p {
+    font-size: 0.86rem;
+  }
+
+  .seminar-quote {
+    padding: 24px 20px;
+  }
+
+  .seminar-cta {
+    padding: 90px 20px;
+  }
+
+  .seminar-cta h2 {
+    font-size: 1.9rem;
+  }
+
+  .seminar-btn {
+    padding: 15px 26px;
+    font-size: 0.92rem;
+  }
+
+  .speaker-hero {
+    padding: 100px 20px 70px;
+  }
+
+  .speaker-intro h1 {
+    font-size: 2.3rem;
+  }
+
+  .speaker-description {
+    font-size: 0.92rem;
+  }
+
+  .speaker-stats {
+    gap: 10px;
+  }
+
+  .speaker-stat {
+    padding: 16px 8px;
+  }
+
+  .speaker-stat-num {
+    font-size: 1.3rem;
+  }
+
+  .speaker-expertise-item {
+    padding: 15px 16px;
+    font-size: 0.9rem;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .seminar-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .seminar-stat-num {
+    font-size: 1.5rem;
+  }
+
+  .seminar-collage-grid {
+    grid-auto-rows: 120px;
+  }
+
+  .seminar-hero-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

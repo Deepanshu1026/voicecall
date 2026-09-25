@@ -1,0 +1,219 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { userAPI, API_BASE_URL } from '../lib/api';
+import '../styles/userLanding.css';
+
+const fallbackAgents = [
+  { _id: 'ekta', id: 'ekta', name: 'Ekta', avatar: '/images/user/ekta.webp', status: 'Active' },
+  { _id: 'kajal', id: 'kajal', name: 'Kajal', avatar: '/images/user/Kajal.webp', status: 'Active' },
+  { _id: 'saniya', id: 'saniya', name: 'Saniya', avatar: '/images/user/saniya.webp', status: 'Active' },
+];
+
+const AgentChatWidget = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [agents, setAgents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(true);
+  const [closing, setClosing] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+      setIsAuthenticated(
+        !!(localStorage.getItem('accessToken') || localStorage.getItem('employeeAccessToken'))
+      );
+    } catch (_) {
+      /* ignore */
+    }
+  }, []);
+
+  // Auto-close popup with slide-down animation after 5 seconds
+  useEffect(() => {
+    if (!open || closing) return undefined;
+    const timer = setTimeout(() => {
+      setClosing(true);
+      setTimeout(() => {
+        setOpen(false);
+        setClosing(false);
+      }, 400);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [open, closing]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchAgents = async () => {
+      try {
+        const res = await userAPI.getConsultants();
+        const data = res.data?.data || [];
+        if (!cancelled) {
+          if (data.length > 0) {
+            setAgents(data.slice(0, 5));
+          } else {
+            setAgents(fallbackAgents);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load agents:', err);
+        if (!cancelled) setAgents(fallbackAgents);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    fetchAgents();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const guestLoginWeb = async () => {
+    const res = await fetch(`${API_BASE_URL}/app/guest`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ loginFrom: 'web' }),
+    });
+    const data = await res.json();
+    if (data && data.token) {
+      localStorage.setItem('accessToken', data.token);
+      localStorage.setItem('refreshToken', data.refreshToken || '');
+      localStorage.removeItem('employeeAccessToken');
+      localStorage.removeItem('employeeRefreshToken');
+      setIsAuthenticated(true);
+    }
+  };
+
+  const handleChat = async (agent) => {
+    const targetId = agent._id || agent.id;
+    if (!isAuthenticated) {
+      setGuestLoading(true);
+      try {
+        await guestLoginWeb();
+      } catch (error) {
+        console.error('Guest login failed:', error);
+      } finally {
+        setGuestLoading(false);
+      }
+    }
+    window.location.assign(`/consultants?userId=${targetId}`);
+  };
+
+  const handleGuestStart = async () => {
+    if (isAuthenticated) {
+      window.location.assign('/consultants');
+      return;
+    }
+    setGuestLoading(true);
+    try {
+      await guestLoginWeb();
+    } catch (error) {
+      console.error('Guest login failed:', error);
+    } finally {
+      setGuestLoading(false);
+    }
+    window.location.assign('/consultants');
+  };
+
+  const handleClose = () => {
+    setClosing(true);
+    setTimeout(() => {
+      setOpen(false);
+      setClosing(false);
+    }, 400);
+  };
+
+  if (!open) {
+    return (
+      <button
+        className="agent-widget-fab"
+        onClick={() => setOpen(true)}
+        aria-label="Open agent chat"
+      >
+        <span className="agent-widget-fab-emoji">💬</span>
+        <span>अनुभवी एजेंटों से संपर्क करें</span>
+      </button>
+    );
+  }
+
+  return (
+    <div className={`agent-chat-widget ${closing ? 'closing' : ''}`}>
+      <div className="agent-chat-loading-overlay" style={{ display: guestLoading ? 'flex' : 'none' }}>
+        <div className="agent-chat-spinner"></div>
+        <div className="agent-chat-loading-text">अतिथि सत्र बना रहे हैं... ⏳</div>
+      </div>
+
+      <button className="agent-chat-close" onClick={handleClose} aria-label="Close agent chat">
+        &times;
+      </button>
+
+      <div className="agent-chat-header">
+        <span className="agent-chat-emoji">💬</span>
+        अनुभवी एजेंटों से संपर्क करें
+      </div>
+
+      <div className="agent-chat-list">
+        {loading ? (
+          <p className="agent-chat-empty">एजेंट लोड हो रहे हैं...</p>
+        ) : agents.length === 0 ? (
+          <p className="agent-chat-empty">अभी कोई एजेंट उपलब्ध नहीं हैं।</p>
+        ) : (
+          agents.map((agent) => {
+            const id = agent._id || agent.id;
+            const name = agent.name || agent.displayName || agent.username || 'Agent';
+            const avatar = agent.avatar?.url || agent.avatar || '/images/user/avatar.webp';
+            const isOnline = true;
+            return (
+              <div className="agent-chat-agent" key={id}>
+                <div className="agent-chat-agent-info">
+                  <div className={`agent-chat-agent-avatar ${isOnline ? 'online' : ''}`}>
+                    <img
+                      src={avatar}
+                      alt={name}
+                      onError={(e) => {
+                        e.target.src = '/images/user/avatar.webp';
+                      }}
+                    />
+                  </div>
+                  <div className="agent-chat-agent-details">
+                    <div className="agent-chat-agent-name">{name}</div>
+                    <div className="agent-chat-agent-status">{isOnline ? 'ऑनलाइन' : 'ऑफलाइन'}</div>
+                  </div>
+                </div>
+                <button
+                  className="agent-chat-btn"
+                  onClick={() => handleChat(agent)}
+                  disabled={guestLoading || !agent?._id}
+                  title={isOnline ? 'चैट शुरू करें' : 'एजेंट ऑफलाइन है - केवल बातचीत देखें'}
+                >
+                  चैट
+                </button>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <div className="agent-chat-footer">
+        {isAuthenticated ? (
+          <div className="agent-chat-logged-in">
+            <div className="agent-chat-icon">✅</div>
+            <p>
+              <strong>आप लॉग इन हैं!</strong>
+            </p>
+            <p>किसी भी एजेंट को चुनें और चैट शुरू करें</p>
+          </div>
+        ) : (
+          <button
+            className="agent-chat-login-btn"
+            onClick={handleGuestStart}
+            disabled={guestLoading}
+          >
+            अतिथि के रूप में चैट शुरू करें ✨
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AgentChatWidget;
