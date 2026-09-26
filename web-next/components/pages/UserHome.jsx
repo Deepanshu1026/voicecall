@@ -236,6 +236,26 @@ const UserHome = () => {
     contentUrl: 'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_74_wU1l2Rrwv.JPG',
     description: 'Kaveesh Kapoor at his own Seminar.',
     name: 'Kaveesh Kapoor',
+  }, {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: 'A Visa Experts Seminar - Kaveesh Kapoor',
+    description:
+      'A Visa Experts seminar by Kaveesh Kapoor sharing expert guidance on tourist, work, transit and PR visas for the USA, UK, Canada, Australia and Europe.',
+    thumbnailUrl: [
+      'https://res.cloudinary.com/fniv4k20/image/upload/v1788775413/seminaar_lipjbc.jpg',
+    ],
+    uploadDate: '2026-01-15T10:00:00+05:30',
+    contentUrl: SEMINAR_VIDEO_URL,
+    embedUrl: 'https://avisaexperts.com/',
+    publisher: {
+      '@type': 'Organization',
+      name: 'A Visa Experts',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://avisaexperts.com/images/user/tmlogo 1.webp',
+      },
+    },
   }];
 
   return (
