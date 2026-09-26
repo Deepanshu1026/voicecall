@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
-const GA_ID = 'G-TDW4SCLJR';
+const GA_ID = 'G-TDW4SCLJRV';
 
 export default function GoogleAnalytics() {
   const pathname = usePathname();

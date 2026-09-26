@@ -144,14 +144,14 @@ export default function RootLayout({ children }) {
         {children}
         <Toaster position="top-right" />
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-TDW4SCLJR"
+          src="https://www.googletagmanager.com/gtag/js?id=G-TDW4SCLJRV"
           strategy="afterInteractive"
         />
         <Script id="ga-init" strategy="afterInteractive">
           {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-TDW4SCLJR', { send_page_view: false });`}
+gtag('config', 'G-TDW4SCLJRV', { send_page_view: false });`}
         </Script>
         <GoogleAnalytics />
         <script

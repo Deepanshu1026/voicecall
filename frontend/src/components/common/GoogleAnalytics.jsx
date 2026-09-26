@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
-const GA_ID = 'G-TDW4SCLJR';
+const GA_ID = 'G-TDW4SCLJRV';
 
 const GoogleAnalytics = () => {
   const location = useLocation();
