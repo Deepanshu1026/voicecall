@@ -10,16 +10,24 @@ export default function GoogleAnalytics() {
   const lastPath = useRef(null);
 
   useEffect(() => {
-    if (typeof window.gtag !== 'function') return;
     const path = pathname + (window.location.search || '');
     if (lastPath.current === path) return;
     lastPath.current = path;
-    window.gtag('event', 'page_view', {
-      page_path: path,
-      page_location: window.location.href,
-      page_title: document.title,
-      send_to: GA_ID,
-    });
+
+    let tries = 0;
+    const send = () => {
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'page_view', {
+          page_path: path,
+          page_location: window.location.href,
+          page_title: document.title,
+          send_to: GA_ID,
+        });
+        return;
+      }
+      if (tries++ < 20) setTimeout(send, 250);
+    };
+    send();
   }, [pathname]);
 
   return null;
