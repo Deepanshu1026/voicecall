@@ -1,5 +1,7 @@
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
+import Script from 'next/script';
+import GoogleAnalytics from '../components/GoogleAnalytics';
 import '../styles/userLanding.css';
 import '../styles/services.css';
 import '../styles/about.css';
@@ -141,6 +143,17 @@ export default function RootLayout({ children }) {
       <body>
         {children}
         <Toaster position="top-right" />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-TDW4SCLJR"
+          strategy="afterInteractive"
+        />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-TDW4SCLJR', { send_page_view: false });`}
+        </Script>
+        <GoogleAnalytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
