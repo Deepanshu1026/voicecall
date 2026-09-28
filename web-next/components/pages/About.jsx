@@ -113,6 +113,29 @@ const About = () => {
                 Your trusted partner in navigating the complexities of visa applications, from work visas to tourist
                 and transit permits. We make the process seamless and stress-free.
               </p>
+              <p>
+                Welcome to <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy.
+                Founded by <strong>Kaveesh Kapoor</strong>, we help individuals and families secure tourist, work, and
+                permanent residency visas for the <strong>USA, UK, Canada, Australia, Europe</strong> and beyond — with
+                clear guidance, honest advice, and an exceptional track record of success.
+              </p>
+              <p>
+                Backed by seasoned legal advisors, a dedicated end-to-end visa process, and a 2 Lakh+ strong community
+                of successful applicants, we make every visa journey smooth, transparent and stress-free.
+              </p>
+              <blockquote className="about-founder-quote">
+                Our mission is simple: to turn your global aspirations into reality with complete transparency,
+                unwavering dedication, and personalized guidance every step of the way.
+                <span className="about-founder-sign">— Kaveesh Kapoor, Chairman &amp; Founder</span>
+              </blockquote>
+              <div className="about-intro-links">
+                <a href="/services">Visa Services</a>
+                <a href="/tourist-visa">Tourist Visa</a>
+                <a href="/work-visa">Work Visa</a>
+                <a href="/transit-visa">Transit Visa</a>
+                <a href="/consultants">Talk to an Advisor</a>
+                <a href="/blogs">Visa Blogs</a>
+              </div>
               <div className="about-features">
                 <div className="about-feature-item">
                   {checkSvg}

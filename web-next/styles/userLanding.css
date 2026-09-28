@@ -1198,6 +1198,34 @@
   font-weight: 600;
 }
 
+/* Internal links under the short founder bio */
+.home-about-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 0 0 22px;
+}
+
+.home-about-links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(201, 162, 75, 0.4);
+  background: rgba(201, 162, 75, 0.08);
+  color: #e7c777;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.home-about-links a:hover {
+  background: rgba(201, 162, 75, 0.2);
+  border-color: rgba(201, 162, 75, 0.7);
+  color: #ffffff;
+}
+
 /* Features Grid */
 .about-features-grid {
   display: grid;

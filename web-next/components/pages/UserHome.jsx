@@ -500,10 +500,23 @@ const UserHome = () => {
                 </p>
               </div>
 
-              {/* Description Body */}
+              {/* Description Body (short) */}
               <p className="founder-bio">
-                Welcome to <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy. Founded by <strong>Kaveesh Kapoor</strong>, we help individuals and families secure tourist, work, and permanent residency visas for the <strong>USA, UK, Canada, Australia, Europe</strong> and beyond — with clear guidance, honest advice, and an exceptional track record of success.
+                <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy founded by
+                {' '}<strong>Kaveesh Kapoor</strong>. We help you secure tourist, work &amp; PR visas for the USA, UK,
+                Canada, Australia &amp; Europe.
               </p>
+
+              {/* Internal links */}
+              <nav className="home-about-links" aria-label="Explore A Visa Experts">
+                <a href="/about">About Us</a>
+                <a href="/services">Visa Services</a>
+                <a href="/tourist-visa">Tourist Visa</a>
+                <a href="/work-visa">Work Visa</a>
+                <a href="/transit-visa">Transit Visa</a>
+                <a href="/consultants">Talk to an Advisor</a>
+                <a href="/blogs">Visa Blogs</a>
+              </nav>
 
               {/* 4 Feature Highlights Grid */}
               <div className="about-features-grid">
