@@ -64,12 +64,6 @@ const UserHome = () => {
       href: '/tourist-visa',
     },
     {
-      title: 'Work Visa',
-      text: 'Start your work visa process today with our advisers!',
-      img: '/images/user/Workvisa_circle 1.webp',
-      href: '/work-visa',
-    },
-    {
       title: 'Via / Transit Visa',
       text: 'Transit visa inquiries? We\'re here to help!',
       img: '/images/user/transitvisa_cirlce 1.webp',
@@ -92,14 +86,14 @@ const UserHome = () => {
     },
     {
       img: '/images/user/sher 1.webp',
-      title: 'Europe Work Visa Approved',
-      text: 'Work Visa Approved! I am so happy! A big thank you to AvisaExpert Team and especially to Mr. Kaveesh ji for always being there to help and support us. Truly a great professional!',
+      title: 'Europe Visa Approved',
+      text: 'Europe Visa Approved! I am so happy! A big thank you to AvisaExpert Team and especially to Mr. Kaveesh ji for always being there to help and support us. Truly a great professional!',
       stars: 4,
     },
     {
       img: '/images/user/neta 1.webp',
-      title: 'Uk Work Visa Approved',
-      text: 'Uk Work Visa Approved! I am so happy! A big thank you to AvisaExpert Team and especially to Mr. Kaveesh ji for always being there to help and support us. Truly a great professional!',
+      title: 'UK Visa Approved',
+      text: 'UK Visa Approved! I am so happy! A big thank you to AvisaExpert Team and especially to Mr. Kaveesh ji for always being there to help and support us. Truly a great professional!',
       stars: 4,
     },
     {
@@ -244,7 +238,7 @@ const UserHome = () => {
       <SEO
         title="A Visa Experts | No.1 Visa Immigration Company in India"
         description="A Visa Experts is India's trusted No.1 Visa Immigration Company. We help with tourist, work, transit and PR visas for USA, UK, Canada, Australia, Europe & NZ."
-        keywords="visa consultants, immigration experts, tourist visa, work visa, Canada visa, UK visa, USA visa, Australia visa, Kaveesh Kapoor"
+        keywords="visa consultants, immigration experts, tourist visa, Canada visa, UK visa, USA visa, Australia visa, Kaveesh Kapoor"
         canonicalPath="/"
         ogImage="/images/user/slider4 1.webp"
         jsonLd={jsonLd}

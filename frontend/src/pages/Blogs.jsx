@@ -18,7 +18,6 @@ const slugify = (text) =>
 
 const deriveCategory = (title) => {
   const t = title.toLowerCase();
-  if (t.includes('work') || t.includes('seasonal') || t.includes('lmia') || t.includes('permit')) return 'Work Visa';
   if (t.includes('tourist') || t.includes('travel') || t.includes('visitor')) return 'Tourist Visa';
   if (t.includes('kaveesh kapoor')) return 'Leadership';
   if (t.includes('app') || t.includes('consultation')) return 'Company News';
@@ -146,7 +145,7 @@ const Blogs = () => {
           />
           <meta
             name="keywords"
-            content="visa blog, immigration tips, tourist visa, work visa, Canada visa, UK visa, Australia visa, Kaveesh Kapoor, A Visa Experts"
+            content="visa blog, immigration tips, tourist visa, Canada visa, UK visa, Australia visa, Kaveesh Kapoor, A Visa Experts"
           />
           <link rel="canonical" href="https://avisaexperts.com/blogs" />
           <meta property="og:type" content="website" />

@@ -29,7 +29,6 @@ import UserHome from './pages/user/UserHome';
 import About from './pages/About';
 import Services from './pages/Services';
 import TouristVisa from './pages/TouristVisa';
-import WorkVisa from './pages/WorkVisa';
 import TransitVisa from './pages/TransitVisa';
 import Blogs from './pages/Blogs';
 import BlogDetail from './pages/BlogDetail';
@@ -97,7 +96,6 @@ function App() {
       <Route path="/about" element={<About />} />
       <Route path="/services" element={<Services />} />
       <Route path="/tourist-visa" element={<TouristVisa />} />
-      <Route path="/work-visa" element={<WorkVisa />} />
       <Route path="/transit-visa" element={<TransitVisa />} />
       <Route path="/blogs" element={<Blogs />} />
       <Route path="/blog/:id/:slug?" element={<BlogDetail />} />

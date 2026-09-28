@@ -34,12 +34,12 @@ const Services = () => {
     {
       name: 'Europe',
       img: '/images/user/europe 1.webp',
-      text: 'Navigate European visa complexities with ease. Our experts offer full support for work, travel, and transit across Europe.',
+      text: 'Navigate European visa complexities with ease. Our experts offer full support for travel and transit across Europe.',
     },
     {
       name: 'Australia',
       img: '/images/user/australia 1.webp',
-      text: 'Explore opportunities in Australia with expert visa guidance for work and travel, with step-by-step application support.',
+      text: 'Explore opportunities in Australia with expert visa guidance for travel, with step-by-step application support.',
     },
     {
       name: 'Japan',
@@ -69,28 +69,6 @@ const Services = () => {
         'Financial documents showing sufficient funds',
         'Travel insurance (if required by destination)',
         'Return flight tickets or onward journey proof',
-      ],
-    },
-    {
-      id: 'work',
-      title: 'Work Visa',
-      shortText: 'Live and work abroad with a permit for skilled employment, contract jobs, or sponsored roles.',
-      fullImg: '/images/user/workvisa_full 1.webp',
-      intro: 'A work visa is an official document that permits a foreign national to live and work in another country for a specific period. It\u2019s typically issued for skilled employment, contract jobs, or sponsored roles. Our experienced immigration experts guide applicants through every step of the process with clarity and professionalism.',
-      types: [
-        { title: 'Skilled Worker Visa', text: 'For individuals with in-demand professional skills.' },
-        { title: 'Temporary Work Visa', text: 'For seasonal or contract-based employment.' },
-        { title: 'Employer-Sponsored Visa', text: 'Issued when a company sponsors a foreign employee.' },
-        { title: 'Working Holiday Visa', text: 'Allows travel and short-term work, mostly for young adults.' },
-      ],
-      closing: 'Trust our Delhi & Noida visa experts to help you secure the right visa and simplify your international employment journey. We make sure your application meets every requirement.',
-      docs: [
-        'Valid passport and photographs',
-        'Employment offer letter or contract',
-        'Educational and professional certificates',
-        'Proof of work experience',
-        'Medical and police clearance (if required)',
-        'Employer sponsorship documents',
       ],
     },
     {
@@ -175,7 +153,7 @@ const Services = () => {
       url: 'https://avisaexperts.com',
     },
     description:
-      'Trusted visa consultancy in Noida & Delhi for tourist, work, and transit visas. Serving clients across Delhi NCR, India, USA, UK, Canada, Australia and Europe.',
+      'Trusted visa consultancy in Noida & Delhi for tourist and transit visas. Serving clients across Delhi NCR, India, USA, UK, Canada, Australia and Europe.',
     serviceType: 'Visa and Immigration Consulting',
     areaServed: ['Noida', 'Delhi', 'Delhi NCR', 'IN', 'US', 'GB', 'CA', 'AU', 'EU'],
   };
@@ -218,7 +196,7 @@ const Services = () => {
             <span className="services-hero-badge">Trusted Visa Consultants in Delhi NCR</span>
             <h1>Your Gateway to Global Opportunities</h1>
             <p>
-              Tourist, work, or transit — as visa consultants in Noida &amp; Delhi, we simplify every visa journey with
+              Tourist or transit — as visa consultants in Noida &amp; Delhi, we simplify every visa journey with
               expert guidance, clear documentation, and dedicated support.
             </p>
             <div className="services-hero-buttons">

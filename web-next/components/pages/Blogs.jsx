@@ -17,7 +17,6 @@ const slugify = (text) =>
 
 const deriveCategory = (title) => {
   const t = title.toLowerCase();
-  if (t.includes('work') || t.includes('seasonal') || t.includes('lmia') || t.includes('permit')) return 'Work Visa';
   if (t.includes('tourist') || t.includes('travel') || t.includes('visitor')) return 'Tourist Visa';
   if (t.includes('kaveesh kapoor')) return 'Leadership';
   if (t.includes('app') || t.includes('consultation')) return 'Company News';

@@ -8,7 +8,7 @@ export const metadata = {
   description:
     "Explore expert visa tips, country guides, immigration updates, and success stories from A Visa Experts, India's trusted visa and immigration company.",
   keywords:
-    'visa blog, immigration tips, tourist visa, work visa, Canada visa, UK visa, Australia visa, Kaveesh Kapoor, A Visa Experts',
+    'visa blog, immigration tips, tourist visa, Canada visa, UK visa, Australia visa, Kaveesh Kapoor, A Visa Experts',
   alternates: { canonical: '/blogs' },
   openGraph: {
     type: 'website',
@@ -29,7 +29,6 @@ export const metadata = {
 
 const deriveCategory = (title) => {
   const t = (title || '').toLowerCase();
-  if (t.includes('work') || t.includes('seasonal') || t.includes('lmia') || t.includes('permit')) return 'Work Visa';
   if (t.includes('tourist') || t.includes('travel') || t.includes('visitor')) return 'Tourist Visa';
   if (t.includes('kaveesh kapoor')) return 'Leadership';
   if (t.includes('app') || t.includes('consultation')) return 'Company News';

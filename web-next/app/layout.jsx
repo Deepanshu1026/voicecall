@@ -18,9 +18,9 @@ export const metadata = {
     template: '%s',
   },
   description:
-    "A Visa Experts is India's trusted No.1 Visa Immigration Company. We help with tourist, work, transit and PR visas for USA, UK, Canada, Australia, Europe & NZ. Free consultation with expert immigration consultants.",
+    "A Visa Experts is India's trusted No.1 Visa Immigration Company. We help with tourist, transit and PR visas for USA, UK, Canada, Australia, Europe & NZ. Free consultation with expert immigration consultants.",
   keywords:
-    'A Visa Experts, Best Visa Immigration Company, Visa Immigration Experts, No.1 Visa Immigration Company, best immigration consultants, best visa consultants, tourist visa consultants, work visa consultants, PR consultants, permanent residency application, visa agent, immigration agent, visa consultancy India',
+    'A Visa Experts, Best Visa Immigration Company, Visa Immigration Experts, No.1 Visa Immigration Company, best immigration consultants, best visa consultants, tourist visa consultants, PR consultants, permanent residency application, visa agent, immigration agent, visa consultancy India',
   authors: [{ name: 'A Visa Experts' }],
   robots: {
     index: true,
@@ -37,7 +37,7 @@ export const metadata = {
     siteName: 'A Visa Experts',
     title: 'A Visa Experts | No.1 Visa Immigration Company in India',
     description:
-      "India's trusted No.1 Visa Immigration Company. Free consultation for tourist, work, transit & PR visas for USA, UK, Canada, Australia, Europe & NZ.",
+      "India's trusted No.1 Visa Immigration Company. Free consultation for tourist, transit & PR visas for USA, UK, Canada, Australia, Europe & NZ.",
     url: SITE_URL,
     images: [{ url: '/images/user/tmlogo%201.webp', alt: 'A Visa Experts logo' }],
   },
@@ -46,7 +46,7 @@ export const metadata = {
     site: '@avisaexperts',
     title: 'A Visa Experts | No.1 Visa Immigration Company in India',
     description:
-      "India's trusted No.1 Visa Immigration Company for tourist, work, transit & PR visas.",
+      "India's trusted No.1 Visa Immigration Company for tourist, transit & PR visas.",
     images: ['/images/user/tmlogo%201.webp'],
   },
 };
@@ -64,7 +64,7 @@ const organizationLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/user/tmlogo%201.webp`,
   description:
-    "India's trusted No.1 Visa Immigration Company helping individuals and families secure tourist, work, transit and PR visas.",
+    "India's trusted No.1 Visa Immigration Company helping individuals and families secure tourist, transit and PR visas.",
   foundingDate: '2018',
   founder: { '@type': 'Person', name: 'Kaveesh Kapoor' },
   contactPoint: {
@@ -91,7 +91,7 @@ const localBusinessLd = {
   telephone: '+91-120-4502750',
   priceRange: '₹₹',
   description:
-    'Trusted No.1 Visa Immigration Company for tourist, work, transit and permanent residency visas.',
+    'Trusted No.1 Visa Immigration Company for tourist, transit and permanent residency visas.',
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'B Block, Sector 2',

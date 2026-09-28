@@ -64,12 +64,6 @@ const UserHome = () => {
       href: '/tourist-visa',
     },
     {
-      title: 'Work Visa',
-      text: 'Start your work visa process today with our advisers!',
-      img: '/images/user/Workvisa_circle 1.webp',
-      href: '/work-visa',
-    },
-    {
       title: 'Via / Transit Visa',
       text: 'Transit visa inquiries? We\'re here to help!',
       img: '/images/user/transitvisa_cirlce 1.webp',
@@ -92,14 +86,14 @@ const UserHome = () => {
     },
     {
       img: '/images/user/sher 1.webp',
-      title: 'Europe Work Visa Approved',
-      text: 'Work Visa Approved! I am so happy! A big thank you to AvisaExpert Team and especially to Mr. Kaveesh ji for always being there to help and support us. Truly a great professional!',
+      title: 'Europe Visa Approved',
+      text: 'Europe Visa Approved! I am so happy! A big thank you to AvisaExpert Team and especially to Mr. Kaveesh ji for always being there to help and support us. Truly a great professional!',
       stars: 4,
     },
     {
       img: '/images/user/neta 1.webp',
-      title: 'Uk Work Visa Approved',
-      text: 'Uk Work Visa Approved! I am so happy! A big thank you to AvisaExpert Team and especially to Mr. Kaveesh ji for always being there to help and support us. Truly a great professional!',
+      title: 'UK Visa Approved',
+      text: 'UK Visa Approved! I am so happy! A big thank you to AvisaExpert Team and especially to Mr. Kaveesh ji for always being there to help and support us. Truly a great professional!',
       stars: 4,
     },
     {
@@ -178,7 +172,7 @@ const UserHome = () => {
     url: 'https://avisaexperts.com',
     logo: 'https://avisaexperts.com/images/user/tmlogo 1.webp',
     description:
-      'Trusted as the No.1 Visa Immigration Company, our Visa Immigration Experts help with tourist, work and transit visas globally.',
+      'Trusted as the No.1 Visa Immigration Company, our Visa Immigration Experts help with tourist and transit visas globally.',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+91-120-4502750',
@@ -242,7 +236,7 @@ const UserHome = () => {
     '@type': 'VideoObject',
     name: 'A Visa Experts Seminar - Kaveesh Kapoor',
     description:
-      'A Visa Experts seminar by Kaveesh Kapoor sharing expert guidance on tourist, work, transit and PR visas for the USA, UK, Canada, Australia and Europe.',
+      'A Visa Experts seminar by Kaveesh Kapoor sharing expert guidance on tourist, transit and PR visas for the USA, UK, Canada, Australia and Europe.',
     thumbnailUrl: [
       'https://res.cloudinary.com/fniv4k20/image/upload/v1788775413/seminaar_lipjbc.jpg',
     ],

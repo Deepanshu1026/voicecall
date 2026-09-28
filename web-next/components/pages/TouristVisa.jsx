@@ -32,12 +32,12 @@ const TouristVisa = () => {
     {
       name: 'Europe',
       img: '/images/user/europe 1.webp',
-      text: 'Navigate the complexities of European visas with ease. Our experts offer guidance via chat, video or calls for work, travel, and transit across Europe.',
+      text: 'Navigate the complexities of European visas with ease. Our experts offer guidance via chat, video or calls for travel and transit across Europe.',
     },
     {
       name: 'Australia',
       img: '/images/user/australia 1.webp',
-      text: 'Explore new opportunities in Australia with expert visa guidance for work and travel, with step-by-step application support.',
+      text: 'Explore new opportunities in Australia with expert visa guidance for travel, with step-by-step application support.',
     },
     {
       name: 'Japan',

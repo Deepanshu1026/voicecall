@@ -66,16 +66,6 @@ const pages = [
     includeInSitemap: true,
   },
   {
-    path: '/work-visa',
-    file: 'work-visa.html',
-    title: 'Work Visa Services | A Visa Experts',
-    description:
-      'Apply for a work visa with expert guidance from A Visa Experts. We assist professionals with Canada, UK, Australia, Europe, and Hong Kong work visas.',
-    priority: '0.8',
-    changefreq: 'monthly',
-    includeInSitemap: true,
-  },
-  {
     path: '/transit-visa',
     file: 'transit-visa.html',
     title: 'Transit Visa Services | A Visa Experts',

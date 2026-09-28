@@ -266,9 +266,8 @@ const BlogDetail = () => {
                 <div className="blog-sidebar-card">
                   <h3>Popular Services</h3>
                   <ul className="blog-sidebar-links">
-                    <li><Link to="/tourist-visa">Tourist Visa</Link></li>
-                    <li><Link to="/work-visa">Work Visa</Link></li>
-                    <li><Link to="/transit-visa">Transit Visa</Link></li>
+                  <li><Link to="/tourist-visa">Tourist Visa</Link></li>
+                  <li><Link to="/transit-visa">Transit Visa</Link></li>
                     <li><Link to="/consultants">Our Advisors</Link></li>
                   </ul>
                 </div>

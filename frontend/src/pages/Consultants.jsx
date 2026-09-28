@@ -32,7 +32,7 @@ const staticConsultants = [
     id: 2,
     name: 'Priya Sharma',
     avatar: '/images/user/avatar.webp',
-    expertise: 'Tourist & Work Visa Expert • UK, Canada, Australia',
+    expertise: 'Tourist Visa Expert • UK, Canada, Australia',
     language: 'English, Hindi, Punjabi',
     experience: '8',
     status: 'Active',
@@ -509,7 +509,7 @@ const Consultants = () => {
       <SEO
         title="Visa Consultants & Immigration Experts | A Visa Experts"
         description="Connect with India's top visa consultants and immigration experts for tourist, work, transit and PR visas. Free consultation for USA, UK, Canada, Australia, Europe & New Zealand."
-        keywords="visa consultants, immigration experts, tourist visa consultant, work visa consultant, PR consultant, best visa consultants India, A Visa Experts"
+        keywords="visa consultants, immigration experts, tourist visa consultant, PR consultant, best visa consultants India, A Visa Experts"
         canonicalPath="/consultants"
         ogImage="/images/user/sirpic 1.webp"
       />

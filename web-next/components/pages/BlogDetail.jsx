@@ -173,9 +173,8 @@ const BlogDetail = ({ post, related = [] }) => {
                 <div className="blog-sidebar-card">
                   <h3>Popular Services</h3>
                   <ul className="blog-sidebar-links">
-                    <li><Link href="/tourist-visa">Tourist Visa</Link></li>
-                    <li><Link href="/work-visa">Work Visa</Link></li>
-                    <li><Link href="/transit-visa">Transit Visa</Link></li>
+                  <li><Link href="/tourist-visa">Tourist Visa</Link></li>
+                  <li><Link href="/transit-visa">Transit Visa</Link></li>
                     <li><Link href="/consultants">Our Advisors</Link></li>
                   </ul>
                 </div>
