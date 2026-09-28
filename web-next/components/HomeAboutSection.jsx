@@ -1,7 +1,9 @@
 'use client';
 
-const HomeAboutSection = () => {
+const HomeAboutSection = ({ variant = 'full' }) => {
   const goTo = (p) => window.location.assign(p);
+  const isShort = variant === 'short';
+
 
   return (
 <section className="home-about-section" id="about-us">
@@ -85,19 +87,37 @@ const HomeAboutSection = () => {
               </div>
 
               {/* Founder Quote */}
-              <div className="founder-quote-card">
-                <span className="quote-icon">“</span>
-                <p>
-                  Our mission is simple: to turn your global aspirations into reality with complete transparency, unwavering dedication, and personalized guidance every step of the way.
-                </p>
-              </div>
+              {!isShort && (
+                <div className="founder-quote-card">
+                  <span className="quote-icon">“</span>
+                  <p>
+                    Our mission is simple: to turn your global aspirations into reality with complete transparency, unwavering dedication, and personalized guidance every step of the way.
+                  </p>
+                </div>
+              )}
 
-              {/* Description Body (short) */}
-              <p className="founder-bio">
-                <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy founded by
-                {' '}<strong>Kaveesh Kapoor</strong>. We help you secure tourist, work &amp; PR visas for the USA, UK,
-                Canada, Australia &amp; Europe.
-              </p>
+              {/* Description Body */}
+              {isShort ? (
+                <p className="founder-bio">
+                  <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy founded by
+                  {' '}<strong>Kaveesh Kapoor</strong>. We help you secure tourist, work &amp; PR visas for the USA, UK,
+                  Canada, Australia &amp; Europe.
+                </p>
+              ) : (
+                <>
+                  <p className="founder-bio">
+                    Welcome to <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration
+                    consultancy. Founded by <strong>Kaveesh Kapoor</strong>, we help individuals and families secure
+                    tourist, work, and permanent residency visas for the <strong>USA, UK, Canada, Australia,
+                    Europe</strong> and beyond — with clear guidance, honest advice, and an exceptional track record of
+                    success.
+                  </p>
+                  <p className="founder-bio">
+                    Backed by seasoned legal advisors, a dedicated end-to-end visa process, and a 2 Lakh+ strong
+                    community of successful applicants, we make every visa journey smooth, transparent and stress-free.
+                  </p>
+                </>
+              )}
 
               {/* Internal links */}
               <nav className="home-about-links" aria-label="Explore A Visa Experts">
@@ -110,7 +130,8 @@ const HomeAboutSection = () => {
                 <a href="/blogs">Visa Blogs</a>
               </nav>
 
-              {/* 4 Feature Highlights Grid */}
+              {/* 4 Feature Highlights Grid (full only) */}
+              {!isShort && (
               <div className="about-features-grid">
                 <div className="about-feature-card">
                   <div className="feature-card-icon">
@@ -165,9 +186,11 @@ const HomeAboutSection = () => {
                   </div>
                 </div>
               </div>
+              )}
 
               {/* Social Connect & Actions */}
               <div className="about-actions-row">
+                {!isShort && (
                 <div className="about-social-group">
                   <span className="social-label">Follow Us:</span>
                   <div className="about-social-icons">
@@ -219,6 +242,7 @@ const HomeAboutSection = () => {
                     </a>
                   </div>
                 </div>
+                )}
 
                 <div className="about-buttons-wrapper">
                   <button className="home-about-cta-btn" onClick={() => goTo('/about')}>
