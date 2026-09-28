@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 
 const HomeAboutSection = () => {
   const goTo = (p) => window.location.assign(p);
 
   return (
-      <section className="home-about-section" id="about-us">
+<section className="home-about-section" id="about-us">
         {/* Ambient decorative lighting */}
         <div className="home-about-glow-1" aria-hidden="true" />
         <div className="home-about-glow-2" aria-hidden="true" />
@@ -13,7 +13,7 @@ const HomeAboutSection = () => {
           {/* Section Header */}
           <div className="home-about-header">
             <div className="home-about-badge">
-              <span className="home-about-badge-sparkle">âœ¦</span>
+              <span className="home-about-badge-sparkle">✦</span>
               <span>ABOUT A VISA EXPERTS</span>
             </div>
             <h2 className="home-about-title">
@@ -80,13 +80,13 @@ const HomeAboutSection = () => {
                   </div>
                 </div>
                 <div className="founder-role">
-                  CHAIRMAN &amp; FOUNDER â€” A VISA EXPERTS
+                  CHAIRMAN &amp; FOUNDER — A VISA EXPERTS
                 </div>
               </div>
 
               {/* Founder Quote */}
               <div className="founder-quote-card">
-                <span className="quote-icon">â€œ</span>
+                <span className="quote-icon">“</span>
                 <p>
                   Our mission is simple: to turn your global aspirations into reality with complete transparency, unwavering dedication, and personalized guidance every step of the way.
                 </p>
@@ -94,7 +94,7 @@ const HomeAboutSection = () => {
 
               {/* Description Body (short) */}
               <p className="founder-bio">
-                <strong>A Visa Experts</strong> â€” India&apos;s trusted visa &amp; immigration consultancy founded by
+                <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy founded by
                 {' '}<strong>Kaveesh Kapoor</strong>. We help you secure tourist, work &amp; PR visas for the USA, UK,
                 Canada, Australia &amp; Europe.
               </p>

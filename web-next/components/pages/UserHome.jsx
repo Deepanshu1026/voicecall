@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import LandingLayout from '../LandingLayout';
@@ -81,13 +81,13 @@ const UserHome = () => {
     {
       img: '/images/user/review1.webp',
       title: 'Uk Visitor Visa Approved',
-      text: 'We are truly grateful! We got our visit visa approved smoothly, all thanks to your amazing support. Sitting in Africa, we saw your Instagram videos, contacted your team, and within days we had our visasâ€”without even stepping out.',
+      text: 'We are truly grateful! We got our visit visa approved smoothly, all thanks to your amazing support. Sitting in Africa, we saw your Instagram videos, contacted your team, and within days we had our visas—without even stepping out.',
       stars: 4,
     },
     {
       img: '/images/user/review2.webp',
       title: 'Tourist Visa to Uk',
-      text: 'After countless rejections and setbacks, I was losing hopeâ€”until I saw a video by Avisa Experts on Instagram. Reaching out to them was the best decision I made. My dream finally came true, thanks to their guidance.',
+      text: 'After countless rejections and setbacks, I was losing hope—until I saw a video by Avisa Experts on Instagram. Reaching out to them was the best decision I made. My dream finally came true, thanks to their guidance.',
       stars: 5,
     },
     {
@@ -166,7 +166,7 @@ const UserHome = () => {
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
-      stars.push(<span key={i}>{i < rating ? 'â˜…' : 'â˜†'}</span>);
+      stars.push(<span key={i}>{i < rating ? '★' : '☆'}</span>);
     }
     return stars;
   };
@@ -675,7 +675,7 @@ const UserHome = () => {
       <section className="reviews-section" aria-labelledby="reviews-heading">
         <div className="reviews-header">
           <span className="reviews-badge">
-            <span className="reviews-badge-stars" aria-hidden="true">â˜…â˜…â˜…â˜…â˜…</span>
+            <span className="reviews-badge-stars" aria-hidden="true">★★★★★</span>
             4.9 Rating
           </span>
           <h2 id="reviews-heading">What Our Clients Say</h2>
