@@ -18,10 +18,10 @@
 
 .abouthero-script {
   position: absolute;
-  right: 5%;
-  bottom: 20%;
+  right: 4%;
+  top: 40%;
   font-family: 'Alex Brush', 'Caveat', cursive;
-  font-size: 2.6rem;
+  font-size: 2.3rem;
   line-height: 1.1;
   color: rgba(255, 255, 255, 0.85);
   text-align: center;
