@@ -5,121 +5,114 @@ const HomeAboutSection = ({ variant = 'full' }) => {
   const isShort = variant === 'short';
 
   const features = [
-    { title: 'Global Reach', desc: 'USA, UK, Canada, EU & Australia' },
-    { title: '2 Lakh+ Clients', desc: 'Successful cases & aspirants' },
-    { title: '40+ Legal Advisors', desc: 'Seasoned visa attorneys' },
-    { title: 'Fast-Track Filing', desc: 'End-to-end file preparation' },
-  ];
-
-  const links = [
-    { label: 'About Us', href: '/about' },
-    { label: 'Visa Services', href: '/services' },
-    { label: 'Tourist Visa', href: '/tourist-visa' },
-    { label: 'Transit Visa', href: '/transit-visa' },
-    { label: 'Talk to an Advisor', href: '/consultants' },
-    { label: 'Visa Blogs', href: '/blogs' },
-  ];
-
-  const stats = [
-    { value: '2 Lakh+', label: 'Followers' },
-    { value: '7+ Years', label: 'Proven Experience' },
-    { value: '40+', label: 'Legal Visa Experts' },
-    { value: '99%', label: 'Success Rate*' },
+    {
+      title: 'Global Reach',
+      desc: 'USA, UK, Canada, EU & Australia',
+      color: 'blue',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="9" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <path d="M12 3a15 15 0 0 1 4 9 15 15 0 0 1-4 9 15 15 0 0 1-4-9 15 15 0 0 1 4-9z" />
+        </svg>
+      ),
+    },
+    {
+      title: '2 Lakh+ Clients',
+      desc: 'Successful cases & counting',
+      color: 'purple',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      ),
+    },
+    {
+      title: '40+ Legal Advisors',
+      desc: 'Expert support at every step',
+      color: 'green',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="M9 12l2 2 4-4" />
+        </svg>
+      ),
+    },
+    {
+      title: 'Fast-Track Support',
+      desc: 'End-to-end file preparation',
+      color: 'orange',
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+      ),
+    },
   ];
 
   return (
-    <section className="aboutx" id="about-us">
-      <div className="aboutx-container">
-        <div className="aboutx-head">
-          <span className="aboutx-kicker">About A Visa Experts</span>
-          <h2>Guiding Your Global Journey With Proven Excellence</h2>
-          <p>
-            India&apos;s trusted visa &amp; immigration consultancy, backed by seasoned legal advisors and hundreds of
-            thousands of success stories.
-          </p>
-        </div>
+    <section className="abouthero" id="about-us">
+      <div className="abouthero-bg" aria-hidden="true">
+        <span className="abouthero-script">Your Visa<br />Our Commitment</span>
+        <svg className="abouthero-flight" viewBox="0 0 260 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 108 C 70 96, 120 40, 236 22" stroke="rgba(255,255,255,0.35)" strokeWidth="1.6" strokeDasharray="4 5" strokeLinecap="round" />
+          <path d="M236 22 l-14 -3 l7 12 l3 -7 l4 -2 z" fill="rgba(255,255,255,0.5)" />
+        </svg>
+      </div>
 
-        <div className="aboutx-grid">
-          <div className="aboutx-media">
-            <img
-              src="/images/user/sirpic 1.webp"
-              alt="Kaveesh Kapoor - Chairman & Founder of A Visa Experts"
-              loading="lazy"
-            />
+      <div className="abouthero-inner">
+        <div className="abouthero-grid">
+          <div className="abouthero-photo">
+            <div className="abouthero-photo-frame">
+              <img src="/images/user/sirpic 1.webp" alt="Kaveesh Kapoor - Founder of A Visa Experts" loading="lazy" />
+            </div>
+            <span className="abouthero-sign">Kaveesh Kapoor</span>
+            <span className="abouthero-photo-label">Founder<br />A Visa Experts</span>
           </div>
 
-          <div className="aboutx-body">
-            <h3 className="aboutx-name">Kaveesh Kapoor</h3>
-            <span className="aboutx-role">Chairman &amp; Founder — A Visa Experts</span>
-
-            {isShort ? (
-              <p className="aboutx-bio">
-                <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy founded by
-                {' '}<strong>Kaveesh Kapoor</strong>. We help you secure tourist, transit &amp; PR visas for the USA, UK,
-                Canada, Australia &amp; Europe.
-              </p>
-            ) : (
-              <>
-                <p className="aboutx-bio">
-                  Welcome to <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy.
-                  Founded by <strong>Kaveesh Kapoor</strong>, we help individuals and families secure tourist, transit
-                  and permanent residency visas for the <strong>USA, UK, Canada, Australia, Europe</strong> and beyond —
-                  with clear guidance, honest advice, and an exceptional track record of success.
-                </p>
-                <p className="aboutx-bio">
-                  Backed by seasoned legal advisors, a dedicated end-to-end visa process, and a 2 Lakh+ strong community
-                  of successful applicants, we make every visa journey smooth, transparent and stress-free.
-                </p>
-                <blockquote className="aboutx-quote">
-                  Our mission is simple: to turn your global aspirations into reality with complete transparency,
-                  unwavering dedication, and personalized guidance every step of the way.
-                  <cite>— Kaveesh Kapoor, Chairman &amp; Founder</cite>
-                </blockquote>
-              </>
-            )}
-
-            <div className="aboutx-links">
-              {links.map((l) => (
-                <a key={l.href} href={l.href}>
-                  {l.label}
-                </a>
-              ))}
-            </div>
-
+          <div className="abouthero-content">
+            <span className="abouthero-kicker"><i />Meet</span>
+            <h2>
+              Kaveesh Kapoor,
+              <br />
+              <span>Founder of A Visa Experts</span>
+            </h2>
+            <p>
+              Kaveesh Kapoor is the Founder of A Visa Experts, helping individuals and families navigate visa
+              applications with clear guidance and a straightforward approach. With a focus on transparency and
+              personalized support, he has built A Visa Experts around making the visa process simpler, smoother and
+              more accessible for everyone.
+            </p>
             {!isShort && (
-              <div className="aboutx-features">
-                {features.map((f) => (
-                  <div className="aboutx-feature" key={f.title}>
-                    <span className="aboutx-check" aria-hidden="true">✓</span>
-                    <div>
-                      <strong>{f.title}</strong>
-                      <span>{f.desc}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <p>
+                Backed by seasoned legal advisors and a 2 Lakh+ strong community, our team handles every case with a
+                documented, end-to-end process — tourist, transit and permanent residency visas for the USA, UK, Canada,
+                Australia and Europe.
+              </p>
             )}
-
-            <div className="aboutx-actions">
-              <button className="aboutx-btn primary" onClick={() => goTo('/about')}>
-                Meet Kaveesh Kapoor
-              </button>
-              <button className="aboutx-btn outline" onClick={() => goTo('/appointment')}>
-                Book Appointment
-              </button>
-            </div>
+            <button className="abouthero-btn" onClick={() => goTo('/about')}>
+              Learn more about Kaveesh Kapoor <span aria-hidden="true">→</span>
+            </button>
           </div>
         </div>
 
-        <div className="aboutx-stats">
-          {stats.map((s) => (
-            <div className="aboutx-stat" key={s.label}>
-              <div className="aboutx-stat-value">{s.value}</div>
-              <div className="aboutx-stat-label">{s.label}</div>
+        <div className="abouthero-features">
+          {features.map((f) => (
+            <div className="abouthero-feature" key={f.title}>
+              <span className={`abouthero-feature-icon ${f.color}`}>{f.icon}</span>
+              <div>
+                <strong>{f.title}</strong>
+                <span>{f.desc}</span>
+              </div>
             </div>
           ))}
         </div>
       </div>
+
+      <div className="abouthero-curve" aria-hidden="true" />
     </section>
   );
 };
