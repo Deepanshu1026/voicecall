@@ -8,6 +8,7 @@ import '../styles/about.css';
 import '../styles/blogs.css';
 import '../styles/seminar.css';
 import '../styles/visaPages.css';
+import '../styles/aboutSection.css';
 
 const SITE_URL = 'https://avisaexperts.com';
 
