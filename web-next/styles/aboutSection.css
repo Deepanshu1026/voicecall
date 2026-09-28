@@ -100,8 +100,9 @@
 
 .abouthero-sign {
   position: absolute;
-  left: 6px;
-  bottom: 58px;
+  left: 18px;
+  bottom: 62px;
+  z-index: 2;
   font-family: 'Alex Brush', 'Caveat', cursive;
   font-size: 1.95rem;
   color: #ffffff;
@@ -111,8 +112,9 @@
 
 .abouthero-photo-label {
   position: absolute;
-  left: 20px;
-  bottom: 14px;
+  left: 30px;
+  bottom: 22px;
+  z-index: 2;
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 1.6px;
