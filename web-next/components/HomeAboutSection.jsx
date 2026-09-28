@@ -49,10 +49,8 @@ const HomeAboutSection = ({ variant = 'full' }) => {
           </div>
 
           <div className="aboutx-body">
-            <div className="aboutx-person">
-              <h3 className="aboutx-name">Kaveesh Kapoor</h3>
-              <span className="aboutx-role">Chairman &amp; Founder — A Visa Experts</span>
-            </div>
+            <h3 className="aboutx-name">Kaveesh Kapoor</h3>
+            <span className="aboutx-role">Chairman &amp; Founder — A Visa Experts</span>
 
             {isShort ? (
               <p className="aboutx-bio">

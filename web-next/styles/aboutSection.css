@@ -44,36 +44,25 @@
 }
 
 .aboutx-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 56px;
   align-items: center;
-  gap: 44px;
 }
 
 .aboutx-media {
   display: flex;
   justify-content: center;
-  width: 100%;
 }
 
 .aboutx-media img {
-  width: auto;
-  max-width: min(360px, 100%);
-  height: auto;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
   border-radius: 18px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
-}
-
-.aboutx-body {
-  width: 100%;
-  max-width: 820px;
-  margin: 0 auto;
-}
-
-.aboutx-person {
-  text-align: center;
-  margin-bottom: 22px;
 }
 
 .aboutx-name {
@@ -90,6 +79,7 @@
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: #f58634;
+  margin-bottom: 20px;
 }
 
 .aboutx-bio {
@@ -128,7 +118,6 @@
 .aboutx-links {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 10px;
   margin: 8px 0 26px;
 }
@@ -196,7 +185,6 @@
 .aboutx-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 14px;
 }
 
@@ -255,6 +243,7 @@
 
 @media (max-width: 900px) {
   .aboutx-grid {
+    grid-template-columns: 1fr;
     gap: 34px;
   }
 
