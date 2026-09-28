@@ -55,23 +55,47 @@
   position: relative;
   display: flex;
   justify-content: center;
+  padding: 16px 12px 24px;
+}
+
+.abouthero-photo-shape {
+  position: absolute;
+  inset: 28px 2px -16px 10px;
+  border-radius: 26px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  transform: rotate(-3deg);
+}
+
+.abouthero-photo-tab {
+  position: absolute;
+  top: 2px;
+  left: 45%;
+  width: 11px;
+  height: 30px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #ffe6a3, #c8891f);
+  z-index: 3;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 .abouthero-photo-frame {
   position: relative;
-  border-radius: 22px;
-  padding: 6px;
-  background: linear-gradient(140deg, #ffcf5c, #c8891f);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-  transform: rotate(-1.4deg);
+  z-index: 1;
+  border-radius: 24px;
+  padding: 8px;
+  background: linear-gradient(140deg, #ffe6a3, #c8891f);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.45);
+  transform: rotate(-1.2deg);
 }
 
 .abouthero-photo-frame img {
   display: block;
-  width: 318px;
+  width: 320px;
   max-width: 100%;
   height: auto;
-  border-radius: 16px;
+  border-radius: 18px;
+  background: #eef2f7;
 }
 
 .abouthero-sign {

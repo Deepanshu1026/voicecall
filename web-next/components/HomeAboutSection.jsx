@@ -66,8 +66,14 @@ const HomeAboutSection = ({ variant = 'full' }) => {
       <div className="abouthero-inner">
         <div className="abouthero-grid">
           <div className="abouthero-photo">
+            <span className="abouthero-photo-shape" aria-hidden="true" />
+            <span className="abouthero-photo-tab" aria-hidden="true" />
             <div className="abouthero-photo-frame">
-              <img src="/images/user/sirpic 1.webp" alt="Kaveesh Kapoor - Founder of A Visa Experts" loading="lazy" />
+              <img
+                src="https://ik.imagekit.io/kaveeshkapoor/kaveesh_kapoor.png"
+                alt="Kaveesh Kapoor - Founder of A Visa Experts"
+                loading="lazy"
+              />
             </div>
             <span className="abouthero-sign">Kaveesh Kapoor</span>
             <span className="abouthero-photo-label">Founder<br />A Visa Experts</span>
