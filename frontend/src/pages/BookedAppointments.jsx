@@ -12,9 +12,11 @@ const AppointmentsPage = () => {
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [search, setSearch] = useState('');
-  const [date, setDate] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const fetchItems = async (pageNum, append = false) => {
     const isInitial = pageNum === 1 && !append;
@@ -22,7 +24,12 @@ const AppointmentsPage = () => {
     else setLoadingMore(true);
 
     try {
-      const res = await agentPortalAPI.getAppointments(pageNum, date || undefined, search || undefined);
+      const res = await agentPortalAPI.getAppointments(
+        pageNum,
+        fromDate || undefined,
+        toDate || undefined,
+        search || undefined
+      );
       const data = res.data?.data || [];
       const pagination = res.data?.pagination || res.data;
       setItems((prev) => (append ? [...prev, ...data] : data));
@@ -46,7 +53,36 @@ const AppointmentsPage = () => {
 
   useEffect(() => {
     resetAndFetch();
-  }, [date]);
+  }, [fromDate, toDate]);
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const res = await agentPortalAPI.exportAppointments(
+        fromDate || undefined,
+        toDate || undefined,
+        search || undefined
+      );
+      const blob = new Blob([res.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const stamp = fromDate && toDate ? `${fromDate}_to_${toDate}` : (fromDate || toDate || new Date().toISOString().split('T')[0]);
+      link.download = `appointments-${stamp}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success('Export downloaded');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to export');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const debounceTimeout = useMemo(() => ({ current: null }), []);
   useEffect(() => {
@@ -80,12 +116,30 @@ const AppointmentsPage = () => {
           onChange={(e) => setSearch(e.target.value)}
           className="simple-input"
         />
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="simple-input" />
-        {date && (
-          <button className="simple-btn secondary" onClick={() => setDate('')}>
+        <input
+          type="date"
+          value={fromDate}
+          max={toDate || undefined}
+          onChange={(e) => setFromDate(e.target.value)}
+          className="simple-input"
+          title="From date"
+        />
+        <input
+          type="date"
+          value={toDate}
+          min={fromDate || undefined}
+          onChange={(e) => setToDate(e.target.value)}
+          className="simple-input"
+          title="To date"
+        />
+        {(fromDate || toDate) && (
+          <button className="simple-btn secondary" onClick={() => { setFromDate(''); setToDate(''); }}>
             Clear
           </button>
         )}
+        <button className="simple-btn" onClick={handleExport} disabled={exporting}>
+          {exporting ? 'Exporting...' : 'Export to Excel'}
+        </button>
       </div>
 
       {loading ? (

@@ -205,8 +205,10 @@ export const agentPortalAPI = {
   getDailyLogins: (page, from, to, search) => api.get('/agent-portal/daily-logins', { params: { page, from, to, search } }),
   getNewUsers: (page, from, to, search) => api.get('/agent-portal/new-users', { params: { page, from, to, search } }),
   exportNewUsers: (from, to, search) => api.get('/agent-portal/new-users/export', { params: { from, to, search }, responseType: 'blob' }),
-  getAppointments: (page, date, search) => api.get('/agent-portal/appointments', { params: { page, date, search } }),
-  getApplicationsList: (page, date, search) => api.get('/agent-portal/applications-list', { params: { page, date, search } }),
+  getAppointments: (page, from, to, search) => api.get('/agent-portal/appointments', { params: { page, from, to, search } }),
+  exportAppointments: (from, to, search) => api.get('/agent-portal/appointments/export', { params: { from, to, search }, responseType: 'blob' }),
+  getApplicationsList: (page, from, to, search) => api.get('/agent-portal/applications-list', { params: { page, from, to, search } }),
+  exportApplicationsList: (from, to, search) => api.get('/agent-portal/applications-list/export', { params: { from, to, search }, responseType: 'blob' }),
 };
 
 export const appointmentAPI = {

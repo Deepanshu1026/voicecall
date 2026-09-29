@@ -6,6 +6,7 @@ const Employee = require('../models/Employee');
 const AppError = require('../utils/AppError');
 const asyncHandler = require('../utils/asyncHandler');
 const { buildXlsx } = require('../utils/xlsx');
+const { buildDateFilter } = require('../utils/dateRange');
 
 async function resolveContext(req, { allowAdmin = false } = {}) {
   if (allowAdmin && req.employee.role === 'admin') {
@@ -33,7 +34,7 @@ exports.getApplications = asyncHandler(async (req, res) => {
 
 exports.getApplicationsList = asyncHandler(async (req, res) => {
   const { sqlId } = await resolveContext(req, { allowAdmin: true });
-  const { date, search = '', page = 1, limit = 50 } = req.query;
+  const { date, from, to, search = '', page = 1, limit = 50 } = req.query;
   const searchRegex = buildSearchRegex(search);
   const pageNum = Math.max(parseInt(page, 10) || 1, 1);
   const limitNum = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 200);
@@ -46,6 +47,8 @@ exports.getApplicationsList = asyncHandler(async (req, res) => {
 
   const filter = {};
   if (sqlId) filter.agentId = sqlId;
+  const range = buildDateFilter({ from, to });
+  if (range) filter.createdAt = range;
 
   const skip = (pageNum - 1) * limitNum;
   const [applications, total] = await Promise.all([
@@ -269,13 +272,19 @@ const buildSearchRegex = (search) => {
 
 exports.getAppointments = asyncHandler(async (req, res) => {
   await resolveContext(req, { allowAdmin: true });
-  const { date, search = '', page = 1, limit = 50 } = req.query;
+  const { date, from, to, search = '', page = 1, limit = 50 } = req.query;
   const searchRegex = buildSearchRegex(search);
   const pageNum = Math.max(parseInt(page, 10) || 1, 1);
   const limitNum = Math.min(Math.max(parseInt(limit, 10) || 50, 1), 200);
 
   const filter = {};
-  if (date) filter.date = date;
+  if (from || to) {
+    filter.date = {};
+    if (from) filter.date.$gte = from;
+    if (to) filter.date.$lte = to;
+  } else if (date) {
+    filter.date = date;
+  }
 
   if (searchRegex) {
     filter.$or = [
@@ -317,6 +326,141 @@ exports.getAppointments = asyncHandler(async (req, res) => {
     pages: Math.ceil(total / limitNum),
     limit: limitNum,
   });
+});
+
+// Export appointments to Excel (optional from/to date range + search).
+exports.exportAppointments = asyncHandler(async (req, res) => {
+  await resolveContext(req, { allowAdmin: true });
+  const { date, from, to, search = '' } = req.query;
+  const searchRegex = buildSearchRegex(search);
+
+  const filter = {};
+  if (from || to) {
+    filter.date = {};
+    if (from) filter.date.$gte = from;
+    if (to) filter.date.$lte = to;
+  } else if (date) {
+    filter.date = date;
+  }
+  if (searchRegex) {
+    filter.$or = [
+      { name: searchRegex },
+      { contact: searchRegex },
+      { email: searchRegex },
+      { referenceId: searchRegex },
+      { query: searchRegex },
+    ];
+  }
+
+  const rows = await Appointment.find(filter).sort({ date: -1, timeSlot: 1 }).lean();
+
+  const headers = ['#', 'Name', 'Contact', 'Email', 'Date', 'Time', 'Plan', 'Mode', 'Status', 'Reference', 'Address', 'Query'];
+  const data = rows.map((a, i) => [
+    i + 1,
+    a.name || '',
+    a.contact || '',
+    a.email || '',
+    a.date || '',
+    a.timeSlot || '',
+    a.selectedPlan || '',
+    a.mode || '',
+    a.meetingConfirm || 'pending',
+    a.referenceId || '',
+    a.address || '',
+    a.query || '',
+  ]);
+
+  const buffer = buildXlsx({ sheetName: 'Appointments', headers, rows: data });
+  const stamp = from && to ? `${from}_to_${to}` : (from || to || date || new Date().toISOString().split('T')[0]);
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader('Content-Disposition', `attachment; filename="appointments-${stamp}.xlsx"`);
+  res.setHeader('Content-Length', buffer.length);
+  res.send(buffer);
+});
+
+// Export applications to Excel (optional from/to date range + search).
+exports.exportApplications = asyncHandler(async (req, res) => {
+  const { sqlId } = await resolveContext(req, { allowAdmin: true });
+  const { date, from, to, search = '' } = req.query;
+  const searchRegex = buildSearchRegex(search);
+
+  const employees = await Employee.find().select('sqlId displayName username').lean();
+  const employeeMap = {};
+  employees.forEach((e) => {
+    employeeMap[e.sqlId] = e.displayName || e.username || 'Agent';
+  });
+
+  const filter = {};
+  if (sqlId) filter.agentId = sqlId;
+  const range = buildDateFilter({ from, to });
+  if (range) filter.createdAt = range;
+
+  let items = (await Application.find(filter).sort({ createdAt: -1 }).lean()).map((a) => {
+    const details = a.details || {};
+    return {
+      name: a.clientName || details.client_name || '',
+      contact: a.contactNumber || details.contact_number || '',
+      email: details.email || '',
+      date: formatDate(details.submission_date || details.appointment_date || a.createdAt),
+      plan: details.visa_type || details.visa_category || '',
+      country: details.visa_country || details.country || '',
+      city: details.city || '',
+      occupation: details.occupation || '',
+      income: details.income || '',
+      leadOutcome: details.lead_outcome || '',
+      status: a.status || 'pending',
+      query: details.remarks || details.query || '',
+      address: details.address || '',
+      referenceId: a.sqlId ? String(a.sqlId) : '',
+      agentName: employeeMap[a.agentId] || `Agent ${a.agentId}`,
+    };
+  });
+
+  if (date) {
+    items = items.filter((a) => a.date === date);
+  }
+  if (searchRegex) {
+    items = items.filter((item) =>
+      searchRegex.test(item.name) ||
+      searchRegex.test(item.contact) ||
+      searchRegex.test(item.email) ||
+      searchRegex.test(item.referenceId) ||
+      searchRegex.test(item.query) ||
+      searchRegex.test(item.agentName) ||
+      searchRegex.test(item.plan) ||
+      searchRegex.test(item.country) ||
+      searchRegex.test(item.city) ||
+      searchRegex.test(item.occupation) ||
+      searchRegex.test(item.leadOutcome)
+    );
+  }
+
+  const headers = ['#', 'Name', 'Contact', 'Email', 'Date', 'Plan', 'Country', 'City', 'Occupation', 'Income', 'Lead Outcome', 'Status', 'Agent', 'Reference', 'Address', 'Query'];
+  const rows = items.map((a, i) => [
+    i + 1,
+    a.name,
+    a.contact,
+    a.email,
+    a.date,
+    a.plan,
+    a.country,
+    a.city,
+    a.occupation,
+    a.income,
+    a.leadOutcome,
+    a.status,
+    a.agentName,
+    a.referenceId,
+    a.address,
+    a.query,
+  ]);
+
+  const buffer = buildXlsx({ sheetName: 'Applications', headers, rows });
+  const stamp = from && to ? `${from}_to_${to}` : (from || to || date || new Date().toISOString().split('T')[0]);
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader('Content-Disposition', `attachment; filename="applications-${stamp}.xlsx"`);
+  res.setHeader('Content-Length', buffer.length);
+  res.send(buffer);
 });
 
 
