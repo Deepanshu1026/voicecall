@@ -31,11 +31,48 @@ async function resolveSqlId(employee) {
   return null;
 }
 
-async function getApplications(sqlId) {
-  const rows = await Application.find({ agentId: sqlId })
+async function getApplications(sqlId, { page = 1, limit = 10, search = '', status = '', outcome = '' } = {}) {
+  const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+  const limitNum = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 100);
+
+  const filter = { agentId: sqlId };
+  if (status && status !== 'all') filter.status = status;
+
+  if (search && String(search).trim()) {
+    const q = String(search).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const rx = new RegExp(q, 'i');
+    const numeric = parseInt(q, 10);
+    filter.$or = [
+      { clientName: rx },
+      { contactNumber: rx },
+      ...(Number.isNaN(numeric) ? [] : [{ sqlId: numeric }]),
+    ];
+  }
+
+  if (outcome && String(outcome).trim()) {
+    const oq = String(outcome).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    filter['details.lead_outcome'] = new RegExp(oq, 'i');
+  }
+
+  const total = await Application.countDocuments(filter);
+  const totalPages = total === 0 ? 1 : Math.ceil(total / limitNum);
+  const skip = (pageNum - 1) * limitNum;
+
+  const rows = await Application.find(filter)
     .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNum)
     .lean();
-  return rows.map(mapApplication);
+
+  return {
+    applications: rows.map(mapApplication),
+    pagination: {
+      current_page: pageNum,
+      total_pages: totalPages,
+      total_records: total,
+      has_more: pageNum < totalPages,
+    },
+  };
 }
 
 async function getStats(sqlId) {

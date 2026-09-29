@@ -26,8 +26,9 @@ exports.getStats = asyncHandler(async (req, res) => {
 
 exports.getApplications = asyncHandler(async (req, res) => {
   const { sqlId } = await resolveContext(req);
-  const applications = await agentPortalService.getApplications(sqlId);
-  res.status(200).json({ success: true, applications });
+  const { page = 1, limit = 10, search = '', status = '', outcome = '' } = req.query;
+  const data = await agentPortalService.getApplications(sqlId, { page, limit, search, status, outcome });
+  res.status(200).json({ success: true, applications: data.applications, pagination: data.pagination });
 });
 
 exports.getApplicationsList = asyncHandler(async (req, res) => {

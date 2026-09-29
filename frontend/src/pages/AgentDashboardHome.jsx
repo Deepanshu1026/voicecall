@@ -78,28 +78,89 @@ const AgentDashboardHome = () => {
   const [modalLoading, setModalLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchData = async () => {
+  const PAGE_SIZE = 10;
+  const [pagination, setPagination] = useState({ current_page: 1, total_pages: 1, total_records: 0, has_more: false });
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreRef = useRef(null);
+  const loadingMoreRef = useRef(false);
+  const loadMoreTimer = useRef(null);
+
+  const fetchApplications = async ({ page = 1, append = false } = {}) => {
     try {
-      setLoading(true);
-      const [statsRes, appsRes] = await Promise.all([
-        agentPortalAPI.getStats(),
-        agentPortalAPI.getApplications(),
-      ]);
-      setStats(statsRes.data.stats || { total: 0, pending: 0, approved: 0, rejected: 0 });
-      setApplications(appsRes.data.applications || []);
+      if (!append) setLoading(true);
+      const res = await agentPortalAPI.getApplications({
+        page,
+        limit: PAGE_SIZE,
+        search: search.trim(),
+        status: statusFilter,
+        outcome: outcomeFilter,
+      });
+      const apps = res.data.applications || [];
+      setApplications((prev) => (append ? [...prev, ...apps] : apps));
+      setPagination(
+        res.data.pagination || { current_page: page, total_pages: 1, total_records: apps.length, has_more: false }
+      );
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || 'Failed to load dashboard');
+      if (!append) alert(err.response?.data?.error || 'Failed to load applications');
     } finally {
-      setLoading(false);
+      if (!append) setLoading(false);
     }
   };
 
+  const fetchStats = async () => {
+    try {
+      const res = await agentPortalAPI.getStats();
+      setStats(res.data.stats || { total: 0, pending: 0, approved: 0, rejected: 0 });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Initial load + reload from page 1 whenever filters/search change (search debounced).
   useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 30000);
+    const timer = window.setTimeout(() => {
+      fetchApplications({ page: 1, append: false });
+    }, search ? 350 : 0);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, statusFilter, outcomeFilter]);
+
+  // Refresh stats periodically (list stays as-is).
+  useEffect(() => {
+    fetchStats();
+    const interval = setInterval(fetchStats, 30000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const loadMore = () => {
+    if (loadingMoreRef.current || !pagination.has_more) return;
+    loadingMoreRef.current = true;
+    setLoadingMore(true);
+    loadMoreTimer.current = window.setTimeout(() => {
+      fetchApplications({ page: (pagination.current_page || 1) + 1, append: true }).finally(() => {
+        loadingMoreRef.current = false;
+        setLoadingMore(false);
+      });
+    }, 300);
+  };
+
+  useEffect(() => () => { if (loadMoreTimer.current) clearTimeout(loadMoreTimer.current); }, []);
+
+  // Load the next 10 applications when the loader row scrolls into view.
+  useEffect(() => {
+    if (!pagination.has_more) return undefined;
+    const el = loadMoreRef.current;
+    if (!el) return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) loadMore(); },
+      { rootMargin: '120px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagination.has_more, pagination.current_page, applications.length]);
 
   const parsedApps = useMemo(() => {
     return applications.map((app) => {
@@ -110,52 +171,6 @@ const AgentDashboardHome = () => {
       return { ...app, details };
     });
   }, [applications]);
-
-  const filtered = useMemo(() => {
-    return parsedApps.filter((app) => {
-      const name = (app.client_name || '').toLowerCase();
-      const contact = (app.contact_number || '').toLowerCase();
-      const term = search.toLowerCase().trim();
-      const matchesSearch = !term || name.includes(term) || contact.includes(term) || String(app.id).includes(term);
-      const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
-      const outcome = (app.details.lead_outcome || '').toLowerCase();
-      const matchesOutcome = !outcomeFilter || outcome.includes(outcomeFilter.toLowerCase());
-      return matchesSearch && matchesStatus && matchesOutcome;
-    });
-  }, [parsedApps, search, statusFilter, outcomeFilter]);
-
-  // Infinite scroll: show 10 applications at a time with a loader after every 10.
-  const PAGE_SIZE = 10;
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const loadMoreRef = useRef(null);
-  const loadingMoreRef = useRef(false);
-
-  const visible = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
-  const hasMore = visibleCount < filtered.length;
-
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [search, statusFilter, outcomeFilter]);
-
-  useEffect(() => {
-    if (!hasMore) return undefined;
-    const el = loadMoreRef.current;
-    if (!el) return undefined;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loadingMoreRef.current) {
-          loadingMoreRef.current = true;
-          window.setTimeout(() => {
-            setVisibleCount((count) => count + PAGE_SIZE);
-            loadingMoreRef.current = false;
-          }, 350);
-        }
-      },
-      { rootMargin: '120px' }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [hasMore, filtered.length, visibleCount]);
 
   const viewApp = async (id) => {
     try {
@@ -352,7 +367,7 @@ const AgentDashboardHome = () => {
             </tr>
           </thead>
           <tbody>
-            {filtered.length === 0 ? (
+            {parsedApps.length === 0 ? (
               <tr>
                 <td colSpan={6}>
                   <div className="agent-empty">
@@ -364,7 +379,7 @@ const AgentDashboardHome = () => {
               </tr>
             ) : (
               <>
-                {visible.map((app) => (
+                {parsedApps.map((app) => (
                   <tr key={app.id} className="row-link" onClick={() => viewApp(app.id)}>
                     <td style={{ color: 'var(--text-muted)' }}>#{app.id}</td>
                     <td>
@@ -385,14 +400,18 @@ const AgentDashboardHome = () => {
                     </td>
                   </tr>
                 ))}
-                {hasMore && (
+                {pagination.has_more && (
                   <tr ref={loadMoreRef}>
                     <td colSpan={6}>
                       <div className="agent-loading" style={{ padding: '16px 0' }}>
-                        <div className="spinner-border spinner-border-sm text-primary" role="status" />
-                        <span className="ms-2" style={{ color: '#718096', fontSize: '0.85rem' }}>
-                          Loading more applications...
-                        </span>
+                        {loadingMore && (
+                          <>
+                            <div className="spinner-border spinner-border-sm text-primary" role="status" />
+                            <span className="ms-2" style={{ color: '#718096', fontSize: '0.85rem' }}>
+                              Loading more applications...
+                            </span>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

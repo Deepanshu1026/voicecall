@@ -196,7 +196,7 @@ export const portalAPI = {
 
 export const agentPortalAPI = {
   getStats: () => api.get('/agent-portal/stats'),
-  getApplications: () => api.get('/agent-portal/applications'),
+  getApplications: (params) => api.get('/agent-portal/applications', { params }),
   getApplication: (id) => api.get(`/agent-portal/applications/${id}`),
   submitApplication: (data) => api.post('/agent-portal/applications', data),
   updateApplication: (id, data) => api.put(`/agent-portal/applications/${id}`, data),
