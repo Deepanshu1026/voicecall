@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { agentPortalAPI } from '../services/api';
 import toast from 'react-hot-toast';
@@ -123,6 +123,39 @@ const AgentDashboardHome = () => {
       return matchesSearch && matchesStatus && matchesOutcome;
     });
   }, [parsedApps, search, statusFilter, outcomeFilter]);
+
+  // Infinite scroll: show 10 applications at a time with a loader after every 10.
+  const PAGE_SIZE = 10;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const loadMoreRef = useRef(null);
+  const loadingMoreRef = useRef(false);
+
+  const visible = useMemo(() => filtered.slice(0, visibleCount), [filtered, visibleCount]);
+  const hasMore = visibleCount < filtered.length;
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [search, statusFilter, outcomeFilter]);
+
+  useEffect(() => {
+    if (!hasMore) return undefined;
+    const el = loadMoreRef.current;
+    if (!el) return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loadingMoreRef.current) {
+          loadingMoreRef.current = true;
+          window.setTimeout(() => {
+            setVisibleCount((count) => count + PAGE_SIZE);
+            loadingMoreRef.current = false;
+          }, 350);
+        }
+      },
+      { rootMargin: '120px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMore, filtered.length, visibleCount]);
 
   const viewApp = async (id) => {
     try {
@@ -330,27 +363,41 @@ const AgentDashboardHome = () => {
                 </td>
               </tr>
             ) : (
-              filtered.map((app) => (
-                <tr key={app.id} className="row-link" onClick={() => viewApp(app.id)}>
-                  <td style={{ color: 'var(--text-muted)' }}>#{app.id}</td>
-                  <td>
-                    <div style={{ fontWeight: 500 }}>{app.client_name}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{app.contact_number}</div>
-                  </td>
-                  <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{fmtDate(app.created_at)}</td>
-                  <td>
-                    <span className={`outcome-badge ${outcomeClass(app.details.lead_outcome)}`}>
-                      {app.details.lead_outcome || 'Submitted'}
-                    </span>
-                  </td>
-                  <td><span className={`status-pill ${app.status}`}>{statusLabel(app.status)}</span></td>
-                  <td style={{ textAlign: 'right' }}>
-                    <button className="agent-btn agent-btn-sm" onClick={(e) => { e.stopPropagation(); viewApp(app.id); }}>
-                      <i className="bi bi-eye" /> View
-                    </button>
-                  </td>
-                </tr>
-              ))
+              <>
+                {visible.map((app) => (
+                  <tr key={app.id} className="row-link" onClick={() => viewApp(app.id)}>
+                    <td style={{ color: 'var(--text-muted)' }}>#{app.id}</td>
+                    <td>
+                      <div style={{ fontWeight: 500 }}>{app.client_name}</div>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{app.contact_number}</div>
+                    </td>
+                    <td style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{fmtDate(app.created_at)}</td>
+                    <td>
+                      <span className={`outcome-badge ${outcomeClass(app.details.lead_outcome)}`}>
+                        {app.details.lead_outcome || 'Submitted'}
+                      </span>
+                    </td>
+                    <td><span className={`status-pill ${app.status}`}>{statusLabel(app.status)}</span></td>
+                    <td style={{ textAlign: 'right' }}>
+                      <button className="agent-btn agent-btn-sm" onClick={(e) => { e.stopPropagation(); viewApp(app.id); }}>
+                        <i className="bi bi-eye" /> View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {hasMore && (
+                  <tr ref={loadMoreRef}>
+                    <td colSpan={6}>
+                      <div className="agent-loading" style={{ padding: '16px 0' }}>
+                        <div className="spinner-border spinner-border-sm text-primary" role="status" />
+                        <span className="ms-2" style={{ color: '#718096', fontSize: '0.85rem' }}>
+                          Loading more applications...
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </>
             )}
           </tbody>
         </table>
