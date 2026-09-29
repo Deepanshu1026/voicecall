@@ -257,6 +257,21 @@ $active = 'dashboard';
             font-size: 0.85em;
             color: #6c757d;
         }
+
+        /* Infinite Scroll Loader */
+        .scroll-loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .scroll-loader .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
     </style>
 </head>
 <body>
@@ -623,55 +638,110 @@ $active = 'dashboard';
         }
     }
 
+    // Pagination / infinite scroll state
+    const PAGE_SIZE = 10;
+    let currentDisplayList = [];
+    let displayedCount = 0;
+    let isLoadingMore = false;
+
+    function buildApplicationRow(app) {
+        let details = {};
+        try { details = typeof app.details === 'string' ? JSON.parse(app.details) : (app.details || {}); } catch(e) {}
+
+        const outcomeStr = details.lead_outcome || 'Submitted';
+
+        let outcomeClass = 'outcome-default';
+        let outcomeIcon = 'bi-circle';
+        const lowerOutcome = outcomeStr.toLowerCase().replace(/\s/g, '');
+
+        if (lowerOutcome.includes('interested')) { outcomeClass = 'outcome-interested'; outcomeIcon = 'bi-check-circle-fill'; }
+        else if (lowerOutcome.includes('later')) { outcomeClass = 'outcome-later'; outcomeIcon = 'bi-clock-history'; }
+        else if (lowerOutcome.includes('timewaste') || lowerOutcome.includes('waste')) { outcomeClass = 'outcome-timewaste'; outcomeIcon = 'bi-x-circle-fill'; }
+        else if (lowerOutcome.includes('submitted')) { outcomeClass = 'outcome-submitted'; outcomeIcon = 'bi-file-earmark-check-fill'; }
+
+        // Remark Notification Badge
+        let remarkBadge = '';
+        if (app.remark_count > 0 && app.status === 'pending') {
+            remarkBadge = `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="z-index: 1;">${app.remark_count}</span>`;
+        }
+
+        const statusClass = app.status === 'approved' ? 'approved' : (app.status === 'rejected' ? 'rejected' : 'pending');
+
+        return `<tr>
+            <td><span class="app-id">#${app.id}</span></td>
+            <td>
+                <div class="fw-bold text-dark">${app.client_name}</div>
+                <div class="small text-muted">${app.contact_number || (details.contact_number || 'N/A')}</div>
+            </td>
+            <td><small class="text-muted"><i class="bi bi-calendar3 me-1"></i>${new Date(app.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</small></td>
+            <td><div class="outcome-badge ${outcomeClass}"><i class="bi ${outcomeIcon}"></i> ${outcomeStr}</div></td>
+            <td><span class="status-pill ${statusClass}">${app.status.toUpperCase()}</span></td>
+            <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary position-relative" onclick="viewApplication(${app.id})">
+                    <i class="bi bi-eye me-1"></i>View
+                    ${remarkBadge}
+                </button>
+            </td>
+        </tr>`;
+    }
+
+    function loaderRowHtml() {
+        return `<tr id="scrollLoaderRow"><td colspan="6">
+            <div class="scroll-loader">
+                <div class="spinner-border text-primary" role="status"></div>
+                <span>Loading more applications...</span>
+            </div>
+        </td></tr>`;
+    }
+
     function renderApplications(applications) {
         const tbody = document.getElementById('appTableBody');
+        currentDisplayList = applications || [];
+        displayedCount = 0;
+        isLoadingMore = false;
         tbody.innerHTML = '';
-        
-        if (applications.length === 0) {
+
+        if (currentDisplayList.length === 0) {
             tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">No matching applications found.</td></tr>`;
             return;
         }
-        
-        tbody.innerHTML = applications.map(app => {
-            let details = {};
-            try { details = typeof app.details === 'string' ? JSON.parse(app.details) : (app.details || {}); } catch(e) {}
-            
-            const outcomeStr = details.lead_outcome || 'Submitted';
-            
-            let outcomeClass = 'outcome-default';
-            let outcomeIcon = 'bi-circle';
-            const lowerOutcome = outcomeStr.toLowerCase().replace(/\s/g, '');
-            
-            if (lowerOutcome.includes('interested')) { outcomeClass = 'outcome-interested'; outcomeIcon = 'bi-check-circle-fill'; }
-            else if (lowerOutcome.includes('later')) { outcomeClass = 'outcome-later'; outcomeIcon = 'bi-clock-history'; }
-            else if (lowerOutcome.includes('timewaste') || lowerOutcome.includes('waste')) { outcomeClass = 'outcome-timewaste'; outcomeIcon = 'bi-x-circle-fill'; }
-            else if (lowerOutcome.includes('submitted')) { outcomeClass = 'outcome-submitted'; outcomeIcon = 'bi-file-earmark-check-fill'; }
 
-            // Remark Notification Badge
-            let remarkBadge = '';
-            if (app.remark_count > 0 && app.status === 'pending') {
-                remarkBadge = `<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="z-index: 1;">${app.remark_count}</span>`;
-            }
+        appendNextBatch();
+    }
 
-            const statusClass = app.status === 'approved' ? 'approved' : (app.status === 'rejected' ? 'rejected' : 'pending');
+    function appendNextBatch() {
+        const tbody = document.getElementById('appTableBody');
+        const existingLoader = document.getElementById('scrollLoaderRow');
+        if (existingLoader) existingLoader.remove();
 
-            return `<tr>
-                <td><span class="app-id">#${app.id}</span></td>
-                <td>
-                    <div class="fw-bold text-dark">${app.client_name}</div>
-                    <div class="small text-muted">${app.contact_number || (details.contact_number || 'N/A')}</div>
-                </td>
-                <td><small class="text-muted"><i class="bi bi-calendar3 me-1"></i>${new Date(app.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</small></td>
-                <td><div class="outcome-badge ${outcomeClass}"><i class="bi ${outcomeIcon}"></i> ${outcomeStr}</div></td>
-                <td><span class="status-pill ${statusClass}">${app.status.toUpperCase()}</span></td>
-                <td class="text-end">
-                    <button class="btn btn-sm btn-outline-primary position-relative" onclick="viewApplication(${app.id})">
-                        <i class="bi bi-eye me-1"></i>View
-                        ${remarkBadge}
-                    </button>
-                </td>
-            </tr>`;
-        }).join('');
+        const nextBatch = currentDisplayList.slice(displayedCount, displayedCount + PAGE_SIZE);
+        if (nextBatch.length === 0) return;
+
+        tbody.insertAdjacentHTML('beforeend', nextBatch.map(buildApplicationRow).join(''));
+        displayedCount += nextBatch.length;
+
+        // Show loader after every batch while more applications remain
+        if (displayedCount < currentDisplayList.length) {
+            tbody.insertAdjacentHTML('beforeend', loaderRowHtml());
+        }
+    }
+
+    function handleInfiniteScroll() {
+        if (isLoadingMore) return;
+        if (displayedCount >= currentDisplayList.length) return;
+
+        const scrollBottom = window.innerHeight + window.scrollY;
+        const threshold = document.body.offsetHeight - 200;
+        if (scrollBottom < threshold) return;
+
+        isLoadingMore = true;
+        const loader = document.getElementById('scrollLoaderRow');
+        if (loader) loader.style.display = '';
+
+        setTimeout(() => {
+            appendNextBatch();
+            isLoadingMore = false;
+        }, 600);
     }
 
     function filterByStatus(status) {
@@ -1070,6 +1140,10 @@ $active = 'dashboard';
     document.addEventListener('DOMContentLoaded', () => {
         loadStats();
         loadApplications();
+
+        // Infinite scroll: load next 10 applications with a loader
+        window.addEventListener('scroll', handleInfiniteScroll);
+        window.addEventListener('resize', handleInfiniteScroll);
         
         // Smart polling every 5 seconds - only updates UI when data changes
         setInterval(() => {
