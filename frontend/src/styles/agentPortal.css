@@ -671,6 +671,7 @@
 .agent-modal-body {
   padding: 1.5rem;
   overflow-y: auto;
+  overscroll-behavior: contain;
   flex: 1;
   min-height: 0;
 }

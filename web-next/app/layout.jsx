@@ -2,6 +2,7 @@ import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import Script from 'next/script';
 import GoogleAnalytics from '../components/GoogleAnalytics';
+import ScrollLockManager from '../components/ScrollLockManager';
 import '../styles/userLanding.css';
 import '../styles/services.css';
 import '../styles/about.css';
@@ -155,6 +156,7 @@ gtag('js', new Date());
 gtag('config', 'G-TDW4SCLJRV', { send_page_view: false });`}
         </Script>
         <GoogleAnalytics />
+        <ScrollLockManager />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
