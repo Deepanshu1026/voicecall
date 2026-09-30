@@ -277,7 +277,8 @@ const AgentDashboardHome = () => {
           };
         });
         setEditModalOpen(false);
-        fetchData();
+        fetchApplications({ page: 1, append: false });
+        fetchStats();
       }
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update application');
