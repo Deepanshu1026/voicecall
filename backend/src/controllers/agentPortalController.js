@@ -162,9 +162,9 @@ exports.updateApplication = asyncHandler(async (req, res) => {
 });
 
 exports.checkContactHistory = asyncHandler(async (req, res) => {
-  await resolveContext(req);
+  const { sqlId } = await resolveContext(req);
   const contact = req.query.contact || '';
-  const history = await agentPortalService.checkContactHistory(contact);
+  const history = await agentPortalService.checkContactHistory(contact, sqlId);
   res.status(200).json({ success: true, history });
 });
 

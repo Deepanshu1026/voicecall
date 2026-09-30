@@ -40,10 +40,23 @@ const AgentNewApplication = () => {
   const [history, setHistory] = useState([]);
   const [searching, setSearching] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [editingAppId, setEditingAppId] = useState(null);
   const searchTimer = useRef(null);
+  const formRef = useRef(null);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleEditHistory = (h) => {
+    setForm({
+      ...initialForm,
+      ...(h.details || {}),
+      client_name: h.client_name || '',
+      contact_number: h.contact_number || '',
+    });
+    setEditingAppId(h.id);
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const searchContact = (contact) => {
@@ -73,14 +86,24 @@ const AgentNewApplication = () => {
     }
     try {
       setSubmitting(true);
-      const res = await agentPortalAPI.submitApplication(form);
-      if (res.data.success) {
-        toast.success('Application submitted successfully');
-        setForm(initialForm);
-        setHistory([]);
+      if (editingAppId) {
+        await agentPortalAPI.updateApplication(editingAppId, { ...form, id: editingAppId });
+        toast.success('Application updated successfully');
+        setEditingAppId(null);
+        searchContact(form.contact_number);
+      } else {
+        const res = await agentPortalAPI.submitApplication(form);
+        if (res.data.success) {
+          toast.success('Application submitted successfully');
+          setForm(initialForm);
+          setHistory([]);
+        }
       }
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to submit application');
+      toast.error(
+        err.response?.data?.error ||
+          (editingAppId ? 'Failed to update application' : 'Failed to submit application')
+      );
     } finally {
       setSubmitting(false);
     }
@@ -109,7 +132,7 @@ const AgentNewApplication = () => {
         {/* Left - Form */}
         <div style={{ flex: '1 1 60%', minWidth: '300px' }}>
           <div className="agent-form-container">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} ref={formRef}>
               {/* Contact Search */}
               <div className="agent-form-group">
                 <label>Contact Number</label>
@@ -278,8 +301,21 @@ const AgentNewApplication = () => {
 
               <div className="d-flex gap-2 mt-4">
                 <button type="submit" className="agent-btn agent-btn-primary" disabled={submitting}>
-                  {submitting ? <><span className="spinner-border spinner-border-sm me-1" /> Submitting...</> : <><i className="bi bi-plus-lg" /> Submit Application</>}
+                  {submitting ? (
+                    <><span className="spinner-border spinner-border-sm me-1" /> {editingAppId ? 'Updating...' : 'Submitting...'}</>
+                  ) : (
+                    <><i className={editingAppId ? 'bi bi-check-lg' : 'bi bi-plus-lg'} /> {editingAppId ? 'Update Application' : 'Submit Application'}</>
+                  )}
                 </button>
+                {editingAppId && (
+                  <button
+                    type="button"
+                    className="agent-btn agent-btn-outline"
+                    onClick={() => { setEditingAppId(null); setForm(initialForm); }}
+                  >
+                    Cancel Edit
+                  </button>
+                )}
                 <button type="button" className="agent-btn agent-btn-outline" onClick={() => navigate('/agent/dashboard')}>
                   Cancel
                 </button>
@@ -318,6 +354,7 @@ const AgentNewApplication = () => {
                         { label: 'City', value: d.city },
                         { label: 'State', value: d.state },
                         { label: 'Address', value: d.address },
+                        { label: 'Remarks', value: d.remarks },
                         { label: 'Notes', value: d.client_notes },
                       ].filter((f) => f.value);
                       return (
@@ -326,9 +363,21 @@ const AgentNewApplication = () => {
                             <span className="fw-bold">{h.client_name}</span>
                             <span className={`ms-2 status-pill ${h.status}`} style={{ fontSize: '0.6rem', padding: '2px 6px' }}>{h.status}</span>
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '4px' }}>
-                            <i className="bi bi-calendar3 me-1" />{logTime(h.created_at)}
-                            <span className="ms-2"><i className="bi bi-person-badge me-1" />{h.agent_name || 'Unknown'}</span>
+                          <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                            <span>
+                              <i className="bi bi-calendar3 me-1" />{logTime(h.created_at)}
+                              <span className="ms-2"><i className="bi bi-person-badge me-1" />{h.agent_name || 'Unknown'}</span>
+                            </span>
+                            {h.is_mine && (
+                              <button
+                                type="button"
+                                className="agent-btn agent-btn-sm"
+                                style={{ padding: '2px 8px', fontSize: '0.7rem', whiteSpace: 'nowrap' }}
+                                onClick={() => handleEditHistory(h)}
+                              >
+                                <i className="bi bi-pencil" /> Edit
+                              </button>
+                            )}
                           </div>
                           {fields.length > 0 && (
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', fontSize: '0.73rem', color: '#475569', background: '#f1f5f9', padding: '6px 8px', borderRadius: '6px' }}>

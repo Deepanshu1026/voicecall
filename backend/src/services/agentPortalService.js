@@ -204,7 +204,7 @@ async function updateApplication(sqlId, input) {
   return appId;
 }
 
-async function checkContactHistory(contactNumber) {
+async function checkContactHistory(contactNumber, currentSqlId = null) {
   if (!contactNumber || !contactNumber.trim()) {
     return [];
   }
@@ -239,6 +239,8 @@ async function checkContactHistory(contactNumber) {
       details,
       visa_type: details.visa_type || 'N/A',
       agent_name: nameBySqlId[row.agentId] || 'Unknown',
+      agent_id: row.agentId ?? null,
+      is_mine: currentSqlId != null && String(row.agentId) === String(currentSqlId),
     };
   });
 }
