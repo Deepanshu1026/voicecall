@@ -241,43 +241,50 @@ const AgentDashboardHome = () => {
       const res = await agentPortalAPI.updateApplication(editForm.id, editForm);
       if (res.data.success) {
         toast.success('Application updated successfully');
-        // Update the open detail modal immediately so no refresh is needed
-        setSelectedApp((prev) => {
-          if (!prev || String(prev.id) !== String(editForm.id)) return prev;
-          return {
-            ...prev,
-            client_name: editForm.client_name,
-            contact_number: editForm.contact_number,
-            details: {
-              ...(prev.details || {}),
-              gender: editForm.gender,
-              age: editForm.age,
-              spouse_name: editForm.spouse_name,
-              spouse_age: editForm.spouse_age,
-              kids: editForm.kids,
-              address: editForm.address,
-              city: editForm.city,
-              state: editForm.state,
-              pincode: editForm.pincode,
-              visa_type: editForm.visa_type,
-              visa_type_other: editForm.visa_type_other,
-              travel_history: editForm.travel_history,
-              refusal_history: editForm.refusal_history,
-              passport_validity: editForm.passport_validity,
-              education: editForm.education,
-              ielts_score: editForm.ielts_score,
-              occupation: editForm.occupation,
-              income: editForm.income,
-              remarks: editForm.remarks,
-              lead_source: editForm.lead_source,
-              lead_outcome: editForm.lead_outcome,
-              client_notes: editForm.client_notes,
-              submission_date: editForm.submission_date,
-            },
-          };
-        });
+        const updatedDetails = {
+          gender: editForm.gender,
+          age: editForm.age,
+          spouse_name: editForm.spouse_name,
+          spouse_age: editForm.spouse_age,
+          kids: editForm.kids,
+          address: editForm.address,
+          city: editForm.city,
+          state: editForm.state,
+          pincode: editForm.pincode,
+          visa_type: editForm.visa_type,
+          visa_type_other: editForm.visa_type_other,
+          travel_history: editForm.travel_history,
+          refusal_history: editForm.refusal_history,
+          passport_validity: editForm.passport_validity,
+          education: editForm.education,
+          ielts_score: editForm.ielts_score,
+          occupation: editForm.occupation,
+          income: editForm.income,
+          remarks: editForm.remarks,
+          lead_source: editForm.lead_source,
+          lead_outcome: editForm.lead_outcome,
+          client_notes: editForm.client_notes,
+          submission_date: editForm.submission_date,
+        };
+        const patch = {
+          client_name: editForm.client_name,
+          contact_number: editForm.contact_number,
+        };
+        // Update in place (do NOT refetch/reset the list) so the loaded rows and the
+        // user's scroll position stay exactly where they were.
+        setSelectedApp((prev) =>
+          prev && String(prev.id) === String(editForm.id)
+            ? { ...prev, ...patch, details: { ...(prev.details || {}), ...updatedDetails } }
+            : prev
+        );
+        setApplications((prev) =>
+          prev.map((app) =>
+            String(app.id) === String(editForm.id)
+              ? { ...app, ...patch, details: { ...(app.details || {}), ...updatedDetails } }
+              : app
+          )
+        );
         setEditModalOpen(false);
-        fetchApplications({ page: 1, append: false });
         fetchStats();
       }
     } catch (err) {
