@@ -77,7 +77,7 @@ const Blogs = ({ initialPosts = [] }) => {
       blogPost: posts.slice(0, 12).map((post) => ({
         '@type': 'BlogPosting',
         headline: post.title,
-        url: `https://avisaexperts.com/blog/${post.id}/${slugify(post.title)}`,
+        url: `https://avisaexperts.com/blog/${post.slug || slugify(post.title)}`,
         datePublished: post.created_at,
         image: post.featured_image || fallbackImage,
       })),
@@ -168,7 +168,7 @@ const Blogs = ({ initialPosts = [] }) => {
                 {featuredPost && (
                   <Link
                     className="blogs-featured"
-                    href={`/blog/${featuredPost.id}/${slugify(featuredPost.title)}`}
+                    href={`/blog/${featuredPost.slug || slugify(featuredPost.title)}`}
                   >
                     <div className="blogs-featured-image">
                       <img
@@ -193,7 +193,7 @@ const Blogs = ({ initialPosts = [] }) => {
                       <Link
                         className="blogs-card"
                         key={post.id}
-                        href={`/blog/${post.id}/${slugify(post.title)}`}
+                        href={`/blog/${post.slug || slugify(post.title)}`}
                       >
                         <div className="blogs-card-image">
                           <img

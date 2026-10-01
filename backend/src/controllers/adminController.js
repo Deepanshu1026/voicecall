@@ -415,6 +415,18 @@ const parseTags = (tags) => {
   return [];
 };
 
+const uniqueSlug = async (base, excludeId = null) => {
+  const root = slugify(base) || 'post';
+  let slug = root;
+  let n = 2;
+  const query = () => (excludeId ? { slug, _id: { $ne: excludeId } } : { slug });
+  while (await Post.exists(query())) {
+    slug = `${root}-${n}`;
+    n += 1;
+  }
+  return slug;
+};
+
 const getBlogs = asyncHandler(async (req, res) => {
   const { search = '', status } = req.query;
   const filter = {};
@@ -439,7 +451,7 @@ const createBlog = asyncHandler(async (req, res) => {
 
   const post = await Post.create({
     title: String(title).trim(),
-    slug: slugify(slug || title),
+    slug: await uniqueSlug(slug || title),
     excerpt: excerpt ? String(excerpt).trim() : '',
     content: String(content),
     featuredImage: featuredImage ? String(featuredImage).trim() : '',
@@ -466,7 +478,7 @@ const updateBlog = asyncHandler(async (req, res) => {
   stringFields.forEach((f) => {
     if (req.body[f] !== undefined) post[f] = typeof req.body[f] === 'string' ? req.body[f].trim() : req.body[f];
   });
-  if (req.body.slug !== undefined) post.slug = slugify(req.body.slug || post.title);
+  if (req.body.slug !== undefined) post.slug = await uniqueSlug(req.body.slug || post.title, post._id);
   if (req.body.tags !== undefined) post.tags = parseTags(req.body.tags);
   if (req.body.status !== undefined) post.status = req.body.status === 'draft' ? 'draft' : 'published';
   if (req.body.publishedAt !== undefined) post.publishedAt = req.body.publishedAt ? new Date(req.body.publishedAt) : post.publishedAt;

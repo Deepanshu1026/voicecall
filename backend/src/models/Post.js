@@ -27,6 +27,7 @@ const postSchema = new mongoose.Schema({
 postSchema.index({ title: 'text', content: 'text', excerpt: 'text' });
 postSchema.index({ category: 1 });
 postSchema.index({ status: 1 });
+postSchema.index({ slug: 1 });
 postSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Post', postSchema);

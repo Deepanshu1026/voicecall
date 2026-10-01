@@ -1,8 +1,10 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import BlogDetail from '../../../../components/pages/BlogDetail';
 import { blogAPI } from '../../../../lib/api';
 
 export const revalidate = 300;
+
+const isLegacyId = (value) => /^[0-9a-fA-F]{24}$/.test(value) || /^\d+$/.test(value);
 
 const slugify = (text) =>
   (text || '')
@@ -63,7 +65,7 @@ export async function generateMetadata({ params }) {
     : post.excerpt
       ? stripHtml(post.excerpt).slice(0, 160)
       : stripHtml(post.content).slice(0, 160);
-  const url = post.canonicalUrl || `https://avisaexperts.com/blog/${post.id}/${slugify(post.title)}`;
+  const url = post.canonicalUrl || `https://avisaexperts.com/blog/${post.slug || slugify(post.title)}`;
   const image = post.featured_image || '/images/user/touristvisa_full 1.webp';
   const keywords = post.metaKeywords
     || ['visa', 'immigration', 'A Visa Experts', 'Kaveesh Kapoor', post.category, ...(post.tags || [])]
@@ -95,7 +97,11 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function Page({ params }) {
-  const [post, related] = await Promise.all([getPost(params.id), getRelated(params.id)]);
+  const post = await getPost(params.id);
   if (!post) notFound();
+  if (isLegacyId(params.id)) {
+    permanentRedirect(`/blog/${post.slug || slugify(post.title)}`);
+  }
+  const related = await getRelated(params.id);
   return <BlogDetail post={post} related={related} />;
 }

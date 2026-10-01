@@ -1390,6 +1390,28 @@ router.get('/users-all-data', asyncHandler(async (req, res) => {
 
 // ==================== BLOG POSTS ====================
 
+const buildPostSlug = (title) =>
+  String(title || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'post';
+
+const ensurePostSlug = async (post) => {
+  if (post.slug) return post.slug;
+  const base = buildPostSlug(post.title);
+  let slug = base;
+  let n = 2;
+  while (await Post.exists({ slug, _id: { $ne: post._id } })) {
+    slug = `${base}-${n}`;
+    n += 1;
+  }
+  await Post.findByIdAndUpdate(post._id, { slug });
+  post.slug = slug;
+  return slug;
+};
+
 router.get('/posts', asyncHandler(async (req, res) => {
   const { category, search, page = 1, limit = 20 } = req.query;
   const filter = { status: 'published' };
@@ -1405,6 +1427,7 @@ router.get('/posts', asyncHandler(async (req, res) => {
     .skip(skip)
     .limit(parseInt(limit, 10))
     .lean();
+  await Promise.all(posts.map((p) => ensurePostSlug(p)));
   const total = await Post.countDocuments(filter);
   res.json({
     success: true,
@@ -1418,15 +1441,19 @@ router.get('/posts', asyncHandler(async (req, res) => {
 router.get('/posts/:id', asyncHandler(async (req, res) => {
   const { id } = req.params;
   let post;
-  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+  if (/^[0-9a-fA-F]{24}$/.test(id)) {
     post = await Post.findById(id).lean();
   }
-  if (!post) {
+  if (!post && /^\d+$/.test(id)) {
     post = await Post.findOne({ legacyId: parseInt(id, 10) }).lean();
+  }
+  if (!post) {
+    post = await Post.findOne({ slug: id }).lean();
   }
   if (!post) {
     throw new AppError('Post not found', 404);
   }
+  await ensurePostSlug(post);
   // Increment clicks
   await Post.findByIdAndUpdate(post._id, { $inc: { clicks: 1 } });
   res.json({ success: true, data: post });
@@ -1434,7 +1461,16 @@ router.get('/posts/:id', asyncHandler(async (req, res) => {
 
 router.get('/posts/:id/related', asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const current = await Post.findById(id).lean() || await Post.findOne({ legacyId: parseInt(id, 10) }).lean();
+  let current = null;
+  if (/^[0-9a-fA-F]{24}$/.test(id)) {
+    current = await Post.findById(id).lean();
+  }
+  if (!current && /^\d+$/.test(id)) {
+    current = await Post.findOne({ legacyId: parseInt(id, 10) }).lean();
+  }
+  if (!current) {
+    current = await Post.findOne({ slug: id }).lean();
+  }
   if (!current) {
     throw new AppError('Post not found', 404);
   }
@@ -1446,6 +1482,7 @@ router.get('/posts/:id/related', asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 })
     .limit(3)
     .lean();
+  await Promise.all(related.map((p) => ensurePostSlug(p)));
   res.json({ success: true, data: related });
 }));
 
