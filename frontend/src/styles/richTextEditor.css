@@ -99,21 +99,27 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  flex: 0 0 auto;
 }
 
 .rte-select {
   appearance: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
   border: none;
   background: transparent;
   color: #4a5568;
   font-size: 0.86rem;
   font-weight: 500;
   height: 32px;
+  min-width: 88px;
   padding: 0 26px 0 10px;
   border-radius: 7px;
   cursor: pointer;
   outline: none;
+  white-space: nowrap;
+  text-overflow: clip;
+  flex: 0 0 auto;
 }
 
 .rte-select:hover {
