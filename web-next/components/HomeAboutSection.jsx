@@ -1,7 +1,6 @@
 'use client';
 
 const HomeAboutSection = ({ variant = 'full' }) => {
-  const goTo = (p) => window.location.assign(p);
   const isShort = variant === 'short';
 
   const features = [
@@ -102,9 +101,14 @@ const HomeAboutSection = ({ variant = 'full' }) => {
                 Australia and Europe.
               </p>
             )}
-            <button className="abouthero-btn" onClick={() => goTo('/about')}>
+            <a
+              className="abouthero-btn"
+              href="https://kaveeshkapoor.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Learn more about Kaveesh Kapoor <span aria-hidden="true">→</span>
-            </button>
+            </a>
           </div>
         </div>
 

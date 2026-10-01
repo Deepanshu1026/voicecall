@@ -196,6 +196,7 @@
   color: #f6b83b;
   font-size: 0.95rem;
   font-weight: 700;
+  text-decoration: none;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
 }
