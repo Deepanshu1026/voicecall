@@ -27,8 +27,18 @@ const SIZE_OPTIONS = [
 const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog content here...' }) => {
   const editorRef = useRef(null);
   const savedRange = useRef(null);
+  const menusRef = useRef(null);
   const lastHtml = useRef(value);
   const [, forceUpdate] = useState(0);
+  const [openMenu, setOpenMenu] = useState(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (menusRef.current && !menusRef.current.contains(e.target)) setOpenMenu(null);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   useEffect(() => {
     const el = editorRef.current;
@@ -148,32 +158,60 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
 
         <Divider />
 
-        <div className="rte-group">
-          <div className="rte-select-wrap">
-            <select
-              className="rte-select"
-              value=""
+        <div className="rte-group" ref={menusRef}>
+          <div className="rte-menu">
+            <button
+              type="button"
+              className="rte-menu-btn"
               title="Text style"
-              onMouseDown={saveSelection}
-              onChange={(e) => { if (e.target.value) applyBlock(e.target.value); e.target.value = ''; }}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setOpenMenu((m) => (m === 'style' ? null : 'style'))}
             >
-              <option value="">Style</option>
-              {BLOCK_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-            <FiChevronDown className="rte-select-caret" />
+              <span>Style</span>
+              <FiChevronDown />
+            </button>
+            {openMenu === 'style' && (
+              <div className="rte-menu-list">
+                {BLOCK_OPTIONS.map((o) => (
+                  <button
+                    key={o.value}
+                    type="button"
+                    className="rte-menu-item"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => { applyBlock(o.value); setOpenMenu(null); }}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="rte-select-wrap">
-            <select
-              className="rte-select"
-              value=""
+          <div className="rte-menu">
+            <button
+              type="button"
+              className="rte-menu-btn"
               title="Font size"
-              onMouseDown={saveSelection}
-              onChange={(e) => { if (e.target.value) exec('fontSize', e.target.value); e.target.value = ''; }}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setOpenMenu((m) => (m === 'size' ? null : 'size'))}
             >
-              <option value="">Size</option>
-              {SIZE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
-            <FiChevronDown className="rte-select-caret" />
+              <span>Size</span>
+              <FiChevronDown />
+            </button>
+            {openMenu === 'size' && (
+              <div className="rte-menu-list">
+                {SIZE_OPTIONS.map((o) => (
+                  <button
+                    key={o.value}
+                    type="button"
+                    className="rte-menu-item"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => { exec('fontSize', o.value); setOpenMenu(null); }}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
