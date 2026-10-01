@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { adminAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import RichTextEditor from '../components/RichTextEditor';
 import '../styles/adminBlogs.css';
 
 const CATEGORIES = ['General', 'Tourist Visa', 'Country Guides', 'Company News', 'Leadership', 'Immigration Updates', 'Success Stories'];
@@ -41,7 +42,6 @@ const AdminBlogs = () => {
   const [editingId, setEditingId] = useState(null);
   const [slugTouched, setSlugTouched] = useState(false);
   const [search, setSearch] = useState('');
-  const [showPreview, setShowPreview] = useState(false);
   const formRef = useRef(null);
 
   const fetchBlogs = async () => {
@@ -77,7 +77,6 @@ const AdminBlogs = () => {
     setForm(initialForm);
     setEditingId(null);
     setSlugTouched(false);
-    setShowPreview(false);
   };
 
   const handleEdit = (post) => {
@@ -197,23 +196,12 @@ const AdminBlogs = () => {
           </div>
 
           <div className="blog-field full">
-            <div className="blog-label-row">
-              <label>Content (HTML supported) <span className="req">*</span></label>
-              <button type="button" className="blog-btn ghost small" onClick={() => setShowPreview((v) => !v)}>
-                {showPreview ? 'Hide Preview' : 'Show Preview'}
-              </button>
-            </div>
-            <textarea
-              name="content"
+            <label>Content <span className="req">*</span></label>
+            <RichTextEditor
               value={form.content}
-              onChange={handleChange}
-              rows={12}
-              className="blog-content-input"
-              placeholder="<h2>Introduction</h2><p>Write your blog content here...</p>"
+              onChange={(html) => setForm((prev) => ({ ...prev, content: html }))}
+              placeholder="Write your blog content here..."
             />
-            {showPreview && (
-              <div className="blog-content-preview" dangerouslySetInnerHTML={{ __html: form.content }} />
-            )}
           </div>
 
           <div className="blog-field">
