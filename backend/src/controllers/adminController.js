@@ -4,6 +4,7 @@ const Message = require('../models/Message');
 const ApiKey = require('../models/ApiKey');
 const User = require('../models/User');
 const Review = require('../models/Review');
+const Post = require('../models/Post');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const ApiResponse = require('../utils/ApiResponse');
@@ -398,6 +399,88 @@ const deleteReview = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Review deleted' });
 });
 
+// ==================== BLOG / POSTS ====================
+
+const slugify = (text) =>
+  String(text || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const parseTags = (tags) => {
+  if (Array.isArray(tags)) return tags.map((t) => String(t).trim()).filter(Boolean);
+  if (typeof tags === 'string') return tags.split(',').map((t) => t.trim()).filter(Boolean);
+  return [];
+};
+
+const getBlogs = asyncHandler(async (req, res) => {
+  const { search = '', status } = req.query;
+  const filter = {};
+  if (status) filter.status = status;
+  if (search && String(search).trim()) {
+    const q = String(search).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const rx = new RegExp(q, 'i');
+    filter.$or = [{ title: rx }, { category: rx }, { slug: rx }];
+  }
+  const posts = await Post.find(filter).sort({ createdAt: -1 }).lean();
+  res.json({ success: true, data: posts });
+});
+
+const createBlog = asyncHandler(async (req, res) => {
+  const {
+    title, slug, excerpt, content, featuredImage, imageAlt, category, tags, author,
+    metaTitle, metaDescription, metaKeywords, canonicalUrl, publishedAt, status,
+  } = req.body;
+
+  if (!title || !String(title).trim()) throw new AppError('Title is required', 400);
+  if (!content || !String(content).trim()) throw new AppError('Content is required', 400);
+
+  const post = await Post.create({
+    title: String(title).trim(),
+    slug: slugify(slug || title),
+    excerpt: excerpt ? String(excerpt).trim() : '',
+    content: String(content),
+    featuredImage: featuredImage ? String(featuredImage).trim() : '',
+    imageAlt: imageAlt ? String(imageAlt).trim() : String(title).trim(),
+    category: category ? String(category).trim() : 'General',
+    tags: parseTags(tags),
+    author: author ? String(author).trim() : 'A Visa Experts',
+    metaTitle: metaTitle ? String(metaTitle).trim() : '',
+    metaDescription: metaDescription ? String(metaDescription).trim() : '',
+    metaKeywords: metaKeywords ? String(metaKeywords).trim() : '',
+    canonicalUrl: canonicalUrl ? String(canonicalUrl).trim() : '',
+    publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+    status: status === 'draft' ? 'draft' : 'published',
+    source: 'admin',
+  });
+  res.status(201).json({ success: true, data: post });
+});
+
+const updateBlog = asyncHandler(async (req, res) => {
+  const post = await Post.findById(req.params.id);
+  if (!post) throw new AppError('Blog not found', 404);
+
+  const stringFields = ['title', 'excerpt', 'content', 'featuredImage', 'imageAlt', 'category', 'author', 'metaTitle', 'metaDescription', 'metaKeywords', 'canonicalUrl'];
+  stringFields.forEach((f) => {
+    if (req.body[f] !== undefined) post[f] = typeof req.body[f] === 'string' ? req.body[f].trim() : req.body[f];
+  });
+  if (req.body.slug !== undefined) post.slug = slugify(req.body.slug || post.title);
+  if (req.body.tags !== undefined) post.tags = parseTags(req.body.tags);
+  if (req.body.status !== undefined) post.status = req.body.status === 'draft' ? 'draft' : 'published';
+  if (req.body.publishedAt !== undefined) post.publishedAt = req.body.publishedAt ? new Date(req.body.publishedAt) : post.publishedAt;
+
+  await post.save();
+  res.json({ success: true, data: post });
+});
+
+const deleteBlog = asyncHandler(async (req, res) => {
+  const post = await Post.findByIdAndDelete(req.params.id);
+  if (!post) throw new AppError('Blog not found', 404);
+  res.json({ success: true, message: 'Blog deleted' });
+});
+
 module.exports = {
   getAllConversations,
   getConversationMessages,
@@ -416,4 +499,8 @@ module.exports = {
   createReview,
   updateReview,
   deleteReview,
+  getBlogs,
+  createBlog,
+  updateBlog,
+  deleteBlog,
 };

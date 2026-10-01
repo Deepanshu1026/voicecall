@@ -58,29 +58,36 @@ export async function generateMetadata({ params }) {
       robots: { index: false, follow: true },
     };
   }
-  const desc = post.excerpt
-    ? stripHtml(post.excerpt).slice(0, 160)
-    : stripHtml(post.content).slice(0, 160);
-  const url = `https://avisaexperts.com/blog/${post.id}/${slugify(post.title)}`;
+  const desc = post.metaDescription
+    ? stripHtml(post.metaDescription).slice(0, 160)
+    : post.excerpt
+      ? stripHtml(post.excerpt).slice(0, 160)
+      : stripHtml(post.content).slice(0, 160);
+  const url = post.canonicalUrl || `https://avisaexperts.com/blog/${post.id}/${slugify(post.title)}`;
   const image = post.featured_image || '/images/user/touristvisa_full 1.webp';
-  return {
-    title: `${post.title} | A Visa Experts Blog`,
-    description: desc,
-    keywords: ['visa', 'immigration', 'A Visa Experts', 'Kaveesh Kapoor', post.category]
+  const keywords = post.metaKeywords
+    || ['visa', 'immigration', 'A Visa Experts', 'Kaveesh Kapoor', post.category, ...(post.tags || [])]
       .filter(Boolean)
-      .join(', '),
+      .join(', ');
+  const metaTitle = post.metaTitle || post.title;
+  return {
+    title: metaTitle.includes('A Visa Experts') ? metaTitle : `${metaTitle} | A Visa Experts Blog`,
+    description: desc,
+    keywords,
+    authors: [{ name: post.author || 'A Visa Experts' }],
     alternates: { canonical: url },
     openGraph: {
       type: 'article',
-      title: post.title,
+      title: metaTitle,
       description: desc,
       url,
       images: [image],
       siteName: 'A Visa Experts',
+      publishedTime: post.publishedAt || post.created_at,
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
+      title: metaTitle,
       description: desc,
       images: [image],
     },

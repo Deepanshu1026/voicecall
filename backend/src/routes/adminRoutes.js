@@ -27,4 +27,9 @@ router.post('/reviews', adminController.createReview);
 router.put('/reviews/:id', adminController.updateReview);
 router.delete('/reviews/:id', adminController.deleteReview);
 
+router.get('/blogs', adminController.getBlogs);
+router.post('/blogs', adminController.createBlog);
+router.put('/blogs/:id', adminController.updateBlog);
+router.delete('/blogs/:id', adminController.deleteBlog);
+
 module.exports = router;

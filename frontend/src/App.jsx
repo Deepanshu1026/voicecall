@@ -20,6 +20,7 @@ import AdminBannerControl from './pages/AdminBannerControl';
 import AdminInstagramToken from './pages/AdminInstagramToken';
 import AdminUserDetails from './pages/AdminUserDetails';
 import AdminReviews from './pages/AdminReviews';
+import AdminBlogs from './pages/AdminBlogs';
 import BookedAppointments from './pages/BookedAppointments';
 import ApplicationsPage from './pages/ApplicationsPage';
 import Chat from './pages/Chat';
@@ -158,6 +159,7 @@ function App() {
         <Route path="admin/instagram-token" element={<AdminInstagramToken />} />
         <Route path="admin/users" element={<AdminUserDetails />} />
         <Route path="admin/reviews" element={<AdminReviews />} />
+        <Route path="admin/blogs" element={<AdminBlogs />} />
       </Route>
 
       {/* Default landing */}

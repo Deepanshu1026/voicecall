@@ -233,6 +233,10 @@ export const adminAPI = {
   createReview: (data) => api.post('/admin/reviews', data),
   updateReview: (id, data) => api.put(`/admin/reviews/${id}`, data),
   deleteReview: (id) => api.delete(`/admin/reviews/${id}`),
+  getBlogs: (params) => api.get('/admin/blogs', { params }),
+  createBlog: (data) => api.post('/admin/blogs', data),
+  updateBlog: (id, data) => api.put(`/admin/blogs/${id}`, data),
+  deleteBlog: (id) => api.delete(`/admin/blogs/${id}`),
 };
 
 export const blogAPI = {

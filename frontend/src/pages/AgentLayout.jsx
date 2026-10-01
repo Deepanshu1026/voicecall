@@ -29,6 +29,7 @@ const adminMenu = [
   { path: '/agent/dashboard/admin/instagram-token', label: 'Instagram Token', icon: 'bi bi-instagram' },
   { path: '/agent/dashboard/admin/users', label: 'User Details', icon: 'bi bi-person-badge' },
   { path: '/agent/dashboard/admin/reviews', label: 'Add Review', icon: 'bi bi-star' },
+  { path: '/agent/dashboard/admin/blogs', label: 'Blogs', icon: 'bi bi-journal-text' },
 ];
 
 const AgentLayout = () => {
