@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingLayout from '../../components/user/LandingLayout';
 import AgentChatWidget from '../../components/user/AgentChatWidget';
-import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_IS_EMBED } from '../../config/seminarVideo';
 import SEO from '../../components/common/SEO';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
@@ -246,33 +245,15 @@ const UserHome = () => {
 
       {/* Hero */}
       <section className="outer-hero-new">
-        {SEMINAR_VIDEO_IS_EMBED ? (
-          <iframe
-            className="background-img"
-            src={SEMINAR_VIDEO_URL}
-            title="A Visa Experts"
-            frameBorder="0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-          />
-        ) : (
-          <video
-            className="background-img"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster="https://res.cloudinary.com/fniv4k20/image/upload/v1788775413/seminaar_lipjbc.jpg"
-          >
-            <source src={SEMINAR_VIDEO_URL} type="video/mp4" />
-          </video>
-        )}
-        <div className="hero-video-overlay" />
+        <img
+          src="/images/user/slider4 1.webp"
+          className="background-img"
+          alt="A Visa Experts - Visa and Immigration Consultation"
+        />
         <div className="new-hero-sec">
           <div className="new-hero-left">
             <h1>
-              <span>Navigate your visa journey effortlessly!</span>
+              <span>Visitor Visa Services for International Travel.</span>
             </h1>
             <div className="parent_btn">
               <button className="herobtn" onClick={() => navigate('/appointment')}>

@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import LandingLayout from '../LandingLayout';
 import AgentChatWidget from '../AgentChatWidget';
 import HomeAboutSection from '../HomeAboutSection';
-import { SEMINAR_VIDEO_URL, SEMINAR_VIDEO_IS_EMBED } from '../../config/seminarVideo';
 import toast from 'react-hot-toast';
 import api from '../../lib/api';
 import { resolveImageUrl } from '../../lib/imageUrl';
@@ -231,26 +230,6 @@ const UserHome = () => {
     contentUrl: 'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_74_wU1l2Rrwv.JPG',
     description: 'Kaveesh Kapoor at his own Seminar.',
     name: 'Kaveesh Kapoor',
-  }, {
-    '@context': 'https://schema.org',
-    '@type': 'VideoObject',
-    name: 'A Visa Experts Seminar - Kaveesh Kapoor',
-    description:
-      'A Visa Experts seminar by Kaveesh Kapoor sharing expert guidance on tourist, transit and PR visas for the USA, UK, Canada, Australia and Europe.',
-    thumbnailUrl: [
-      'https://res.cloudinary.com/fniv4k20/image/upload/v1788775413/seminaar_lipjbc.jpg',
-    ],
-    uploadDate: '2026-01-15T10:00:00+05:30',
-    contentUrl: SEMINAR_VIDEO_URL,
-    embedUrl: 'https://avisaexperts.com/',
-    publisher: {
-      '@type': 'Organization',
-      name: 'A Visa Experts',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://avisaexperts.com/images/user/tmlogo 1.webp',
-      },
-    },
   }];
 
   return (
@@ -262,33 +241,15 @@ const UserHome = () => {
 
       {/* Hero */}
       <section className="outer-hero-new">
-        {SEMINAR_VIDEO_IS_EMBED ? (
-          <iframe
-            className="background-img"
-            src={SEMINAR_VIDEO_URL}
-            title="A Visa Experts"
-            frameBorder="0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowFullScreen
-          />
-        ) : (
-          <video
-            className="background-img"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster="https://res.cloudinary.com/fniv4k20/image/upload/v1788775413/seminaar_lipjbc.jpg"
-          >
-            <source src={SEMINAR_VIDEO_URL} type="video/mp4" />
-          </video>
-        )}
-        <div className="hero-video-overlay" />
+        <img
+          src="/images/user/slider4 1.webp"
+          className="background-img"
+          alt="A Visa Experts - Visa and Immigration Consultation"
+        />
         <div className="new-hero-sec">
           <div className="new-hero-left">
             <h1>
-              <span>Navigate your visa journey effortlessly!</span>
+              <span>Visitor Visa Services for International Travel.</span>
             </h1>
             <div className="parent_btn">
               <button className="herobtn" onClick={() => navigate('/appointment')}>

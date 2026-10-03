@@ -465,7 +465,7 @@
 }
 
 .new-hero-left h1 span {
-  color: #ff7a00;
+  color: #ffffff;
 }
 
 .parent_btn {
@@ -772,24 +772,10 @@
   }
 }
 
-/* Mobile / small devices: hide the hero video and use a clean white background */
+/* Mobile / small devices: keep the hero image with the white heading */
 @media (max-width: 768px) {
-  .outer-hero-new {
-    background: #ffffff;
-  }
-
-  .outer-hero-new .background-img,
   .outer-hero-new .hero-video-overlay {
     display: none;
-  }
-
-  .new-hero-sec {
-    color: #0f172a;
-  }
-
-  .new-hero-left h1 {
-    color: #0f172a;
-    text-shadow: none;
   }
 
   .herobtn.outlined-herobtn {
