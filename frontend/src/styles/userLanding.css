@@ -772,12 +772,8 @@
   }
 }
 
-/* Mobile / small devices: keep the hero image with the white heading */
+/* Mobile / small devices: keep the darkened hero image with the white heading */
 @media (max-width: 768px) {
-  .outer-hero-new .hero-video-overlay {
-    display: none;
-  }
-
   .herobtn.outlined-herobtn {
     background: #ffffff;
     border: 2px solid #170b39;

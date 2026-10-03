@@ -246,10 +246,11 @@ const UserHome = () => {
       {/* Hero */}
       <section className="outer-hero-new">
         <img
-          src="/images/user/slider4 1.webp"
+          src="https://res.cloudinary.com/fniv4k20/image/upload/v1788775413/seminaar_lipjbc.jpg"
           className="background-img"
           alt="A Visa Experts - Visa and Immigration Consultation"
         />
+        <div className="hero-video-overlay" />
         <div className="new-hero-sec">
           <div className="new-hero-left">
             <h1>
