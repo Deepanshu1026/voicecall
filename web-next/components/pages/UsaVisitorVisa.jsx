@@ -9,6 +9,8 @@ const UsaVisitorVisa = () => {
     { country: 'USA', img: '/images/user/carousel3img 1.webp' },
     { country: 'New York', img: '/images/user/statueofliberty 1.webp' },
     { country: 'USA', img: '/images/user/popularplace3 1.webp' },
+    { country: 'New York', img: '/images/user/statueofliberty 1.webp' },
+    { country: 'USA', img: '/images/user/carousel3img 1.webp' },
   ];
 
   const stats = [
@@ -261,10 +263,8 @@ const UsaVisitorVisa = () => {
             <span className="visa-hero-badge">USA Visitor Visa</span>
             <h1>USA Visitor Visa</h1>
             <p>
-              Your USA journey starts with the right visa guidance. Planning a business visit, attending meetings,
-              exploring opportunities, or visiting the USA for a short stay? Our USA Visitor Visa experts help you
-              navigate the application process with professional guidance, accurate documentation and personalized
-              support.
+              Your USA journey starts with the right visa guidance. Planning a business visit, attending meetings, or
+              visiting the USA for a short stay? Our experts make the process simple.
             </p>
             <div className="visa-hero-buttons">
               <button className="visa-hero-primary" onClick={() => navigate('/appointment')}>
@@ -289,26 +289,36 @@ const UsaVisitorVisa = () => {
                 <h2>Your USA Journey Starts With the Right Visa Guidance</h2>
                 <p>
                   Planning a business visit, attending meetings, exploring opportunities, or visiting the USA for a
-                  short stay? Our USA Visitor Visa experts help you navigate the application process with professional
-                  guidance, accurate documentation and personalized support&mdash;so you can focus on planning your trip
-                  while we help you prepare your visa application.
+                  short stay?
                 </p>
-                <div className="visa-stats">
-                  {stats.map((stat, idx) => (
-                    <div className="visa-stat" key={idx}>
-                      <strong>{stat.value}</strong>
-                      <span>{stat.label}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="visa-callout">
-                  <h3>Planning Your USA Visit?</h3>
-                  <p>Let&apos;s make your visa process simple.</p>
-                  <button className="visa-about-button" onClick={() => navigate('/appointment')}>
-                    Book a Free Consultation
-                  </button>
-                </div>
+                <p>
+                  Our USA Visitor Visa experts help you navigate the application process with professional guidance,
+                  accurate documentation and personalized support&mdash;so you can focus on planning your trip while we
+                  help you prepare your visa application.
+                </p>
+                <button className="visa-about-button" onClick={() => navigate('/appointment')}>
+                  Book a Free Consultation
+                </button>
               </div>
+            </div>
+
+            <div className="visa-stats">
+              {stats.map((stat, idx) => (
+                <div className="visa-stat" key={idx}>
+                  <strong>{stat.value}</strong>
+                  <span>{stat.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="visa-callout visa-callout-wide">
+              <div>
+                <h3>Planning Your USA Visit?</h3>
+                <p>Let&apos;s make your visa process simple.</p>
+              </div>
+              <button className="visa-about-button" onClick={() => navigate('/appointment')}>
+                Book a Free Consultation
+              </button>
             </div>
           </div>
         </section>
