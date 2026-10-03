@@ -870,9 +870,9 @@ const UserHome = () => {
                 <div className="dest-box-body">
                   <h3>{dest.name}</h3>
                   <p>{dest.desc}</p>
-                  <button className="dest-box-btn" onClick={() => navigate(dest.href)}>
+                  <a className="dest-box-btn" href={dest.href}>
                     Read more <span aria-hidden="true">&rarr;</span>
-                  </button>
+                  </a>
                 </div>
               </article>
             ))}
