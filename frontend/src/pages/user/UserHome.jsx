@@ -132,7 +132,7 @@ const UserHome = () => {
       name: 'Canada',
       img: '/images/user/stratch2 1.webp',
       desc: 'Expert guidance for Canada visitor visas.',
-      href: '/tourist-visa',
+      href: '/canada-visitor-visa',
     },
     {
       name: 'United Kingdom',

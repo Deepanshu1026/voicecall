@@ -86,6 +86,16 @@ const pages = [
     includeInSitemap: true,
   },
   {
+    path: '/canada-visitor-visa',
+    file: 'canada-visitor-visa.html',
+    title: 'Canada Visitor Visa Services | A Visa Experts',
+    description:
+      'Expert Canada Visitor Visa guidance from A Visa Experts. Profile assessment, online application guidance, documentation support, biometrics guidance and GCMS / CAIPS Notes assistance.',
+    priority: '0.8',
+    changefreq: 'monthly',
+    includeInSitemap: true,
+  },
+  {
     path: '/blogs',
     file: 'blogs.html',
     title: 'Visa & Immigration Blogs | A Visa Experts',
