@@ -196,7 +196,12 @@ async function updateApplication(sqlId, input) {
   };
 
   if (input.submission_date) {
-    update.createdAt = new Date(`${input.submission_date} ${new Date().toTimeString().slice(0, 8)}`);
+    const incoming = new Date(`${input.submission_date} ${new Date().toTimeString().slice(0, 8)}`);
+    const existingDate = existing.createdAt ? new Date(existing.createdAt) : null;
+    const sameDay = existingDate && !Number.isNaN(existingDate.getTime())
+      && existingDate.toDateString() === incoming.toDateString();
+    // Only move the submission date when the agent actually changed it.
+    if (!sameDay) update.createdAt = incoming;
   }
 
   await Application.updateOne({ sqlId: appId, agentId: sqlId }, update);

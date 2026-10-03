@@ -63,6 +63,16 @@ const outcomeClass = (outcome) => {
   return 'outcome-submitted';
 };
 
+const toDateInput = (value) => {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
 const AgentDashboardHome = () => {
   const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
@@ -225,7 +235,7 @@ const AgentDashboardHome = () => {
       lead_source: d.lead_source || '',
       lead_outcome: d.lead_outcome || '',
       client_notes: d.client_notes || '',
-      submission_date: d.submission_date || '',
+      submission_date: toDateInput(selectedApp.created_at) || d.submission_date || '',
     });
     setEditModalOpen(true);
   };

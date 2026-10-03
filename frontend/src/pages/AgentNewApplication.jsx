@@ -34,6 +34,16 @@ const initialForm = {
   client_notes: '',
 };
 
+const toDateInput = (value) => {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
 const AgentNewApplication = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
@@ -54,6 +64,7 @@ const AgentNewApplication = () => {
       ...(h.details || {}),
       client_name: h.client_name || '',
       contact_number: h.contact_number || '',
+      submission_date: toDateInput(h.created_at) || initialForm.submission_date,
     });
     setEditingAppId(h.id);
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
