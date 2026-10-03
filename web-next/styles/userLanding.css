@@ -2338,6 +2338,28 @@
   margin: 0;
 }
 
+.dest-box-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 9px 18px;
+  border: none;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #001e74 0%, #003c97 100%);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 30, 116, 0.2);
+}
+
+.dest-box-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 30, 116, 0.3);
+}
+
 @media (max-width: 900px) {
   .dest-grid {
     grid-template-columns: repeat(2, 1fr);

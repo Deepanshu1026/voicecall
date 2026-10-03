@@ -124,33 +124,39 @@ const UserHome = () => {
   const destinations = [
     {
       name: 'United States',
-      img: '/images/user/statueofliberty 1.webp',
+      img: '/images/user/carousel3img 1.webp',
       desc: 'Tourist & visitor visa support for the USA.',
+      href: '/usa-visitor-visa',
     },
     {
       name: 'Canada',
       img: '/images/user/stratch2 1.webp',
       desc: 'Expert guidance for Canada visitor visas.',
+      href: '/tourist-visa',
     },
     {
       name: 'United Kingdom',
       img: '/images/user/bigben 1.webp',
       desc: 'UK tourist & visitor visa assistance.',
+      href: '/tourist-visa',
     },
     {
       name: 'Europe',
       img: '/images/user/stretch4 1.webp',
       desc: 'Schengen & Europe travel visa support.',
+      href: '/tourist-visa',
     },
     {
       name: 'Australia',
       img: '/images/user/stretch5 1.webp',
       desc: 'Australia visitor visa made simple.',
+      href: '/tourist-visa',
     },
     {
-      name: 'Japan',
-      img: '/images/user/japan 1.webp',
-      desc: 'Japan tourist visa support & guidance.',
+      name: 'New York',
+      img: '/images/user/statueofliberty 1.webp',
+      desc: 'Explore New York with expert visa support.',
+      href: '/usa-visitor-visa',
     },
   ];
 
@@ -397,6 +403,9 @@ const UserHome = () => {
                 <div className="dest-box-body">
                   <h3>{dest.name}</h3>
                   <p>{dest.desc}</p>
+                  <button className="dest-box-btn" onClick={() => navigate(dest.href)}>
+                    Read more <span aria-hidden="true">&rarr;</span>
+                  </button>
                 </div>
               </article>
             ))}

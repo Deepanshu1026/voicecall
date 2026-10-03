@@ -562,6 +562,241 @@
   flex-wrap: wrap;
 }
 
+/* Lead paragraphs */
+.visa-lead {
+  max-width: 820px;
+  margin: 0 auto 18px;
+  text-align: center;
+  font-size: 16px;
+  color: var(--visa-text-light);
+  line-height: 1.7;
+}
+
+.visa-primary .visa-lead,
+.visa-dark .visa-lead {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.visa-subhead {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--visa-primary);
+  text-align: center;
+  margin: 0 0 24px;
+}
+
+.visa-primary .visa-subhead,
+.visa-dark .visa-subhead {
+  color: var(--visa-white);
+}
+
+/* Stats */
+.visa-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.visa-stat {
+  background: var(--visa-bg);
+  border: 1px solid var(--visa-border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.visa-stat strong {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--visa-primary);
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.visa-stat span {
+  font-size: 13px;
+  color: var(--visa-text-light);
+}
+
+/* Callout */
+.visa-callout {
+  background: linear-gradient(135deg, var(--visa-primary) 0%, var(--visa-primary-light) 100%);
+  color: var(--visa-white);
+  border-radius: var(--visa-radius);
+  padding: 28px;
+  margin-top: 24px;
+}
+
+.visa-callout h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 6px;
+}
+
+.visa-callout p {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 18px;
+  font-size: 15px;
+}
+
+/* Document groups */
+.visa-doc-groups {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.visa-doc-group {
+  background: var(--visa-white);
+  border: 1px solid var(--visa-border);
+  border-radius: var(--visa-radius);
+  padding: 26px;
+  box-shadow: var(--visa-shadow);
+}
+
+.visa-doc-group h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--visa-primary);
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--visa-accent);
+}
+
+.visa-doc-group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.visa-doc-group li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 14px;
+  color: var(--visa-text-light);
+  line-height: 1.5;
+}
+
+.visa-doc-group li::before {
+  content: '\2713';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--visa-accent);
+  font-weight: 700;
+}
+
+/* Checklist on dark sections */
+.visa-primary .visa-doc-item,
+.visa-dark .visa-doc-item {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* FAQ */
+.visa-faq {
+  max-width: 820px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.visa-faq-item {
+  background: var(--visa-white);
+  border: 1px solid var(--visa-border);
+  border-radius: var(--visa-radius);
+  box-shadow: var(--visa-shadow);
+  overflow: hidden;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.visa-faq-item[open] {
+  border-color: var(--visa-accent);
+  box-shadow: var(--visa-shadow-hover);
+}
+
+.visa-faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--visa-primary);
+}
+
+.visa-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.visa-faq-question {
+  flex: 1;
+}
+
+.visa-faq-icon {
+  position: relative;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.visa-faq-icon::before,
+.visa-faq-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: var(--visa-accent);
+  border-radius: 2px;
+  transform: translate(-50%, -50%);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.visa-faq-icon::before {
+  width: 14px;
+  height: 2px;
+}
+
+.visa-faq-icon::after {
+  width: 2px;
+  height: 14px;
+}
+
+.visa-faq-item[open] .visa-faq-icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+
+.visa-faq-answer {
+  padding: 0 24px 20px;
+}
+
+.visa-faq-answer p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--visa-text-light);
+  line-height: 1.7;
+}
+
+/* CTA tags */
+.visa-cta-tags {
+  margin-top: 26px;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
 /* Tablet */
 @media (min-width: 768px) {
   .visa-section {
@@ -608,6 +843,10 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .visa-doc-groups {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .visa-cta h2 {
     font-size: 40px;
   }
@@ -631,6 +870,10 @@
 
   .visa-about-content h2 {
     font-size: 34px;
+  }
+
+  .visa-stats {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

@@ -9,6 +9,7 @@
     { "src": "/tourist-visa", "dest": "https://avisaexperts-next.vercel.app/tourist-visa" },
     { "src": "/work-visa", "status": 301, "headers": { "Location": "/services" } },
     { "src": "/transit-visa", "dest": "https://avisaexperts-next.vercel.app/transit-visa" },
+    { "src": "/usa-visitor-visa", "dest": "https://avisaexperts-next.vercel.app/usa-visitor-visa" },
     { "src": "/blogs", "dest": "https://avisaexperts-next.vercel.app/blogs" },
     { "src": "/blog/([^/]+)/([^/]+)", "dest": "https://avisaexperts-next.vercel.app/blog/$1/$2" },
     { "src": "/blog/([^/]+)", "dest": "https://avisaexperts-next.vercel.app/blog/$1" },

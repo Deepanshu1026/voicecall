@@ -76,6 +76,16 @@ const pages = [
     includeInSitemap: true,
   },
   {
+    path: '/usa-visitor-visa',
+    file: 'usa-visitor-visa.html',
+    title: 'USA Visitor Visa Services | A Visa Experts',
+    description:
+      'Expert USA Visitor Visa guidance from A Visa Experts. Profile assessment, DS-160 assistance, documentation support and interview preparation. Book a free consultation.',
+    priority: '0.8',
+    changefreq: 'monthly',
+    includeInSitemap: true,
+  },
+  {
     path: '/blogs',
     file: 'blogs.html',
     title: 'Visa & Immigration Blogs | A Visa Experts',
