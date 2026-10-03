@@ -2210,6 +2210,135 @@
   }
 }
 
+/* Popular Destinations - 6 boxes */
+.dest-section {
+  padding: 80px 40px;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.dest-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dest-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.dest-header h2 {
+  color: #181818;
+  font-family: "Open Sans";
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.12px;
+  margin: 0;
+}
+
+.dest-header p {
+  color: #666;
+  font-family: "Open Sans";
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.dest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+.dest-box {
+  background: #ffffff;
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.dest-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+}
+
+.dest-box-img {
+  height: 190px;
+  overflow: hidden;
+}
+
+.dest-box-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.dest-box:hover .dest-box-img img {
+  transform: scale(1.06);
+}
+
+.dest-box-body {
+  padding: 16px 18px 20px;
+}
+
+.dest-box-body h3 {
+  color: #001e74;
+  font-family: "Open Sans";
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.dest-box-body p {
+  color: #64748b;
+  font-family: "Open Sans";
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .dest-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .dest-section {
+    padding: 50px 18px;
+  }
+
+  .dest-header h2 {
+    font-size: 28px;
+  }
+
+  .dest-header p {
+    font-size: 15px;
+  }
+
+  .dest-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .dest-box-img {
+    height: 200px;
+  }
+}
+
 /* Reviews */
 .reviews-section {
   position: relative;

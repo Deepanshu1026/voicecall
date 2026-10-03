@@ -123,29 +123,34 @@ const UserHome = () => {
 
   const destinations = [
     {
-      name: 'Statue of Liberty (UNITED STATE)',
+      name: 'United States',
       img: '/images/user/statueofliberty 1.webp',
-      flag: '/images/user/US.jpg',
+      desc: 'Tourist & visitor visa support for the USA.',
     },
     {
-      name: 'Niagara Falls (CANADA)',
+      name: 'Canada',
       img: '/images/user/stratch2 1.webp',
-      flag: '/images/user/CA 1.webp',
+      desc: 'Expert guidance for Canada visitor visas.',
     },
     {
-      name: 'Big Ben (UNITED KINGDOM)',
+      name: 'United Kingdom',
       img: '/images/user/bigben 1.webp',
-      flag: '/images/user/ukk.webp',
+      desc: 'UK tourist & visitor visa assistance.',
     },
     {
-      name: 'Eiffel Tower (EUROPE)',
+      name: 'Europe',
       img: '/images/user/stretch4 1.webp',
-      flag: '/images/user/EU 1.webp',
+      desc: 'Schengen & Europe travel visa support.',
     },
     {
-      name: 'Sydney Opera House (AUSTRALIA)',
+      name: 'Australia',
       img: '/images/user/stretch5 1.webp',
-      flag: '/images/user/aus.webp',
+      desc: 'Australia visitor visa made simple.',
+    },
+    {
+      name: 'Japan',
+      img: '/images/user/japan 1.webp',
+      desc: 'Japan tourist visa support & guidance.',
     },
   ];
 
@@ -242,7 +247,7 @@ const UserHome = () => {
       {/* Hero */}
       <section className="outer-hero-new">
         <img
-          src="https://res.cloudinary.com/fniv4k20/image/upload/v1788775413/seminaar_lipjbc.jpg"
+          src="/images/user/slider4 1.webp"
           className="background-img"
           alt="A Visa Experts - Visa and Immigration Consultation"
         />
@@ -372,35 +377,30 @@ const UserHome = () => {
 
 
       {/* Destination gallery */}
-      <section className="destination-gallery">
-        <div className="gallery-content">
-          <span className="gallery-badge">Popular Destinations</span>
-          <h2>Enjoy your dream vacation</h2>
-          <p>Discover beautiful countries with our hassle-free tourist visa services.</p>
-          <button className="view-button" aria-label="View All Destinations" onClick={() => navigate('/tourist-visa')}>
-            View All Destinations
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        </div>
-        <div className="image-gallery">
-          {destinations.map((dest, idx) => (
-            <div
-              key={idx}
-              className={`destination-card ${idx === 0 ? 'first-card' : ''}`}
-              style={{ backgroundImage: `url('${dest.img}')` }}
-            >
-              <div className="destination-overlay" />
-              <div className="location-info">
-                <div className="location-details">
-                  <img className="flag-icon" src={dest.flag} alt={`${dest.name} visa support - A Visa Experts`} />
-                  <h3>{dest.name}</h3>
+      <section className="dest-section">
+        <div className="dest-container">
+          <div className="dest-header">
+            <span className="gallery-badge">Popular Destinations</span>
+            <h2>Enjoy your dream vacation</h2>
+            <p>Discover beautiful countries with our hassle-free tourist visa services.</p>
+          </div>
+          <div className="dest-grid">
+            {destinations.map((dest, idx) => (
+              <article className="dest-box" key={idx}>
+                <div className="dest-box-img">
+                  <img
+                    src={dest.img}
+                    alt={`${dest.name} - Visa services by A Visa Experts`}
+                    loading="lazy"
+                  />
                 </div>
-                <span className="destination-explore">Explore &rarr;</span>
-              </div>
-            </div>
-          ))}
+                <div className="dest-box-body">
+                  <h3>{dest.name}</h3>
+                  <p>{dest.desc}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
