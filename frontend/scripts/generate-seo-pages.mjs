@@ -76,8 +76,8 @@ const pages = [
     includeInSitemap: true,
   },
   {
-    path: '/usa-visitor-visa',
-    file: 'usa-visitor-visa.html',
+    path: '/usa-visa',
+    file: 'usa-visa.html',
     title: 'USA Visitor Visa Services | A Visa Experts',
     description:
       'Expert USA Visitor Visa guidance from A Visa Experts. Profile assessment, DS-160 assistance, documentation support and interview preparation. Book a free consultation.',
@@ -86,8 +86,8 @@ const pages = [
     includeInSitemap: true,
   },
   {
-    path: '/canada-visitor-visa',
-    file: 'canada-visitor-visa.html',
+    path: '/canada-visa',
+    file: 'canada-visa.html',
     title: 'Canada Visitor Visa Services | A Visa Experts',
     description:
       'Expert Canada Visitor Visa guidance from A Visa Experts. Profile assessment, online application guidance, documentation support, biometrics guidance and GCMS / CAIPS Notes assistance.',
@@ -96,8 +96,8 @@ const pages = [
     includeInSitemap: true,
   },
   {
-    path: '/uk-visitor-visa',
-    file: 'uk-visitor-visa.html',
+    path: '/uk-visa',
+    file: 'uk-visa.html',
     title: 'UK Visitor Visa Services | A Visa Experts',
     description:
       'Expert UK Standard Visitor Visa guidance from A Visa Experts. Profile assessment, online application guidance, documentation support, business-visit guidance and biometrics guidance.',

@@ -126,19 +126,19 @@ const UserHome = () => {
       name: 'United States',
       img: '/images/user/carousel3img 1.webp',
       desc: 'Tourist & visitor visa support for the USA.',
-      href: '/usa-visitor-visa',
+      href: '/usa-visa',
     },
     {
       name: 'Canada',
       img: '/images/user/stratch2 1.webp',
       desc: 'Expert guidance for Canada visitor visas.',
-      href: '/canada-visitor-visa',
+      href: '/canada-visa',
     },
     {
       name: 'United Kingdom',
       img: '/images/user/bigben 1.webp',
       desc: 'UK tourist & visitor visa assistance.',
-      href: '/uk-visitor-visa',
+      href: '/uk-visa',
     },
     {
       name: 'Europe',
@@ -156,7 +156,7 @@ const UserHome = () => {
       name: 'New York',
       img: '/images/user/statueofliberty 1.webp',
       desc: 'Explore New York with expert visa support.',
-      href: '/usa-visitor-visa',
+      href: '/usa-visa',
     },
   ];
 
