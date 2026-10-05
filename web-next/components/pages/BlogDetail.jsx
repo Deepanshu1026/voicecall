@@ -35,6 +35,13 @@ const BlogDetail = ({ post, related = [] }) => {
   }, [post]);
   const metaTitle = useMemo(() => (post ? `${post.title} | A Visa Experts Blog` : 'Blog | A Visa Experts'), [post]);
   const imageUrl = post?.featured_image || fallbackImage;
+  const bodyHtml = useMemo(() => {
+    const html = post?.content || '';
+    // The article title is the page H1; demote any in-content H1s to H2 for SEO.
+    return html
+      .replace(/<h1(\s[^>]*)?>/gi, '<h2$1>')
+      .replace(/<\/h1>/gi, '</h2>');
+  }, [post]);
   const keywords = useMemo(() => {
     if (!post) return '';
     const base = ['visa', 'immigration', 'A Visa Experts', 'Kaveesh Kapoor'];
@@ -147,7 +154,7 @@ const BlogDetail = ({ post, related = [] }) => {
               <div className="blog-detail-content">
                 <div
                   className="blog-detail-body"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  dangerouslySetInnerHTML={{ __html: bodyHtml }}
                 />
                 <div className="blog-detail-actions">
                   <button className="blogs-cta-primary" onClick={() => navigate('/appointment')}>
