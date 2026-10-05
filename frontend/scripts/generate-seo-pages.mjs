@@ -96,6 +96,16 @@ const pages = [
     includeInSitemap: true,
   },
   {
+    path: '/uk-visitor-visa',
+    file: 'uk-visitor-visa.html',
+    title: 'UK Visitor Visa Services | A Visa Experts',
+    description:
+      'Expert UK Standard Visitor Visa guidance from A Visa Experts. Profile assessment, online application guidance, documentation support, business-visit guidance and biometrics guidance.',
+    priority: '0.8',
+    changefreq: 'monthly',
+    includeInSitemap: true,
+  },
+  {
     path: '/blogs',
     file: 'blogs.html',
     title: 'Visa & Immigration Blogs | A Visa Experts',

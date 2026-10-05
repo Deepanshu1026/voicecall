@@ -104,6 +104,11 @@ const VisitorVisaPage = ({ data, jsonLd, faqJsonLd, children }) => {
               ))}
             </ul>
             <p>{data.businessClosing}</p>
+            {data.businessNote && (
+              <div className="spage-note">
+                <p>{data.businessNote}</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -117,6 +122,11 @@ const VisitorVisaPage = ({ data, jsonLd, faqJsonLd, children }) => {
                 <p>{p.text}</p>
               </div>
             ))}
+            {data.strongNote && (
+              <div className="spage-note">
+                <p>{data.strongNote}</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -135,6 +145,11 @@ const VisitorVisaPage = ({ data, jsonLd, faqJsonLd, children }) => {
                 </ul>
               </div>
             ))}
+            {data.docsNote && (
+              <div className="spage-note">
+                <p>{data.docsNote}</p>
+              </div>
+            )}
           </div>
         </section>
 

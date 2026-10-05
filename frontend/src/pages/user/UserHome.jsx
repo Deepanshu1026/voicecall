@@ -138,7 +138,7 @@ const UserHome = () => {
       name: 'United Kingdom',
       img: '/images/user/bigben 1.webp',
       desc: 'UK tourist & visitor visa assistance.',
-      href: '/tourist-visa',
+      href: '/uk-visitor-visa',
     },
     {
       name: 'Europe',
