@@ -6,7 +6,7 @@ export const metadata = {
     "A Visa Experts is India's trusted No.1 Visa Immigration Company. We help with tourist, transit and PR visas for USA, UK, Canada, Australia, Europe & NZ.",
   keywords:
     'visa consultants, immigration experts, tourist visa, Canada visa, UK visa, USA visa, Australia visa, Kaveesh Kapoor',
-  alternates: { canonical: '/' },
+  alternates: { canonical: 'https://avisaexperts.com/' },
   openGraph: {
     title: 'A Visa Experts | No.1 Visa Immigration Company in India',
     description:

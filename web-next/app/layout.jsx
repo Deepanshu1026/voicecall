@@ -29,7 +29,7 @@ export const metadata = {
     follow: true,
     googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
-  alternates: { canonical: '/' },
+  alternates: { canonical: 'https://avisaexperts.com/' },
   icons: {
     icon: [{ url: '/images/user/logo%202.webp', type: 'image/webp' }],
   },
