@@ -2401,74 +2401,23 @@
   margin: 0 auto;
 }
 
-.process-header {
-  text-align: center;
-  max-width: 760px;
-  margin: 0 auto 50px;
+.process-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 16px;
 }
 
-.process-label {
-  display: inline-block;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #2563eb;
-  margin-bottom: 12px;
-}
-
-.process-header h2 {
-  font-size: 42px;
-  font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 16px;
-  line-height: 1.2;
-}
-
-.process-header p {
-  font-size: 18px;
-  color: #475569;
-  line-height: 1.7;
-  margin: 0;
-}
-
-.process-steps {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 24px;
-}
-
-.process-step {
-  text-align: center;
-}
-
-.process-step-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
-  color: #ffffff;
-  font-weight: 800;
-  font-size: 18px;
-  margin-bottom: 18px;
-}
-
-.process-step h3 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 8px;
-  line-height: 1.3;
-}
-
-.process-step p {
-  font-size: 15px;
-  color: #475569;
-  line-height: 1.6;
-  margin: 0;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Why Choose A Visa Experts */
@@ -2538,11 +2487,6 @@
 }
 
 @media (max-width: 992px) {
-  .process-steps {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 32px 24px;
-  }
-
   .why-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -2554,17 +2498,8 @@
     padding: 50px 18px;
   }
 
-  .process-header h2 {
-    font-size: 28px;
-  }
-
-  .process-header p,
   .why-header p {
     font-size: 16px;
-  }
-
-  .process-steps {
-    grid-template-columns: 1fr;
   }
 
   .why-header h2 {

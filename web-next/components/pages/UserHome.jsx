@@ -160,14 +160,6 @@ const UserHome = () => {
     },
   ];
 
-  const processSteps = [
-    { title: 'Initial Consultation', desc: 'Understand your travel plans and choose the right visa type.' },
-    { title: 'Document Preparation', desc: 'Get guidance on required documents and application requirements.' },
-    { title: 'Application Submission', desc: 'We help review your application and prepare it for submission.' },
-    { title: 'Interview Support', desc: 'Get guidance to prepare for your visa interview, if required.' },
-    { title: 'Visa Decision & Next Steps', desc: 'Understand the next steps after your visa decision.' },
-  ];
-
   const whyCards = [
     { title: 'Experienced Visa Team', desc: 'Guidance based on visa requirements and application procedures.' },
     { title: 'Personalized Guidance', desc: 'Support tailored to your visa type, destination and individual situation.' },
@@ -433,23 +425,13 @@ const UserHome = () => {
       {/* How Our Visa Process Works */}
       <section className="process-section" aria-labelledby="process-heading">
         <div className="process-container">
-          <div className="process-header">
-            <span className="process-label">Our Process</span>
-            <h2 id="process-heading">How Our Visa Process Works</h2>
-            <p>
-              We make the visa application process easier with clear guidance at every step, from understanding your
-              requirements to preparing your application.
-            </p>
-          </div>
-          <div className="process-steps">
-            {processSteps.map((step, idx) => (
-              <div className="process-step" key={idx}>
-                <span className="process-step-num">{String(idx + 1).padStart(2, '0')}</span>
-                <h3>{step.title}</h3>
-                <p>{step.desc}</p>
-              </div>
-            ))}
-          </div>
+          <h2 id="process-heading" className="sr-only">How Our Visa Process Works</h2>
+          <img
+            className="process-image"
+            src="/images/user/visa-process.png"
+            alt="How Our Visa Process Works: 1 Initial Consultation, 2 Document Preparation, 3 Application Submission, 4 Interview Support, 5 Visa Decision and Next Steps"
+            loading="lazy"
+          />
         </div>
       </section>
 
