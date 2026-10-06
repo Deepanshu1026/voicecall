@@ -2390,6 +2390,193 @@
   }
 }
 
+/* How Our Visa Process Works */
+.process-section {
+  padding: 80px 40px;
+  background: #ffffff;
+}
+
+.process-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.process-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 50px;
+}
+
+.process-label {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #2563eb;
+  margin-bottom: 12px;
+}
+
+.process-header h2 {
+  font-size: 42px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 16px;
+  line-height: 1.2;
+}
+
+.process-header p {
+  font-size: 18px;
+  color: #475569;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+}
+
+.process-step {
+  text-align: center;
+}
+
+.process-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 18px;
+  margin-bottom: 18px;
+}
+
+.process-step h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px;
+  line-height: 1.3;
+}
+
+.process-step p {
+  font-size: 15px;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Why Choose A Visa Experts */
+.why-section {
+  padding: 80px 40px;
+  background: #f8fafc;
+}
+
+.why-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.why-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 44px;
+}
+
+.why-header h2 {
+  font-size: 38px;
+  font-weight: 800;
+  color: #001e74;
+  margin: 0 0 16px;
+  line-height: 1.2;
+}
+
+.why-header p {
+  font-size: 18px;
+  color: #475569;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.why-card {
+  background: #ffffff;
+  border: 1px solid #e8edf5;
+  border-radius: 16px;
+  padding: 26px 24px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.why-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.1);
+}
+
+.why-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #001e74;
+  margin: 0 0 8px;
+}
+
+.why-card p {
+  font-size: 15px;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (max-width: 992px) {
+  .process-steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 24px;
+  }
+
+  .why-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .process-section,
+  .why-section {
+    padding: 50px 18px;
+  }
+
+  .process-header h2 {
+    font-size: 28px;
+  }
+
+  .process-header p,
+  .why-header p {
+    font-size: 16px;
+  }
+
+  .process-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .why-header h2 {
+    font-size: 26px;
+  }
+
+  .why-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
 /* Reviews */
 .reviews-section {
   position: relative;
