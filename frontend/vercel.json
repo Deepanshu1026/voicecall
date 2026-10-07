@@ -32,6 +32,7 @@
     { "src": "/blog/([^/]+)", "dest": "https://avisaexperts-next.vercel.app/blog/$1" },
     { "src": "/_next/(.*)", "dest": "https://avisaexperts-next.vercel.app/_next/$1" },
     { "src": "^/$", "dest": "https://avisaexperts-next.vercel.app/" },
+    { "src": "/sitemap.xml", "dest": "https://avisaexperts-next.vercel.app/sitemap.xml" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
