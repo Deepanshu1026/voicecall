@@ -13,6 +13,7 @@
     { "src": "/canada-visitor-visa", "status": 301, "headers": { "Location": "/canada-visa" } },
     { "src": "/uk-visitor-visa", "status": 301, "headers": { "Location": "/uk-visa" } },
     { "src": "/usa-visa", "dest": "https://avisaexperts-next.vercel.app/usa-visa" },
+    { "src": "/usa-b1b2-visa", "dest": "https://avisaexperts-next.vercel.app/usa-b1b2-visa" },
     { "src": "/canada-visa", "dest": "https://avisaexperts-next.vercel.app/canada-visa" },
     { "src": "/uk-visa", "dest": "https://avisaexperts-next.vercel.app/uk-visa" },
     { "src": "/blogs", "dest": "https://avisaexperts-next.vercel.app/blogs" },

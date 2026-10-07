@@ -107,6 +107,16 @@ const pages = [
     includeInSitemap: true,
   },
   {
+    path: '/usa-b1b2-visa',
+    file: 'usa-b1b2-visa.html',
+    title: 'USA B1/B2 Visa from India | Business & Tourist Visa | A Visa Experts',
+    description:
+      'Understand the USA B1/B2 Visa from India. Learn what B-1 and B-2 mean, the difference between them, allowed activities, validity, interview questions and application guidance.',
+    priority: '0.8',
+    changefreq: 'monthly',
+    includeInSitemap: true,
+  },
+  {
     path: '/blogs',
     file: 'blogs.html',
     title: 'Visa & Immigration Blogs | A Visa Experts',
