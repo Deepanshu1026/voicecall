@@ -105,6 +105,7 @@ const localBusinessLd = {
   geo: { '@type': 'GeoCoordinates', latitude: 28.5695, longitude: 77.321 },
   openingHours: 'Mo-Sa 11:00-18:00',
   sameAs: [
+    'https://www.linkedin.com/company/a-visa-experts',
     'https://www.instagram.com/avisa.expert/',
     'https://www.facebook.com/profile.php?id=61590985693281',
     'https://www.youtube.com/@avisaexperts',

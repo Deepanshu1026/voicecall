@@ -200,8 +200,10 @@ const UserHome = () => {
       availableLanguage: ['English', 'Hindi'],
     },
     sameAs: [
+      'https://www.linkedin.com/company/a-visa-experts',
       'https://www.instagram.com/avisa.expert/',
       'https://www.facebook.com/profile.php?id=61590985693281',
+      'https://www.youtube.com/@avisaexperts',
     ],
     image: [
       'https://ik.imagekit.io/kaveeshkapoor/image_library/image_library_66_kEoLRyiBP.HEIC',
