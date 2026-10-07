@@ -107,7 +107,7 @@ const pages = [
     includeInSitemap: true,
   },
   {
-    path: '/usa-b1b2-visa',
+    path: '/usa-visa/usa-b1b2-visa',
     file: 'usa-b1b2-visa.html',
     title: 'USA B1/B2 Visa from India | Business & Tourist Visa | A Visa Experts',
     description:

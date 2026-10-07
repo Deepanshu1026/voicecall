@@ -202,7 +202,7 @@ const UsaVisitorVisa = () => {
               If you are planning a short trip to the United States, understanding the appropriate visa category and
               application requirements is an important first step.
             </p>
-            <a className="spage-link" href="/usa-b1b2-visa">Learn more about the USA B1/B2 Visa</a>
+            <a className="spage-link" href="/usa-visa/usa-b1b2-visa">Learn more about the USA B1/B2 Visa</a>
           </div>
         </section>
 
@@ -253,7 +253,7 @@ const UsaVisitorVisa = () => {
                 </p>
               </div>
             </div>
-            <a className="spage-link" href="/usa-b1b2-visa">Explore our USA B1/B2 Visa Guide</a>
+            <a className="spage-link" href="/usa-visa/usa-b1b2-visa">Explore our USA B1/B2 Visa Guide</a>
           </div>
         </section>
 

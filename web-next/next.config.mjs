@@ -10,6 +10,7 @@ const nextConfig = {
       { source: '/usa-visitor-visa', destination: '/usa-visa', permanent: true },
       { source: '/canada-visitor-visa', destination: '/canada-visa', permanent: true },
       { source: '/uk-visitor-visa', destination: '/uk-visa', permanent: true },
+      { source: '/usa-b1b2-visa', destination: '/usa-visa/usa-b1b2-visa', permanent: true },
     ];
   },
 };
