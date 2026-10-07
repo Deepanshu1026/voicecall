@@ -1,18 +1,18 @@
 import UsaVisitorVisa from '../../components/pages/UsaVisitorVisa';
 
 export const metadata = {
-  title: 'USA Visitor Visa Services | A Visa Experts',
+  title: 'USA Visitor Visa & Tourist Visa from India | A Visa Experts',
   description:
-    'Expert USA Visitor Visa guidance from A Visa Experts. Profile assessment, DS-160 assistance, documentation support and interview preparation. Book a free consultation.',
+    'USA Visitor Visa and Tourist Visa guidance from A Visa Experts. Understand B-1/B-2 categories, requirements, documents, DS-160, fees, processing time and interview preparation.',
   keywords:
-    'USA visitor visa, US visitor visa, USA business visa, B1 B2 visa, DS-160 assistance, USA visa consultants, USA visa interview preparation, A Visa Experts',
+    'USA visitor visa, USA tourist visa, B1 B2 visa, USA visa from India, DS-160, USA visa requirements, USA visa documents, USA visa fees, USA visa interview questions, A Visa Experts',
   alternates: { canonical: '/usa-visa' },
   openGraph: {
-    title: 'USA Visitor Visa Services | A Visa Experts',
+    title: 'USA Visitor Visa & Tourist Visa from India | A Visa Experts',
     description:
-      'Expert USA Visitor Visa guidance from A Visa Experts. Profile assessment, DS-160 assistance, documentation support and interview preparation.',
+      'USA Visitor Visa and Tourist Visa guidance from A Visa Experts. Understand B-1/B-2 categories, requirements, documents, DS-160, fees, processing time and interview preparation.',
     url: 'https://avisaexperts.com/usa-visa',
-    images: ['/images/user/popularplace3 1.webp'],
+    images: ['/images/user/statueofliberty 1.webp'],
   },
 };
 

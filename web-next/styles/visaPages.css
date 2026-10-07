@@ -1272,6 +1272,82 @@
   margin-top: 16px;
 }
 
+/* Rich content bits for long-form content pages */
+.spage-link {
+  display: inline-block;
+  margin-top: 4px;
+  font-weight: 700;
+  color: #001e74;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.spage-link:hover {
+  color: #f58634;
+}
+
+.spage-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 8px;
+}
+
+.spage-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 22px;
+  background: #f8fafc;
+}
+
+.spage-card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  color: #001e74;
+}
+
+.spage-card p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.spage-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 16px;
+  font-size: 16px;
+}
+
+.spage-table th,
+.spage-table td {
+  border: 1px solid #e2e8f0;
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.spage-table th {
+  background: #001e74;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.spage-table tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.spage-subnote {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+@media (min-width: 768px) {
+  .spage-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 600px) {
   .spage-hero {
     padding: 130px 20px 60px;

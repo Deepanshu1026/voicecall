@@ -1,294 +1,452 @@
 'use client';
 
-import VisitorVisaPage from './VisitorVisaPage';
+import LandingLayout from '../LandingLayout';
 
-const interviewQuestions = [
-  'Why are you visiting the USA?',
-  'What is the purpose of your business trip?',
-  'Who are you meeting?',
-  'How long do you plan to stay?',
-  'Who will cover your travel expenses?',
-  'What do you do professionally?',
-  'What are your plans after your visit?',
+const docRows = [
+  ['Valid Passport', 'Identity and international travel'],
+  ['DS-160 Confirmation', 'Visa application record'],
+  ['Appointment Confirmation', 'Interview appointment'],
+  ['Bank Statements', 'Evidence of financial circumstances'],
+  ['Salary Slips', 'Employment and income evidence'],
+  ['ITR / Tax Documents', 'Financial and tax information'],
+  ['Employment Proof', 'Evidence of professional ties'],
+  ['Business Documents', 'Relevant business information, where applicable'],
+  ['Travel Itinerary', 'Information about the planned trip'],
 ];
 
-const data = {
-  heroImage: '/images/user/statueofliberty 1.webp',
-  title: 'USA Visitor Visa',
-  heroText:
-    'Your USA journey starts with the right visa guidance. Planning a business visit, attending meetings, or visiting the USA for a short stay? Our experts make the process simple.',
+const requirements = [
+  'Valid passport',
+  'Completed DS-160 application form',
+  'Visa application fee payment',
+  'Clear purpose of travel',
+  'Evidence of financial capability',
+  'Employment or business information',
+  'Evidence of ties to India',
+  'Supporting documents relevant to your circumstances',
+];
 
-  introHeading: 'Your USA Journey Starts With the Right Visa Guidance',
-  introParas: [
-    'Planning a business visit, attending meetings, exploring opportunities, or visiting the USA for a short stay?',
-    'Our USA Visitor Visa experts help you navigate the application process with professional guidance, accurate documentation and personalized support\u2014so you can focus on planning your trip while we help you prepare your visa application.',
-  ],
-  stats: [
-    { value: '7+ Years', label: 'Experience' },
-    { value: '99%', label: 'Success Rate' },
-    { value: '40+', label: 'Legal Visa Experts' },
-    { value: '2 Lakh+', label: 'Followers' },
-  ],
-  planningText: "Planning Your USA Visit? Let's make your visa process simple.",
+const steps = [
+  {
+    title: 'Step 1: Determine the Appropriate Visa Category',
+    text: 'Understand whether your planned visit falls under the B-1, B-2, or B-1/B-2 visa category based on the purpose of your trip.',
+  },
+  {
+    title: 'Step 2: Complete the DS-160 Form',
+    text: 'Complete the DS-160 online application form with accurate personal, travel, employment, and background information.',
+    link: { label: 'Read our DS-160 Guide', href: '/blog/ds-160-guide-a-simple-guide-for-usa-visa-applicants' },
+  },
+  {
+    title: 'Step 3: Pay the Visa Application Fee',
+    text: 'Pay the applicable USA visa application fee using the available payment process.',
+    link: { label: 'Check the Latest USA Visa Fees', href: '#fees' },
+  },
+  {
+    title: 'Step 4: Schedule Your Visa Appointment',
+    text: 'After completing the required application steps, schedule your USA visa appointment according to the applicable process.',
+    link: { label: 'Read the USA Visa Appointment Guide', href: '#how-to-apply' },
+  },
+  {
+    title: 'Step 5: Prepare Your Documents',
+    text: 'Keep your passport, application confirmation, appointment details, and relevant supporting documents ready before the interview.',
+  },
+  {
+    title: 'Step 6: Attend the Visa Interview',
+    text: 'Attend the USA visa interview and answer the consular officer\u2019s questions clearly and truthfully.',
+    link: { label: 'Read USA Visa Interview Tips', href: '#interview' },
+  },
+  {
+    title: 'Step 7: Wait for the Visa Decision',
+    text: 'After the interview, the application will be processed according to the applicable procedure. Processing times can vary depending on individual circumstances and other factors.',
+    link: { label: 'Check USA Visa Processing Time', href: '#processing' },
+  },
+];
 
-  whyHeading: 'Why Choose Us for Your USA Visitor Visa?',
-  whyParas: [
-    'A successful visa application starts with the right preparation.',
-    'From understanding your profile to preparing your documents and getting you ready for the interview, our team provides complete guidance at every stage.',
-  ],
-  whySubhead: 'Our USA Visitor Visa Assistance Includes:',
-  whyList: [
-    'Profile assessment',
-    'USA Visitor Visa application guidance',
-    'DS-160 assistance',
-    'Personalized document checklist',
-    'Financial document guidance',
-    'Business travel documentation',
-    'Appointment assistance',
-    'Visa interview preparation',
-    'Application review',
-    'End-to-end case support',
-  ],
-  whyClosing: 'One Application. One Dedicated Team. Complete Guidance.',
+const interviewQuestions = [
+  'Why do you want to visit the USA?',
+  'What is the purpose of your trip?',
+  'How long do you plan to stay?',
+  'Who will pay for your trip?',
+  'What do you do for work?',
+  'Where will you stay in the USA?',
+  'Do you have relatives or friends in the USA?',
+  'Why will you return to India?',
+];
 
-  processHeading: 'How We Help You Get Ready for Your USA Visit',
-  steps: [
-    {
-      title: 'Understand Your Profile',
-      text: 'We learn about your travel purpose, professional background, financial profile and previous travel history.',
-    },
-    {
-      title: 'Build Your Application',
-      text: 'Our team guides you through the required information and documentation for your USA Visitor Visa application.',
-    },
-    {
-      title: 'Prepare Your Documents',
-      text: 'From financial documents to business or travel-related supporting papers, we help you organize your application properly.',
-    },
-    {
-      title: 'DS-160 & Appointment Guidance',
-      text: 'Get step-by-step assistance with your DS-160 and visa appointment process.',
-    },
-    {
-      title: 'Prepare for Your Interview',
-      text: 'We help you understand the interview process and prepare for questions related to your travel plans, business activities and personal circumstances.',
-    },
-    {
-      title: 'Stay Updated',
-      text: 'Our team keeps you informed about important updates throughout your application journey.',
-    },
-  ],
+const refusalReasons = [
+  'Inconsistent or unclear information',
+  'Unclear purpose of travel',
+  'Insufficient evidence supporting the application',
+  'Financial circumstances that do not adequately support the proposed trip',
+  'Insufficient evidence of ties to the home country',
+  'Previous immigration or visa-related concerns',
+];
 
-  businessHeading: 'USA Visitor Visa for Business Travel',
-  businessSub: 'Visit the USA for Your Business Needs',
-  businessText:
-    'Planning to travel to the USA for eligible business activities? A USA Visitor Visa may be relevant for temporary business activities such as:',
-  businessSubhead: 'Business Visit Activities May Include:',
-  businessList: [
-    'Attending business meetings',
-    'Meeting clients or business associates',
-    'Attending conferences and seminars',
-    'Participating in eligible business events',
-    'Negotiating business arrangements',
-    'Exploring business opportunities',
-    'Visiting a US business partner',
-  ],
-  businessClosing:
-    'We help you prepare your application around your genuine purpose of travel and supporting documentation.',
-
-  strongHeading: 'What Makes a Strong USA Visitor Visa Application?',
-  strongPoints: [
-    {
-      title: 'Clear Travel Purpose',
-      text: 'Your reason for visiting the USA should be genuine, clear and supported by appropriate documentation.',
-    },
-    {
-      title: 'Strong Financial Profile',
-      text: 'Your financial documents should demonstrate your ability to support your planned trip.',
-    },
-    {
-      title: 'Professional Background',
-      text: 'Your employment or business profile can help establish your circumstances and purpose of travel.',
-    },
-    {
-      title: 'Travel History',
-      text: 'Previous international travel and compliance with immigration rules may form part of your overall profile.',
-    },
-    {
-      title: 'Proper Documentation',
-      text: 'Accurate and consistent information across your application and supporting documents is essential.',
-    },
-    {
-      title: 'Interview Preparation',
-      text: 'Being prepared to clearly explain your travel plans can help you approach your interview with confidence.',
-    },
-  ],
-
-  docsHeading: 'Documents Required for USA Visitor Visa',
-  docsIntro: 'Your exact requirements may vary depending on your profile and purpose of travel.',
-  docGroups: [
-    {
-      title: 'Personal Documents',
-      items: [
-        'Valid passport',
-        'Recent photograph, where applicable',
-        'DS-160 confirmation',
-        'Visa appointment confirmation',
-      ],
-    },
-    {
-      title: 'Financial Documents',
-      items: [
-        'Bank statements',
-        'Income documents',
-        'Salary slips, where applicable',
-        'Income tax documents, where applicable',
-        'Other financial supporting documents',
-      ],
-    },
-    {
-      title: 'Professional / Business Documents',
-      items: [
-        'Employment proof',
-        'Business registration documents, if applicable',
-        'Company profile, if applicable',
-        'Business invitation or meeting details, if applicable',
-        'Conference or event details, if applicable',
-      ],
-    },
-    {
-      title: 'Travel Documents',
-      items: [
-        'Proposed travel itinerary',
-        'Accommodation details, if available',
-        'Invitation documents, if applicable',
-        'Previous travel and visa documents',
-      ],
-    },
-  ],
-
-  faqHeading: 'Frequently Asked Questions',
-  faqs: [
-    {
-      q: 'What is a USA Visitor Visa?',
-      a: 'A USA Visitor Visa is a temporary visa for eligible individuals travelling to the United States for permitted purposes such as tourism, visiting family or friends, or certain temporary business activities.',
-    },
-    {
-      q: 'Can I visit the USA for business purposes?',
-      a: 'Yes, a Visitor Visa may cover certain temporary business activities, such as attending meetings, conferences or negotiating business arrangements, subject to applicable US immigration rules.',
-    },
-    {
-      q: 'Can I attend a business meeting in the USA?',
-      a: 'Eligible temporary business meetings can generally be a permitted purpose of a business visitor, provided the activity complies with the applicable rules.',
-    },
-    {
-      q: 'Do I need an invitation letter for a USA Visitor Visa?',
-      a: 'An invitation letter may be useful depending on your circumstances and purpose of travel, but requirements vary from case to case.',
-    },
-    {
-      q: 'How much bank balance is required for a USA Visitor Visa?',
-      a: 'There is no single fixed bank-balance amount that guarantees approval. Your financial situation should reasonably support your proposed travel plans and overall circumstances.',
-    },
-    {
-      q: 'Is a USA Visitor Visa guaranteed after applying?',
-      a: 'No visa can be guaranteed. Each application is assessed based on the applicant\u2019s circumstances and applicable US visa requirements.',
-    },
-    {
-      q: 'How long does the USA Visitor Visa process take?',
-      a: 'Processing and appointment times can vary depending on the applicant\u2019s location, appointment availability and other circumstances.',
-    },
-    {
-      q: 'How can your team help?',
-      a: 'We provide profile assessment, documentation guidance, DS-160 assistance, appointment guidance, interview preparation and end-to-end application support.',
-    },
-  ],
-
-  whyUsHeading: 'Why Thousands Choose Our Visa Guidance',
-  whyUs: [
-    {
-      title: '7+ Years of Experience',
-      text: 'Professional experience in helping applicants navigate visa processes.',
-    },
-    {
-      title: '40+ Legal Visa Experts',
-      text: 'A dedicated team providing structured support throughout your application.',
-    },
-    {
-      title: 'Personalized Guidance',
-      text: 'Your application is reviewed according to your individual profile and travel purpose.',
-    },
-    {
-      title: 'Complete Documentation Support',
-      text: 'We help you understand and organize the documents relevant to your application.',
-    },
-    {
-      title: 'Interview Preparation',
-      text: 'Get practical preparation before your USA Visitor Visa interview.',
-    },
-    {
-      title: '2 Lakh+ Followers',
-      text: 'A growing community that follows our visa and immigration guidance.',
-    },
-  ],
-
-  ctaHeading: 'Ready to Visit the USA?',
-  ctaText:
-    "Your business trip starts with the right preparation. Whether you're attending a meeting, conference, business event or visiting the USA for another permitted temporary purpose, our team can help you prepare your Visitor Visa application. Plan your USA visit with confidence.",
-  ctaTags:
-    'USA Visitor Visa Assistance | Business Visit Guidance | Documentation Support | Interview Preparation',
-};
+const faqs = [
+  {
+    q: 'What is a USA Tourist Visa?',
+    a: 'A USA Tourist Visa generally refers to the B-2 visa category, which is used by eligible travelers for tourism and other permitted temporary visitor purposes.',
+  },
+  {
+    q: 'What is the difference between a Visitor Visa and a Tourist Visa?',
+    a: 'A tourist visa generally refers to travel for tourism under the B-2 category, while visitor visa is a broader term that can include permitted tourism, visiting family or friends, and certain other temporary visitor purposes.',
+  },
+  {
+    q: 'What is a B1/B2 Visa?',
+    a: 'A B1/B2 visa can cover eligible temporary business and tourism-related travel.',
+  },
+  {
+    q: 'How much bank balance is required for a USA Tourist Visa?',
+    a: 'There is no single fixed bank balance amount that guarantees approval. Financial circumstances should reasonably support the planned trip and should be considered together with the applicant\u2019s overall circumstances.',
+  },
+  {
+    q: 'Do I need an invitation letter for a USA Tourist Visa?',
+    a: 'An invitation letter may be relevant in some circumstances, but having an invitation letter alone does not guarantee visa approval.',
+  },
+  {
+    q: 'Is USA Tourist Visa approval guaranteed?',
+    a: 'No. Visa approval cannot be guaranteed by a consultant, agent, document, or service.',
+  },
+  {
+    q: 'How long does a USA Tourist Visa take?',
+    a: 'Processing and appointment timelines can vary. Applicants should check the latest official information and appointment availability when planning their application.',
+  },
+];
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'USA Visitor Visa Services',
+  name: 'USA Visitor Visa & Tourist Visa Services',
   provider: {
     '@type': 'Organization',
     name: 'A Visa Experts',
     url: 'https://avisaexperts.com',
   },
   description:
-    'Expert USA Visitor Visa assistance including profile assessment, DS-160 guidance, documentation support and interview preparation.',
-  serviceType: 'USA Visitor Visa Consulting',
+    'USA Visitor Visa and Tourist Visa guidance from A Visa Experts, including B-1/B-2 categories, requirements, documents, DS-160, fees, processing time and interview preparation.',
+  serviceType: 'USA Visitor Visa & Tourist Visa Consulting',
   areaServed: 'US',
 };
 
 const faqJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: data.faqs.map((faq) => ({
+  mainEntity: faqs.map((faq) => ({
     '@type': 'Question',
     name: faq.q,
     acceptedAnswer: { '@type': 'Answer', text: faq.a },
   })),
 };
 
-const UsaInterviewSection = () => (
-  <section className="spage-section">
-    <div className="spage-wrap">
-      <h2>USA Visitor Visa Interview Preparation</h2>
-      <p>Walk Into Your Interview Prepared &amp; Confident</p>
-      <p>
-        The visa interview is an important part of the application process. Our team helps you prepare for questions
-        related to:
-      </p>
-      <ul className="spage-list">
-        {interviewQuestions.map((q, i) => (
-          <li key={i}>{q}</li>
-        ))}
-      </ul>
-      <div className="spage-note">
-        <h3>Our Goal?</h3>
-        <p>Help you understand your application clearly and present your genuine travel purpose with confidence.</p>
-      </div>
-    </div>
-  </section>
-);
+const UsaVisitorVisa = () => {
+  const navigate = (p) => window.location.assign(p);
 
-const UsaVisitorVisa = () => (
-  <VisitorVisaPage data={data} jsonLd={jsonLd} faqJsonLd={faqJsonLd}>
-    <UsaInterviewSection />
-  </VisitorVisaPage>
-);
+  return (
+    <LandingLayout>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <div className="spage">
+        {/* Hero */}
+        <section className="spage-hero" style={{ backgroundImage: "url('/images/user/statueofliberty 1.webp')" }}>
+          <div className="spage-hero-inner">
+            <h1>USA Visitor Visa &amp; Tourist Visa from India</h1>
+            <p>
+              Planning to visit the United States for tourism, visiting family or friends, or certain business
+              activities? A USA Visitor Visa allows eligible travelers to visit the United States temporarily for
+              permitted purposes. For tourism-related travel, applicants generally apply under the B-2 visa category,
+              while the B-1/B-2 visa can cover permitted business and tourism purposes.
+            </p>
+            <div className="spage-btns">
+              <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+                Get Expert Guidance
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Intro */}
+        <section className="spage-section">
+          <div className="spage-wrap">
+            <p>
+              At AvisaExperts, we provide guidance throughout the USA visa application process, including understanding
+              visa requirements, preparing supporting documents, completing the DS-160, scheduling an appointment, and
+              preparing for the visa interview.
+            </p>
+            <div className="spage-btns left" style={{ marginTop: '8px' }}>
+              <button className="spage-btn dark" onClick={() => navigate('/appointment')}>
+                Get Expert Guidance for Your USA Visitor Visa or Tourist Visa
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* What is a USA Visitor Visa? */}
+        <section className="spage-section" id="visitor-visa">
+          <div className="spage-wrap">
+            <h2>What is a USA Visitor Visa?</h2>
+            <p>
+              A USA Visitor Visa is a nonimmigrant visa for eligible travelers who want to visit the United States
+              temporarily for purposes such as tourism, visiting family or friends, or certain business activities.
+            </p>
+            <p>
+              For tourism, the B-2 visa is generally used for permitted tourist and visitor activities. The B-1 visa is
+              generally used for permitted temporary business activities, while the combined B-1/B-2 visa can cover both
+              eligible business and tourism purposes.
+            </p>
+            <p>
+              If you are planning a short trip to the United States, understanding the appropriate visa category and
+              application requirements is an important first step.
+            </p>
+            <a className="spage-link" href="#types">Learn more about the USA B1/B2 Visa</a>
+          </div>
+        </section>
+
+        {/* What is a USA Tourist Visa? */}
+        <section className="spage-section" id="tourist-visa">
+          <div className="spage-wrap">
+            <h2>What is a USA Tourist Visa?</h2>
+            <p>
+              A USA Tourist Visa is generally associated with the B-2 visitor visa category and is used by eligible
+              travelers visiting the United States temporarily for tourism and other permitted visitor purposes.
+            </p>
+            <p>
+              Depending on the circumstances, travelers may use a B-2 visa for activities such as tourism, holidays,
+              visiting family or friends, or other permitted temporary visitor activities.
+            </p>
+            <p>
+              Applicants should understand the purpose of their trip and choose the appropriate visa category before
+              starting their application.
+            </p>
+            <a className="spage-link" href="/blog/usa-tourist-visa">Read the complete USA Tourist Visa Guide</a>
+          </div>
+        </section>
+
+        {/* Types */}
+        <section className="spage-section" id="types">
+          <div className="spage-wrap">
+            <h2>Types of USA Visitor and Tourist Visa</h2>
+            <div className="spage-cards">
+              <div className="spage-card">
+                <h3>B-1 Business Visa</h3>
+                <p>
+                  The B-1 visa is intended for eligible temporary business activities such as attending meetings,
+                  conferences, consultations, or other permitted business activities.
+                </p>
+              </div>
+              <div className="spage-card">
+                <h3>B-2 Tourist Visa</h3>
+                <p>
+                  The B-2 visa is generally used for tourism, holidays, visiting family or friends, and certain other
+                  permitted temporary visitor purposes.
+                </p>
+              </div>
+              <div className="spage-card">
+                <h3>B-1/B-2 Visa</h3>
+                <p>
+                  The B-1/B-2 visa combines permitted business and tourism purposes and is commonly used by eligible
+                  travelers whose trips may involve both purposes.
+                </p>
+              </div>
+            </div>
+            <a className="spage-link" href="/blog/usa-visit-visa-from-india-b1b2-visa-guide-for-indian-travelers">
+              Explore our USA B1/B2 Visa Guide
+            </a>
+          </div>
+        </section>
+
+        {/* Requirements */}
+        <section className="spage-section" id="requirements">
+          <div className="spage-wrap">
+            <h2>USA Visitor Visa and Tourist Visa Requirements</h2>
+            <p>
+              Before applying for a USA Visitor Visa or Tourist Visa, applicants should understand the applicable
+              requirements and prepare appropriate supporting information. Common requirements may include:
+            </p>
+            <ul className="spage-list">
+              {requirements.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+            <p>
+              The documents required can vary depending on the applicant&apos;s individual circumstances. Providing
+              accurate and consistent information throughout the application is important.
+            </p>
+            <a className="spage-link" href="#documents">Check the complete USA Visa Requirements</a>
+          </div>
+        </section>
+
+        {/* Documents */}
+        <section className="spage-section" id="documents">
+          <div className="spage-wrap">
+            <h2>Documents Required for USA Tourist and Visitor Visa</h2>
+            <p>
+              Preparing the right documents can make your USA visa application more organized. The documents you may need
+              can depend on your personal, professional, financial, and travel circumstances.
+            </p>
+            <table className="spage-table">
+              <thead>
+                <tr>
+                  <th>Document</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                {docRows.map((row, i) => (
+                  <tr key={i}>
+                    <td>{row[0]}</td>
+                    <td>{row[1]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p>
+              Applicants should prepare documents according to their individual circumstances rather than relying on a
+              fixed document list.
+            </p>
+            <a className="spage-link" href="/blog/usa-visa-document-checklist">
+              View the complete USA Visa Document Checklist
+            </a>
+          </div>
+        </section>
+
+        {/* How to Apply */}
+        <section className="spage-section" id="how-to-apply">
+          <div className="spage-wrap">
+            <h2>How to Apply for a USA Visitor or Tourist Visa</h2>
+            <p>
+              The USA Visitor Visa and Tourist Visa application process involves several important steps. Applicants
+              should complete each stage carefully and provide accurate information.
+            </p>
+            <ol className="spage-steps">
+              {steps.map((s, i) => (
+                <li key={i}>
+                  <strong>{s.title}</strong>
+                  <span>{s.text}</span>
+                  {s.link && (
+                    <a className="spage-link" href={s.link.href}>
+                      {s.link.label}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* Interview Questions */}
+        <section className="spage-section" id="interview">
+          <div className="spage-wrap">
+            <h2>USA Tourist Visa Interview Questions</h2>
+            <p>
+              The USA tourist visa interview is an important part of the application process. Applicants should be
+              prepared to clearly explain their travel plans, purpose of visit, financial circumstances, and reasons for
+              returning to India. Common questions may include:
+            </p>
+            <ul className="spage-list">
+              {interviewQuestions.map((q, i) => (
+                <li key={i}>{q}</li>
+              ))}
+            </ul>
+            <p>Your answers should be truthful, clear, and consistent with your application.</p>
+            <a
+              className="spage-link"
+              href="/blog/usa-visitor-visa-interview-questions-for-indians-complete-guide-2025"
+            >
+              Read our USA Visa Interview Questions and Answers Guide
+            </a>
+          </div>
+        </section>
+
+        {/* Fees */}
+        <section className="spage-section" id="fees">
+          <div className="spage-wrap">
+            <h2>USA Tourist Visa Fees</h2>
+            <p>
+              The USA Tourist Visa fee depends on the applicable visa category and the current U.S. government fee
+              structure.
+            </p>
+            <p>
+              Visa fees and other charges can change, so applicants should always check the latest official fee
+              information before making payment.
+            </p>
+            <a className="spage-link" href="/consultants">Check the Latest USA Visa Fees</a>
+          </div>
+        </section>
+
+        {/* Processing Time */}
+        <section className="spage-section" id="processing">
+          <div className="spage-wrap">
+            <h2>USA Tourist Visa Processing Time</h2>
+            <p>
+              The USA Tourist Visa processing time can vary depending on factors such as appointment availability,
+              application circumstances, administrative processing, and consular workload.
+            </p>
+            <p>
+              Because processing times can change, applicants should avoid relying on a fixed number of days when
+              planning international travel.
+            </p>
+            <a className="spage-link" href="#processing">Check USA Visa Processing Time</a>
+          </div>
+        </section>
+
+        {/* Refusal Reasons */}
+        <section className="spage-section" id="refusal">
+          <div className="spage-wrap">
+            <h2>Common Reasons for USA Tourist Visa Refusal</h2>
+            <p>
+              A USA Tourist Visa or Visitor Visa application can be refused for different reasons depending on the
+              applicant&apos;s individual circumstances. Some common concerns may include:
+            </p>
+            <ul className="spage-list">
+              {refusalReasons.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
+            </ul>
+            <p className="spage-subnote">
+              No consultant, document, or service can guarantee USA visa approval. The final decision is made by the
+              appropriate U.S. authorities.
+            </p>
+            <a className="spage-link" href="#refusal">Read Common USA Visa Rejection Reasons</a>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="spage-section" id="faq">
+          <div className="spage-wrap">
+            <h2>Frequently Asked Questions About USA Visitor and Tourist Visa</h2>
+            <div className="spage-faq">
+              {faqs.map((f, i) => (
+                <details key={i}>
+                  <summary>{f.q}</summary>
+                  <p>{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Need help */}
+        <section className="spage-cta" id="need-help">
+          <h2>Need Help With Your USA Visitor or Tourist Visa?</h2>
+          <p>
+            Preparing a USA Visitor Visa or Tourist Visa application can be confusing, especially when you are unsure
+            about the visa category, documents, DS-160, appointment, or interview preparation. AvisaExperts can help you
+            understand the USA visa application process and prepare your application more systematically.
+          </p>
+          <div className="spage-btns">
+            <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+              Get Expert Guidance for Your USA Visitor or Tourist Visa
+            </button>
+          </div>
+        </section>
+      </div>
+    </LandingLayout>
+  );
+};
 
 export default UsaVisitorVisa;
