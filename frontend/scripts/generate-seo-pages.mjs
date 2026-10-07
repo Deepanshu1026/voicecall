@@ -11,6 +11,7 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const distDir = resolve(here, '..', 'dist');
 const baseUrl = 'https://avisaexperts.com';
+const apiBase = 'https://voicecall-6ylg.onrender.com/api';
 const today = new Date().toISOString().split('T')[0];
 
 const HOME_TITLE = 'A Visa Experts | No.1 Visa Immigration Company in India';
@@ -195,14 +196,48 @@ for (const page of pages) {
   writeFileSync(resolve(distDir, page.file), html, 'utf8');
 }
 
-const sitemapUrls = pages
+const slugify = (text) =>
+  String(text || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const escapeXml = (value) =>
+  String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+const pageUrls = pages
   .filter((p) => p.includeInSitemap)
   .map(
     (p) =>
       `  <url>\n    <loc>${baseUrl}${p.path}</loc>\n    <lastmod>${today}</lastmod>\n` +
       `    <changefreq>${p.changefreq || 'monthly'}</changefreq>\n    <priority>${p.priority || '0.7'}</priority>\n  </url>`
-  )
-  .join('\n');
+  );
+
+// Blog posts are dynamic — fetch every published article and add its clean slug URL.
+let blogUrls = [];
+try {
+  const res = await fetch(`${apiBase}/app/posts?limit=1000`);
+  const json = await res.json();
+  const posts = Array.isArray(json?.data) ? json.data : [];
+  blogUrls = posts
+    .map((post) => {
+      const slug = post.slug || slugify(post.title);
+      if (!slug) return null;
+      const lastmod = String(post.updatedAt || post.publishedAt || post.createdAt || today).slice(0, 10);
+      return (
+        `  <url>\n    <loc>${baseUrl}/blog/${escapeXml(slug)}</loc>\n    <lastmod>${lastmod}</lastmod>\n` +
+        `    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>`
+      );
+    })
+    .filter(Boolean);
+  console.log(`[seo] sitemap: added ${blogUrls.length} blog post URL(s)`);
+} catch (e) {
+  console.warn('[seo] could not fetch blog posts for sitemap:', e.message);
+}
+
+const sitemapUrls = [...pageUrls, ...blogUrls].join('\n');
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls}\n</urlset>\n`;
 writeFileSync(resolve(distDir, 'sitemap.xml'), sitemap, 'utf8');
