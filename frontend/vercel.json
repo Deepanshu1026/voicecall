@@ -26,6 +26,7 @@
     { "src": "/canada-visa", "dest": "https://avisaexperts-next.vercel.app/canada-visa" },
     { "src": "/uk-visa", "dest": "https://avisaexperts-next.vercel.app/uk-visa" },
     { "src": "/immigration-laws", "dest": "https://avisaexperts-next.vercel.app/immigration-laws" },
+    { "src": "/immigration-lawyers", "dest": "https://avisaexperts-next.vercel.app/immigration-lawyers" },
     { "src": "/blogs", "dest": "https://avisaexperts-next.vercel.app/blogs" },
     { "src": "/blog/([^/]+)/([^/]+)", "dest": "https://avisaexperts-next.vercel.app/blog/$1/$2" },
     { "src": "/blog/([^/]+)", "dest": "https://avisaexperts-next.vercel.app/blog/$1" },

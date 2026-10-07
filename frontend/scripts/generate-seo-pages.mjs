@@ -127,6 +127,16 @@ const pages = [
     includeInSitemap: true,
   },
   {
+    path: '/immigration-lawyers',
+    file: 'immigration-lawyers.html',
+    title: 'Immigration Lawyers & Visa Consultants | A Visa Experts',
+    description:
+      'Talk to immigration lawyers and visa consultants at A Visa Experts. Expert guidance for work, permanent residency, tourist, business and transit visas for the USA, UK, Canada, Australia and Europe.',
+    priority: '0.8',
+    changefreq: 'monthly',
+    includeInSitemap: true,
+  },
+  {
     path: '/blogs',
     file: 'blogs.html',
     title: 'Visa & Immigration Blogs | A Visa Experts',

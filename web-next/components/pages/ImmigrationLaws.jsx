@@ -288,7 +288,11 @@ const ImmigrationLaws = () => {
                 <li key={i}>{item}</li>
               ))}
             </ul>
-            <a className="spage-link" href="/consultants">Talk to an immigration expert</a>
+            <p>
+              <a className="spage-link" href="/immigration-lawyers">Meet our immigration lawyers &amp; consultants</a>{' '}
+              or{' '}
+              <a className="spage-link" href="/consultants">talk to an advisor</a>.
+            </p>
           </div>
         </section>
 
