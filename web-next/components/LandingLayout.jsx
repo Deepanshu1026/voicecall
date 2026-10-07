@@ -8,6 +8,7 @@ import SocialLinks from './SocialLinks';
 const navLinks = [
   { label: 'Home', href: '/home' },
   { label: 'Services', href: '/services' },
+  { label: 'Immigration', href: '/immigration-laws' },
   { label: 'About us', href: '/about' },
   { label: 'Blogs', href: '/blogs' },
   { label: 'Our Advisor', href: '/consultants' },

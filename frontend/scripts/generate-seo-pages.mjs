@@ -117,6 +117,16 @@ const pages = [
     includeInSitemap: true,
   },
   {
+    path: '/immigration-laws',
+    file: 'immigration-laws.html',
+    title: 'Immigration Laws 2026: US, UK, Canada & Australia Guide | A Visa Experts',
+    description:
+      'A clear 2026 guide to immigration laws for the USA, UK, Canada, Australia and Europe. Understand visa categories, permanent residency, eligibility, documents and how to apply.',
+    priority: '0.9',
+    changefreq: 'weekly',
+    includeInSitemap: true,
+  },
+  {
     path: '/blogs',
     file: 'blogs.html',
     title: 'Visa & Immigration Blogs | A Visa Experts',
