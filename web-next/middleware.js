@@ -1,16 +1,47 @@
 import { NextResponse } from 'next/server';
 
-// Strip junk tracking parameters (e.g. ?c=123...) so they never get indexed
-// as duplicate homepage/content URLs. Redirects permanently to the clean URL.
-const JUNK_PARAMS = ['c'];
+// Strip junk/tracking query parameters (e.g. ?c=123..., ?utm_source=...) so they
+// never get indexed as duplicate pages. Permanently redirects to the clean URL.
+const JUNK_EXACT = new Set([
+  'c',
+  'fbclid',
+  'gclid',
+  'gclsrc',
+  'dclid',
+  'msclkid',
+  'mc_cid',
+  'mc_eid',
+  'igshid',
+  'yclid',
+  'twclid',
+  'ttclid',
+  'li_fat_id',
+  'wbraid',
+  'gbraid',
+  's_kwcid',
+  'epik',
+  'scid',
+  '_ga',
+  '_gl',
+]);
+
+const JUNK_PREFIXES = ['utm_'];
 
 export function middleware(request) {
   const { nextUrl } = request;
-  const hasJunk = JUNK_PARAMS.some((p) => nextUrl.searchParams.has(p));
+  const params = nextUrl.searchParams;
 
-  if (hasJunk) {
+  const toDelete = [];
+  for (const key of params.keys()) {
+    const k = key.toLowerCase();
+    if (JUNK_EXACT.has(k) || JUNK_PREFIXES.some((prefix) => k.startsWith(prefix))) {
+      toDelete.push(key);
+    }
+  }
+
+  if (toDelete.length > 0) {
     const url = nextUrl.clone();
-    JUNK_PARAMS.forEach((p) => url.searchParams.delete(p));
+    toDelete.forEach((k) => url.searchParams.delete(k));
     return NextResponse.redirect(url, 301);
   }
 
