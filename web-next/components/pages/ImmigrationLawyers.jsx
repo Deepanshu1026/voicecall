@@ -12,7 +12,6 @@ const whatTheyDo = [
 ];
 
 const expertise = [
-  { title: 'Work Visas', text: 'Guidance for eligible employment and business purposes.', href: '/services' },
   { title: 'Permanent Residency (PR)', text: 'Long-term settlement pathways and requirements.', href: '/services' },
   { title: 'Tourist & Visitor Visas', text: 'Tourism, visiting family or friends, and short stays.', href: '/tourist-visa' },
   { title: 'Business Visas (B-1/B-2)', text: 'Meetings, conferences and permitted business activities.', href: '/usa-visa/usa-b1b2-visa' },
@@ -31,7 +30,7 @@ const whyUs = [
 const faqs = [
   {
     q: 'Are your advisors immigration lawyers?',
-    a: 'Our team includes immigration lawyers and visa consultants with experience across visitor, work, business and permanent residency applications. You can see the current advisors on our advisors page.',
+    a: 'Our team includes immigration lawyers and visa consultants with experience across visitor, business and permanent residency applications. You can see the current advisors on our advisors page.',
   },
   {
     q: 'What can an immigration consultant help with?',
@@ -62,7 +61,7 @@ const jsonLd = {
   url: 'https://avisaexperts.com/immigration-lawyers',
   image: 'https://avisaexperts.com/images/user/tmlogo%201.webp',
   description:
-    'Immigration lawyers and visa consultants helping applicants with work, permanent residency, tourist, business and transit visa applications for the USA, UK, Canada, Australia and Europe.',
+    'Immigration lawyers and visa consultants helping applicants with permanent residency, tourist, business and transit visa applications for the USA, UK, Canada, Australia and Europe.',
   areaServed: ['IN', 'US', 'GB', 'CA', 'AU', 'EU'],
   serviceType: 'Immigration & Visa Consulting',
   founder: { '@type': 'Person', name: 'Kaveesh Kapoor' },
@@ -128,7 +127,7 @@ const ImmigrationLawyers = () => {
             <h2>Who Are Our Immigration Advisors?</h2>
             <p>
               A Visa Experts brings together immigration lawyers, visa consultants and documentation specialists with
-              experience across visitor, work, business and permanent residency applications.
+              experience across visitor, business and permanent residency applications.
             </p>
             <p>
               Our advisors guide applicants at every stage — from eligibility assessment to documentation, application
@@ -218,7 +217,7 @@ const ImmigrationLawyers = () => {
         <section className="spage-cta" id="need-help">
           <h2>Need Help From an Immigration Lawyer or Consultant?</h2>
           <p>
-            Whether you are applying for a visitor, work or permanent residency visa, our advisors can help you
+            Whether you are applying for a visitor or permanent residency visa, our advisors can help you
             understand the requirements and prepare your application more systematically.
           </p>
           <div className="spage-btns">

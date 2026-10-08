@@ -66,7 +66,7 @@ const interviewQuestions = [
   'What is the purpose of your trip?',
   'How long do you plan to stay?',
   'Who will pay for your trip?',
-  'What do you do for work?',
+  'What is your occupation?',
   'Where will you stay in the USA?',
   'Do you have relatives or friends in the USA?',
   'Why will you return to India?',

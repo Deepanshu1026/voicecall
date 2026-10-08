@@ -48,7 +48,7 @@ const allowedB2 = [
 
 const notAllowed = [
   'Taking up employment in the USA',
-  'Working for a U.S. employer in a position requiring employment authorization',
+  'Taking up employment with a U.S. employer',
   'Permanently living in the United States',
   'Using a visitor visa for purposes that require a different visa category',
 ];
@@ -86,7 +86,7 @@ const faqs = [
     a: 'The B-1 classification can cover certain permitted temporary business activities, including eligible business meetings.',
   },
   {
-    q: 'Can I work in the USA with a B1/B2 Visa?',
+    q: 'Does a B1/B2 Visa allow employment in the USA?',
     a: 'No. A B1/B2 Visa does not generally authorize regular employment in the United States.',
   },
   {
@@ -184,7 +184,7 @@ const UsaB1B2Visa = () => {
             </ul>
             <p>When both purposes are applicable, a traveler may be issued a B-1/B-2 combination visa.</p>
             <p>
-              The visa does not give permission to live or work permanently in the United States. Your activities in the
+              The visa does not give permission to live permanently in the United States. Your activities in the
               USA must remain within the purpose permitted by your visa.
             </p>
             <p>
@@ -309,7 +309,7 @@ const UsaB1B2Visa = () => {
           <div className="spage-wrap">
             <h2>Activities Not Allowed on a B1/B2 Visa</h2>
             <p>
-              A B1/B2 Visa is not a work visa. You cannot use it to take up regular employment in the United States.
+              A B1/B2 Visa does not authorize regular employment in the United States.
               Generally, you should not use a B1/B2 Visa for activities such as:
             </p>
             <ul className="spage-list">

@@ -166,7 +166,7 @@ const UserHome = () => {
     { title: 'Document Preparation Support', desc: 'Help understanding and organizing the documents required for your application.' },
     { title: 'Transparent Process', desc: 'Clear communication about the application process, requirements and next steps.' },
     { title: 'Support Throughout the Process', desc: 'Assistance from the initial consultation through the application journey.' },
-    { title: 'Multiple Visa Services', desc: 'Support for visitor, work, student and transit visa applications, where offered.' },
+    { title: 'Multiple Visa Services', desc: 'Support for visitor, business and transit visa applications, where offered.' },
   ];
 
   const trackReviews = useMemo(

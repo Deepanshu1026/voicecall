@@ -5,7 +5,7 @@ import LandingLayout from '../LandingLayout';
 const countryCards = [
   {
     title: 'United States',
-    text: 'Visitor (B-1/B-2), business, work and other nonimmigrant visa categories for the USA.',
+    text: 'Visitor (B-1/B-2), business and other nonimmigrant visa categories for the USA.',
     href: '/usa-visa',
   },
   {
@@ -15,7 +15,7 @@ const countryCards = [
   },
   {
     title: 'Canada',
-    text: 'Visitor (TRV), work permits and permanent residency pathways for Canada.',
+    text: 'Visitor (TRV) and permanent residency pathways for Canada.',
     href: '/canada-visa',
   },
   {
@@ -31,7 +31,6 @@ const countryCards = [
 ];
 
 const categories = [
-  'Work Visas — for eligible employment or business purposes.',
   'Permanent Residency (PR) — long-term settlement pathways.',
   'Tourist & Visitor Visas — tourism, visiting family or friends, or short stays.',
   'Business Visas — meetings, conferences and permitted business activities.',
@@ -65,7 +64,7 @@ const help = [
 const faqs = [
   {
     q: 'What are immigration laws?',
-    a: 'Immigration laws are the rules that govern how foreign nationals can enter, stay, work and settle in a country. They define visa categories, eligibility, documentation and pathways to permanent residency.',
+    a: 'Immigration laws are the rules that govern how foreign nationals can enter, stay and settle in a country. They define visa categories, eligibility, documentation and pathways to permanent residency.',
   },
   {
     q: 'What is the difference between a visa and immigration?',
@@ -73,11 +72,11 @@ const faqs = [
   },
   {
     q: 'Which countries can I immigrate to?',
-    a: 'Many countries offer visitor, work and permanent residency routes. Popular destinations include the USA, UK, Canada, Australia and Europe, each with its own rules and eligibility criteria.',
+    a: 'Many countries offer visitor and permanent residency routes. Popular destinations include the USA, UK, Canada, Australia and Europe, each with its own rules and eligibility criteria.',
   },
   {
     q: 'What is permanent residency?',
-    a: 'Permanent residency (PR) allows an eligible person to live and often work in a country on an ongoing basis, subject to that country\u2019s rules and conditions.',
+    a: 'Permanent residency (PR) allows an eligible person to live in a country on an ongoing basis, subject to that country\u2019s rules and conditions.',
   },
   {
     q: 'Do immigration laws change?',
@@ -144,7 +143,7 @@ const ImmigrationLaws = () => {
           <div className="spage-hero-inner">
             <h1>Immigration Laws 2026: Complete Guide for the USA, UK, Canada &amp; Australia</h1>
             <p>
-              Immigration laws decide who can enter, live, work and settle in a country. They cover visa categories,
+              Immigration laws decide who can enter, live and settle in a country. They cover visa categories,
               eligibility, documentation and permanent residency. This guide explains the key rules for popular
               destinations and how to approach your application with confidence.
             </p>
@@ -171,7 +170,7 @@ const ImmigrationLaws = () => {
           <div className="spage-wrap">
             <h2>What Are Immigration Laws?</h2>
             <p>
-              Immigration laws are the rules that govern how foreign nationals can enter, stay, work and settle in a
+              Immigration laws are the rules that govern how foreign nationals can enter, stay and settle in a
               country. They define visa categories, eligibility criteria, documentation requirements, duration of stay
               and pathways to permanent residency or citizenship.
             </p>
@@ -315,7 +314,7 @@ const ImmigrationLaws = () => {
         <section className="spage-cta" id="need-help">
           <h2>Need Guidance on Immigration &amp; Visa Laws?</h2>
           <p>
-            Whether you are planning a short visit, a work move or long-term settlement, understanding the current rules
+            Whether you are planning a short visit, a long-term move or settlement, understanding the current rules
             is the first step. A Visa Experts can help you prepare your application more systematically.
           </p>
           <div className="spage-btns">

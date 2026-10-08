@@ -113,7 +113,7 @@ const data = {
   businessClosing:
     'We help you prepare your application around your genuine purpose of travel and relevant supporting documentation.',
   businessNote:
-    'Standard Visitor rules do not permit general work in the UK. Activities must fall within the permitted visitor rules.',
+    'Standard Visitor rules do not permit employment in the UK. Activities must fall within the permitted visitor rules.',
 
   strongHeading: 'What Makes a Strong UK Visitor Visa Application?',
   strongPoints: [
