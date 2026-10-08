@@ -3,7 +3,11 @@ import { NextResponse } from 'next/server';
 // Strip junk/tracking query parameters (e.g. ?c=123..., ?utm_source=...) so they
 // never get indexed as duplicate pages. Permanently redirects to the clean URL.
 const JUNK_EXACT = new Set([
+  'o',
+  'u',
+  's',
   'c',
+  'l',
   'fbclid',
   'gclid',
   'gclsrc',

@@ -1,5 +1,41 @@
 User-agent: *
 Allow: /
 
+# Block junk/spam query-parameter URLs from being indexed
+Disallow: /*?o=*
+Disallow: /*?u=*
+Disallow: /*?s=*
+Disallow: /*?c=*
+Disallow: /*?l=*
+Disallow: /*?fbclid=*
+Disallow: /*?gclid=*
+Disallow: /*?gclsrc=*
+Disallow: /*?dclid=*
+Disallow: /*?msclkid=*
+Disallow: /*?mc_cid=*
+Disallow: /*?mc_eid=*
+Disallow: /*?igshid=*
+Disallow: /*?yclid=*
+Disallow: /*?twclid=*
+Disallow: /*?ttclid=*
+Disallow: /*?li_fat_id=*
+Disallow: /*?wbraid=*
+Disallow: /*?gbraid=*
+Disallow: /*?s_kwcid=*
+Disallow: /*?epik=*
+Disallow: /*?scid=*
+Disallow: /*?_ga=*
+Disallow: /*?_gl=*
+Disallow: /*?utm_*
+
+# Block private/app-only routes
+Disallow: /login
+Disallow: /register
+Disallow: /agent/
+Disallow: /chat
+Disallow: /settings
+Disallow: /profile
+Disallow: /appointment-payment
+
 Sitemap: https://avisaexperts.com/sitemap.xml
 Sitemap: https://avisaexperts.com/sitemap-images.xml

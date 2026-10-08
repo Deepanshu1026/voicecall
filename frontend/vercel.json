@@ -3,6 +3,7 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "routes": [
+    { "src": "/(?<path>[^?]*)\\?(?:o|u|s|c|l)=[^&]*(?:&.*)?$", "status": 301, "headers": { "Location": "/$path" } },
     { "src": "/(.*)", "continue": true, "headers": {
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "SAMEORIGIN",
