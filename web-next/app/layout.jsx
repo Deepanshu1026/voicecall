@@ -56,7 +56,8 @@ export const metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#050505',
+  maximumScale: 5,
+  themeColor: '#001e74',
 };
 
 const organizationLd = {
