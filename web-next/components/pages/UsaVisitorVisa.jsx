@@ -286,22 +286,24 @@ const UsaVisitorVisa = () => {
               Preparing the right documents can make your USA visa application more organized. The documents you may need
               can depend on your personal, professional, financial, and travel circumstances.
             </p>
-            <table className="spage-table">
-              <thead>
-                <tr>
-                  <th>Document</th>
-                  <th>Purpose</th>
-                </tr>
-              </thead>
-              <tbody>
-                {docRows.map((row, i) => (
-                  <tr key={i}>
-                    <td>{row[0]}</td>
-                    <td>{row[1]}</td>
+            <div className="spage-table-wrap">
+              <table className="spage-table">
+                <thead>
+                  <tr>
+                    <th>Document</th>
+                    <th>Purpose</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {docRows.map((row, i) => (
+                    <tr key={i}>
+                      <td>{row[0]}</td>
+                      <td>{row[1]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <p>
               Applicants should prepare documents according to their individual circumstances rather than relying on a
               fixed document list.

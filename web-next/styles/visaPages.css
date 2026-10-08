@@ -1321,10 +1321,15 @@
   font-size: 16px;
 }
 
+.spage-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 8px 0 16px;
+}
+
 .spage-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 8px 0 16px;
   font-size: 16px;
 }
 
@@ -1352,7 +1357,13 @@
   margin-top: 8px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 560px) {
+  .spage-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
   .spage-cards {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1360,31 +1371,125 @@
 
 @media (max-width: 600px) {
   .spage-hero {
-    padding: 130px 20px 60px;
-    min-height: 360px;
+    padding: 130px 18px 56px;
+    min-height: 340px;
   }
 
   .spage-hero h1 {
-    font-size: 30px;
+    font-size: 27px;
+    line-height: 1.2;
   }
 
   .spage-hero p {
-    font-size: 16px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .spage-wrap {
+    padding: 0 18px;
   }
 
   .spage-section {
-    padding: 42px 0;
+    padding: 38px 0;
   }
 
   .spage-section h2 {
-    font-size: 23px;
+    font-size: 22px;
+  }
+
+  .spage-section h3 {
+    font-size: 17px;
+    margin-top: 20px;
   }
 
   .spage-section p {
     font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .spage-list li {
+    font-size: 15px;
+    padding: 5px 0 5px 28px;
+  }
+
+  .spage-list li::before {
+    width: 18px;
+    height: 18px;
+  }
+
+  .spage-steps li {
+    padding: 0 0 18px 42px;
+  }
+
+  .spage-steps strong {
+    font-size: 16px;
+  }
+
+  .spage-steps span {
+    font-size: 15px;
+  }
+
+  .spage-table {
+    font-size: 13.5px;
+  }
+
+  .spage-table th,
+  .spage-table td {
+    padding: 8px 10px;
+  }
+
+  .spage-cards {
+    gap: 14px;
+  }
+
+  .spage-card {
+    padding: 18px;
+  }
+
+  .spage-card h3 {
+    font-size: 17px;
+  }
+
+  .spage-card p {
+    font-size: 15px;
+  }
+
+  .spage-faq summary {
+    font-size: 15px;
+    padding: 16px 0;
+  }
+
+  .spage-faq p {
+    font-size: 15px;
+  }
+
+  .spage-btns {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .spage-btn {
+    width: 100%;
+  }
+
+  .spage-cta {
+    padding: 48px 18px;
   }
 
   .spage-cta h2 {
-    font-size: 24px;
+    font-size: 23px;
+  }
+
+  .spage-cta p {
+    font-size: 16px;
+  }
+
+  .spage-tags {
+    font-size: 12px;
+  }
+
+  .spage-disclaimer {
+    font-size: 12.5px;
   }
 }

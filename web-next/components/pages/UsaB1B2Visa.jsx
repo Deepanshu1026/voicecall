@@ -233,24 +233,26 @@ const UsaB1B2Visa = () => {
           <div className="spage-wrap">
             <h2>B-1 vs B-2 Visa: What is the Difference?</h2>
             <p>Although both categories are temporary visitor visas, their purposes are different.</p>
-            <table className="spage-table">
-              <thead>
-                <tr>
-                  <th>Feature</th>
-                  <th>B-1 Visa</th>
-                  <th>B-2 Visa</th>
-                </tr>
-              </thead>
-              <tbody>
-                {b1b2Rows.map((row, i) => (
-                  <tr key={i}>
-                    <td>{row[0]}</td>
-                    <td>{row[1]}</td>
-                    <td>{row[2]}</td>
+            <div className="spage-table-wrap">
+              <table className="spage-table">
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th>B-1 Visa</th>
+                    <th>B-2 Visa</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {b1b2Rows.map((row, i) => (
+                    <tr key={i}>
+                      <td>{row[0]}</td>
+                      <td>{row[1]}</td>
+                      <td>{row[2]}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <p>
               A B1/B2 Visa can cover both eligible business and tourism purposes, depending on the circumstances of the
               traveler.
