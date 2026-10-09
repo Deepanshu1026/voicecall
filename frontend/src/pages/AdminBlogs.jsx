@@ -150,7 +150,7 @@ const AdminBlogs = () => {
   };
 
   const previewSlug = form.slug || slugify(form.title) || 'your-blog-title';
-  const previewUrl = form.canonicalUrl || `https://avisaexperts.com/blog/${editingId || 'new'}/${previewSlug}`;
+  const previewUrl = form.canonicalUrl || `https://avisaexperts.com/blog/${form.slug || previewSlug}`;
   const serpTitle = form.metaTitle || form.title || 'Your blog title';
   const serpDesc = form.metaDescription || form.excerpt || 'Add a meta description to control how this blog appears on Google.';
 

@@ -82,7 +82,7 @@ const BlogDetail = () => {
     return () => { cancelled = true; };
   }, [postId]);
 
-  const pageUrl = useMemo(() => `https://avisaexperts.com/blog/${post?.id}/${slugify(post?.title || '')}`, [post]);
+  const pageUrl = useMemo(() => `https://avisaexperts.com/blog/${post?.slug || slugify(post?.title || '')}`, [post]);
   const metaDescription = useMemo(() => {
     if (!post) return '';
     return post.excerpt ? stripHtml(post.excerpt).slice(0, 160) : stripHtml(post.content).slice(0, 160);
@@ -285,7 +285,7 @@ const BlogDetail = () => {
                   <Link
                     className="blogs-card"
                     key={item.id}
-                    to={`/blog/${item.id}/${slugify(item.title)}`}
+                    to={`/blog/${item.slug || slugify(item.title)}`}
                   >
                     <div className="blogs-card-image">
                       <img
