@@ -65,7 +65,16 @@ export async function generateMetadata({ params }) {
     : post.excerpt
       ? stripHtml(post.excerpt).slice(0, 160)
       : stripHtml(post.content).slice(0, 160);
-  const url = post.canonicalUrl || `https://avisaexperts.com/blog/${post.slug || slugify(post.title)}`;
+  const ownUrl = `https://avisaexperts.com/blog/${post.slug || slugify(post.title)}`;
+  // Only honour a canonical override if it points to a DIFFERENT domain (true cross-post).
+  // Internal /blog/... overrides are ignored so the canonical always matches the real URL.
+  const externalCanonical =
+    post.canonicalUrl &&
+    /^https?:\/\//i.test(post.canonicalUrl) &&
+    !/^https?:\/\/(www\.)?avisaexperts\.com\//i.test(post.canonicalUrl)
+      ? post.canonicalUrl
+      : null;
+  const url = externalCanonical || ownUrl;
   const image = post.featured_image || '/images/user/touristvisa_full 1.webp';
   const keywords = post.metaKeywords
     || ['visa', 'immigration', 'A Visa Experts', 'Kaveesh Kapoor', post.category, ...(post.tags || [])]
