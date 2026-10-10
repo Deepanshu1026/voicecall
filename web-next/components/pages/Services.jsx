@@ -280,7 +280,7 @@ const Services = () => {
                     <span className="services-detail-tag">{service.id} Visa</span>
                     <h2>About {service.title}</h2>
                     <p>{service.intro}</p>
-                    <h4>Common Types</h4>
+                    <h3>Common Types</h3>
                     <div className="services-types">
                       {service.types.map((type, tidx) => (
                         <div className="services-type" key={tidx}>
