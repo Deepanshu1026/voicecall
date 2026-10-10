@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import '../styles/seminar.css';
 
@@ -36,13 +36,16 @@ const gallery = [
 
 const HomeSeminarSections = () => {
   const router = useRouter();
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const gridRef = useRef(null);
 
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    setMouse({
-      x: (e.clientX - rect.left) / rect.width - 0.5,
-      y: (e.clientY - rect.top) / rect.height - 0.5,
+    const mx = (e.clientX - rect.left) / rect.width - 0.5;
+    const my = (e.clientY - rect.top) / rect.height - 0.5;
+    const items = gridRef.current ? gridRef.current.querySelectorAll('.g-item') : [];
+    items.forEach((el, i) => {
+      const depth = gallery[i] ? gallery[i].depth : 0;
+      el.style.transform = `translate(${mx * depth}px, ${my * depth}px)`;
     });
   };
 
@@ -54,13 +57,12 @@ const HomeSeminarSections = () => {
           <h2>Captured At The Seminar</h2>
           <p>Move your cursor and watch the moments come alive.</p>
         </div>
-        <div className="seminar-collage-grid">
+        <div className="seminar-collage-grid" ref={gridRef}>
           {gallery.map((g, i) =>
             g.type === 'card' ? (
               <div
                 className={`g-item ${g.cls}`}
                 key={i}
-                style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
                 onClick={() => {
                   if (g.arrow === 'down') {
                     router.push('/services');
@@ -114,11 +116,7 @@ const HomeSeminarSections = () => {
                 </div>
               </div>
             ) : (
-              <div
-                className={`g-item ${g.cls}`}
-                key={i}
-                style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
-              >
+              <div className={`g-item ${g.cls}`} key={i}>
                 <img src={g.img} alt={`Seminar moment ${i + 1}`} />
               </div>
             )
