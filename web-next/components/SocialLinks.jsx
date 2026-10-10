@@ -1,10 +1,5 @@
 const socialLinks = [
   {
-    name: 'LinkedIn',
-    href: 'https://www.linkedin.com/company/a-visa-experts',
-    type: 'linkedin',
-  },
-  {
     name: 'Instagram',
     href: 'https://www.instagram.com/avisa.expert/',
     type: 'instagram',
