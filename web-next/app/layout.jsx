@@ -116,11 +116,19 @@ const websiteLd = {
   '@type': 'WebSite',
   name: 'A Visa Experts',
   url: SITE_URL,
+  description:
+    "India's trusted No.1 Visitor Visa & Immigration Company. Expert guidance for UK, USA, Canada, Australia & Europe visitor visas, tourist visas and permanent residency.",
+  inLanguage: 'en-IN',
   potentialAction: {
     '@type': 'SearchAction',
     target: `${SITE_URL}/consultants?q={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
+  sameAs: [
+    'https://www.instagram.com/avisa.expert/',
+    'https://www.facebook.com/profile.php?id=61590985693281',
+    'https://www.youtube.com/@avisaexperts',
+  ],
 };
 
 export default function RootLayout({ children }) {
