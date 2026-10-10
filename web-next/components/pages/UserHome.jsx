@@ -17,9 +17,9 @@ const DEFAULT_CONTACT = {
   whatsappHours: 'Mon-Sat, 11AM-6PM EST',
 };
 
-const UserHome = () => {
+const UserHome = ({ initialReviews = [] }) => {
   const navigate = (p) => window.location.assign(p);
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState(initialReviews);
   const [contactSettings, setContactSettings] = useState(DEFAULT_CONTACT);
 
   const applyReviews = useCallback((list) => {
