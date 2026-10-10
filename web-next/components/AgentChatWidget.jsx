@@ -169,6 +169,8 @@ const AgentChatWidget = () => {
                     <img
                       src={avatar}
                       alt={name}
+                      width={45}
+                      height={45}
                       onError={(e) => {
                         e.target.src = '/images/user/avatar.webp';
                       }}

@@ -180,10 +180,10 @@ const LandingLayout = ({ children }) => {
             <div className="offer-banner-content">
               {banner.link ? (
                 <a href={banner.link} target="_blank" rel="noopener noreferrer" className="offer-banner-link">
-                  <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
+                  <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" width={1200} height={400} />
                 </a>
               ) : (
-                <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
+                <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" width={1200} height={400} />
               )}
             </div>
           </div>

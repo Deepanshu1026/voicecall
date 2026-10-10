@@ -174,6 +174,8 @@ const Blogs = ({ initialPosts = [] }) => {
                       <img
                         src={featuredPost.featured_image || fallbackImage}
                         alt={featuredPost.image_alt || featuredPost.title}
+                        width={1200}
+                        height={630}
                         onError={(e) => { e.target.src = fallbackImage; }}
                       />
                       <span className="blogs-featured-category">{featuredPost.derivedCategory}</span>
@@ -199,6 +201,8 @@ const Blogs = ({ initialPosts = [] }) => {
                           <img
                             src={post.featured_image || fallbackImage}
                             alt={post.image_alt || post.title}
+                            width={600}
+                            height={400}
                             onError={(e) => { e.target.src = fallbackImage; }}
                           />
                           <span className="blogs-card-category">{post.derivedCategory}</span>

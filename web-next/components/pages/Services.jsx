@@ -54,6 +54,8 @@ const Services = () => {
       title: 'Tourist Visa',
       shortText: 'Travel for leisure, sightseeing, visiting family, or attending events with a limited-duration permit.',
       fullImg: '/images/user/touristvisa_full 1.webp',
+      imgW: 626,
+      imgH: 447,
       intro: 'A tourist visa is an official document that permits travelers to enter, stay, and explore a country for leisure purposes. It is typically granted for a limited duration and is intended for activities like sightseeing, visiting family or friends, or attending events.',
       types: [
         { title: 'Single-entry Visa', text: 'Allows one-time entry. Re-entry requires applying for a new visa.' },
@@ -76,6 +78,8 @@ const Services = () => {
       title: 'Transit Visa',
       shortText: 'Pass through a country smoothly during airport layovers, connecting flights, or land travel.',
       fullImg: '/images/user/transitimg 1.webp',
+      imgW: 762,
+      imgH: 641,
       intro: 'A transit visa allows travelers to pass through a country on their way to another destination. It\u2019s typically required for short stays, even if you\'re only in the airport for a few hours. Our visa experts provide clear guidance on transit visa requirements for different countries.',
       types: [
         { title: 'Short Duration', text: 'Valid typically for 24 to 72 hours, depending on the country\u2019s rules.' },
@@ -217,7 +221,7 @@ const Services = () => {
               {visaServices.map((service) => (
                 <div className="services-card" key={service.id}>
                   <div className="services-card-image">
-                    <img src={service.fullImg} alt={service.title} />
+                    <img src={service.fullImg} alt={service.title} width={service.imgW} height={service.imgH} />
                   </div>
                   <div className="services-card-body">
                     <h3>{service.title}</h3>
@@ -246,7 +250,7 @@ const Services = () => {
               {destinations.map((dest, idx) => (
                 <div className="services-destination" key={idx}>
                   <div className="services-destination-img">
-                    <img src={dest.img} alt={dest.name} />
+                    <img src={dest.img} alt={dest.name} width={600} height={400} />
                     <div className="services-destination-overlay" />
                     <h3>{dest.name}</h3>
                   </div>
@@ -274,7 +278,7 @@ const Services = () => {
                   key={service.id}
                 >
                   <div className="services-detail-image">
-                    <img src={service.fullImg} alt={service.title} />
+                    <img src={service.fullImg} alt={service.title} width={service.imgW} height={service.imgH} />
                   </div>
                   <div className="services-detail-content">
                     <span className="services-detail-tag">{service.id} Visa</span>

@@ -304,6 +304,8 @@ const UserHome = () => {
           src="/images/user/slider4 1.webp"
           className="background-img"
           alt="A Visa Experts - Visa and Immigration Consultation"
+          width={1536}
+          height={1109}
         />
         <div className="hero-video-overlay" />
         <div className="new-hero-sec">
@@ -445,6 +447,8 @@ const UserHome = () => {
                   <img
                     src={dest.img}
                     alt={`${dest.name} - Visa services by A Visa Experts`}
+                    width={600}
+                    height={400}
                     loading="lazy"
                   />
                 </div>
@@ -551,6 +555,8 @@ const UserHome = () => {
                         className="review-photo"
                         src={review.img}
                         alt={label}
+                        width={457}
+                        height={816}
                         onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
                       />
                     ) : (

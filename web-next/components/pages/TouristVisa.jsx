@@ -114,7 +114,7 @@ const TouristVisa = () => {
           <div className="visa-container">
             <div className="visa-about">
               <div className="visa-about-image">
-                <img src="/images/user/touristvisa_full 1.webp" alt="About Tourist Visa" />
+                <img src="/images/user/touristvisa_full 1.webp" alt="About Tourist Visa" width={626} height={447} />
               </div>
               <div className="visa-about-content">
                 <span className="visa-label">About Tourist Visa</span>
@@ -156,7 +156,7 @@ const TouristVisa = () => {
               {destinations.map((dest, idx) => (
                 <div className="visa-destination" key={idx}>
                   <div className="visa-destination-img">
-                    <img src={dest.img} alt={dest.name} />
+                    <img src={dest.img} alt={dest.name} width={600} height={400} />
                     <div className="visa-destination-overlay" />
                     <h3>{dest.name}</h3>
                   </div>

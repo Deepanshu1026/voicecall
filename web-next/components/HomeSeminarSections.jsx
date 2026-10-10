@@ -117,7 +117,7 @@ const HomeSeminarSections = () => {
               </div>
             ) : (
               <div className={`g-item ${g.cls}`} key={i}>
-                <img src={g.img} alt={`Seminar moment ${i + 1}`} />
+                <img src={g.img} alt={`Seminar moment ${i + 1}`} width={600} height={400} />
               </div>
             )
           )}
