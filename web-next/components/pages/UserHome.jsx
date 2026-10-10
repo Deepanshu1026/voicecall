@@ -169,6 +169,29 @@ const UserHome = () => {
     { title: 'Multiple Visa Services', desc: 'Support for visitor, business and transit visa applications, where offered.' },
   ];
 
+  const homeFaqs = [
+    {
+      q: 'What is a visitor visa?',
+      a: 'A visitor visa allows eligible travellers to visit a country temporarily for tourism, visiting family or friends, or certain permitted business activities, subject to that country\u2019s rules.',
+    },
+    {
+      q: 'How can I improve my UK visa approval chances?',
+      a: 'A clear travel purpose, accurate documents, sufficient funds and strong ties to your home country can support a UK visa approval. Our advisors help you prepare each part correctly.',
+    },
+    {
+      q: 'What should I do if I face a visa refusal?',
+      a: 'A visa refusal is not the end. Review the refusal reasons, correct any inconsistencies and strengthen your documents before reapplying. A Visa Experts can guide you through the process.',
+    },
+    {
+      q: 'Who is Kaveesh Kapoor?',
+      a: 'Kaveesh Kapoor is the founder of A Visa Experts. With years of experience in visa and immigration guidance, he leads a team that helps applicants prepare stronger visa applications.',
+    },
+    {
+      q: 'Which countries does A Visa Experts cover?',
+      a: 'We provide visitor visa guidance for popular destinations including the UK, USA, Canada, Australia and Europe, along with tourist, transit and permanent residency support.',
+    },
+  ];
+
   const trackReviews = useMemo(
     () => (reviews.length > 1 ? [...reviews, ...reviews] : reviews),
     [reviews]
@@ -254,11 +277,25 @@ const UserHome = () => {
     name: 'Kaveesh Kapoor',
   }];
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: homeFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
+
   return (
     <LandingLayout>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
       {/* Hero */}
@@ -453,6 +490,21 @@ const UserHome = () => {
                 <h3>{card.title}</h3>
                 <p>{card.desc}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="home-faq-section" aria-labelledby="home-faq-heading">
+        <div className="home-faq-container">
+          <h2 id="home-faq-heading">Frequently Asked Questions</h2>
+          <div className="spage-faq">
+            {homeFaqs.map((f, i) => (
+              <details key={i}>
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
             ))}
           </div>
         </div>
