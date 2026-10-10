@@ -121,7 +121,7 @@ const LandingLayout = ({ children }) => {
       <header className={`landing-header ${scrolled ? 'scrolled' : ''}`}>
         <div className="landing-header-left">
           <a href="/home" className="landing-logo-link">
-            <img className="landing-logo" src="/images/user/tmlogo 1.webp" alt="Visa Experts" />
+            <img className="landing-logo" src="/images/user/tmlogo 1.webp" alt="Visa Experts" width={151} height={103} />
           </a>
         </div>
 
@@ -197,7 +197,7 @@ const LandingLayout = ({ children }) => {
       <footer className="site-footer">
         <div className="footer-wrapper">
           <div className="footer-section footer-logo-section">
-            <img className="footer-logo" src="/images/user/tmlogo 1.webp" alt="Logo" />
+            <img className="footer-logo" src="/images/user/tmlogo 1.webp" alt="Logo" width={151} height={103} />
             <p>A Visa Expert helps individuals secure visas for the US, UK, Canada, New Zealand, and Australia. Our experienced team offers
               personalized guidance, ensuring a smooth application process for tourist and transit visas.</p>
           </div>
@@ -273,7 +273,7 @@ const LandingLayout = ({ children }) => {
                           </defs>
                         </svg>
                       ) : (
-                        <img className="flag-img" width="40px" src={item.flag} alt="flag" />
+                        <img className="flag-img" width={132} height={88} src={item.flag} alt="flag" />
                       )}
                       <div className="ofic-nm">{item.title} <span>{item.span}</span></div>
                     </div>

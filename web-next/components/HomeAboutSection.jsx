@@ -72,6 +72,8 @@ const HomeAboutSection = ({ variant = 'full' }) => {
                 <img
                   src="https://ik.imagekit.io/kaveeshkapoor/kaveesh_kapoor.png"
                   alt="Kaveesh Kapoor - Founder of A Visa Experts"
+                  width={1024}
+                  height={1536}
                   loading="lazy"
                 />
                 <span className="abouthero-photo-shade" aria-hidden="true" />
