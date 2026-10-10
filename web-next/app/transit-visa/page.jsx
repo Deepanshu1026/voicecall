@@ -6,7 +6,7 @@ export const metadata = {
     'Understand transit visa requirements and get expert guidance for smooth airport layovers. A Visa Experts helps with transit visas for international travel.',
   keywords:
     'transit visa, airport transit, layover visa, transit visa requirements, international travel',
-  alternates: { canonical: '/transit-visa' },
+  alternates: { canonical: '/transit-visa', languages: { en: '/transit-visa', 'en-IN': '/transit-visa', 'x-default': '/transit-visa' } },
   openGraph: {
     title: 'Transit Visa Services | A Visa Experts',
     description:

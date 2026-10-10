@@ -7,7 +7,7 @@ export const metadata = {
     "India's trusted No.1 Visitor Visa & Immigration Company. Expert guidance for UK, USA, Canada & Europe visitor visas, plus visa refusal support. Free advice.",
   keywords:
     'visa experts, visitor visa, visitor visa India, visa refusal, UK visa approval, immigration company, tourist visa, Canada visa, UK visa, USA visa, Kaveesh Kapoor',
-  alternates: { canonical: 'https://avisaexperts.com/' },
+  alternates: { canonical: 'https://avisaexperts.com/', languages: { en: '/', 'en-IN': '/', 'x-default': '/' } },
   openGraph: {
     title: 'A Visa Experts | No.1 Visitor Visa Company in India',
     description:

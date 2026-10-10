@@ -6,7 +6,7 @@ export const metadata = {
     "Learn about A Visa Experts, India's trusted visa and immigration company led by Kaveesh Kapoor. We help clients with tourist and transit visas.",
   keywords:
     'about A Visa Experts, Kaveesh Kapoor, visa immigration company, visa consultants, immigration experts',
-  alternates: { canonical: '/about' },
+  alternates: { canonical: '/about', languages: { en: '/about', 'en-IN': '/about', 'x-default': '/about' } },
   openGraph: {
     title: 'About Us | A Visa Experts - Visa & Immigration Experts',
     description:

@@ -6,7 +6,7 @@ export const metadata = {
     'Expert UK Standard Visitor Visa guidance from A Visa Experts. Profile assessment, online application guidance, documentation support, business-visit guidance and biometrics guidance.',
   keywords:
     'UK visitor visa, UK standard visitor visa, UK business visa, UK visa application, biometrics guidance, UK visa consultants, A Visa Experts',
-  alternates: { canonical: '/uk-visa' },
+  alternates: { canonical: '/uk-visa', languages: { en: '/uk-visa', 'en-IN': '/uk-visa', 'x-default': '/uk-visa' } },
   openGraph: {
     title: 'UK Visitor Visa Services | A Visa Experts',
     description:

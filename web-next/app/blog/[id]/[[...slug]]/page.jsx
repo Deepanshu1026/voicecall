@@ -86,7 +86,7 @@ export async function generateMetadata({ params }) {
     description: desc,
     keywords,
     authors: [{ name: post.author || 'A Visa Experts' }],
-    alternates: { canonical: url },
+    alternates: { canonical: url, languages: { en: url, 'en-IN': url, 'x-default': url } },
     openGraph: {
       type: 'article',
       title: metaTitle,
