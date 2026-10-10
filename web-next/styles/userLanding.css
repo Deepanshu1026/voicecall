@@ -606,7 +606,7 @@
   flex: 1;
 }
 
-.new-hero-card-content h3 {
+.new-hero-card-content h2 {
   color: white;
   font-size: 1.4rem;
   margin: 0;
@@ -675,7 +675,7 @@
     padding: 1.5rem;
   }
 
-  .new-hero-card-content h3 {
+  .new-hero-card-content h2 {
     font-size: 1.2rem;
   }
 
@@ -745,7 +745,7 @@
     padding: 1.25rem;
   }
 
-  .new-hero-card-content h3 {
+  .new-hero-card-content h2 {
     font-size: 1.1rem;
   }
 

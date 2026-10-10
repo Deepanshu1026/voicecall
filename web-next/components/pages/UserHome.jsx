@@ -326,7 +326,7 @@ const UserHome = () => {
                 <div className="new-hero-card">
                   <img src={card.img} alt={`${card.title} - Visa Services by A Visa Experts`} />
                   <div className="new-hero-card-content">
-                    <h3>{card.title}</h3>
+                    <h2>{card.title}</h2>
                     <p>{card.text}</p>
                   </div>
                   <button className="new-hero-arrow-btn" aria-label={`Navigate to ${card.title}`}>
