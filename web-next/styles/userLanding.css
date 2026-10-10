@@ -3510,6 +3510,7 @@ html {
 }
 
 .agent-chat-loading-overlay {
+  display: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -3521,6 +3522,10 @@ html {
   align-items: center;
   flex-direction: column;
   gap: 15px;
+}
+
+.agent-chat-loading-overlay.is-visible {
+  display: flex;
 }
 
 .agent-chat-spinner {
@@ -3841,4 +3846,21 @@ html {
     top: 6px;
     right: 6px;
   }
+}
+
+/* Utilities moved out of inline styles */
+.accordion-content.open {
+  display: block;
+}
+
+.reviews-track-static {
+  animation: none;
+}
+
+.flag-img {
+  border-radius: 5px;
+}
+
+.mask-alpha {
+  mask-type: alpha;
 }

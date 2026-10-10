@@ -232,7 +232,7 @@ const LandingLayout = ({ children }) => {
                       {item.flag === 'us' ? (
                         <svg xmlns="http://www.w3.org/2000/svg" width="60" height="42" viewBox="0 0 60 42" fill="none">
                           <g clipPath="url(#clipUS)">
-                            <mask id="maskUS" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="60" height="42">
+                            <mask id="maskUS" className="mask-alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="60" height="42">
                               <path d="M54.2794 0H6.51749C3.41417 0 0.898438 2.46542 0.898438 5.50667V35.7933C0.898438 38.8346 3.41417 41.3 6.51749 41.3H54.2794C57.3827 41.3 59.8984 38.8346 59.8984 35.7933V5.50667C59.8984 2.46542 57.3827 0 54.2794 0Z" fill="white" />
                             </mask>
                             <g mask="url(#maskUS)">
@@ -252,7 +252,7 @@ const LandingLayout = ({ children }) => {
                       ) : item.flag === 'uk' ? (
                         <svg xmlns="http://www.w3.org/2000/svg" width="59" height="42" viewBox="0 0 59 42" fill="none">
                           <g clipPath="url(#clipUK)">
-                            <mask id="maskUK" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="59" height="42">
+                            <mask id="maskUK" className="mask-alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="59" height="42">
                               <path d="M53.381 0H5.61905C2.51573 0 0 2.46542 0 5.50667V35.7933C0 38.8346 2.51573 41.3 5.61905 41.3H53.381C56.4843 41.3 59 38.8346 59 35.7933V5.50667C59 2.46542 56.4843 0 53.381 0Z" fill="white" />
                             </mask>
                             <g mask="url(#maskUK)">
@@ -273,13 +273,13 @@ const LandingLayout = ({ children }) => {
                           </defs>
                         </svg>
                       ) : (
-                        <img style={{ borderRadius: '5px' }} width="40px" src={item.flag} alt="flag" />
+                        <img className="flag-img" width="40px" src={item.flag} alt="flag" />
                       )}
                       <div className="ofic-nm">{item.title} <span>{item.span}</span></div>
                     </div>
-                    <span className="footer-add-icon">{accordionOpen[item.key] ? 'âˆ’' : '+'}</span>
+                    <span className="footer-add-icon">{accordionOpen[item.key] ? '-' : '+'}</span>
                   </div>
-                  <div className="accordion-content" style={{ display: accordionOpen[item.key] ? 'block' : 'none' }}>
+                  <div className={`accordion-content${accordionOpen[item.key] ? ' open' : ''}`}>
                     <p>{item.content}</p>
                   </div>
                 </div>

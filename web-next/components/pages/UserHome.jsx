@@ -526,8 +526,8 @@ const UserHome = () => {
 
         <div className="reviews-wrapper">
           <div
-            className="reviews-track"
-            style={reviews.length > 1 ? { animationDuration: `${marqueeDuration}s` } : { animation: 'none' }}
+            className={`reviews-track${reviews.length > 1 ? '' : ' reviews-track-static'}`}
+            style={reviews.length > 1 ? { animationDuration: `${marqueeDuration}s` } : undefined}
           >
             {trackReviews.map((review, idx) => {
               const visa = review.visa || review.title;

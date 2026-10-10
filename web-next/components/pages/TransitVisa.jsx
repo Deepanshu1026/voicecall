@@ -88,7 +88,7 @@ const TransitVisa = () => {
           <div className="visa-hero-bg">
             <div
               className="visa-hero-slide active"
-              style={{ backgroundImage: "url('/images/user/transitimg 1.webp')", opacity: 1, animation: 'none' }}
+              style={{ backgroundImage: "url('/images/user/transitimg 1.webp')" }}
             >
               <span className="visa-hero-slide-label">Transit</span>
             </div>

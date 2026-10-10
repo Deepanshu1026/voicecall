@@ -137,7 +137,7 @@ const AgentChatWidget = () => {
 
   return (
     <div className={`agent-chat-widget ${closing ? 'closing' : ''}`}>
-      <div className="agent-chat-loading-overlay" style={{ display: guestLoading ? 'flex' : 'none' }}>
+      <div className={`agent-chat-loading-overlay${guestLoading ? ' is-visible' : ''}`}>
         <div className="agent-chat-spinner"></div>
         <div className="agent-chat-loading-text">अतिथि सत्र बना रहे हैं... ⏳</div>
       </div>
