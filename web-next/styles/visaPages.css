@@ -1494,3 +1494,29 @@
     font-size: 12.5px;
   }
 }
+
+/* Utility spacing (replaces inline marginTop) */
+.spage-mt-8 { margin-top: 8px; }
+.spage-mt-16 { margin-top: 16px; }
+.spage-mt-24 { margin-top: 24px; }
+
+/* Per-page hero backgrounds (replaces inline background-image) */
+.spage-hero.hero-usa { background-image: url('/images/user/statueofliberty 1.webp'); }
+.spage-hero.hero-b1b2 { background-image: url('/images/user/carousel3img 1.webp'); }
+.spage-hero.hero-canada { background-image: url('/images/user/canada 1.webp'); }
+.spage-hero.hero-uk { background-image: url('/images/user/uk 1.webp'); }
+.spage-hero.hero-immigration { background-image: url('/images/user/popularplace2 1.webp'); }
+.spage-hero.hero-lawyers { background-image: url('/images/user/popularplace3 1.webp'); }
+
+/* Tourist visa hero slides (replaces inline background-image + delay) */
+.visa-hero.tourist-hero .visa-hero-slide:nth-child(1) { background-image: url('/images/user/carousel6img 1.webp'); animation-delay: 0s; }
+.visa-hero.tourist-hero .visa-hero-slide:nth-child(2) { background-image: url('/images/user/Italy 1.webp'); animation-delay: 4s; }
+.visa-hero.tourist-hero .visa-hero-slide:nth-child(3) { background-image: url('/images/user/carousel3img 1.webp'); animation-delay: 8s; }
+.visa-hero.tourist-hero .visa-hero-slide:nth-child(4) { background-image: url('/images/user/uk 1.webp'); animation-delay: 12s; }
+.visa-hero.tourist-hero .visa-hero-slide:nth-child(5) { background-image: url('/images/user/japan1 1.webp'); animation-delay: 16s; }
+
+/* Transit hero background */
+.visa-hero-slide.transit-bg { background-image: url('/images/user/transitimg 1.webp'); }
+
+/* Destination card image (replaces inline background-image) */
+.visa-destination-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }

@@ -17,7 +17,7 @@ const VisitorVisaPage = ({ data, jsonLd, faqJsonLd, children }) => {
       />
       <div className="spage">
         {/* Hero */}
-        <section className="spage-hero" style={{ backgroundImage: `url('${data.heroImage}')` }}>
+        <section className={`spage-hero ${data.heroClass || ''}`}>
           <div className="spage-hero-inner">
             <h1>{data.title}</h1>
             <p>{data.heroText}</p>
@@ -46,10 +46,10 @@ const VisitorVisaPage = ({ data, jsonLd, faqJsonLd, children }) => {
                 </li>
               ))}
             </ul>
-            <p style={{ marginTop: '24px' }}>
+            <p className="spage-mt-24">
               <strong>{data.planningText}</strong>
             </p>
-            <div className="spage-btns left" style={{ marginTop: '8px' }}>
+            <div className="spage-btns left spage-mt-8">
               <button className="spage-btn dark" onClick={() => navigate('/appointment')}>
                 Book a Free Consultation
               </button>

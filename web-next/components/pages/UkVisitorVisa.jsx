@@ -29,6 +29,7 @@ const processingSteps = [
 
 const data = {
   heroImage: '/images/user/uk 1.webp',
+  heroClass: 'hero-uk',
   title: 'UK Visitor Visa',
   heroText:
     'Your UK journey starts with the right visa guidance. Planning a business visit, attending meetings, or travelling to the UK for a short stay? Our experts make the process simple.',

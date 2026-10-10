@@ -182,11 +182,7 @@ const Services = () => {
         <section className="services-hero">
           <div className="services-hero-bg">
             {heroSlides.map((slide, idx) => (
-              <div
-                key={idx}
-                className="services-hero-slide"
-                style={{ backgroundImage: `url('${slide.img}')`, animationDelay: `${idx * 4}s` }}
-              >
+              <div key={idx} className="services-hero-slide">
                 <span className="services-hero-slide-label">{slide.country}</span>
               </div>
             ))}
@@ -249,7 +245,8 @@ const Services = () => {
             <div className="services-destinations">
               {destinations.map((dest, idx) => (
                 <div className="services-destination" key={idx}>
-                  <div className="services-destination-img" style={{ backgroundImage: `url('${dest.img}')` }}>
+                  <div className="services-destination-img">
+                    <img src={dest.img} alt={dest.name} />
                     <div className="services-destination-overlay" />
                     <h3>{dest.name}</h3>
                   </div>

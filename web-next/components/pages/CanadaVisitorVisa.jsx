@@ -42,6 +42,7 @@ const gcmsWho = [
 
 const data = {
   heroImage: '/images/user/canada 1.webp',
+  heroClass: 'hero-canada',
   title: 'Canada Visitor Visa',
   heroText:
     'Your Canada journey starts with the right visa guidance. Planning a business visit, attending meetings, or visiting Canada for a short stay? Our experts make the process simple.',
@@ -376,7 +377,7 @@ const CanadaSections = () => (
             Our team can help you obtain and understand available GCMS / CAIPS information and explain how it may relate
             to your future visa application.
           </p>
-          <div className="spage-btns left" style={{ marginTop: '16px' }}>
+          <div className="spage-btns left spage-mt-16">
             <button
               className="spage-btn dark"
               onClick={() => window.location.assign('/consultants')}

@@ -143,7 +143,7 @@ const UsaB1B2Visa = () => {
       />
       <div className="spage">
         {/* Hero */}
-        <section className="spage-hero" style={{ backgroundImage: "url('/images/user/carousel3img 1.webp')" }}>
+        <section className="spage-hero hero-b1b2">
           <div className="spage-hero-inner">
             <h1>USA B1/B2 Visa from India</h1>
             <p>

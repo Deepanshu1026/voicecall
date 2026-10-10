@@ -152,7 +152,7 @@ const UsaVisitorVisa = () => {
       />
       <div className="spage">
         {/* Hero */}
-        <section className="spage-hero" style={{ backgroundImage: "url('/images/user/statueofliberty 1.webp')" }}>
+        <section className="spage-hero hero-usa">
           <div className="spage-hero-inner">
             <h1>USA Visitor Visa &amp; Tourist Visa from India</h1>
             <p>
@@ -177,7 +177,7 @@ const UsaVisitorVisa = () => {
               visa requirements, preparing supporting documents, completing the DS-160, scheduling an appointment, and
               preparing for the visa interview.
             </p>
-            <div className="spage-btns left" style={{ marginTop: '8px' }}>
+            <div className="spage-btns left spage-mt-8">
               <button className="spage-btn dark" onClick={() => navigate('/appointment')}>
                 Get Expert Guidance for Your USA Visitor Visa or Tourist Visa
               </button>

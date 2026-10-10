@@ -84,14 +84,10 @@ const TouristVisa = () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="visa-page">
-        <section className="visa-hero">
+        <section className="visa-hero tourist-hero">
           <div className="visa-hero-bg">
             {slides.map((slide, idx) => (
-              <div
-                key={idx}
-                className="visa-hero-slide"
-                style={{ backgroundImage: `url('${slide.img}')`, animationDelay: `${idx * 4}s` }}
-              >
+              <div key={idx} className="visa-hero-slide">
                 <span className="visa-hero-slide-label">{slide.country}</span>
               </div>
             ))}
@@ -159,7 +155,8 @@ const TouristVisa = () => {
             <div className="visa-destinations">
               {destinations.map((dest, idx) => (
                 <div className="visa-destination" key={idx}>
-                  <div className="visa-destination-img" style={{ backgroundImage: `url('${dest.img}')` }}>
+                  <div className="visa-destination-img">
+                    <img src={dest.img} alt={dest.name} />
                     <div className="visa-destination-overlay" />
                     <h3>{dest.name}</h3>
                   </div>

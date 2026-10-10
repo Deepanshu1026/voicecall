@@ -86,10 +86,7 @@ const TransitVisa = () => {
       <div className="visa-page">
         <section className="visa-hero">
           <div className="visa-hero-bg">
-            <div
-              className="visa-hero-slide active"
-              style={{ backgroundImage: "url('/images/user/transitimg 1.webp')" }}
-            >
+            <div className="visa-hero-slide active transit-bg">
               <span className="visa-hero-slide-label">Transit</span>
             </div>
           </div>

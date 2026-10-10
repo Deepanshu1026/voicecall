@@ -105,7 +105,7 @@ const ImmigrationLawyers = () => {
       />
       <div className="spage">
         {/* Hero */}
-        <section className="spage-hero" style={{ backgroundImage: "url('/images/user/popularplace3 1.webp')" }}>
+        <section className="spage-hero hero-lawyers">
           <div className="spage-hero-inner">
             <h1>Immigration Lawyers &amp; Visa Consultants at A Visa Experts</h1>
             <p>
@@ -190,7 +190,7 @@ const ImmigrationLawyers = () => {
               Connect with our immigration lawyers and visa consultants for guidance on your application. You can chat,
               call or start a video consultation with an available advisor.
             </p>
-            <div className="spage-btns left" style={{ marginTop: '8px' }}>
+            <div className="spage-btns left spage-mt-8">
               <button className="spage-btn dark" onClick={() => navigate('/consultants')}>
                 View Advisors &amp; Chat
               </button>

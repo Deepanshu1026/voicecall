@@ -139,7 +139,7 @@ const ImmigrationLaws = () => {
       />
       <div className="spage">
         {/* Hero */}
-        <section className="spage-hero" style={{ backgroundImage: "url('/images/user/popularplace2 1.webp')" }}>
+        <section className="spage-hero hero-immigration">
           <div className="spage-hero-inner">
             <h1>Immigration Laws 2026: Complete Guide for the USA, UK, Canada &amp; Australia</h1>
             <p>
