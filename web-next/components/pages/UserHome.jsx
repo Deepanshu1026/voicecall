@@ -324,7 +324,7 @@ const UserHome = () => {
             {heroCards.map((card, idx) => (
               <a href={card.href || '/home'} className="new-hero-card-wrapper" key={idx} aria-label={`Learn more about ${card.title}`}>
                 <div className="new-hero-card">
-                  <img src={card.img} alt={`${card.title} - Visa Services by A Visa Experts`} />
+                  <img src={card.img} alt={`${card.title} - Visa Services by A Visa Experts`} width={146} height={144} />
                   <div className="new-hero-card-content">
                     <h2>{card.title}</h2>
                     <p>{card.text}</p>
@@ -469,6 +469,8 @@ const UserHome = () => {
             className="process-image"
             src="/images/user/visa-process.png"
             alt="How Our Visa Process Works: 1 Initial Consultation, 2 Document Preparation, 3 Application Submission, 4 Interview Support, 5 Visa Decision and Next Steps"
+            width={1536}
+            height={1024}
             loading="lazy"
           />
         </div>
