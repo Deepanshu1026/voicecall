@@ -17,6 +17,11 @@ const AgentChatWidget = () => {
   const [open, setOpen] = useState(true);
   const [closing, setClosing] = useState(false);
   const [guestLoading, setGuestLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     try {
@@ -121,6 +126,8 @@ const AgentChatWidget = () => {
       setClosing(false);
     }, 400);
   };
+
+  if (!mounted) return null;
 
   if (!open) {
     return (

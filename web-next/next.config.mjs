@@ -26,7 +26,6 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   eslint: { ignoreDuringBuilds: true },
-  experimental: { optimizeCss: true },
   images: { unoptimized: true },
   async redirects() {
     return [
