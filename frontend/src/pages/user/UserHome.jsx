@@ -74,13 +74,13 @@ const UserHome = () => {
     {
       img: '/images/user/review1.webp',
       title: 'Uk Visitor Visa Approved',
-      text: 'We are truly grateful! We got our visit visa approved smoothly, all thanks to your amazing support. Sitting in Africa, we saw your Instagram videos, contacted your team, and within days we had our visasâ€”without even stepping out.',
+      text: 'We are truly grateful! We got our visit visa approved smoothly, all thanks to your amazing support. Sitting in Africa, we saw your Instagram videos, contacted your team, and within days we had our visas—without even stepping out.',
       stars: 4,
     },
     {
       img: '/images/user/review2.webp',
       title: 'Tourist Visa to Uk',
-      text: 'After countless rejections and setbacks, I was losing hopeâ€”until I saw a video by A Visa Experts on Instagram. Reaching out to them was the best decision I made. My dream finally came true, thanks to their guidance.',
+      text: 'After countless rejections and setbacks, I was losing hope—until I saw a video by A Visa Experts on Instagram. Reaching out to them was the best decision I made. My dream finally came true, thanks to their guidance.',
       stars: 5,
     },
     {
@@ -170,7 +170,7 @@ const UserHome = () => {
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
-      stars.push(<span key={i}>{i < rating ? 'â˜…' : 'â˜†'}</span>);
+      stars.push(<span key={i}>{i < rating ? '★' : '☆'}</span>);
     }
     return stars;
   };
@@ -394,7 +394,7 @@ const UserHome = () => {
           {/* Section Header */}
           <div className="home-about-header">
             <div className="home-about-badge">
-              <span className="home-about-badge-sparkle">âœ¦</span>
+              <span className="home-about-badge-sparkle">✦</span>
               <span>ABOUT A VISA EXPERTS</span>
             </div>
             <h2 className="home-about-title">
@@ -461,13 +461,13 @@ const UserHome = () => {
                   </div>
                 </div>
                 <div className="founder-role">
-                  CHAIRMAN &amp; FOUNDER â€” A VISA EXPERTS
+                  CHAIRMAN &amp; FOUNDER — A VISA EXPERTS
                 </div>
               </div>
 
               {/* Founder Quote */}
               <div className="founder-quote-card">
-                <span className="quote-icon">â€œ</span>
+                <span className="quote-icon">“</span>
                 <p>
                   Our mission is simple: to turn your global aspirations into reality with complete transparency, unwavering dedication, and personalized guidance every step of the way.
                 </p>
@@ -475,7 +475,7 @@ const UserHome = () => {
 
               {/* Description Body */}
               <p className="founder-bio">
-                Welcome to <strong>A Visa Experts</strong> â€” India&apos;s trusted visa &amp; immigration consultancy. Founded by <strong>Kaveesh Kapoor</strong>, we help individuals and families secure tourist, work, and permanent residency visas for the <strong>USA, UK, Canada, Australia, Europe</strong> and beyond â€” with clear guidance, honest advice, and an exceptional track record of success.
+                Welcome to <strong>A Visa Experts</strong> — India&apos;s trusted visa &amp; immigration consultancy. Founded by <strong>Kaveesh Kapoor</strong>, we help individuals and families secure tourist, work, and permanent residency visas for the <strong>USA, UK, Canada, Australia, Europe</strong> and beyond — with clear guidance, honest advice, and an exceptional track record of success.
               </p>
 
               {/* 4 Feature Highlights Grid */}
@@ -877,7 +877,7 @@ const UserHome = () => {
       <section className="reviews-section" aria-labelledby="reviews-heading">
         <div className="reviews-header">
           <span className="reviews-badge">
-            <span className="reviews-badge-stars" aria-hidden="true">â˜…â˜…â˜…â˜…â˜…</span>
+            <span className="reviews-badge-stars" aria-hidden="true">★★★★★</span>
             4.9 Rating
           </span>
           <h2 id="reviews-heading">What Our Clients Say</h2>

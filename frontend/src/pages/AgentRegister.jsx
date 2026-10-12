@@ -184,7 +184,7 @@ const AgentRegister = () => {
 
         <div style={{ textAlign: 'center' }}>
           <Link to="/home" className="agent-auth-back-link">
-            â† Back to home
+            ← Back to home
           </Link>
         </div>
       </div>

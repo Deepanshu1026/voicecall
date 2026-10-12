@@ -115,7 +115,7 @@ const UserLogin = () => {
 
         <div style={{ textAlign: 'center' }}>
           <Link to="/home" className="auth-back-link">
-            â† Back to home
+            ← Back to home
           </Link>
         </div>
       </div>
