@@ -127,7 +127,7 @@ const BlogDetail = ({ post, related = [] }) => {
         <article className="blog-detail">
           <div className="blog-detail-hero">
             <div className="blog-detail-hero-bg">
-              <img src={imageUrl} alt={post.image_alt || post.title} width={1200} height={630} onError={(e) => { e.target.src = fallbackImage; }} />
+              <img src={imageUrl} alt={`${post.image_alt || post.title} - A Visa Experts`} width={1200} height={630} onError={(e) => { e.target.src = fallbackImage; }} />
               <div className="blog-detail-hero-overlay" />
             </div>
             <div className="blog-detail-hero-content">
@@ -204,7 +204,7 @@ const BlogDetail = ({ post, related = [] }) => {
                     <div className="blogs-card-image">
                       <img
                         src={item.featured_image || fallbackImage}
-                        alt={item.image_alt || item.title}
+                        alt={`${item.image_alt || item.title} - A Visa Experts`}
                         width={600}
                         height={400}
                         onError={(e) => { e.target.src = fallbackImage; }}

@@ -112,7 +112,7 @@ const TransitVisa = () => {
           <div className="visa-container">
             <div className="visa-about">
               <div className="visa-about-image">
-                <img src="/images/user/transitimg 1.webp" alt="What is Transit Visa" width={762} height={641} />
+                <img src="/images/user/transitimg 1.webp" alt="What is Transit Visa - A Visa Experts" width={762} height={641} />
               </div>
               <div className="visa-about-content">
                 <span className="visa-label">What is a Transit Visa?</span>

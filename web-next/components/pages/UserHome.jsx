@@ -471,7 +471,7 @@ const UserHome = ({ initialReviews = [] }) => {
           <img
             className="process-image"
             src="/images/user/visa-process.png"
-            alt="How Our Visa Process Works: 1 Initial Consultation, 2 Document Preparation, 3 Application Submission, 4 Interview Support, 5 Visa Decision and Next Steps"
+            alt="How Our Visa Process Works: 1 Initial Consultation, 2 Document Preparation, 3 Application Submission, 4 Interview Support, 5 Visa Decision and Next Steps - A Visa Experts"
             width={1536}
             height={1024}
             loading="lazy"
@@ -553,7 +553,7 @@ const UserHome = ({ initialReviews = [] }) => {
                       <img
                         className="review-photo"
                         src={review.img}
-                        alt={label}
+                        alt={`${label} - A Visa Experts`}
                         width={457}
                         height={816}
                         onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}

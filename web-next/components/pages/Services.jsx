@@ -221,7 +221,7 @@ const Services = () => {
               {visaServices.map((service) => (
                 <div className="services-card" key={service.id}>
                   <div className="services-card-image">
-                    <img src={service.fullImg} alt={service.title} width={service.imgW} height={service.imgH} />
+                    <img src={service.fullImg} alt={`${service.title} - A Visa Experts`} width={service.imgW} height={service.imgH} />
                   </div>
                   <div className="services-card-body">
                     <h3>{service.title}</h3>
@@ -250,7 +250,7 @@ const Services = () => {
               {destinations.map((dest, idx) => (
                 <div className="services-destination" key={idx}>
                   <div className="services-destination-img">
-                    <img src={dest.img} alt={dest.name} width={600} height={400} />
+                    <img src={dest.img} alt={`${dest.name} - A Visa Experts`} width={600} height={400} />
                     <div className="services-destination-overlay" />
                     <h3>{dest.name}</h3>
                   </div>
@@ -278,7 +278,7 @@ const Services = () => {
                   key={service.id}
                 >
                   <div className="services-detail-image">
-                    <img src={service.fullImg} alt={service.title} width={service.imgW} height={service.imgH} />
+                    <img src={service.fullImg} alt={`${service.title} - A Visa Experts`} width={service.imgW} height={service.imgH} />
                   </div>
                   <div className="services-detail-content">
                     <span className="services-detail-tag">{service.id} Visa</span>

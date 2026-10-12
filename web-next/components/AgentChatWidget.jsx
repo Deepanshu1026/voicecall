@@ -168,7 +168,7 @@ const AgentChatWidget = () => {
                   <div className={`agent-chat-agent-avatar ${isOnline ? 'online' : ''}`}>
                     <img
                       src={avatar}
-                      alt={name}
+                      alt={`${name} - A Visa Experts`}
                       width={45}
                       height={45}
                       onError={(e) => {
