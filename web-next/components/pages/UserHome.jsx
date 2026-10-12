@@ -6,7 +6,7 @@ import AgentChatWidget from '../AgentChatWidget';
 import HomeAboutSection from '../HomeAboutSection';
 import toast from 'react-hot-toast';
 import api from '../../lib/api';
-import { resolveImageUrl } from '../../lib/imageUrl';
+import { resolveReviewImage } from '../../lib/imageUrl';
 
 const DEFAULT_CONTACT = {
   email: 'Support@avisaexperts.com',
@@ -33,7 +33,7 @@ const UserHome = ({ initialReviews = [] }) => {
         if (Array.isArray(list) && list.length > 0) {
           applyReviews(list.map((r, i) => ({
             id: r.id || r._id || i,
-            img: resolveImageUrl(r.user_image),
+            img: resolveReviewImage(r.user_image),
             name: r.user_name || '',
             visa: r.visa_type || '',
             text: r.story || '',
@@ -305,6 +305,7 @@ const UserHome = ({ initialReviews = [] }) => {
           alt="A Visa Experts - Visa and Immigration Consultation"
           width={1536}
           height={1109}
+          fetchPriority="high"
         />
         <div className="hero-video-overlay" />
         <div className="new-hero-sec">
@@ -470,7 +471,7 @@ const UserHome = ({ initialReviews = [] }) => {
           <h2 id="process-heading" className="sr-only">How Our Visa Process Works</h2>
           <img
             className="process-image"
-            src="/images/user/visa-process.png"
+            src="/images/user/visa-process.webp"
             alt="How Our Visa Process Works: 1 Initial Consultation, 2 Document Preparation, 3 Application Submission, 4 Interview Support, 5 Visa Decision and Next Steps - A Visa Experts"
             width={1536}
             height={1024}
@@ -556,6 +557,8 @@ const UserHome = ({ initialReviews = [] }) => {
                         alt={`${label} - A Visa Experts`}
                         width={457}
                         height={816}
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }}
                       />
                     ) : (

@@ -1,5 +1,5 @@
 import UserHome from '../components/pages/UserHome';
-import { resolveImageUrl } from '../lib/imageUrl';
+import { resolveImageUrl, resolveReviewImage } from '../lib/imageUrl';
 
 export const metadata = {
   title: 'A Visa Experts | No.1 Visitor Visa Company in India',
@@ -27,7 +27,7 @@ async function getReviews() {
     if (Array.isArray(list) && list.length > 0) {
       return list.map((r, i) => ({
         id: r.id || r._id || i,
-        img: resolveImageUrl(r.user_image),
+        img: resolveReviewImage(r.user_image),
         name: r.user_name || '',
         visa: r.visa_type || '',
         text: r.story || '',

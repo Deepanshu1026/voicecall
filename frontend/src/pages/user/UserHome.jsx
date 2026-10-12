@@ -5,7 +5,7 @@ import AgentChatWidget from '../../components/user/AgentChatWidget';
 import SEO from '../../components/common/SEO';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
-import { resolveImageUrl } from '../../utils/imageUrl';
+import { resolveReviewImage } from '../../utils/imageUrl';
 import '../../styles/userLanding.css';
 
 const DEFAULT_CONTACT = {
@@ -33,7 +33,7 @@ const UserHome = () => {
         if (Array.isArray(list) && list.length > 0) {
           applyReviews(list.map((r, i) => ({
             id: r.id || r._id || i,
-            img: resolveImageUrl(r.user_image),
+            img: resolveReviewImage(r.user_image),
             name: r.user_name || '',
             visa: r.visa_type || '',
             text: r.story || '',

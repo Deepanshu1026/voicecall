@@ -29,4 +29,16 @@ export const resolveImageUrl = (value) => {
   return encodeURI(`${SERVER_ORIGIN}${path}`);
 };
 
+/**
+ * Review photos: same as resolveImageUrl, but Google-Drive hosted images are
+ * requested as a small thumbnail (=w320) since they render as tiny avatars.
+ */
+export const resolveReviewImage = (value) => {
+  const url = resolveImageUrl(value);
+  if (/^https?:\/\/lh3\.googleusercontent\.com\/d\//i.test(url) && !url.includes('=')) {
+    return `${url}=w320`;
+  }
+  return url;
+};
+
 export default resolveImageUrl;
