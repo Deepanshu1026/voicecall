@@ -59,7 +59,7 @@ async function getApplications(sqlId, { page = 1, limit = 10, search = '', statu
   const skip = (pageNum - 1) * limitNum;
 
   const rows = await Application.find(filter)
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: -1, _id: -1 })
     .skip(skip)
     .limit(limitNum)
     .lean();

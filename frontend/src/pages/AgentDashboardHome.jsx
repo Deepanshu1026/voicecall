@@ -95,26 +95,40 @@ const AgentDashboardHome = () => {
   const loadingMoreRef = useRef(false);
   const loadMoreTimer = useRef(null);
 
+  // Always-current filters, readable by async callbacks (prevents stale-closure
+  // in the infinite-scroll observer from fetching the wrong status page).
+  const filtersRef = useRef({ search, status: statusFilter, outcome: outcomeFilter });
+  useEffect(() => {
+    filtersRef.current = { search, status: statusFilter, outcome: outcomeFilter };
+  }, [search, statusFilter, outcomeFilter]);
+
+  // Monotonic request token: only the newest request is allowed to update state.
+  const requestSeq = useRef(0);
+
   const fetchApplications = async ({ page = 1, append = false } = {}) => {
+    const seq = ++requestSeq.current;
+    const { search: q, status: st, outcome: oc } = filtersRef.current;
     try {
       if (!append) setLoading(true);
       const res = await agentPortalAPI.getApplications({
         page,
         limit: PAGE_SIZE,
-        search: search.trim(),
-        status: statusFilter,
-        outcome: outcomeFilter,
+        search: q.trim(),
+        status: st,
+        outcome: oc,
       });
+      if (seq !== requestSeq.current) return; // a newer request superseded this one
       const apps = res.data.applications || [];
       setApplications((prev) => (append ? [...prev, ...apps] : apps));
       setPagination(
         res.data.pagination || { current_page: page, total_pages: 1, total_records: apps.length, has_more: false }
       );
     } catch (err) {
+      if (seq !== requestSeq.current) return;
       console.error(err);
       if (!append) alert(err.response?.data?.error || 'Failed to load applications');
     } finally {
-      if (!append) setLoading(false);
+      if (seq === requestSeq.current && !append) setLoading(false);
     }
   };
 
@@ -129,6 +143,12 @@ const AgentDashboardHome = () => {
 
   // Initial load + reload from page 1 whenever filters/search change (search debounced).
   useEffect(() => {
+    if (loadMoreTimer.current) {
+      clearTimeout(loadMoreTimer.current);
+      loadMoreTimer.current = null;
+    }
+    loadingMoreRef.current = false;
+    setLoadingMore(false);
     const timer = window.setTimeout(() => {
       fetchApplications({ page: 1, append: false });
     }, search ? 350 : 0);
@@ -170,7 +190,7 @@ const AgentDashboardHome = () => {
     observer.observe(el);
     return () => observer.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagination.has_more, pagination.current_page, applications.length]);
+  }, [pagination.has_more, pagination.current_page, applications.length, search, statusFilter, outcomeFilter]);
 
   const parsedApps = useMemo(() => {
     return applications.map((app) => {

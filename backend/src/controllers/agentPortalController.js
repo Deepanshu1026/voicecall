@@ -52,7 +52,7 @@ exports.getApplicationsList = asyncHandler(async (req, res) => {
 
   const skip = (pageNum - 1) * limitNum;
   const [applications, total] = await Promise.all([
-    Application.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limitNum).lean(),
+    Application.find(filter).sort({ createdAt: -1, _id: -1 }).skip(skip).limit(limitNum).lean(),
     Application.countDocuments(filter),
   ]);
 
