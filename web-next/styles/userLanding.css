@@ -3130,8 +3130,8 @@ html {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   font-family: 'Segoe UI', sans-serif;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  animation: agent-widget-slideUp 0.6s ease-out;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  will-change: transform, opacity;
 }
 
 @keyframes agent-widget-slideUp {
