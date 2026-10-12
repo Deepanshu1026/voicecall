@@ -133,6 +133,7 @@ const AgentChatWidget = () => {
   const content = !open ? (
     <button
       className="agent-widget-fab"
+      style={{ position: 'fixed' }}
       onClick={() => setOpen(true)}
       aria-label="Open agent chat"
     >
@@ -140,7 +141,7 @@ const AgentChatWidget = () => {
       <span>अनुभवी एजेंटों से संपर्क करें</span>
     </button>
   ) : (
-    <div className={`agent-chat-widget ${closing ? 'closing' : ''}`}>
+    <div className={`agent-chat-widget ${closing ? 'closing' : ''}`} style={{ position: 'fixed' }}>
       <div className={`agent-chat-loading-overlay${guestLoading ? ' is-visible' : ''}`}>
         <div className="agent-chat-spinner"></div>
         <div className="agent-chat-loading-text">अतिथि सत्र बना रहे हैं... ⏳</div>
