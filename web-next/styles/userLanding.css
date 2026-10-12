@@ -3152,8 +3152,6 @@ html {
 }
 
 .agent-chat-widget.closing {
-  animation: none;
-  transform: translateY(calc(100% + 40px));
   opacity: 0;
   pointer-events: none;
 }
