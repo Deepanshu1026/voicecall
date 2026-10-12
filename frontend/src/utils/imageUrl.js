@@ -30,13 +30,17 @@ export const resolveImageUrl = (value) => {
 };
 
 /**
- * Review photos: same as resolveImageUrl, but Google-Drive hosted images are
- * requested as a small thumbnail (=w320) since they render as tiny avatars.
+ * Review photos: same as resolveImageUrl, but:
+ * - photos hosted on the backend are served from our own fast origin, and
+ * - Google-Drive hosted images are requested as a small thumbnail (=w200).
  */
 export const resolveReviewImage = (value) => {
-  const url = resolveImageUrl(value);
+  let url = resolveImageUrl(value);
+  if (/^https?:\/\/[^/]*onrender\.com\/img\//i.test(url)) {
+    url = url.replace(/^https?:\/\/[^/]*onrender\.com\/img\//i, 'https://avisaexperts.com/images/user/');
+  }
   if (/^https?:\/\/lh3\.googleusercontent\.com\/d\//i.test(url) && !url.includes('=')) {
-    return `${url}=w320`;
+    return `${url}=w200`;
   }
   return url;
 };
