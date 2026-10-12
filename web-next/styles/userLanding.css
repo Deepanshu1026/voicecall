@@ -3231,7 +3231,7 @@ html {
 
 .agent-chat-list {
   padding: 15px;
-  max-height: 280px;
+  height: 280px;
   overflow-y: auto;
   background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
 }
