@@ -222,7 +222,7 @@ const Services = () => {
               {visaServices.map((service) => (
                 <div className="services-card" key={service.id}>
                   <div className="services-card-image">
-                    <img src={service.fullImg} alt={service.title} />
+                    <img src={service.fullImg} alt={`${service.title} - A Visa Experts`} />
                   </div>
                   <div className="services-card-body">
                     <h3>{service.title}</h3>
@@ -278,7 +278,7 @@ const Services = () => {
                   key={service.id}
                 >
                   <div className="services-detail-image">
-                    <img src={service.fullImg} alt={service.title} />
+                    <img src={service.fullImg} alt={`${service.title} - A Visa Experts`} />
                   </div>
                   <div className="services-detail-content">
                     <span className="services-detail-tag">{service.id} Visa</span>

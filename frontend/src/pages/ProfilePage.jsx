@@ -88,7 +88,7 @@ const ProfilePage = () => {
         <div className="card mb-6 text-center">
           <div className="relative inline-block">
             {avatarUrl ? (
-              <img src={avatarUrl} alt={getDisplayName(user)} className="w-24 h-24 rounded-full object-cover mx-auto" />
+              <img src={avatarUrl} alt={`${getDisplayName(user)} - A Visa Experts`} className="w-24 h-24 rounded-full object-cover mx-auto" />
             ) : (
               <div className="w-24 h-24 rounded-full bg-primary-600 flex items-center justify-center mx-auto">
                 <span className="text-2xl text-white font-semibold">{getInitials(getDisplayName(user))}</span>

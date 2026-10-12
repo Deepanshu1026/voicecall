@@ -110,7 +110,7 @@ const LandingLayout = ({ children }) => {
       <header className={`landing-header ${scrolled ? 'scrolled' : ''}`}>
         <div className="landing-header-left">
           <a href="/home" className="landing-logo-link">
-            <img className="landing-logo" src="/images/user/tmlogo 1.webp" alt="Visa Experts" />
+            <img className="landing-logo" src="/images/user/tmlogo 1.webp" alt="A Visa Experts logo" />
           </a>
         </div>
 
@@ -169,10 +169,10 @@ const LandingLayout = ({ children }) => {
             <div className="offer-banner-content">
               {banner.link ? (
                 <a href={banner.link} target="_blank" rel="noopener noreferrer" className="offer-banner-link">
-                  <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
+                  <img src={banner.imageUrl} alt={`${banner.altText} - A Visa Experts`} className="offer-banner-image" />
                 </a>
               ) : (
-                <img src={banner.imageUrl} alt={banner.altText} className="offer-banner-image" />
+                <img src={banner.imageUrl} alt={`${banner.altText} - A Visa Experts`} className="offer-banner-image" />
               )}
             </div>
           </div>
@@ -186,7 +186,7 @@ const LandingLayout = ({ children }) => {
       <footer className="site-footer">
         <div className="footer-wrapper">
           <div className="footer-section footer-logo-section">
-            <img className="footer-logo" src="/images/user/tmlogo 1.webp" alt="Logo" />
+            <img className="footer-logo" src="/images/user/tmlogo 1.webp" alt="A Visa Experts logo" />
             <p>A Visa Expert helps individuals secure visas for the US, UK, Canada, New Zealand, and Australia. Our experienced team offers
               personalized guidance, ensuring a smooth application process for tourist and transit visas.</p>
           </div>
@@ -262,11 +262,11 @@ const LandingLayout = ({ children }) => {
                           </defs>
                         </svg>
                       ) : (
-                        <img style={{ borderRadius: '5px' }} width="40px" src={item.flag} alt="flag" />
+                        <img style={{ borderRadius: '5px' }} width="40px" src={item.flag} alt="flag - A Visa Experts" />
                       )}
                       <div className="ofic-nm">{item.title} <span>{item.span}</span></div>
                     </div>
-                    <span className="footer-add-icon">{accordionOpen[item.key] ? 'âˆ’' : '+'}</span>
+                    <span className="footer-add-icon">{accordionOpen[item.key] ? '-' : '+'}</span>
                   </div>
                   <div className="accordion-content" style={{ display: accordionOpen[item.key] ? 'block' : 'none' }}>
                     <p>{item.content}</p>

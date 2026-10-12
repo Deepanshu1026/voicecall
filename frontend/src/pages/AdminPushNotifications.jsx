@@ -324,7 +324,7 @@ const AdminPushNotifications = () => {
                       {imageUrl.trim() && (
                         <img
                           src={imageUrl.trim()}
-                          alt=""
+                          alt="A Visa Experts"
                           className="push-notification-image"
                           onError={(e) => { e.target.style.display = 'none'; }}
                           onLoad={(e) => { e.target.style.display = 'block'; }}

@@ -218,7 +218,7 @@ const AppointmentPayment = () => {
               <div className="qr-card">
                 <div className="qr-wrapper">
                   {qrCodeUrl ? (
-                    <img src={qrCodeUrl} alt="UPI QR Code" className="qr-image" />
+                    <img src={qrCodeUrl} alt="UPI QR Code - A Visa Experts" className="qr-image" />
                   ) : (
                     <div className="qr-placeholder">Generating QR...</div>
                   )}

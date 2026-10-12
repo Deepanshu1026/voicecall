@@ -233,7 +233,7 @@ const AdminReviews = () => {
             return (
               <div className={`review-item ${editingId === r._id ? 'review-item-editing' : ''}`} key={r._id}>
                 {r.user_image ? (
-                  <img className="review-item-avatar" src={resolveImageUrl(r.user_image)} alt={name} />
+                  <img className="review-item-avatar" src={resolveImageUrl(r.user_image)} alt={`${name} - A Visa Experts`} />
                 ) : (
                   <div className="review-item-avatar-fallback">{initials(name)}</div>
                 )}

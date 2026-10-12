@@ -341,7 +341,7 @@ const AdminChatDashboard = () => {
       return (
         <img
           src={avatarUrl}
-          alt={name}
+          alt={`${name} - A Visa Experts`}
           onError={() => setBrokenAvatars((prev) => new Set(prev).add(avatarKey))}
           style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }}
         />
@@ -429,7 +429,7 @@ const AdminChatDashboard = () => {
                     {message.fileUrl && message.type !== 'text' && (
                       <div className="admin-chat-message-file">
                         {message.fileUrl.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) ? (
-                          <img src={message.fileUrl} alt={message.fileName} className="admin-chat-message-image" />
+                          <img src={message.fileUrl} alt={`${message.fileName} - A Visa Experts`} className="admin-chat-message-image" />
                         ) : (
                           <a href={message.fileUrl} target="_blank" rel="noopener noreferrer">
                             {message.fileName || 'File'}

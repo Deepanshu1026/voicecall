@@ -213,7 +213,7 @@ const BlogDetail = () => {
         <article className="blog-detail">
           <div className="blog-detail-hero">
             <div className="blog-detail-hero-bg">
-              <img src={imageUrl} alt={post.image_alt || post.title} onError={(e) => { e.target.src = fallbackImage; }} />
+              <img src={imageUrl} alt={`${post.image_alt || post.title} - A Visa Experts`} onError={(e) => { e.target.src = fallbackImage; }} />
               <div className="blog-detail-hero-overlay" />
             </div>
             <div className="blog-detail-hero-content">
@@ -290,7 +290,7 @@ const BlogDetail = () => {
                     <div className="blogs-card-image">
                       <img
                         src={item.featured_image || fallbackImage}
-                        alt={item.image_alt || item.title}
+                        alt={`${item.image_alt || item.title} - A Visa Experts`}
                         onError={(e) => { e.target.src = fallbackImage; }}
                       />
                       <span className="blogs-card-category">{item.category || 'General'}</span>

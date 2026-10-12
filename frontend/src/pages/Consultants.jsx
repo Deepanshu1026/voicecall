@@ -149,7 +149,7 @@ const ConsultantCard = memo(({ consultant, isOnline, onStartChat, onStartCall, f
         <div className={`avatar-ring ${isOnline ? 'online' : 'offline'}`}>
           <img
             src={avatar}
-            alt={name}
+            alt={`${name} - A Visa Experts`}
             className="profile-img"
             onError={(e) => {
               e.target.src = '/images/user/avatar.webp';
@@ -545,7 +545,7 @@ const Consultants = () => {
                     <button className="add-money-btn" title="Add money">+</button>
                   </div>
                   <div id="profile" ref={profileTriggerRef} onClick={() => setProfileOpen((p) => !p)} style={{ cursor: 'pointer' }}>
-                    <img id="thisprofile" src={activeUser.avatar} alt="Profile Picture" />
+                    <img id="thisprofile" src={activeUser.avatar} alt="Profile Picture - A Visa Experts" />
                   </div>
                 </>
               ) : (
@@ -587,7 +587,7 @@ const Consultants = () => {
           {activeUser && profileOpen && (
             <div className="profile-card" ref={profileCardRef} style={{ display: 'block' }}>
               <div className="profile-image">
-                <img id="profile" src={activeUser.avatar} alt="User Image" />
+                <img id="profile" src={activeUser.avatar} alt="User Image - A Visa Experts" />
               </div>
               <div className="profile-name">{activeUser.name}</div>
               <div className="profile-phone">{activeUser.phone}</div>

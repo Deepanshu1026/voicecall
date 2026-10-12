@@ -117,7 +117,7 @@ const HomeSeminarSections = () => {
                 key={i}
                 style={{ transform: `translate(${mouse.x * g.depth}px, ${mouse.y * g.depth}px)` }}
               >
-                <img src={g.img} alt={`Seminar moment ${i + 1}`} />
+                <img src={g.img} alt={`Seminar moment ${i + 1} - A Visa Experts`} />
               </div>
             )
           )}

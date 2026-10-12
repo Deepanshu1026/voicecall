@@ -49,7 +49,7 @@ const ImageLightbox = ({ src, alt, isOpen, onClose }) => {
       {/* Image */}
       <img
         src={src}
-        alt={alt}
+        alt={`${alt} - A Visa Experts`}
         className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl animate-scale-in"
         onClick={(e) => e.stopPropagation()}
       />

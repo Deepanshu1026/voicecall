@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -52,7 +52,7 @@ const UserLogin = () => {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <img className="auth-logo" src="/images/user/tmlogo 1.webp" alt="Avisa Experts" />
+        <img className="auth-logo" src="/images/user/tmlogo 1.webp" alt="A Visa Experts logo" />
         <h1 className="auth-title">Welcome back</h1>
         <p className="auth-subtitle">Sign in to connect with our visa agents anytime.</p>
 
@@ -115,7 +115,7 @@ const UserLogin = () => {
 
         <div style={{ textAlign: 'center' }}>
           <Link to="/home" className="auth-back-link">
-            ← Back to home
+            â† Back to home
           </Link>
         </div>
       </div>

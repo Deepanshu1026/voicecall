@@ -142,7 +142,7 @@ const About = () => {
               {achievements.map((item, idx) => (
                 <div className="about-achievement-item" key={idx}>
                   <div className="about-icon">
-                    <img src={item.icon} alt={item.text} />
+                    <img src={item.icon} alt={`${item.text} - A Visa Experts`} />
                   </div>
                   <div className="about-text-exp">
                     {item.text}
@@ -162,7 +162,7 @@ const About = () => {
           <div className="about-team-gallery">
             {team.map((member, idx) => (
               <div className="about-team-member" key={idx}>
-                <img src={member.img} alt={member.name} />
+                <img src={member.img} alt={`${member.name} - A Visa Experts`} />
                 <div className="about-overlay">
                   <div className="about-overlay-content">
                     <div className="about-flex-bottom-profile">

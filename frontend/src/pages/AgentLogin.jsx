@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -55,7 +55,7 @@ const AgentLogin = () => {
   return (
     <div className="agent-auth-page">
       <div className="agent-auth-card">
-        <img className="agent-auth-logo" src="/images/user/tmlogo 1.webp" alt="Avisa Experts" />
+        <img className="agent-auth-logo" src="/images/user/tmlogo 1.webp" alt="A Visa Experts logo" />
         <span className="agent-portal-badge">Agent Portal</span>
         <h1 className="agent-auth-title">Agent Sign In</h1>
         <p className="agent-auth-subtitle">Log in to your agent dashboard and manage client calls.</p>
@@ -109,7 +109,7 @@ const AgentLogin = () => {
 
         <div style={{ textAlign: 'center' }}>
           <Link to="/home" className="agent-auth-back-link">
-            ← Back to home
+            â† Back to home
           </Link>
         </div>
       </div>

@@ -223,7 +223,7 @@ const Blogs = () => {
                     <div className="blogs-featured-image">
                       <img
                         src={featuredPost.featured_image || fallbackImage}
-                        alt={featuredPost.image_alt || featuredPost.title}
+                        alt={`${featuredPost.image_alt || featuredPost.title} - A Visa Experts`}
                         onError={(e) => { e.target.src = fallbackImage; }}
                       />
                       <span className="blogs-featured-category">{featuredPost.derivedCategory}</span>
@@ -248,7 +248,7 @@ const Blogs = () => {
                         <div className="blogs-card-image">
                           <img
                             src={post.featured_image || fallbackImage}
-                            alt={post.image_alt || post.title}
+                            alt={`${post.image_alt || post.title} - A Visa Experts`}
                             onError={(e) => { e.target.src = fallbackImage; }}
                           />
                           <span className="blogs-card-category">{post.derivedCategory}</span>

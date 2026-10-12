@@ -36,7 +36,7 @@ const Avatar = ({ user, size = 'md', showStatus = false, className = '' }) => {
       {avatarUrl ? (
         <img
           src={avatarUrl}
-          alt={getDisplayName(user)}
+          alt={`${getDisplayName(user)} - A Visa Experts`}
           className={`${sizeClasses[size]} rounded-full object-cover`}
         />
       ) : (

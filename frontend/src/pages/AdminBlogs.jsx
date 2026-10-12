@@ -214,7 +214,7 @@ const AdminBlogs = () => {
           </div>
           {form.featuredImage && (
             <div className="blog-field full">
-              <img className="blog-image-preview" src={form.featuredImage} alt={form.imageAlt || 'preview'} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+              <img className="blog-image-preview" src={form.featuredImage} alt={`${form.imageAlt || 'preview'} - A Visa Experts`} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
             </div>
           )}
         </div>
@@ -290,7 +290,7 @@ const AdminBlogs = () => {
           {blogs.map((b) => (
             <div className={`blog-item ${editingId === b._id ? 'editing' : ''}`} key={b._id}>
               {b.featuredImage ? (
-                <img className="blog-item-thumb" src={b.featuredImage} alt={b.imageAlt || b.title} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                <img className="blog-item-thumb" src={b.featuredImage} alt={`${b.imageAlt || b.title} - A Visa Experts`} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
               ) : (
                 <div className="blog-item-thumb fallback"><i className="bi bi-image" /></div>
               )}

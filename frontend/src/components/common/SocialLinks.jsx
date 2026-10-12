@@ -36,10 +36,10 @@ const SocialLinks = ({ className = 'social-icons' }) => {
             </svg>
           )}
           {link.type === 'instagram' && (
-            <img src="/images/user/instagram 1.webp" alt="instagram" width="30" height="30" />
+            <img src="/images/user/instagram 1.webp" alt="instagram - A Visa Experts" width="30" height="30" />
           )}
           {link.type === 'facebook' && (
-            <img src="/images/user/logos_facebook 1.webp" alt="facebook" width="30" height="30" />
+            <img src="/images/user/logos_facebook 1.webp" alt="facebook - A Visa Experts" width="30" height="30" />
           )}
           {link.type === 'youtube' && (
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 64 45" fill="none">

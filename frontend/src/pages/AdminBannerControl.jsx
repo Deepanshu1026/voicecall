@@ -203,7 +203,7 @@ const AdminBannerControl = () => {
                           </button>
                           <img
                             src={previewUrl}
-                            alt={banner.altText}
+                            alt={`${banner.altText} - A Visa Experts`}
                             style={{ width: '100%', borderRadius: '12px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
                             onError={(e) => { e.target.style.display = 'none'; }}
                             onLoad={(e) => { e.target.style.display = 'block'; }}

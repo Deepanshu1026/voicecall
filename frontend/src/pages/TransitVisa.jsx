@@ -120,7 +120,7 @@ const TransitVisa = () => {
           <div className="visa-container">
             <div className="visa-about">
               <div className="visa-about-image">
-                <img src="/images/user/transitimg 1.webp" alt="What is Transit Visa" />
+                <img src="/images/user/transitimg 1.webp" alt="What is Transit Visa - A Visa Experts" />
               </div>
               <div className="visa-about-content">
                 <span className="visa-label">What is a Transit Visa?</span>

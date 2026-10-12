@@ -254,7 +254,7 @@ const Appointment = () => {
           <img
             className="offer_screen"
             src="/images/user/25-off-offer.png"
-            alt="25% off offer"
+            alt="25% off offer - A Visa Experts"
           />
         </div>
 
@@ -329,7 +329,7 @@ const Appointment = () => {
                 <span className="badge premium-ribbon">Premium</span>
                 <div className="chairman-header">
                   <div className="chairman-avatar">
-                    <img src="/images/user/sirpic 1.webp" alt="Kaveesh Kapoor" />
+                    <img src="/images/user/sirpic 1.webp" alt="Kaveesh Kapoor - A Visa Experts" />
                     <span className="chairman-badge">Chairman</span>
                   </div>
                   <div className="chairman-title">

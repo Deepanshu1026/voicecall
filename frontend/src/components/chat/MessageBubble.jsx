@@ -114,7 +114,7 @@ const MessageBubble = ({ message, isOwn, onReply, onEdit, onDelete, variant = 'd
         <div className="mb-1">
           <img
             src={fileUrl}
-            alt={message.fileName}
+            alt={`${message.fileName} - A Visa Experts`}
             className="max-w-full max-h-64 rounded-lg object-cover cursor-pointer"
             onClick={() => setLightboxOpen(true)}
             onError={(e) => { e.target.style.display = 'none'; }}
@@ -235,7 +235,7 @@ const MessageBubble = ({ message, isOwn, onReply, onEdit, onDelete, variant = 'd
       </div>
       <ImageLightbox
         src={message.fileUrl}
-        alt={message.fileName}
+        alt={`${message.fileName} - A Visa Experts`}
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
       />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -81,7 +81,7 @@ const UserRegister = () => {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <img className="auth-logo" src="/images/user/tmlogo 1.webp" alt="Avisa Experts" />
+        <img className="auth-logo" src="/images/user/tmlogo 1.webp" alt="A Visa Experts logo" />
         <h1 className="auth-title">Create account</h1>
         <p className="auth-subtitle">Join us and get instant access to our visa experts.</p>
 
@@ -144,25 +144,25 @@ const UserRegister = () => {
                 value={form.countryCode}
                 onChange={handleChange}
               >
-                <option value="+91">🇮🇳 +91</option>
-                <option value="+1">🇺🇸 +1</option>
-                <option value="+44">🇬🇧 +44</option>
-                <option value="+61">🇦🇺 +61</option>
-                <option value="+971">🇦🇪 +971</option>
-                <option value="+974">🇶🇦 +974</option>
-                <option value="+966">🇸🇦 +966</option>
-                <option value="+965">🇰🇼 +965</option>
-                <option value="+968">🇴🇲 +968</option>
-                <option value="+973">🇧🇭 +973</option>
-                <option value="+92">🇵🇰 +92</option>
-                <option value="+880">🇧🇩 +880</option>
-                <option value="+94">🇱🇰 +94</option>
-                <option value="+977">🇳🇵 +977</option>
-                <option value="+86">🇨🇳 +86</option>
-                <option value="+81">🇯🇵 +81</option>
-                <option value="+82">🇰🇷 +82</option>
-                <option value="+65">🇸🇬 +65</option>
-                <option value="+60">🇲🇾 +60</option>
+                <option value="+91">ðŸ‡®ðŸ‡³ +91</option>
+                <option value="+1">ðŸ‡ºðŸ‡¸ +1</option>
+                <option value="+44">ðŸ‡¬ðŸ‡§ +44</option>
+                <option value="+61">ðŸ‡¦ðŸ‡º +61</option>
+                <option value="+971">ðŸ‡¦ðŸ‡ª +971</option>
+                <option value="+974">ðŸ‡¶ðŸ‡¦ +974</option>
+                <option value="+966">ðŸ‡¸ðŸ‡¦ +966</option>
+                <option value="+965">ðŸ‡°ðŸ‡¼ +965</option>
+                <option value="+968">ðŸ‡´ðŸ‡² +968</option>
+                <option value="+973">ðŸ‡§ðŸ‡­ +973</option>
+                <option value="+92">ðŸ‡µðŸ‡° +92</option>
+                <option value="+880">ðŸ‡§ðŸ‡© +880</option>
+                <option value="+94">ðŸ‡±ðŸ‡° +94</option>
+                <option value="+977">ðŸ‡³ðŸ‡µ +977</option>
+                <option value="+86">ðŸ‡¨ðŸ‡³ +86</option>
+                <option value="+81">ðŸ‡¯ðŸ‡µ +81</option>
+                <option value="+82">ðŸ‡°ðŸ‡· +82</option>
+                <option value="+65">ðŸ‡¸ðŸ‡¬ +65</option>
+                <option value="+60">ðŸ‡²ðŸ‡¾ +60</option>
               </select>
               <input
                 id="phone"
@@ -234,7 +234,7 @@ const UserRegister = () => {
 
         <div style={{ textAlign: 'center' }}>
           <Link to="/home" className="auth-back-link">
-            ← Back to home
+            â† Back to home
           </Link>
         </div>
       </div>

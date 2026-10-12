@@ -123,7 +123,7 @@ const TouristVisa = () => {
           <div className="visa-container">
             <div className="visa-about">
               <div className="visa-about-image">
-                <img src="/images/user/touristvisa_full 1.webp" alt="About Tourist Visa" />
+                <img src="/images/user/touristvisa_full 1.webp" alt="About Tourist Visa - A Visa Experts" />
               </div>
               <div className="visa-about-content">
                 <span className="visa-label">About Tourist Visa</span>
