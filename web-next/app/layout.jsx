@@ -140,7 +140,7 @@ export default function RootLayout({ children }) {
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){var l=document.createElement('link');l.rel='stylesheet';l.media='print';l.onload=function(){this.media='all'};l.href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600;700&family=Caveat:wght@500;600;700&family=Alex+Brush&family=Mrs+Saint+Delafield&display=swap';document.head.appendChild(l);})();",
+              "(function(){var l=document.createElement('link');l.rel='stylesheet';l.media='print';l.onload=function(){this.media='all'};l.href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&family=Alex+Brush&display=swap';document.head.appendChild(l);})();",
           }}
         />
       </head>
