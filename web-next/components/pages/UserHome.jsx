@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import LandingLayout from '../LandingLayout';
 import AgentChatWidget from '../AgentChatWidget';
 import HomeAboutSection from '../HomeAboutSection';
-import toast from 'react-hot-toast';
 import api from '../../lib/api';
 import { resolveReviewImage } from '../../lib/imageUrl';
 

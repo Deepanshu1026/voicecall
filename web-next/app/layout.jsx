@@ -1,5 +1,4 @@
 import './globals.css';
-import { Toaster } from 'react-hot-toast';
 import Script from 'next/script';
 import GoogleAnalytics from '../components/GoogleAnalytics';
 import ScrollLockManager from '../components/ScrollLockManager';
@@ -146,7 +145,6 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         {children}
-        <Toaster position="top-right" />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TDW4SCLJRV"
           strategy="lazyOnload"

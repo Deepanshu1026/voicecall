@@ -5,7 +5,6 @@ import LandingLayout from '../LandingLayout';
 import HomeAboutSection from '../HomeAboutSection';
 import HomeSeminarSections from '../HomeSeminarSections';
 import api from '../../lib/api';
-import toast from 'react-hot-toast';
 
 const DEFAULT_CONTACT = {
   email: 'Support@avisaexperts.com',
