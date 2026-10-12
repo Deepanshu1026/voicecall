@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { userAPI, API_BASE_URL } from '../lib/api';
 import '../styles/userLanding.css';
 
@@ -129,20 +130,16 @@ const AgentChatWidget = () => {
 
   if (!mounted) return null;
 
-  if (!open) {
-    return (
-      <button
-        className="agent-widget-fab"
-        onClick={() => setOpen(true)}
-        aria-label="Open agent chat"
-      >
-        <span className="agent-widget-fab-emoji">💬</span>
-        <span>अनुभवी एजेंटों से संपर्क करें</span>
-      </button>
-    );
-  }
-
-  return (
+  const content = !open ? (
+    <button
+      className="agent-widget-fab"
+      onClick={() => setOpen(true)}
+      aria-label="Open agent chat"
+    >
+      <span className="agent-widget-fab-emoji">💬</span>
+      <span>अनुभवी एजेंटों से संपर्क करें</span>
+    </button>
+  ) : (
     <div className={`agent-chat-widget ${closing ? 'closing' : ''}`}>
       <div className={`agent-chat-loading-overlay${guestLoading ? ' is-visible' : ''}`}>
         <div className="agent-chat-spinner"></div>
@@ -223,6 +220,8 @@ const AgentChatWidget = () => {
       </div>
     </div>
   );
+
+  return createPortal(content, document.body);
 };
 
 export default AgentChatWidget;
