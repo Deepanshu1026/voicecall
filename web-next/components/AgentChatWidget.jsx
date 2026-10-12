@@ -34,18 +34,14 @@ const AgentChatWidget = () => {
     }
   }, []);
 
-  // Auto-close popup with slide-down animation after 5 seconds
+  // Auto-close popup after 5 seconds (no animation, to avoid layout shift)
   useEffect(() => {
-    if (!open || closing) return undefined;
+    if (!open) return undefined;
     const timer = setTimeout(() => {
-      setClosing(true);
-      setTimeout(() => {
-        setOpen(false);
-        setClosing(false);
-      }, 400);
+      setOpen(false);
     }, 5000);
     return () => clearTimeout(timer);
-  }, [open, closing]);
+  }, [open]);
 
   useEffect(() => {
     let cancelled = false;
@@ -121,11 +117,8 @@ const AgentChatWidget = () => {
   };
 
   const handleClose = () => {
-    setClosing(true);
-    setTimeout(() => {
-      setOpen(false);
-      setClosing(false);
-    }, 400);
+    setOpen(false);
+    setClosing(false);
   };
 
   if (!mounted) return null;
