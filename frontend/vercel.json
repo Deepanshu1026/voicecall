@@ -56,6 +56,18 @@
     { "src": "^/$", "dest": "https://avisaexperts-next.vercel.app/" },
     { "src": "/sitemap.xml", "dest": "https://avisaexperts-next.vercel.app/sitemap.xml" },
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/login", "dest": "/index.html" },
+    { "src": "/register", "dest": "/index.html" },
+    { "src": "/agent/login", "dest": "/index.html" },
+    { "src": "/agent/dashboard", "dest": "/index.html" },
+    { "src": "/agent/dashboard/.*", "dest": "/index.html" },
+    { "src": "/consultants", "dest": "/index.html" },
+    { "src": "/appointment", "dest": "/index.html" },
+    { "src": "/appointment-payment", "dest": "/index.html" },
+    { "src": "/user/.*", "dest": "/index.html" },
+    { "src": "/chat", "dest": "/index.html" },
+    { "src": "/settings", "dest": "/index.html" },
+    { "src": "/profile", "dest": "/index.html" },
+    { "src": "/(.*)", "status": 404 }
   ]
 }
