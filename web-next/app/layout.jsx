@@ -81,6 +81,44 @@ const organizationLd = {
     'https://www.facebook.com/profile.php?id=61590985693281',
     'https://www.youtube.com/@avisaexperts',
   ],
+  image: [
+    'https://ik.imagekit.io/kaveeshkapoor/image_library/image_library_66_kEoLRyiBP.HEIC',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_74_wU1l2Rrwv.JPG',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_75_xgqf4Yn45.JPG',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_76_NShavxym8.JPG',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_77_thDVbAPV0.PNG',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_78_TFFk5GeZv.PNG',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_82_ss3Pf6Vwv.JPG',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_83_Nh2zNphmQ.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_86_U0JUredyY.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_87_pB0kAin6A.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_88_Y1lgfa1bx.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_89_MGWM0goWW.PNG',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_90_wygtbpgfk.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_92_B_IbLp9Jr.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_93_qLn6lCW98.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_94_-XCq4TgZ_.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_98_41mY5jHiD.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_99_QIExGTeEx.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_100_NJVSmrV0J.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_102_fTc4_usqE.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_103_BWPywuaHT.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_122_kz-Hp3vO_.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_123_pn_PdugKk.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_125_pwyQgcEc4.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_126_LGucb4dnd.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_127_KWJZo2HQi.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_129_s5q8KKtZG.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_130_NHkfmAvNn.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_132_QnwpfeZLP.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_134_H6YXU9NvD.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_135_Nuztto9xt.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_138_O3NnVPWx2.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_140_s1VInDH48.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_142_uoKkwPUmn.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_143_yPlx7OxnQ.jpg',
+    'https://ik.imagekit.io/kaveeshkapoor/kaveesh-kapoor/kaveesh-kapoor_144_mRRBb9OKe.jpg',
+  ],
 };
 
 const localBusinessLd = {
@@ -136,12 +174,7 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "(function(){var l=document.createElement('link');l.rel='stylesheet';l.media='print';l.onload=function(){this.media='all'};l.href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&family=Alex+Brush&display=swap';document.head.appendChild(l);})();",
-          }}
-        />
+        <script src="/fonts.js" defer />
       </head>
       <body>
         {children}
@@ -159,15 +192,12 @@ gtag('config', 'G-TDW4SCLJRV', { send_page_view: false });`}
         <ScrollLockManager />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [organizationLd, localBusinessLd, websiteLd],
+            }),
+          }}
         />
       </body>
     </html>
