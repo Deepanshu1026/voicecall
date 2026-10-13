@@ -29,14 +29,25 @@ export const resolveImageUrl = (value) => {
 /**
  * Review photos: same as resolveImageUrl, but:
  * - photos hosted on the backend are served from our own fast origin, and
- * - Google-Drive hosted images are requested as a small thumbnail (=w200).
+ * - Google-Drive hosted images map to local copies when we have them
+ *   (otherwise a small =w200 thumbnail is requested).
  */
+const LOCAL_GDRIVE_IMAGES = {
+  '1k-ZCbaCtGmhs6Rro_HHjWLukba6eYjI6': '/images/user/review-hongkong.webp',
+  '18gP17Xgf6WYRRrI5rZTLUoWLHuf1l2Wm': '/images/user/review-london.webp',
+  '1xql2auy4lupWRV9gD93p-MaVqQkOl_NL': '/images/user/review-uk-1.webp',
+  '1iEckH-9FEuAJiUoVGtdOi5Rx3JsFVPh': '/images/user/review-uk-2.webp',
+};
+
 export const resolveReviewImage = (value) => {
   let url = resolveImageUrl(value);
   if (/^https?:\/\/[^/]*onrender\.com\/img\//i.test(url)) {
     url = url.replace(/^https?:\/\/[^/]*onrender\.com\/img\//i, 'https://avisaexperts.com/images/user/');
   }
-  if (/^https?:\/\/lh3\.googleusercontent\.com\/d\//i.test(url) && !url.includes('=')) {
+  const gdrive = /^https?:\/\/lh3\.googleusercontent\.com\/d\/([^/=?]+)/i.exec(url);
+  if (gdrive) {
+    const local = LOCAL_GDRIVE_IMAGES[gdrive[1]];
+    if (local) return `https://avisaexperts.com${local}`;
     return `${url}=w200`;
   }
   return url;

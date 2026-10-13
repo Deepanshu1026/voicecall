@@ -72,12 +72,12 @@
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
+  <!-- <url>
     <loc>https://avisaexperts.com/consultants</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
+  </url> -->
   <url>
     <loc>https://avisaexperts.com/appointment</loc>
     <lastmod>2026-10-07</lastmod>

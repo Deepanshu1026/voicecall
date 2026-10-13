@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import '../styles/seminar.css';
 
 const gallery = [
-  { img: 'https://ik.imagekit.io/kaveeshkapoor/aboutus/seminar%20(2).webp', cls: 'wide', depth: 18 },
-  { img: 'https://ik.imagekit.io/kaveeshkapoor/aboutus/seminar%20(3).webp', cls: '', depth: 10 },
-  { img: 'https://ik.imagekit.io/kaveeshkapoor/aboutus/fcjveqbwdpbbahily83m.webp', cls: 'tall', depth: 26 },
-  { img: 'https://ik.imagekit.io/kaveeshkapoor/aboutus/ioe1fw0keemqavixjia3.webp', cls: '', depth: 12 },
-  { img: 'https://ik.imagekit.io/kaveeshkapoor/aboutus/tqxrmarrbsi1d8xd42sg.webp', cls: '', depth: 8 },
+  { img: '/images/user/seminar/seminar-2.webp', cls: 'wide', depth: 18 },
+  { img: '/images/user/seminar/seminar-3.webp', cls: '', depth: 10 },
+  { img: '/images/user/seminar/seminar-fcjv.webp', cls: 'tall', depth: 26 },
+  { img: '/images/user/seminar/seminar-ioe1.webp', cls: '', depth: 12 },
+  { img: '/images/user/seminar/seminar-tqxr.webp', cls: '', depth: 8 },
   {
     type: 'card',
     cls: 'collage-feature-card card-1',
@@ -20,8 +20,8 @@ const gallery = [
     action: 'Watch Highlights',
     arrow: 'loop',
   },
-  { img: 'https://ik.imagekit.io/kaveeshkapoor/aboutus/xq53f83kjflfpi96k1th.webp', cls: 'wide', depth: 22 },
-  { img: 'https://ik.imagekit.io/kaveeshkapoor/aboutus/fqhxsoym3n1kjje2nhem.webp', cls: '', depth: 15 },
+  { img: '/images/user/seminar/seminar-xq53.webp', cls: 'wide', depth: 22 },
+  { img: '/images/user/seminar/seminar-fqhx.webp', cls: '', depth: 15 },
   {
     type: 'card',
     cls: 'collage-feature-card card-2',

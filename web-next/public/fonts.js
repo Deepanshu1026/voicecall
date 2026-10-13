@@ -1,2 +1,2 @@
-/* Non-blocking Google Fonts loader (loaded with defer; switches media to "all" once ready). */
-(function(){var l=document.createElement('link');l.rel='stylesheet';l.media='print';l.onload=function(){this.media='all'};l.href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&family=Alex+Brush&display=swap';document.head.appendChild(l);})();
+/* Non-blocking loader for the self-hosted fonts (/fonts.css, latin subsets). */
+(function(){var l=document.createElement('link');l.rel='stylesheet';l.media='print';l.onload=function(){this.media='all'};l.href='/fonts.css';document.head.appendChild(l);})();

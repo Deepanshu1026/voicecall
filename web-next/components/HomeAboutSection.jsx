@@ -70,10 +70,10 @@ const HomeAboutSection = ({ variant = 'full' }) => {
             <div className="abouthero-photo-frame">
               <div className="abouthero-photo-inner">
                 <img
-                  src="https://ik.imagekit.io/kaveeshkapoor/kaveesh_kapoor.png?tr=w-500,f-webp,q-75"
+                  src="/images/user/founder-kaveesh.webp"
                   alt="Kaveesh Kapoor - Founder of A Visa Experts"
-                  width={1024}
-                  height={1536}
+                  width={800}
+                  height={1200}
                   loading="lazy"
                 />
                 <span className="abouthero-photo-shade" aria-hidden="true" />
