@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/patch-defer.mjs",
-    "postbuild": "node scripts/patch-defer.mjs",
+    "build": "node scripts/patch-react-defer.mjs && next build && node scripts/patch-defer.mjs",
+    "postinstall": "node scripts/patch-react-defer.mjs",
     "start": "next start",
     "lint": "next lint"
   },
