@@ -36,11 +36,13 @@ const LOCAL_GDRIVE_IMAGES = {
   '1k-ZCbaCtGmhs6Rro_HHjWLukba6eYjI6': '/images/user/review-hongkong.webp',
   '18gP17Xgf6WYRRrI5rZTLUoWLHuf1l2Wm': '/images/user/review-london.webp',
   '1xql2auy4lupWRV9gD93p-MaVqQkOl_NL': '/images/user/review-uk-1.webp',
-  '1iEckH-9FEuAJiUoVGtdOi5Rx3JsFVPh': '/images/user/review-uk-2.webp',
+  '1iEckH-9FEuAJiUoVGtdOi5Rx3jJsFVPh': '/images/user/review-uk-2.webp',
 };
 
 export const resolveReviewImage = (value) => {
   let url = resolveImageUrl(value);
+  // Dead Cloudinary account (401s): skip straight to the letter fallback.
+  if (/^https?:\/\/res\.cloudinary\.com\/fniv4k20\//i.test(url)) return '';
   if (/^https?:\/\/[^/]*onrender\.com\/img\//i.test(url)) {
     url = url.replace(/^https?:\/\/[^/]*onrender\.com\/img\//i, 'https://avisaexperts.com/images/user/');
   }

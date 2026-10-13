@@ -158,7 +158,9 @@ const AgentChatWidget = () => {
           agents.map((agent) => {
             const id = agent._id || agent.id;
             const name = agent.name || agent.displayName || agent.username || 'Agent';
-            const avatar = agent.avatar?.url || agent.avatar || '/images/user/avatar.webp';
+            const rawAvatar = agent.avatar?.url || agent.avatar || '';
+          // Dead Cloudinary account (401s): use the local default avatar directly.
+          const avatar = /^https?:\/\/res\.cloudinary\.com\/fniv4k20\//i.test(String(rawAvatar)) ? '/images/user/avatar.webp' : (rawAvatar || '/images/user/avatar.webp');
             const isOnline = true;
             return (
               <div className="agent-chat-agent" key={id}>

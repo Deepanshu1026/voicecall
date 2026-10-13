@@ -74,9 +74,12 @@ const LandingLayout = ({ children }) => {
       try {
         const res = await bannerAPI.getBanner();
         const data = res.data?.data || res.data || {};
+        // Dead Cloudinary account returns 401s - skip straight to a text-only banner.
+        const rawImage = data.imageUrl || '';
+        const imageUrl = /^https?:\/\/res\.cloudinary\.com\/fniv4k20\//i.test(rawImage) ? '' : rawImage;
         setBanner({
           enabled: data.enabled !== false,
-          imageUrl: data.imageUrl || '',
+          imageUrl,
           altText: data.altText || 'Special offer',
           link: data.link || '',
         });
