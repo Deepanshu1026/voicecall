@@ -427,11 +427,10 @@ const AppointmentInfo = () => (
         <div className="spage-wrap">
           <h2>How the appointment works</h2>
           <ol className="spage-steps">
-            {steps.map((step, i) => (
+            {steps.map((step) => (
               <li key={step.title}>
-                <span>{String(i + 1).padStart(2, '0')}</span>
                 <strong>{step.title}</strong>
-                <p>{step.text}</p>
+                <span>{step.text}</span>
               </li>
             ))}
           </ol>
