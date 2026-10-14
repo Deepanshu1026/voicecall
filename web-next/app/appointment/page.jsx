@@ -1,0 +1,24 @@
+import AppointmentInfo from '../../components/pages/AppointmentInfo';
+
+export const metadata = {
+  title: 'Book a Visa Appointment Online | A Visa Experts',
+  description:
+    'Book a visa appointment with A Visa Experts. Get a one-to-one consultation, a personalised document checklist and clear next steps for your USA, UK, Canada or Europe visa.',
+  keywords:
+    'book visa appointment, visa appointment booking, visa consultation, visa appointment online, visa expert appointment, A Visa Experts appointment, USA visa appointment, UK visa appointment, Canada visa appointment',
+  alternates: {
+    canonical: '/appointment',
+    languages: { en: '/appointment', 'en-IN': '/appointment', 'x-default': '/appointment' },
+  },
+  openGraph: {
+    title: 'Book a Visa Appointment Online | A Visa Experts',
+    description:
+      'Book a one-to-one visa consultation with an experienced advisor. Get a personalised document checklist and clear next steps for your visa application.',
+    url: 'https://avisaexperts.com/appointment',
+    images: ['/images/user/appointmentbg 1.webp'],
+  },
+};
+
+export default function Page() {
+  return <AppointmentInfo />;
+}

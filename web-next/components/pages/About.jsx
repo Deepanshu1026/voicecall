@@ -230,7 +230,7 @@ const About = () => {
 
         <section className="about-bottom-cta">
           <div className="about-parent-btn">
-            <button className="about-herobtn" onClick={() => navigate('/appointment')}>
+            <button className="about-herobtn" onClick={() => navigate('/book-appointment')}>
               Schedule An Appointment Now!
             </button>
             <button className="about-herobtn about-outlined-herobtn" onClick={() => navigate('/consultants')}>

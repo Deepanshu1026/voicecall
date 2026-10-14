@@ -1507,6 +1507,7 @@
 .spage-hero.hero-uk { background-image: url('/images/user/uk 1.webp'); }
 .spage-hero.hero-immigration { background-image: url('/images/user/popularplace2 1.webp'); }
 .spage-hero.hero-lawyers { background-image: url('/images/user/popularplace3 1.webp'); }
+.spage-hero.hero-appointment { background-image: url('/images/user/appointmentbg 1.webp'); }
 
 /* Tourist visa hero slides (replaces inline background-image + delay) */
 .visa-hero.tourist-hero .visa-hero-slide:nth-child(1) { background-image: url('/images/user/carousel6img 1.webp'); animation-delay: 0s; }

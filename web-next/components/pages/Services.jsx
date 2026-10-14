@@ -200,7 +200,7 @@ const Services = () => {
               expert guidance, clear documentation, and dedicated support.
             </p>
             <div className="services-hero-buttons">
-              <button className="services-hero-primary" onClick={() => navigate('/appointment')}>
+              <button className="services-hero-primary" onClick={() => navigate('/book-appointment')}>
                 Book Consultation
               </button>
               <button className="services-hero-secondary" onClick={() => navigate('/consultants')}>
@@ -381,7 +381,7 @@ const Services = () => {
             <h2>Ready to Start Your Visa Journey?</h2>
             <p>Book a free consultation and get personalized guidance from our experts.</p>
             <div className="services-cta-buttons">
-              <button className="services-cta-primary" onClick={() => navigate('/appointment')}>
+              <button className="services-cta-primary" onClick={() => navigate('/book-appointment')}>
                 Schedule Appointment
               </button>
               <button className="services-cta-secondary" onClick={() => navigate('/consultants')}>

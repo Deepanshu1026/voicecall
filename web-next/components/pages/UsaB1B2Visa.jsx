@@ -152,7 +152,7 @@ const UsaB1B2Visa = () => {
               Visa under one visa classification.
             </p>
             <div className="spage-btns">
-              <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+              <button className="spage-btn primary" onClick={() => navigate('/book-appointment')}>
                 Get Expert Guidance
               </button>
             </div>
@@ -438,7 +438,7 @@ const UsaB1B2Visa = () => {
             process, documentation, application preparation, and interview preparation.
           </p>
           <div className="spage-btns">
-            <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+            <button className="spage-btn primary" onClick={() => navigate('/book-appointment')}>
               Contact AvisaExperts for USA B1/B2 Visa Assistance
             </button>
           </div>

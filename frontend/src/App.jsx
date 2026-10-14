@@ -102,6 +102,7 @@ function App() {
       <Route path="/blog/:id/:slug?" element={<BlogDetail />} />
       <Route path="/consultants" element={<Consultants />} />
       <Route path="/appointment" element={<Appointment />} />
+      <Route path="/book-appointment" element={<Appointment />} />
       <Route path="/appointment-payment" element={<AppointmentPayment />} />
       <Route path="/user/:id" element={<UserProfile />} />
 

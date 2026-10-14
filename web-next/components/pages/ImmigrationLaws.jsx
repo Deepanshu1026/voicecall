@@ -148,7 +148,7 @@ const ImmigrationLaws = () => {
               destinations and how to approach your application with confidence.
             </p>
             <div className="spage-btns">
-              <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+              <button className="spage-btn primary" onClick={() => navigate('/book-appointment')}>
                 Get Expert Guidance
               </button>
             </div>
@@ -318,7 +318,7 @@ const ImmigrationLaws = () => {
             is the first step. A Visa Experts can help you prepare your application more systematically.
           </p>
           <div className="spage-btns">
-            <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+            <button className="spage-btn primary" onClick={() => navigate('/book-appointment')}>
               Book a Free Consultation
             </button>
           </div>

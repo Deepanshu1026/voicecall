@@ -217,6 +217,7 @@ const LandingLayout = ({ children }) => {
             <h3>Help</h3>
             <ul>
               <li><a href="/consultants">Consultant</a></li>
+              <li><a href="/appointment">Book Appointment</a></li>
             </ul>
           </div>
           <div className="footer-section footer-second-clm">

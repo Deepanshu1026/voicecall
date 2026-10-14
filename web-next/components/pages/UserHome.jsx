@@ -248,7 +248,7 @@ const UserHome = ({ initialReviews = [] }) => {
               <span>Visitor Visa Services for International Travel.</span>
             </h1>
             <div className="parent_btn">
-              <button className="herobtn" onClick={() => navigate('/appointment')}>
+              <button className="herobtn" onClick={() => navigate('/book-appointment')}>
                 Schedule An Appointment Now!
               </button>
               <button className="herobtn outlined-herobtn" onClick={() => navigate('/consultants')}>

@@ -106,7 +106,7 @@ const TransitVisa = () => {
               navigate global airports with confidence.
             </p>
             <div className="visa-hero-buttons">
-              <button className="visa-hero-primary" onClick={() => navigate('/appointment')}>
+              <button className="visa-hero-primary" onClick={() => navigate('/book-appointment')}>
                 Book Consultation
               </button>
               <button className="visa-hero-secondary" onClick={() => navigate('/consultants')}>
@@ -222,7 +222,7 @@ const TransitVisa = () => {
             <h2>Ready for Smooth Transit?</h2>
             <p>Book a free consultation and get personalized guidance from our experts.</p>
             <div className="visa-cta-buttons">
-              <button className="visa-cta-primary" onClick={() => navigate('/appointment')}>
+              <button className="visa-cta-primary" onClick={() => navigate('/book-appointment')}>
                 Schedule Appointment
               </button>
               <button className="visa-cta-secondary" onClick={() => navigate('/consultants')}>

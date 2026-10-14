@@ -269,7 +269,7 @@ const UserHome = () => {
               <span>Visitor Visa Services for International Travel.</span>
             </h1>
             <div className="parent_btn">
-              <button className="herobtn" onClick={() => navigate('/appointment')}>
+              <button className="herobtn" onClick={() => navigate('/book-appointment')}>
                 Schedule An Appointment Now!
               </button>
               <button className="herobtn outlined-herobtn" onClick={() => navigate('/consultants')}>
@@ -585,7 +585,7 @@ const UserHome = () => {
                       <polyline points="12 5 19 12 12 19" />
                     </svg>
                   </button>
-                  <button className="home-about-outline-btn" onClick={() => navigate('/appointment')}>
+                  <button className="home-about-outline-btn" onClick={() => navigate('/book-appointment')}>
                     <span>Book Appointment</span>
                   </button>
                 </div>

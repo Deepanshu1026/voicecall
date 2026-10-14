@@ -243,7 +243,7 @@ const BlogDetail = () => {
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
                 <div className="blog-detail-actions">
-                  <button className="blogs-cta-primary" onClick={() => navigate('/appointment')}>
+                  <button className="blogs-cta-primary" onClick={() => navigate('/book-appointment')}>
                     Book Consultation
                   </button>
                   <button className="blogs-cta-secondary" onClick={() => navigate('/consultants')}>
@@ -259,7 +259,7 @@ const BlogDetail = () => {
                     Get expert guidance from A Visa Experts. We have helped thousands of clients secure their visas with
                     confidence.
                   </p>
-                  <button className="blogs-cta-primary" onClick={() => navigate('/appointment')}>
+                  <button className="blogs-cta-primary" onClick={() => navigate('/book-appointment')}>
                     Book Free Consultation
                   </button>
                 </div>

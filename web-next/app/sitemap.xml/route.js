@@ -60,7 +60,7 @@ const staticPages = [
     changefreq: 'weekly',
     images: [{ loc: img('teammember1 1.webp'), title: 'Visa Consultant Team - A Visa Experts' }],
   },
-  { path: '/appointment', priority: '0.6', changefreq: 'monthly' },
+  { path: '/appointment', priority: '0.7', changefreq: 'monthly' },
 ];
 
 const escapeXml = (value) =>

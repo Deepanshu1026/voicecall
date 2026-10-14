@@ -46,7 +46,7 @@ const AppointmentPayment = () => {
 
   useEffect(() => {
     if (!appointmentData) {
-      navigate('/appointment', { replace: true });
+      navigate('/book-appointment', { replace: true });
       return;
     }
     // Prevent double booking if the component re-renders (e.g. React Strict Mode
@@ -89,7 +89,7 @@ const AppointmentPayment = () => {
   };
 
   const handleBack = () => {
-    navigate('/appointment');
+    navigate('/book-appointment');
   };
 
   const handleGoHome = () => {

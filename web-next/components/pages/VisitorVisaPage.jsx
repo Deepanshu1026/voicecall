@@ -22,7 +22,7 @@ const VisitorVisaPage = ({ data, jsonLd, faqJsonLd, children }) => {
             <h1>{data.title}</h1>
             <p>{data.heroText}</p>
             <div className="spage-btns">
-              <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+              <button className="spage-btn primary" onClick={() => navigate('/book-appointment')}>
                 Book Consultation
               </button>
               <button className="spage-btn outline" onClick={() => navigate('/consultants')}>
@@ -50,7 +50,7 @@ const VisitorVisaPage = ({ data, jsonLd, faqJsonLd, children }) => {
               <strong>{data.planningText}</strong>
             </p>
             <div className="spage-btns left spage-mt-8">
-              <button className="spage-btn dark" onClick={() => navigate('/appointment')}>
+              <button className="spage-btn dark" onClick={() => navigate('/book-appointment')}>
                 Book a Free Consultation
               </button>
             </div>
@@ -189,7 +189,7 @@ const VisitorVisaPage = ({ data, jsonLd, faqJsonLd, children }) => {
           <h2>{data.ctaHeading}</h2>
           <p>{data.ctaText}</p>
           <div className="spage-btns">
-            <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+            <button className="spage-btn primary" onClick={() => navigate('/book-appointment')}>
               Book a Free Consultation
             </button>
           </div>

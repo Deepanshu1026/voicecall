@@ -235,7 +235,7 @@ const Blogs = ({ initialPosts = [] }) => {
             <h2>Need Personalized Visa Guidance?</h2>
             <p>Book a free consultation with our experts and get your visa journey started.</p>
             <div className="blogs-cta-buttons">
-              <button className="blogs-cta-primary" onClick={() => navigate('/appointment')}>
+              <button className="blogs-cta-primary" onClick={() => navigate('/book-appointment')}>
                 Book Consultation
               </button>
               <button className="blogs-cta-secondary" onClick={() => navigate('/consultants')}>

@@ -162,7 +162,7 @@ const UsaVisitorVisa = () => {
               while the B-1/B-2 visa can cover permitted business and tourism purposes.
             </p>
             <div className="spage-btns">
-              <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+              <button className="spage-btn primary" onClick={() => navigate('/book-appointment')}>
                 Get Expert Guidance
               </button>
             </div>
@@ -178,7 +178,7 @@ const UsaVisitorVisa = () => {
               preparing for the visa interview.
             </p>
             <div className="spage-btns left spage-mt-8">
-              <button className="spage-btn dark" onClick={() => navigate('/appointment')}>
+              <button className="spage-btn dark" onClick={() => navigate('/book-appointment')}>
                 Get Expert Guidance for Your USA Visitor Visa or Tourist Visa
               </button>
             </div>
@@ -439,7 +439,7 @@ const UsaVisitorVisa = () => {
             understand the USA visa application process and prepare your application more systematically.
           </p>
           <div className="spage-btns">
-            <button className="spage-btn primary" onClick={() => navigate('/appointment')}>
+            <button className="spage-btn primary" onClick={() => navigate('/book-appointment')}>
               Get Expert Guidance for Your USA Visitor or Tourist Visa
             </button>
           </div>
