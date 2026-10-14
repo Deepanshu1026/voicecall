@@ -1,7 +1,23 @@
 import Link from 'next/link';
 import LandingLayout from '../LandingLayout';
+import '../../styles/appointmentInfo.css';
 
 const BOOK_URL = '/book-appointment';
+
+const toc = [
+  { href: '#what-is', label: 'What is a visa appointment?' },
+  { href: '#who', label: 'Who should book a consultation?' },
+  { href: '#plans', label: 'Plans and prices' },
+  { href: '#how', label: 'How the appointment works' },
+  { href: '#modes', label: 'Online or office visit' },
+  { href: '#expect', label: 'What to expect' },
+  { href: '#bring', label: 'What to bring' },
+  { href: '#tips', label: 'Tips for your appointment' },
+  { href: '#next', label: 'Your next steps' },
+  { href: '#why', label: 'Why choose A Visa Experts' },
+  { href: '#services', label: 'Related visa services' },
+  { href: '#faq', label: 'FAQs' },
+];
 
 const whoShould = [
   'First-time visa applicants who want to get it right the first time.',
@@ -12,31 +28,19 @@ const whoShould = [
   'Anyone preparing for an embassy or consulate interview (biometrics and interview appointment).',
 ];
 
-const planRows = [
+const plans = [
   {
-    plan: 'Customer Support',
-    duration: '10 minutes',
-    price: 'Free (usually ₹599)',
-    best: 'Quick questions and general guidance',
-  },
-  {
-    plan: 'Senior Manager',
-    duration: '15 minutes',
-    price: '₹1180 (GST included)',
-    best: 'Personalised advice on specific visa types',
-  },
-  {
-    plan: 'Premium — Chairman',
-    duration: '20 minutes',
-    price: '₹1770 (GST included)',
-    best: 'Complex cases and full assistance',
-  },
-];
-
-const planDetails = [
-  {
-    title: 'Customer Support — free 10-minute meeting',
-    items: [
+    key: 'basic',
+    title: 'Customer Support',
+    duration: '10-minute team meeting',
+    price: (
+      <>
+        Free <del>₹599</del>
+      </>
+    ),
+    note: 'No charge',
+    cta: 'Select Plan',
+    features: [
       '10-minute meeting with our support team',
       'Free of charge',
       'Introduction to visa types and current offers',
@@ -46,8 +50,15 @@ const planDetails = [
     ],
   },
   {
-    title: 'Senior Manager — 15-minute consultation',
-    items: [
+    key: 'advance',
+    featured: true,
+    badge: 'Most Popular',
+    title: 'Senior Manager',
+    duration: '15-minute consultation',
+    price: <>₹1180</>,
+    note: 'GST included',
+    cta: 'Select Plan',
+    features: [
       '15-minute meeting with a Senior Manager',
       'In-depth consultation on specific visa types',
       'Detailed explanation of eligibility requirements',
@@ -56,8 +67,14 @@ const planDetails = [
     ],
   },
   {
-    title: 'Premium — 20-minute meeting with the Chairman',
-    items: [
+    key: 'premium',
+    title: 'Premium — Chairman',
+    duration: '20-minute personal meeting',
+    price: <>₹1770</>,
+    note: 'GST included',
+    cta: 'Select Premium Plan',
+    chairman: true,
+    features: [
       '20-minute personal meeting with our Chairman, Mr. Kaveesh Kapoor',
       'Customised visa strategy for your profile',
       'Case Manager support throughout the process',
@@ -121,20 +138,23 @@ const tips = [
   'Book early — apply well before your planned travel date.',
 ];
 
-const afterAppointment = [
+const nextSteps = [
   {
+    icon: '📋',
     title: 'Prepare your documents',
     text: 'Follow the checklist you receive and gather each document before you apply.',
     href: '/services',
     linkText: 'Explore our visa services',
   },
   {
+    icon: '🛂',
     title: 'Apply for the right visa',
     text: 'Choose the correct category for your trip — tourist, visitor, transit or PR.',
     href: '/tourist-visa',
     linkText: 'Tourist & visitor visas',
   },
   {
+    icon: '🗣️',
     title: 'Prepare for your embassy appointment',
     text: 'Get ready for biometrics and the visa interview with the right answers and documents.',
     href: '/usa-visa',
@@ -144,18 +164,22 @@ const afterAppointment = [
 
 const whyUs = [
   {
+    icon: '🏆',
     title: 'Trusted visa specialists',
-    text: 'A Visa Experts is a leading visitor visa and immigration consultancy in India, with thousands of successful applications.',
+    text: 'A leading visitor visa and immigration consultancy in India, with thousands of successful applications.',
   },
   {
+    icon: '🌍',
     title: 'Destinations we cover',
-    text: 'Expert guidance for the USA, UK, Canada, Australia, Europe and other popular destinations — tourist, visitor, transit and PR visas.',
+    text: 'Expert guidance for the USA, UK, Canada, Australia, Europe and other popular destinations.',
   },
   {
+    icon: '🔄',
     title: 'Refusal support',
-    text: 'Already refused? We review the reasons and advise on the strongest way forward, including re-application where appropriate.',
+    text: 'Already refused? We review the reasons and advise on the strongest way forward, including re-application.',
   },
   {
+    icon: '🤝',
     title: 'Transparent guidance',
     text: 'Clear, honest advice at every step, so you always know what is required and what happens next.',
   },
@@ -220,36 +244,14 @@ const serviceJsonLd = {
   '@type': 'Service',
   name: 'Visa Appointment & Consultation',
   serviceType: 'Visa Consultation',
-  provider: {
-    '@type': 'Organization',
-    name: 'A Visa Experts',
-    url: 'https://avisaexperts.com',
-  },
+  provider: { '@type': 'Organization', name: 'A Visa Experts', url: 'https://avisaexperts.com' },
   description:
     'Book a visa appointment with A Visa Experts. Choose from a free 10-minute team meeting, a 15-minute Senior Manager consultation, or a 20-minute personal meeting with the Chairman. Online or in-office.',
   areaServed: ['US', 'GB', 'CA', 'AU', 'EU', 'IN'],
   offers: [
-    {
-      '@type': 'Offer',
-      name: 'Customer Support — free 10-minute meeting',
-      price: '0',
-      priceCurrency: 'INR',
-      description: '10-minute team meeting, free of charge, for general visa guidance.',
-    },
-    {
-      '@type': 'Offer',
-      name: 'Senior Manager — 15-minute consultation',
-      price: '1180',
-      priceCurrency: 'INR',
-      description: 'In-depth consultation on specific visa types and eligibility requirements.',
-    },
-    {
-      '@type': 'Offer',
-      name: 'Premium — 20-minute meeting with the Chairman',
-      price: '1770',
-      priceCurrency: 'INR',
-      description: 'Personal meeting with Mr. Kaveesh Kapoor with customised visa strategy and Case Manager support.',
-    },
+    { '@type': 'Offer', name: 'Customer Support — free 10-minute meeting', price: '0', priceCurrency: 'INR', description: '10-minute team meeting, free of charge, for general visa guidance.' },
+    { '@type': 'Offer', name: 'Senior Manager — 15-minute consultation', price: '1180', priceCurrency: 'INR', description: 'In-depth consultation on specific visa types and eligibility requirements.' },
+    { '@type': 'Offer', name: 'Premium — 20-minute meeting with the Chairman', price: '1770', priceCurrency: 'INR', description: 'Personal meeting with Mr. Kaveesh Kapoor with customised visa strategy and Case Manager support.' },
   ],
 };
 
@@ -258,12 +260,7 @@ const howToJsonLd = {
   '@type': 'HowTo',
   name: 'How to book a visa appointment with A Visa Experts',
   description: 'Book a one-to-one visa consultation online or at our office in six simple steps.',
-  step: steps.map((s, i) => ({
-    '@type': 'HowToStep',
-    position: i + 1,
-    name: s.title,
-    text: s.text,
-  })),
+  step: steps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, name: s.title, text: s.text })),
 };
 
 const faqJsonLd = {
@@ -290,12 +287,9 @@ const AppointmentInfo = () => (
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }} />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-    />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
-    <div className="spage">
+    <div className="spage apt-page">
       {/* Hero */}
       <section className="spage-hero hero-appointment">
         <div className="spage-hero-inner">
@@ -303,9 +297,13 @@ const AppointmentInfo = () => (
           <p>
             Book a one-to-one visa appointment with an experienced advisor at A Visa Experts. Whether you are applying
             for a tourist, visitor, transit or permanent residency visa — or recovering from a refusal — a consultation
-            gives you a clear, personalised plan. Choose a free 10-minute team meeting, a 15-minute Senior Manager
-            consultation, or a 20-minute personal session with our Chairman, Mr. Kaveesh Kapoor.
+            gives you a clear, personalised plan.
           </p>
+          <div className="apt-hero-pills">
+            <span className="apt-pill offer">🎉 Limited time: 25% off Senior Manager consultations</span>
+            <span className="apt-pill">✓ Online &amp; in-office appointments</span>
+            <span className="apt-pill">✓ USA · UK · Canada · Australia · Europe</span>
+          </div>
           <div className="spage-btns">
             <a className="spage-btn primary" href={BOOK_URL}>
               Book Your Appointment
@@ -317,8 +315,24 @@ const AppointmentInfo = () => (
         </div>
       </section>
 
-      {/* What is a visa appointment */}
+      {/* Table of contents */}
       <section className="spage-section">
+        <div className="apt-wide">
+          <nav className="apt-toc" aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              {toc.map((item) => (
+                <li key={item.href}>
+                  <a href={item.href}>{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </section>
+
+      {/* What is a visa appointment */}
+      <section className="spage-section apt-anchor" id="what-is">
         <div className="spage-wrap">
           <h2>What is a visa appointment?</h2>
           <p>
@@ -336,94 +350,76 @@ const AppointmentInfo = () => (
           </p>
           <p>
             Whether you are applying for a{' '}
-            <Link className="spage-link" href="/tourist-visa">
-              tourist or visitor visa
-            </Link>
-            , a{' '}
-            <Link className="spage-link" href="/transit-visa">
-              transit visa
-            </Link>
-            , or a longer-term route such as{' '}
-            <Link className="spage-link" href="/usa-visa">
-              a USA visitor visa
-            </Link>{' '}
-            or{' '}
-            <Link className="spage-link" href="/canada-visa">
-              Canada visitor visa
-            </Link>
-            , an appointment with an expert saves time and helps you avoid avoidable mistakes.
+            <Link className="spage-link" href="/tourist-visa">tourist or visitor visa</Link>, a{' '}
+            <Link className="spage-link" href="/transit-visa">transit visa</Link>, or a longer-term route such as{' '}
+            <Link className="spage-link" href="/usa-visa">a USA visitor visa</Link> or{' '}
+            <Link className="spage-link" href="/canada-visa">Canada visitor visa</Link>, an appointment with an expert
+            saves time and helps you avoid avoidable mistakes.
           </p>
         </div>
       </section>
 
       {/* Who should book */}
-      <section className="spage-section">
+      <section className="spage-section apt-anchor" id="who">
         <div className="spage-wrap">
           <h2>Who should book a visa consultation?</h2>
-          <p>A consultation is useful for almost every applicant, and especially for:</p>
-          <ul className="spage-list">
+          <p className="apt-lead">A consultation is useful for almost every applicant, and especially for:</p>
+          <div className="apt-grid">
             {whoShould.map((item) => (
-              <li key={item}>{item}</li>
+              <div className="apt-check" key={item}>
+                {item}
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      {/* Plans table */}
-      <section className="spage-section">
-        <div className="spage-wrap">
+      {/* Plans */}
+      <section className="spage-section apt-anchor" id="plans">
+        <div className="apt-wide">
           <h2>Consultation plans and prices</h2>
-          <p>
+          <p className="apt-lead">
             Choose the level of support that matches your case. Every plan is a live, one-to-one meeting with a real
             advisor — never a chatbot or a call centre.
           </p>
-          <div className="spage-table-wrap">
-            <table className="spage-table">
-              <thead>
-                <tr>
-                  <th>Plan</th>
-                  <th>Duration</th>
-                  <th>Price</th>
-                  <th>Best for</th>
-                </tr>
-              </thead>
-              <tbody>
-                {planRows.map((row) => (
-                  <tr key={row.plan}>
-                    <td>{row.plan}</td>
-                    <td>{row.duration}</td>
-                    <td>{row.price}</td>
-                    <td>{row.best}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="apt-plans">
+            {plans.map((plan) => (
+              <div className={`apt-plan${plan.featured ? ' featured' : ''}`} key={plan.key}>
+                {plan.badge && <span className="apt-plan-badge">{plan.badge}</span>}
+                {plan.chairman && (
+                  <div className="apt-chairman">
+                    <img src="/images/user/sirpic 1.webp" alt="Kaveesh Kapoor, Chairman of A Visa Experts" width={48} height={48} />
+                    <div>
+                      <strong>Meet Mr. Kaveesh Kapoor</strong>
+                      <span>Founder &amp; Chairman, A Visa Experts</span>
+                    </div>
+                  </div>
+                )}
+                <h3>{plan.title}</h3>
+                <p className="apt-plan-duration">{plan.duration}</p>
+                <div className="apt-plan-price">
+                  {plan.price}
+                  <small>{plan.note}</small>
+                </div>
+                <ul>
+                  {plan.features.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+                <a className="apt-plan-cta" href={BOOK_URL}>
+                  {plan.cta}
+                </a>
+              </div>
+            ))}
           </div>
-          <p className="spage-subnote">
+          <p className="apt-plan-note">
             Prices are in Indian Rupees and include GST where stated. The Customer Support meeting is free of charge.
           </p>
         </div>
       </section>
 
-      {/* What each plan includes */}
-      <section className="spage-section">
-        <div className="spage-wrap">
-          <h2>What each plan includes</h2>
-          {planDetails.map((plan) => (
-            <div className="spage-note" key={plan.title}>
-              <h3>{plan.title}</h3>
-              <ul className="spage-list">
-                {plan.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* How it works */}
-      <section className="spage-section">
+      <section className="spage-section apt-anchor" id="how">
         <div className="spage-wrap">
           <h2>How the appointment works</h2>
           <ol className="spage-steps">
@@ -443,22 +439,24 @@ const AppointmentInfo = () => (
       </section>
 
       {/* Online or office */}
-      <section className="spage-section">
+      <section className="spage-section apt-anchor" id="modes">
         <div className="spage-wrap">
           <h2>Online meeting or office visit?</h2>
-          <p>
+          <p className="apt-lead">
             You can meet your advisor wherever it is most convenient for you. Both options cover the same expert
             guidance — the choice is simply about how you prefer to meet.
           </p>
-          <div className="spage-cards">
-            <div className="spage-card">
+          <div className="apt-cards">
+            <div className="apt-card">
+              <span className="apt-card-icon">💻</span>
               <h3>Online meeting (recommended)</h3>
               <p>
                 Connect with our expert from anywhere through secure video conferencing — HD video quality, screen
                 sharing and no travel required. Ideal if you are outside Noida or Ahmedabad, or short on time.
               </p>
             </div>
-            <div className="spage-card">
+            <div className="apt-card">
+              <span className="apt-card-icon">🏢</span>
               <h3>Office visit meeting</h3>
               <p>
                 Visit us for an in-person consultation at <strong>Sector 2, Noida, Uttar Pradesh 201301</strong> or{' '}
@@ -471,55 +469,62 @@ const AppointmentInfo = () => (
       </section>
 
       {/* What to expect */}
-      <section className="spage-section">
+      <section className="spage-section apt-anchor" id="expect">
         <div className="spage-wrap">
           <h2>What to expect in your consultation</h2>
-          <ul className="spage-list">
+          <div className="apt-grid">
             {expectations.map((item) => (
-              <li key={item}>{item}</li>
+              <div className="apt-check" key={item}>
+                {item}
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
       {/* What to bring */}
-      <section className="spage-section">
+      <section className="spage-section apt-anchor" id="bring">
         <div className="spage-wrap">
           <h2>What to bring to your appointment</h2>
-          <p>
+          <p className="apt-lead">
             You do not need to bring everything to your first appointment, but having the following details ready helps
             us give you accurate, personalised guidance.
           </p>
-          <ul className="spage-list">
+          <div className="apt-grid">
             {bring.map((item) => (
-              <li key={item}>{item}</li>
+              <div className="apt-check" key={item}>
+                {item}
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
       {/* Tips */}
-      <section className="spage-section">
+      <section className="spage-section apt-anchor" id="tips">
         <div className="spage-wrap">
           <h2>Tips to get the most out of your appointment</h2>
-          <ul className="spage-list">
+          <div className="apt-grid">
             {tips.map((item) => (
-              <li key={item}>{item}</li>
+              <div className="apt-check" key={item}>
+                {item}
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      {/* After your appointment */}
-      <section className="spage-section">
-        <div className="spage-wrap">
+      {/* Next steps */}
+      <section className="spage-section apt-anchor" id="next">
+        <div className="apt-wide">
           <h2>After your appointment: your next steps</h2>
-          <div className="spage-cards">
-            {afterAppointment.map((card) => (
-              <div className="spage-card" key={card.title}>
+          <div className="apt-cards cols-3">
+            {nextSteps.map((card) => (
+              <div className="apt-card" key={card.title}>
+                <span className="apt-card-icon">{card.icon}</span>
                 <h3>{card.title}</h3>
                 <p>{card.text}</p>
-                <Link className="spage-link" href={card.href}>
+                <Link className="apt-link" href={card.href}>
                   {card.linkText} &rarr;
                 </Link>
               </div>
@@ -529,12 +534,13 @@ const AppointmentInfo = () => (
       </section>
 
       {/* Why choose us */}
-      <section className="spage-section">
-        <div className="spage-wrap">
+      <section className="spage-section apt-anchor" id="why">
+        <div className="apt-wide">
           <h2>Why choose A Visa Experts</h2>
-          <div className="spage-cards">
+          <div className="apt-cards cols-4">
             {whyUs.map((card) => (
-              <div className="spage-card" key={card.title}>
+              <div className="apt-card" key={card.title}>
+                <span className="apt-card-icon">{card.icon}</span>
                 <h3>{card.title}</h3>
                 <p>{card.text}</p>
               </div>
@@ -544,15 +550,15 @@ const AppointmentInfo = () => (
       </section>
 
       {/* Related services */}
-      <section className="spage-section">
-        <div className="spage-wrap">
+      <section className="spage-section apt-anchor" id="services">
+        <div className="apt-wide">
           <h2>Related visa services</h2>
-          <p>Explore the services our clients book most often after their consultation.</p>
-          <div className="spage-cards">
+          <p className="apt-lead">Explore the services our clients book most often after their consultation.</p>
+          <div className="apt-cards cols-4">
             {related.map((card) => (
-              <div className="spage-card" key={card.title}>
+              <div className="apt-card" key={card.title}>
                 <h3>
-                  <Link className="spage-link" href={card.href}>
+                  <Link className="apt-link" href={card.href}>
                     {card.title}
                   </Link>
                 </h3>
@@ -564,10 +570,10 @@ const AppointmentInfo = () => (
       </section>
 
       {/* FAQ */}
-      <section className="spage-section">
-        <div className="spage-wrap">
+      <section className="spage-section apt-anchor" id="faq">
+        <div className="apt-wide">
           <h2>Visa appointment FAQs</h2>
-          <div className="spage-faq">
+          <div className="apt-faq">
             {faqs.map((faq) => (
               <details key={faq.q}>
                 <summary>{faq.q}</summary>
@@ -579,20 +585,22 @@ const AppointmentInfo = () => (
       </section>
 
       {/* Final CTA */}
-      <section className="spage-cta">
-        <div className="spage-wrap">
-          <h2>Ready to book your visa appointment?</h2>
-          <p>
-            Choose your plan and schedule a one-to-one meeting with a visa expert today. Online or at our Noida or
-            Ahmedabad office.
-          </p>
-          <div className="spage-btns">
-            <a className="spage-btn primary" href={BOOK_URL}>
-              Book Your Appointment
-            </a>
-            <a className="spage-btn dark" href="/consultants">
-              Talk to a Consultant
-            </a>
+      <section className="spage-section">
+        <div className="apt-wide">
+          <div className="apt-cta-band">
+            <h2>Ready to book your visa appointment?</h2>
+            <p>
+              Choose your plan and schedule a one-to-one meeting with a visa expert today. Online or at our Noida or
+              Ahmedabad office.
+            </p>
+            <div className="apt-btns">
+              <a className="primary" href={BOOK_URL}>
+                Book Your Appointment
+              </a>
+              <a className="ghost" href="/consultants">
+                Talk to a Consultant
+              </a>
+            </div>
           </div>
         </div>
       </section>
