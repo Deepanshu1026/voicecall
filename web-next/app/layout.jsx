@@ -9,6 +9,7 @@ import '../styles/blogs.css';
 import '../styles/seminar.css';
 import '../styles/visaPages.css';
 import '../styles/aboutSection.css';
+import '../styles/fonts.css';
 
 const SITE_URL = 'https://avisaexperts.com';
 
@@ -171,9 +172,6 @@ const websiteLd = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <script src="/fonts.js" defer />
-      </head>
       <body>
         {children}
         <Script

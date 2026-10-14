@@ -17,7 +17,9 @@ const slugify = (text) =>
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  if (Number.isNaN(date.getTime())) return '';
+  // Fixed timeZone so the server (UTC) and the browser (local) render identical text.
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 };
 
 const stripHtml = (html) => {
