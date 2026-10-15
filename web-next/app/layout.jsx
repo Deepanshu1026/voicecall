@@ -24,6 +24,9 @@ export const metadata = {
   keywords:
     'A Visa Experts, Best Visa Immigration Company, Visa Immigration Experts, No.1 Visa Immigration Company, best immigration consultants, best visa consultants, tourist visa consultants, PR consultants, permanent residency application, visa agent, immigration agent, visa consultancy India',
   authors: [{ name: 'A Visa Experts' }],
+  verification: {
+    other: { 'msvalidate.01': '1907D46034778900D454338DBF5A543D' },
+  },
   robots: {
     index: true,
     follow: true,
