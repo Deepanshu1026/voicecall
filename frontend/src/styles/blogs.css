@@ -640,6 +640,15 @@
   font-weight: 600;
 }
 
+/* Tailwind Preflight resets lists to `list-style: none` — restore real markers
+   for article content (bullets / numbers) including nested lists. */
+.blog-detail-body ul { list-style: disc; }
+.blog-detail-body ul ul { list-style: circle; }
+.blog-detail-body ul ul ul { list-style: square; }
+.blog-detail-body ol { list-style: decimal; }
+.blog-detail-body ol ol { list-style: lower-alpha; }
+.blog-detail-body ol ol ol { list-style: lower-roman; }
+
 .blog-detail-body ol,
 .blog-detail-body ul {
   padding-left: 28px;

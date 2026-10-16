@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import LandingLayout from '../components/user/LandingLayout';
 import { blogAPI } from '../services/api';
+import { cleanPostHtml } from '../utils/cleanPostHtml';
 import '../styles/blogs.css';
 
 const fallbackImage = '/images/user/touristvisa_full 1.webp';
@@ -240,7 +241,7 @@ const BlogDetail = () => {
               <div className="blog-detail-content">
                 <div
                   className="blog-detail-body"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  dangerouslySetInnerHTML={{ __html: cleanPostHtml(post.content) }}
                 />
                 <div className="blog-detail-actions">
                   <button className="blogs-cta-primary" onClick={() => navigate('/book-appointment')}>

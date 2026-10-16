@@ -5,6 +5,7 @@ import {
   FiRotateCcw, FiRotateCw, FiChevronDown, FiVideo, FiMinus,
 } from 'react-icons/fi';
 import { FaStrikethrough, FaHighlighter, FaUnderline } from 'react-icons/fa';
+import { cleanPostHtml } from '../utils/cleanPostHtml';
 import '../styles/richTextEditor.css';
 
 const BLOCK_OPTIONS = [
@@ -126,10 +127,29 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
     forceUpdate((n) => n + 1);
   };
 
+  // Paste from Word / Outlook / Google Docs cleanly: strip the junk (o:p,
+  // MsoNormal, <font>, mso-* styles, stray colours) so lists and text keep
+  // rendering correctly on the website.
+  const handlePaste = (e) => {
+    const cd = e.clipboardData;
+    if (!cd) return;
+    const html = cd.getData('text/html');
+    const text = cd.getData('text/plain');
+    e.preventDefault();
+    editorRef.current?.focus();
+    restoreSelection();
+    if (html) {
+      document.execCommand('insertHTML', false, cleanPostHtml(html));
+    } else if (text) {
+      document.execCommand('insertText', false, text);
+    }
+    emitChange();
+    forceUpdate((n) => n + 1);
+  };
+
   const active = (command) => {
     try { return document.queryCommandState(command); } catch { return false; }
   };
-
   const currentBlock = () => {
     try { return (document.queryCommandValue('formatBlock') || 'p').toLowerCase(); } catch { return 'p'; }
   };
@@ -286,6 +306,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
         suppressContentEditableWarning
         data-placeholder={placeholder}
         onInput={emitChange}
+        onPaste={handlePaste}
         onBlur={saveSelection}
         onKeyUp={saveSelection}
         onMouseUp={saveSelection}

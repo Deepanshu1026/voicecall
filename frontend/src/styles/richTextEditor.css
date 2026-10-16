@@ -187,7 +187,8 @@
 .rte-editor p { margin: 0 0 0.85em; }
 
 .rte-editor a {
-  color: #4f46e5;
+  /* Match the published site (accent orange) so the editor previews the real look. */
+  color: #f58634;
   text-decoration: underline;
 }
 

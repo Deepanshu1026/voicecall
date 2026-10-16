@@ -1,0 +1,50 @@
+/**
+ * Cleans blog content HTML pasted from Word / Outlook / Google Docs.
+ * Used by the admin rich-text editor (paste) and by the blog renderer.
+ * Keeps real formatting (headings, bold, lists, links, images, embeds, tables)
+ * and removes only junk.
+ */
+export const cleanPostHtml = (html) => {
+  if (!html) return '';
+  let out = String(html);
+
+  out = out.replace(/<!--[\s\S]*?-->/g, '');
+
+  // Word / Outlook namespace tags (invalid in HTML)
+  out = out.replace(/<\/?o:p[^>]*>/gi, '');
+  out = out.replace(/<\/?w:[^>]*>/gi, '');
+  out = out.replace(/<\/?m:[^>]*>/gi, '');
+  out = out.replace(/<\/?v:[^>]*>/gi, '');
+
+  // Never render these from post content
+  out = out.replace(/<meta[^>]*>/gi, '');
+  out = out.replace(/<link[^>]*>/gi, '');
+  out = out.replace(/<style[\s\S]*?<\/style>/gi, '');
+  out = out.replace(/<script[\s\S]*?<\/script>/gi, '');
+
+  // Deprecated <font> wrapper -> keep its text
+  out = out.replace(/<\/?font[^>]*>/gi, '');
+
+  // Word paragraph classes
+  out = out.replace(/\sclass="Mso[^"]*"/gi, '');
+  out = out.replace(/\sclass='Mso[^']*'/gi, '');
+
+  // Inline styles: drop Word-only declarations and stray blue colours,
+  // keep the rest (text-align, font-weight, etc.).
+  out = out.replace(/\sstyle="([^"]*)"/gi, (_m, styles) => {
+    const kept = styles
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .filter((decl) => !/^mso-/i.test(decl))
+      .filter((decl) => !/\bcm2?\b/i.test(decl))
+      .filter((decl) => !/^font-family\s*:/i.test(decl))
+      .filter((decl) => !/^font-size\s*:[^;]*pt/i.test(decl))
+      .filter((decl) => !/^color\s*:\s*(blue|#00f{1,3}|#0000ff|rgb\(\s*0\s*,\s*0\s*,\s*255)/i.test(decl));
+    return kept.length ? ` style="${kept.join('; ')}"` : '';
+  });
+
+  return out.trim();
+};
+
+export default cleanPostHtml;

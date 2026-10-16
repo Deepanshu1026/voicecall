@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import Link from 'next/link';
 import LandingLayout from '../LandingLayout';
+import { cleanPostHtml } from '../../lib/cleanPostHtml';
 
 const fallbackImage = '/images/user/touristvisa_full 1.webp';
 
@@ -38,7 +39,7 @@ const BlogDetail = ({ post, related = [] }) => {
   const metaTitle = useMemo(() => (post ? `${post.title} | A Visa Experts Blog` : 'Blog | A Visa Experts'), [post]);
   const imageUrl = post?.featured_image || fallbackImage;
   const bodyHtml = useMemo(() => {
-    const html = post?.content || '';
+    const html = cleanPostHtml(post?.content || '');
     // The article title is the page H1; demote any in-content H1s to H2 for SEO.
     return html
       .replace(/<h1(\s[^>]*)?>/gi, '<h2$1>')
