@@ -1,6 +1,7 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import BlogDetail from '../../../../components/pages/BlogDetail';
 import { blogAPI } from '../../../../lib/api';
+import { cleanPostHtml } from '../../../../lib/cleanPostHtml';
 
 export const revalidate = 300;
 
@@ -26,6 +27,7 @@ async function getPost(id) {
     return {
       ...found,
       id: found._id || found.legacyId,
+      content: cleanPostHtml(found.content || ''),
       featured_image: found.featuredImage || '',
       image_alt: found.imageAlt || '',
       created_at: found.createdAt,
