@@ -670,6 +670,68 @@
   font-weight: 700;
 }
 
+/* The site's global reset `.user-landing * { text-decoration: none }` strips
+   underline / strikethrough inside articles — restore the real tag behaviour. */
+.blog-detail-body u,
+.blog-detail-body ins {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.blog-detail-body s,
+.blog-detail-body strike,
+.blog-detail-body del {
+  text-decoration: line-through;
+}
+
+.blog-detail-body em,
+.blog-detail-body i,
+.blog-detail-body cite {
+  font-style: italic;
+}
+
+.blog-detail-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92em;
+  background: #f1f5f9;
+  border: 1px solid var(--blogs-border);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.blog-detail-body pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 15px;
+  line-height: 1.55;
+  background: #0f172a;
+  color: #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: 18px 0;
+  overflow-x: auto;
+}
+
+.blog-detail-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+.blog-detail-body mark {
+  background: #fde047;
+  color: #1f2937;
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+.blog-detail-body sub,
+.blog-detail-body sup {
+  font-size: 0.75em;
+  line-height: 0;
+}
+
 .blog-detail-body a {
   color: var(--blogs-accent);
   text-decoration: underline;
