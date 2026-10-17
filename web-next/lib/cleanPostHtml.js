@@ -30,6 +30,12 @@ export const cleanPostHtml = (html) => {
   out = out.replace(/\sclass="Mso[^"]*"/gi, '');
   out = out.replace(/\sclass='Mso[^']*'/gi, '');
 
+  // Drop empty paragraphs and collapse runs of blank line-breaks (Word paste
+  // inserts these between blocks, creating big gaps on the page).
+  out = out.replace(/<p[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '');
+  out = out.replace(/(?:\s*<br\s*\/?>){2,}/gi, '<br />');
+  out = out.replace(/(?:\s|&nbsp;)+<\/p>/gi, '</p>');
+
   // Inline styles: drop Word-only declarations and stray blue colours,
   // keep the rest (text-align, font-weight, etc.).
   out = out.replace(/\sstyle="([^"]*)"/gi, (_m, styles) => {

@@ -611,10 +611,10 @@
   min-width: 0;
 }
 
-/* Article typography — wide, centered measure with generous rhythm */
+/* Article typography — wide, centered measure with a tight, readable rhythm */
 .blog-detail-body {
   font-size: 18px;
-  line-height: 1.85;
+  line-height: 1.6;
   color: #334155;
   max-width: 100%;
   overflow-wrap: break-word;
@@ -635,10 +635,10 @@
   scroll-margin-top: 120px;
 }
 
-.blog-detail-body h1 { font-size: 30px; margin: 40px 0 16px; }
-.blog-detail-body h2 { font-size: 27px; margin: 40px 0 16px; }
-.blog-detail-body h3 { font-size: 22px; margin: 32px 0 12px; }
-.blog-detail-body h4 { font-size: 19px; margin: 26px 0 10px; }
+.blog-detail-body h1 { font-size: 30px; margin: 28px 0 12px; }
+.blog-detail-body h2 { font-size: 27px; margin: 28px 0 12px; }
+.blog-detail-body h3 { font-size: 22px; margin: 24px 0 10px; }
+.blog-detail-body h4 { font-size: 19px; margin: 20px 0 8px; }
 
 /* The editor sometimes wraps headings in spans that reset size/weight/colour —
    force them back to the heading style so headings read as headings. */
@@ -653,7 +653,7 @@
 }
 
 .blog-detail-body p {
-  margin: 0 0 18px;
+  margin: 0 0 12px;
 }
 
 .blog-detail-body p:last-child {
@@ -683,7 +683,7 @@
   max-width: 100%;
   height: auto;
   border-radius: 14px;
-  margin: 28px auto;
+  margin: 20px auto;
   box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.45);
 }
 
@@ -693,7 +693,7 @@
 }
 
 .blog-detail-body figure {
-  margin: 28px 0;
+  margin: 20px 0;
   text-align: center;
 }
 
@@ -715,12 +715,12 @@
 
 .blog-detail-body ol,
 .blog-detail-body ul {
-  margin: 0 0 18px;
+  margin: 0 0 12px;
   padding-left: 28px;
 }
 
 .blog-detail-body li {
-  margin-bottom: 9px;
+  margin-bottom: 4px;
   color: #334155;
 }
 
@@ -731,8 +731,8 @@
 
 .blog-detail-body blockquote {
   border-left: 4px solid var(--blogs-accent);
-  margin: 28px 0;
-  padding: 22px 26px;
+  margin: 20px 0;
+  padding: 16px 22px;
   font-style: italic;
   font-size: 17.5px;
   color: var(--blogs-text);
@@ -743,13 +743,13 @@
 .blog-detail-body hr {
   border: none;
   border-top: 1px solid var(--blogs-border);
-  margin: 36px 0;
+  margin: 26px 0;
 }
 
 .blog-detail-body table {
   width: 100%;
   border-collapse: collapse;
-  margin: 26px 0;
+  margin: 18px 0;
   font-size: 16px;
 }
 
