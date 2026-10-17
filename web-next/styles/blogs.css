@@ -640,12 +640,16 @@
 .blog-detail-body h3 { font-size: 22px; margin: 24px 0 10px; }
 .blog-detail-body h4 { font-size: 19px; margin: 20px 0 8px; }
 
-/* The editor sometimes wraps headings in spans that reset size/weight/colour —
-   force them back to the heading style so headings read as headings. */
-.blog-detail-body h1 span,
-.blog-detail-body h2 span,
-.blog-detail-body h3 span,
-.blog-detail-body h4 span {
+/* Headings must always render at one size. The editor / pasted content can leave
+   inline font-size / font-weight / colour on child elements (<b>, <span>, <font>),
+   which made some headings render smaller than others — force every child to
+   inherit the heading's own style. */
+.blog-detail-body h1 *,
+.blog-detail-body h2 *,
+.blog-detail-body h3 *,
+.blog-detail-body h4 *,
+.blog-detail-body h5 *,
+.blog-detail-body h6 * {
   font-size: inherit !important;
   font-weight: inherit !important;
   color: inherit !important;

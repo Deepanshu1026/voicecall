@@ -35,6 +35,20 @@ export const cleanPostHtml = (html) => {
   out = out.replace(/(?:\s*<br\s*\/?>){2,}/gi, '<br />');
   out = out.replace(/(?:\s|&nbsp;)+<\/p>/gi, '</p>');
 
+  // Headings must all render at one size — strip any inline font-size from
+  // elements inside a heading (e.g. <b style="font-size:1.5rem">).
+  out = out.replace(/<(h[1-6])([^>]*)>([\s\S]*?)<\/\1>/gi, (_m, tag, attrs, inner) => {
+    const cleanInner = inner.replace(/\sstyle="([^"]*)"/gi, (_mm, styles) => {
+      const kept = styles
+        .split(';')
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .filter((decl) => !/^font-size\s*:/i.test(decl));
+      return kept.length ? ` style="${kept.join('; ')}"` : '';
+    });
+    return `<${tag}${attrs}>${cleanInner}</${tag}>`;
+  });
+
   // Inline styles: drop Word-only declarations and stray blue colours,
   // keep the rest (text-align, font-weight, etc.).
   out = out.replace(/\sstyle="([^"]*)"/gi, (_m, styles) => {
