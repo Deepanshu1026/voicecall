@@ -148,7 +148,7 @@ const BlogDetail = ({ post, related = [] }) => {
           <div className="blogs-container">
             <nav className="blog-breadcrumb" aria-label="Breadcrumb">
               <ol>
-                <li><Link href="/home">Home</Link></li>
+                <li><Link href="/">Home</Link></li>
                 <li><Link href="/blogs">Blogs</Link></li>
                 <li aria-current="page">{post.title}</li>
               </ol>

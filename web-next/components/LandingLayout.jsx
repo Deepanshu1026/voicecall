@@ -123,7 +123,7 @@ const LandingLayout = ({ children }) => {
       {/* Header */}
       <header className={`landing-header ${scrolled ? 'scrolled' : ''}`}>
         <div className="landing-header-left">
-          <a href="/home" className="landing-logo-link">
+          <a href="/" className="landing-logo-link">
             <img className="landing-logo" src="/images/user/tmlogo 1.webp" alt="A Visa Experts logo" width={151} height={103} />
           </a>
         </div>
@@ -209,7 +209,7 @@ const LandingLayout = ({ children }) => {
             <h3>About</h3>
             <ul>
               <li><a href="/about">About Us</a></li>
-              <li><a href="/home">Contact Us</a></li>
+              <li><a href="/">Contact Us</a></li>
               <li><a href="/agent/login">AVE Partners</a></li>
             </ul>
           </div>
@@ -223,7 +223,7 @@ const LandingLayout = ({ children }) => {
           <div className="footer-section footer-second-clm">
             <h3>Get In Touch</h3>
             <ul>
-              <li><a href="/home">Contact Us</a></li>
+              <li><a href="/">Contact Us</a></li>
             </ul>
           </div>
 
