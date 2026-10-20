@@ -6,7 +6,7 @@ import SocialLinks from '../common/SocialLinks';
 import '../../styles/userLanding.css';
 
 const navLinks = [
-  { label: 'Home', href: '/home' },
+  { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
   { label: 'About us', href: '/about' },
   { label: 'Blogs', href: '/blogs' },
@@ -118,8 +118,8 @@ const LandingLayout = ({ children }) => {
         <nav className={`landing-nav-links ${menuOpen ? 'nav-open' : ''}`}>
           {navLinks.map((link) => {
             const isActive =
-              link.href === '/home'
-                ? location.pathname === '/home' || location.pathname === '/'
+              link.href === '/'
+                ? location.pathname === '/'
                 : location.pathname === link.href || location.pathname.startsWith(link.href + '/');
             return (
               <a

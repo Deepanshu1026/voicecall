@@ -233,7 +233,7 @@ const UserRegister = () => {
         </div>
 
         <div style={{ textAlign: 'center' }}>
-          <Link to="/home" className="auth-back-link">
+          <Link to="/" className="auth-back-link">
             ← Back to home
           </Link>
         </div>

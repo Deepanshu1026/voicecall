@@ -6,7 +6,7 @@ import { bannerAPI } from '../lib/api';
 import SocialLinks from './SocialLinks';
 
 const navLinks = [
-  { label: 'Home', href: '/home' },
+  { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
   { label: 'Immigration', href: '/immigration-laws' },
   { label: 'About us', href: '/about' },
@@ -131,8 +131,8 @@ const LandingLayout = ({ children }) => {
         <nav className={`landing-nav-links ${menuOpen ? 'nav-open' : ''}`}>
           {navLinks.map((link) => {
             const isActive =
-              link.href === '/home'
-                ? pathname === '/home' || pathname === '/'
+              link.href === '/'
+                ? pathname === '/'
                 : pathname === link.href || pathname.startsWith(link.href + '/');
             return (
               <a

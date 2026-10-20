@@ -95,7 +95,7 @@ const Blogs = ({ initialPosts = [] }) => {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://avisaexperts.com/home',
+          item: 'https://avisaexperts.com/',
         },
         {
           '@type': 'ListItem',

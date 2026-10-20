@@ -138,7 +138,7 @@ const BlogDetail = () => {
           '@type': 'ListItem',
           position: 1,
           name: 'Home',
-          item: 'https://avisaexperts.com/home',
+          item: 'https://avisaexperts.com/',
         },
         {
           '@type': 'ListItem',
@@ -232,7 +232,7 @@ const BlogDetail = () => {
           <div className="blogs-container">
             <nav className="blog-breadcrumb" aria-label="Breadcrumb">
               <ol>
-                <li><Link to="/home">Home</Link></li>
+                <li><Link to="/">Home</Link></li>
                 <li><Link to="/blogs">Blogs</Link></li>
                 <li aria-current="page">{post.title}</li>
               </ol>

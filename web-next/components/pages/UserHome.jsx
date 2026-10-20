@@ -258,7 +258,7 @@ const UserHome = ({ initialReviews = [] }) => {
           </div>
           <div className="new-hero-right">
             {heroCards.map((card, idx) => (
-              <a href={card.href || '/home'} className="new-hero-card-wrapper" key={idx} aria-label={`Learn more about ${card.title}`}>
+              <a href={card.href || '/'} className="new-hero-card-wrapper" key={idx} aria-label={`Learn more about ${card.title}`}>
                 <div className="new-hero-card">
                   <img src={card.img} alt={`${card.title} - Visa Services by A Visa Experts`} width={146} height={144} />
                   <div className="new-hero-card-content">

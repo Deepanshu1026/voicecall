@@ -599,7 +599,7 @@ const Consultants = () => {
                   className="profile-btn"
                   onClick={() => {
                     logout();
-                    navigate('/home');
+                    navigate('/');
                   }}
                   style={{ width: '100%' }}
                 >

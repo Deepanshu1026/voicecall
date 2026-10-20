@@ -93,7 +93,7 @@ const AppointmentPayment = () => {
   };
 
   const handleGoHome = () => {
-    navigate('/home');
+    navigate('/');
   };
 
   if (!appointmentData) return null;
