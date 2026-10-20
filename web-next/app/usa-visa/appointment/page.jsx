@@ -1,11 +1,11 @@
 import UsaAppointment from '../../../components/pages/UsaAppointment';
 
 export const metadata = {
-  title: 'USA Visa Appointment: How to Book | A Visa Experts',
+  title: 'USA Visa Appointment from India | A Visa Experts',
   description:
-    'How to book a US visa appointment from India — the steps, documents to bring, what happens at biometrics and the interview, and how to reschedule.',
+    'USA visa appointment from India explained — the appointment process, biometrics and interview, what to carry, appointment availability, rescheduling and expedited appointments.',
   keywords:
-    'USA visa appointment, US visa appointment booking, book US visa appointment India, US consulate appointment, US visa interview appointment, biometrics appointment USA visa',
+    'USA visa appointment, USA visa appointment from India, US visa appointment booking, US visa biometrics appointment, US visa interview appointment, reschedule US visa appointment, expedited US visa appointment',
   alternates: {
     canonical: '/usa-visa/appointment',
     languages: {
@@ -15,8 +15,9 @@ export const metadata = {
     },
   },
   openGraph: {
-    title: 'USA Visa Appointment: How to Book | A Visa Experts',
-    description: 'How to book a US visa appointment, what to bring and what happens on the day.',
+    title: 'USA Visa Appointment from India | A Visa Experts',
+    description:
+      'How to get a US visa appointment from India — the process, biometrics, interview and what to carry.',
     url: 'https://avisaexperts.com/usa-visa/appointment',
     images: ['/images/user/statueofliberty 1.webp'],
   },

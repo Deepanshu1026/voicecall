@@ -3,74 +3,112 @@ import LandingLayout from '../LandingLayout';
 
 const BOOK_URL = '/book-appointment';
 
-const bookingSteps = [
-  { title: 'Complete the DS-160', text: 'Submit your online nonimmigrant visa application and save the barcode confirmation.' },
-  { title: 'Pay the visa fee', text: 'Pay the MRV fee through the official channels and keep the receipt.' },
-  { title: 'Create your appointment profile', text: 'Set up your applicant profile on the official appointment system using your DS-160 barcode and fee receipt.' },
-  { title: 'Choose your consulate and slot', text: 'Select the US embassy or consulate in India and pick the earliest available date and time.' },
-  { title: 'Confirm the appointment', text: 'Review the details and confirm. Save or print the appointment confirmation.' },
-  { title: 'Attend on the day', text: 'Arrive early with your documents for biometrics and the visa interview.' },
+const processSteps = [
+  'Completing the required visa application',
+  'Paying the applicable visa fee',
+  'Creating or accessing the visa scheduling profile',
+  'Providing applicant information',
+  'Selecting the applicable appointment location',
+  'Choosing an available date',
+  'Confirming the appointment',
+  'Saving the appointment confirmation',
 ];
 
-const bring = [
-  'Appointment confirmation page',
-  'DS-160 confirmation page (barcode)',
-  'Valid passport and previous passports',
-  'Visa fee payment receipt',
-  'A photograph meeting US specifications (if requested)',
-  'Supporting documents — financial, employment or business proof',
-  'Invitation letter, if applicable',
+const interviewTopics = [
+  'Your reason for visiting the USA',
+  'Your planned activities',
+  'Your employment or business',
+  'Your financial circumstances',
+  'Your family situation',
+  'Your previous travel',
+  'Your plans after the visit',
 ];
 
-const happens = [
-  'Security check and document verification on arrival',
-  'Biometrics — your fingerprints and photograph are collected',
-  'The visa interview with a consular officer',
-  'The officer decides on your case, often on the same day',
-  'Your passport is retained and returned with the visa once approved',
+const checkBefore = [
+  'Full name',
+  'Passport number',
+  'Date of birth',
+  'Visa category',
+  'DS-160 information',
+  'Appointment location',
+  'Appointment date',
+  'Appointment time',
+  'Contact information',
+];
+
+const carry = [
+  'Current passport',
+  'Previous passports, if applicable',
+  'DS-160 confirmation',
+  'Appointment confirmation',
+  'Visa fee payment details',
+  'Supporting documents',
+  'Employment or business documents',
+  'Financial documents',
+];
+
+const rescheduleChecklist = [
+  'Check the available appointments',
+  'Confirm that you can attend the new date',
+  'Review your appointment details',
+  'Save the updated confirmation',
+];
+
+const waitingFactors = [
+  'Visa category',
+  'Appointment location',
+  'Seasonal demand',
+  'Number of applicants',
+  'Available appointment slots',
+  'Cancellations',
+  'Additional administrative requirements',
 ];
 
 const tips = [
-  'Book the earliest available slot rather than waiting for a preferred date.',
-  'Arrive 15–30 minutes early — late arrivals may be turned away.',
-  'Carry only the required documents; do not bring large bags or electronics.',
-  'Answer questions clearly, honestly and consistently with your DS-160.',
-  'Check your case status on CEAC after the interview.',
+  'Check your appointment confirmation before travelling.',
+  'Carry your current passport.',
+  'Keep your DS-160 confirmation accessible.',
+  'Organize supporting documents beforehand.',
+  'Reach the location according to the instructions provided.',
+  'Answer questions honestly during the interview.',
+  'Do not submit false or misleading information.',
+  'Follow the security instructions at the appointment location.',
+  'Do not rely on unofficial sources for appointment availability.',
 ];
 
 const faqs = [
   {
-    q: 'How do I book a US visa appointment from India?',
-    a: 'Complete the DS-160, pay the visa fee, then use the official US visa appointment system to choose your consulate and the earliest available slot. Save the appointment confirmation for the interview day.',
+    q: 'Can I choose my USA visa appointment date?',
+    a: 'You can generally select from the appointment dates available through the applicable scheduling system.',
   },
   {
-    q: 'How long does it take to get a US visa appointment in India?',
-    a: 'Appointment wait times vary by consulate and season, from days to several months. See our USA visa processing time guide for the typical ranges and how to plan.',
+    q: 'Can I change my appointment after booking?',
+    a: 'Rescheduling may be available depending on the current appointment system and applicable rules.',
   },
   {
-    q: 'What should I bring to my US visa appointment?',
-    a: 'Your appointment confirmation, DS-160 confirmation, passport, visa fee receipt, a compliant photo if requested, and your supporting documents (financial, employment/business and any invitation letter).',
+    q: 'Can I request an earlier appointment?',
+    a: 'An earlier appointment may become available when additional slots are released or existing appointments are changed. Expedited appointments may also be available in qualifying circumstances.',
   },
   {
-    q: 'What happens at the US visa appointment?',
-    a: 'You go through a security check, have your biometrics (fingerprints and photo) taken, and attend the visa interview with a consular officer, who usually decides on the same day.',
+    q: 'Do I need to carry my DS-160 confirmation?',
+    a: 'Applicants should keep their DS-160 confirmation available as part of their visa application documents.',
   },
   {
-    q: 'Can I reschedule or cancel my US visa appointment?',
-    a: 'Yes — you can reschedule or cancel through the official appointment system. Frequent rescheduling can delay your case, and fees are non-refundable.',
+    q: 'Is a USA visa appointment the same as visa approval?',
+    a: 'No. An appointment is only one stage of the application process. It does not guarantee visa approval.',
   },
   {
-    q: 'Do I need an interview for a US visa?',
-    a: 'Most first-time applicants need an interview. Some renewals qualify for an interview waiver (dropbox), which skips the interview and is usually faster.',
+    q: 'How early should I prepare for my appointment?',
+    a: 'It is better to organize your application and supporting documents before the appointment date so that you are prepared for the required steps.',
   },
 ];
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'USA Visa Appointment: How to Book and What to Expect',
+  headline: 'USA Visa Appointment from India',
   description:
-    'How to book a US visa appointment from India — the steps, documents to bring, what happens at biometrics and the interview, and how to reschedule.',
+    'USA visa appointment from India explained — the appointment process, biometrics and interview, what to carry, appointment availability, rescheduling and expedited appointments.',
   author: { '@type': 'Organization', name: 'A Visa Experts', url: 'https://avisaexperts.com' },
   publisher: {
     '@type': 'Organization',
@@ -78,14 +116,6 @@ const jsonLd = {
     logo: { '@type': 'ImageObject', url: 'https://avisaexperts.com/images/user/tmlogo%201.webp' },
   },
   mainEntityOfPage: { '@type': 'WebPage', '@id': 'https://avisaexperts.com/usa-visa/appointment' },
-};
-
-const howToJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'HowTo',
-  name: 'How to book a US visa appointment',
-  description: 'The steps to book a US visa appointment from India.',
-  step: bookingSteps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, name: s.title, text: s.text })),
 };
 
 const faqJsonLd = {
@@ -116,18 +146,17 @@ const breadcrumbJsonLd = {
 const UsaAppointment = () => (
   <LandingLayout>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }} />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
     <div className="spage">
       <section className="spage-hero hero-usa">
         <div className="spage-hero-inner">
-          <h1>USA Visa Appointment: How to Book and What to Expect</h1>
+          <h1>USA Visa Appointment from India</h1>
           <p>
-            The US visa appointment is where your application is completed — biometrics and the visa interview at the
-            embassy or consulate. This guide explains how to book the appointment from India, what to bring, what happens
-            on the day, and how to reschedule if your plans change.
+            Getting a USA visa appointment is an important part of the visa application process. Applicants need to
+            complete the required application steps and follow the current appointment procedure before appearing for
+            biometrics or a visa interview, depending on their visa category and individual circumstances.
           </p>
           <div className="spage-btns">
             <a className="spage-btn primary" href={BOOK_URL}>
@@ -142,54 +171,34 @@ const UsaAppointment = () => (
 
       <section className="spage-section">
         <div className="spage-wrap">
-          <h2>What is the US visa appointment?</h2>
           <p>
-            The US visa appointment has two parts: <strong>biometrics</strong> (fingerprints and a photograph) and the{' '}
-            <strong>visa interview</strong> with a consular officer. Depending on the consulate, these can be on the same
-            day or on separate days. The interview is where the officer assesses your application and usually decides
-            your case.
-          </p>
-          <p>
-            Some applicants qualify for an <strong>interview waiver (dropbox)</strong>, which skips the interview. See our{' '}
-            <Link className="spage-link" href="/usa-visa/processing-time">
-              processing time guide
-            </Link>{' '}
-            for how that affects your timeline.
+            The availability of appointment dates can change frequently, so applicants should check the current
+            scheduling options before making travel plans.
           </p>
         </div>
       </section>
 
       <section className="spage-section">
         <div className="spage-wrap">
-          <h2>How to book a US visa appointment</h2>
-          <ol className="spage-steps">
-            {bookingSteps.map((s) => (
-              <li key={s.title}>
-                <strong>{s.title}</strong>
-                <span>{s.text}</span>
-              </li>
-            ))}
-          </ol>
-          <div className="spage-btns left spage-mt-24">
-            <a className="spage-btn primary" href={BOOK_URL}>
-              Get Appointment Help
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section className="spage-section">
-        <div className="spage-wrap">
-          <h2>What to bring to your US visa appointment</h2>
+          <h2>USA Visa Appointment Process for Indians</h2>
+          <p>
+            The appointment process generally requires applicants to complete the necessary application formalities
+            before selecting an available date.
+          </p>
+          <p>The process may include:</p>
           <ul className="spage-list">
-            {bring.map((b) => (
-              <li key={b}>{b}</li>
+            {processSteps.map((s) => (
+              <li key={s}>{s}</li>
             ))}
           </ul>
-          <p className="spage-subnote">
-            See the full{' '}
-            <Link className="spage-link" href="/blog/usa-visa-document-checklist">
-              USA visa document checklist
+          <p className="spage-mt-16">
+            Applicants should make sure that their passport and application information is accurate before confirming
+            their appointment.
+          </p>
+          <p>
+            For information about the application charges, visit our{' '}
+            <Link className="spage-link" href="/usa-visa/fees">
+              USA Visa Fees page
             </Link>
             .
           </p>
@@ -198,79 +207,276 @@ const UsaAppointment = () => (
 
       <section className="spage-section">
         <div className="spage-wrap">
-          <h2>What happens at the appointment</h2>
-          <ul className="spage-list">
-            {happens.map((h) => (
-              <li key={h}>{h}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="spage-section">
-        <div className="spage-wrap">
-          <h2>Appointment tips</h2>
-          <ul className="spage-list">
-            {tips.map((t) => (
-              <li key={t}>{t}</li>
-            ))}
-          </ul>
-          <p className="spage-mt-16">
-            Preparing for the interview? Review our{' '}
-            <Link
-              className="spage-link"
-              href="/blog/usa-visitor-visa-interview-questions-for-indians-complete-guide-2025"
-            >
-              USA visa interview questions
-            </Link>{' '}
-            guide.
+          <h2>USA Visa Appointment Locations in India</h2>
+          <p>
+            US visa applicants in India may have appointment options depending on their visa category and the current US
+            visa appointment system.
+          </p>
+          <p>
+            The location available to you can depend on the type of appointment required and the current scheduling
+            arrangements.
+          </p>
+          <p>
+            Before selecting a location, check the available options in the official appointment system and choose a
+            location that you can attend on the scheduled date.
           </p>
         </div>
       </section>
 
       <section className="spage-section">
         <div className="spage-wrap">
-          <h2>Related USA visa guides</h2>
-          <div className="spage-cards">
-            <div className="spage-card">
-              <h3>
-                <Link className="spage-link" href="/usa-visa/processing-time">
-                  USA Visa Processing Time
-                </Link>
-              </h3>
-              <p>How long each stage takes, including appointment waits.</p>
-            </div>
-            <div className="spage-card">
-              <h3>
-                <Link className="spage-link" href="/usa-visa/fees">
-                  USA Visa Fees
-                </Link>
-              </h3>
-              <p>What you pay and when, before booking your appointment.</p>
-            </div>
-            <div className="spage-card">
-              <h3>
-                <Link className="spage-link" href="/usa-visa/requirements">
-                  USA Visa Requirements for India
-                </Link>
-              </h3>
-              <p>Eligibility and documents for Indian applicants.</p>
-            </div>
-            <div className="spage-card">
-              <h3>
-                <Link className="spage-link" href="/usa-visa">
-                  USA Visa Overview
-                </Link>
-              </h3>
-              <p>Visitor and tourist visa guidance for the USA.</p>
-            </div>
-          </div>
+          <h2>USA Visa Appointment for Biometrics</h2>
+          <p>
+            Some applicants may need to provide biometric information as part of their visa application.
+          </p>
+          <p>
+            Biometric appointments can involve the collection of fingerprints and other required information at the
+            designated application center.
+          </p>
+          <p>Carry your passport and the documents specified in your appointment instructions.</p>
         </div>
       </section>
 
       <section className="spage-section">
         <div className="spage-wrap">
-          <h2>USA visa appointment FAQs</h2>
+          <h2>USA Visa Interview Appointment</h2>
+          <p>A visa interview may be required depending on your visa category and circumstances.</p>
+          <p>
+            During the interview, the consular officer may ask questions related to your application and intended
+            travel.
+          </p>
+          <p>You should be ready to explain:</p>
+          <ul className="spage-list">
+            {interviewTopics.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+          <p className="spage-mt-16">
+            You can prepare for the interview using our{' '}
+            <Link
+              className="spage-link"
+              href="/blog/usa-visitor-visa-interview-questions-for-indians-complete-guide-2025"
+            >
+              USA Visa Interview Questions &amp; Answers guide
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>What to Check Before Confirming Your Appointment</h2>
+          <p>Before confirming your appointment, carefully check:</p>
+          <ul className="spage-list">
+            {checkBefore.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+          <p className="spage-mt-16">
+            Any incorrect information should be reviewed and corrected according to the applicable procedure before
+            proceeding.
+          </p>
+          <p>
+            For help with the DS-160, visit our{' '}
+            <Link className="spage-link" href="/blog/ds-160-guide-a-simple-guide-for-usa-visa-applicants">
+              DS-160 Guide
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>What to Carry on the Appointment Day</h2>
+          <p>Prepare your documents before leaving for the appointment. Depending on your circumstances, you may need:</p>
+          <ul className="spage-list">
+            {carry.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+          <p className="spage-mt-16">
+            Not every applicant will need the same supporting documents. Your documents should match your visa category
+            and circumstances.
+          </p>
+          <p>
+            See our{' '}
+            <Link className="spage-link" href="/blog/usa-visa-document-checklist">
+              USA Visa Document Checklist
+            </Link>{' '}
+            for detailed preparation.
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Appointment Date Availability</h2>
+          <p>
+            Appointment availability is not fixed. New appointment dates can become available when additional slots are
+            released or when applicants change or cancel their appointments.
+          </p>
+          <p>
+            For this reason, applicants should regularly check the current scheduling system if they are looking for an
+            earlier available appointment.
+          </p>
+          <p>Do not make non-refundable travel arrangements based only on an expected appointment date.</p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>How to Get an Earlier USA Visa Appointment</h2>
+          <p>
+            Applicants who need an earlier appointment should first check the available dates through the official
+            scheduling system.
+          </p>
+          <p>
+            If an earlier date becomes available, it may be possible to change the appointment according to the current
+            rules.
+          </p>
+          <p>
+            An earlier appointment should not be assumed or guaranteed because availability depends on the appointment
+            system.
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>Emergency USA Visa Appointment</h2>
+          <p>
+            In certain situations, applicants may be able to request an expedited appointment if they meet the applicable
+            criteria.
+          </p>
+          <p>
+            An expedited appointment is not automatically granted simply because an applicant wants an earlier date.
+          </p>
+          <p>
+            Applicants should check the current eligibility requirements and provide appropriate supporting information
+            when requesting an expedited appointment.
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Appointment Rescheduling</h2>
+          <p>
+            If you cannot attend your scheduled appointment, check whether the current scheduling system allows you to
+            reschedule.
+          </p>
+          <p>Before selecting a new date:</p>
+          <ul className="spage-list">
+            {rescheduleChecklist.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+          <p className="spage-mt-16">
+            Avoid cancelling or changing an appointment without first understanding the applicable rules.
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Appointment Cancellation</h2>
+          <p>
+            If you no longer need your appointment, follow the current cancellation procedure provided by the appointment
+            system.
+          </p>
+          <p>
+            If you later decide to apply again, you may need to complete additional steps before booking another
+            appointment.
+          </p>
+          <p>Keep your application and payment information available for future reference.</p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>Missed USA Visa Appointment</h2>
+          <p>If you miss your appointment, check the current instructions in the visa scheduling system.</p>
+          <p>Depending on the circumstances, you may need to reschedule your appointment.</p>
+          <p>
+            A missed appointment does not by itself mean that your visa application has been approved or refused. Follow
+            the applicable appointment instructions.
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Appointment Waiting Period</h2>
+          <p>The waiting period for an appointment can change depending on:</p>
+          <ul className="spage-list">
+            {waitingFactors.map((f) => (
+              <li key={f}>{f}</li>
+            ))}
+          </ul>
+          <p className="spage-mt-16">
+            Appointment waiting time and visa processing time are different. For information about processing after the
+            application stage, read our{' '}
+            <Link className="spage-link" href="/usa-visa/processing-time">
+              USA Visa Processing Time guide
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Appointment for B1/B2 Applicants</h2>
+          <p>
+            B1/B2 applicants should make sure that their application information correctly reflects their intended
+            business or tourism-related visit.
+          </p>
+          <p>Before attending the appointment, review your application and supporting documents carefully.</p>
+          <p>
+            For category-specific information, visit our{' '}
+            <Link className="spage-link" href="/usa-visa/usa-b1b2-visa">
+              USA B1/B2 Visa Guide
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Tourist Visa Appointment</h2>
+          <p>
+            Applicants travelling for tourism, holidays, sightseeing, or visiting family and friends should ensure that
+            their application accurately reflects their intended visit.
+          </p>
+          <p>Keep relevant travel and personal documents ready before the appointment.</p>
+          <p>
+            For more information about tourist visa requirements, visit our{' '}
+            <Link className="spage-link" href="/blog/usa-tourist-visa">
+              USA Tourist Visa Guide
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>Important USA Visa Appointment Tips</h2>
+          <p>Keep these points in mind:</p>
+          <ul className="spage-list">
+            {tips.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Appointment: Common Questions</h2>
           <div className="spage-faq">
             {faqs.map((f) => (
               <details key={f.q}>
@@ -284,8 +490,12 @@ const UsaAppointment = () => (
 
       <section className="spage-cta">
         <div className="spage-wrap">
-          <h2>Need help booking your US visa appointment?</h2>
-          <p>Talk to a USA visa expert at A Visa Experts for guidance on slots, documents and interview preparation.</p>
+          <h2>Need Assistance With Your USA Visa Appointment?</h2>
+          <p>
+            Preparing your application information, appointment details, and supporting documents in advance can help
+            you avoid unnecessary mistakes. If you need assistance with your USA visa application or appointment
+            preparation, contact A Visa Experts for guidance.
+          </p>
           <div className="spage-btns">
             <a className="spage-btn primary" href={BOOK_URL}>
               Book an Appointment

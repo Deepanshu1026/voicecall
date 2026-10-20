@@ -3,65 +3,67 @@ import LandingLayout from '../LandingLayout';
 
 const BOOK_URL = '/book-appointment';
 
-const feeRows = [
-  { type: 'B-1/B-2 visitor visa (business/tourism)', fee: 'US$185', note: 'Standard nonimmigrant visa application fee' },
-  { type: 'F-1 / M-1 student visa', fee: 'US$185', note: 'Plus a separate SEVIS fee' },
-  { type: 'H-1B / L-1 work visa', fee: 'US$205', note: 'Additional fraud-prevention fees may apply' },
-  { type: 'Other nonimmigrant categories', fee: 'Varies', note: 'Confirm the current fee for your category' },
-];
-
-const otherCosts = [
-  'Courier or passport delivery charges (if you choose delivery)',
+const feeCovers = [
+  'Travel expenses',
+  'Document preparation costs',
   'Photograph costs',
-  'SEVIS fee for student and exchange visitor visas',
-  'Reciprocity fees, where they apply to your nationality and visa type',
-  'Optional professional preparation and consultation services',
+  'Translation or other professional services',
+  'Travel to the visa appointment location',
+  'Other applicable charges',
 ];
 
-const covered = [
-  'Processing of your nonimmigrant visa application by the US authorities',
-  'The visa interview and the decision on your application',
+const visaCategories = [
+  'B1/B2 Visitor Visa',
+  'B1 Business Visa',
+  'B2 Tourist Visa',
+  'Student and exchange visitor visas',
+  'Work-related visa categories',
+  'Other nonimmigrant visa categories',
 ];
 
-const notCovered = [
-  'A guarantee of approval — the fee is for processing, not for the visa itself',
-  'Travel costs, flights, hotels or insurance',
-  'A refund if your visa is refused',
+const paymentMistakes = [
+  'Select the correct visa category',
+  'Enter your personal information accurately',
+  'Use the correct passport details',
+  'Follow the current payment instructions',
+  'Keep your payment confirmation',
+  'Avoid making duplicate payments unless instructed',
+  'Check the latest official fee information',
 ];
 
 const faqs = [
   {
-    q: 'How much does a USA visa cost?',
-    a: 'The standard nonimmigrant visa application (MRV) fee for a B-1/B-2 visitor visa is currently US$185. Some categories cost more — for example, H-1B and L-1 work visas are typically US$205. Always confirm the current fee for your visa category before you pay.',
+    q: 'How much is the USA visa fee?',
+    a: 'The applicable fee depends on the visa category. Applicants should check the latest official fee schedule before making a payment.',
   },
   {
-    q: 'Is the US visa fee refundable?',
-    a: 'No. The visa application (MRV) fee is non-refundable and non-transferable, even if your visa is refused or you do not attend your appointment.',
+    q: 'Is the USA visa fee refundable?',
+    a: 'Visa application fees are generally non-refundable. Applicants should verify the current rules before making a payment.',
   },
   {
-    q: 'How do I pay the US visa fee in India?',
-    a: 'The fee is paid through the official US visa fee payment channels before you book your appointment. You must have a valid payment receipt to schedule the interview.',
+    q: 'Do I have to pay the USA visa fee before the appointment?',
+    a: 'Applicants generally need to complete the applicable fee payment before proceeding with appointment scheduling.',
   },
   {
-    q: 'Does the fee guarantee my visa?',
-    a: 'No. Paying the fee only means your application will be processed. The decision is made solely by the consular officer based on your application and interview.',
+    q: 'Does the visa fee guarantee approval?',
+    a: 'No. Payment of the visa fee does not guarantee visa approval.',
   },
   {
-    q: 'Are there extra fees for a student or work visa?',
-    a: 'Yes. Student and exchange visitor visas usually require a separate SEVIS fee, and some work visa categories include additional fraud-prevention fees. See the official fee schedule for your category.',
+    q: 'Can the USA visa fee change?',
+    a: 'Yes. Visa fees and payment procedures can change. Always verify the latest applicable information before payment.',
   },
   {
-    q: 'How long is the visa fee receipt valid?',
-    a: 'The MRV fee receipt is valid for a limited period for scheduling an appointment. If it expires before you book, you may need to pay again — so plan your appointment promptly after paying.',
+    q: 'Is the USA visa fee the same for every visa?',
+    a: 'No. Different visa categories can have different fee structures.',
   },
 ];
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'USA Visa Fees (2026): How Much Does a US Visa Cost?',
+  headline: 'USA Visa Fees for Indian Applicants',
   description:
-    'USA visa fees explained — the nonimmigrant visa application (MRV) fee by visa type, what the fee covers, other costs and why it is non-refundable.',
+    'Understanding USA visa fees for Indian applicants — the visa application (MRV) fee, what the fee covers, refund rules, payment steps and fee categories.',
   author: { '@type': 'Organization', name: 'A Visa Experts', url: 'https://avisaexperts.com' },
   publisher: {
     '@type': 'Organization',
@@ -100,11 +102,11 @@ const UsaVisaFees = () => (
     <div className="spage">
       <section className="spage-hero hero-usa">
         <div className="spage-hero-inner">
-          <h1>USA Visa Fees (2026): How Much Does a US Visa Cost?</h1>
+          <h1>USA Visa Fees for Indian Applicants</h1>
           <p>
-            The cost of a US visa is made up of the government application fee plus a few possible extras. This guide
-            explains the nonimmigrant visa application (MRV) fee by visa type, what the fee covers, other costs to plan
-            for, and why the fee is not refundable.
+            Understanding the USA visa fees is an important part of planning your US visa application from India. The fee
+            you need to pay depends on the visa category you are applying for and the type of service or application
+            involved.
           </p>
           <div className="spage-btns">
             <a className="spage-btn primary" href={BOOK_URL}>
@@ -119,89 +121,33 @@ const UsaVisaFees = () => (
 
       <section className="spage-section">
         <div className="spage-wrap">
-          <h2>USA visa application fees by visa type</h2>
-          <div className="spage-table-wrap">
-            <table className="spage-table">
-              <thead>
-                <tr>
-                  <th>Visa type</th>
-                  <th>Application (MRV) fee</th>
-                  <th>Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {feeRows.map((r) => (
-                  <tr key={r.type}>
-                    <td>{r.type}</td>
-                    <td>{r.fee}</td>
-                    <td>{r.note}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="spage-subnote">
-            Fees are set by the US government and can change. Always confirm the current fee for your visa category
-            before you pay — our team can guide you.
-          </p>
-        </div>
-      </section>
-
-      <section className="spage-section">
-        <div className="spage-wrap">
-          <h2>What the visa fee covers — and what it doesn&rsquo;t</h2>
-          <div className="spage-cards">
-            <div className="spage-card">
-              <h3>What it covers</h3>
-              <ul className="spage-list">
-                {covered.map((c) => (
-                  <li key={c}>{c}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="spage-card">
-              <h3>What it does not cover</h3>
-              <ul className="spage-list">
-                {notCovered.map((c) => (
-                  <li key={c}>{c}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="spage-section">
-        <div className="spage-wrap">
-          <h2>Other costs to plan for</h2>
-          <ul className="spage-list">
-            {otherCosts.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
-          <p className="spage-subnote">
-            The visa application fee is non-refundable and non-transferable — it is not returned if your visa is refused
-            or you miss your appointment.
-          </p>
-        </div>
-      </section>
-
-      <section className="spage-section">
-        <div className="spage-wrap">
-          <h2>Paying the US visa fee in India</h2>
           <p>
-            The visa fee is paid through the official US visa fee payment channels before you can schedule your
-            appointment. Keep your payment receipt safe — you will need it to book the interview, and it is valid for a
-            limited period.
+            The visa application fee is generally required before proceeding with the applicable appointment process.
+            Applicants should always check the latest official fee information before making a payment because fees and
+            payment rules can change.
           </p>
-          <p className="spage-mt-16">
-            Once paid, move quickly to booking. See our guide to the{' '}
-            <Link className="spage-link" href="/usa-visa/appointment">
-              USA visa appointment
-            </Link>{' '}
-            and{' '}
-            <Link className="spage-link" href="/usa-visa/processing-time">
-              processing time
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Application Fee</h2>
+          <p>
+            The US visa application fee is also known as the <strong>Machine Readable Visa (MRV) fee</strong> for many
+            nonimmigrant visa categories.
+          </p>
+          <p>
+            For common visitor visa categories such as B1, B2 and B1/B2, applicants need to pay the applicable visa
+            application fee before completing the appointment process.
+          </p>
+          <p>
+            The amount can vary depending on the visa category. Make sure you select the correct visa category before
+            making your payment.
+          </p>
+          <p>
+            For information about which visa category may apply to your trip, see our{' '}
+            <Link className="spage-link" href="/usa-visa">
+              USA Visitor Visa page
             </Link>
             .
           </p>
@@ -210,47 +156,238 @@ const UsaVisaFees = () => (
 
       <section className="spage-section">
         <div className="spage-wrap">
-          <h2>Related USA visa guides</h2>
-          <div className="spage-cards">
-            <div className="spage-card">
-              <h3>
-                <Link className="spage-link" href="/usa-visa/requirements">
-                  USA Visa Requirements for India
-                </Link>
-              </h3>
-              <p>Eligibility, documents and the application process.</p>
-            </div>
-            <div className="spage-card">
-              <h3>
-                <Link className="spage-link" href="/usa-visa/business-visa">
-                  USA Business Visa
-                </Link>
-              </h3>
-              <p>B-1 business visa requirements and how to apply.</p>
-            </div>
-            <div className="spage-card">
-              <h3>
-                <Link className="spage-link" href="/usa-visa/rejection-reasons">
-                  USA Visa Rejection Reasons
-                </Link>
-              </h3>
-              <p>Why US visas get refused and how to avoid it.</p>
-            </div>
-            <div className="spage-card">
-              <h3>
-                <Link className="spage-link" href="/usa-visa">
-                  USA Visa Overview
-                </Link>
-              </h3>
-              <p>Visitor and tourist visa guidance for the USA.</p>
-            </div>
-          </div>
+          <h2>USA B1/B2 Visa Fees</h2>
+          <p>
+            The B1/B2 visa is commonly used for temporary business and tourism-related travel to the United States.
+          </p>
+          <p>
+            The applicable visa fee must be paid according to the current fee schedule for the visa category.
+          </p>
+          <p>
+            For more information about the B1/B2 category, visit our{' '}
+            <Link className="spage-link" href="/usa-visa/usa-b1b2-visa">
+              USA B1/B2 Visa Guide
+            </Link>
+            .
+          </p>
         </div>
       </section>
 
       <section className="spage-section">
         <div className="spage-wrap">
-          <h2>USA visa fees FAQs</h2>
+          <h2>USA Tourist Visa Fees</h2>
+          <p>
+            Applicants travelling to the USA for tourism, vacation, sightseeing, or visiting family and friends
+            generally apply under the appropriate visitor visa category.
+          </p>
+          <p>
+            The applicable visa fee depends on the visa category and the current US government fee schedule.
+          </p>
+          <p>
+            You can learn more about the visa category through our{' '}
+            <Link className="spage-link" href="/blog/usa-tourist-visa">
+              USA Tourist Visa Guide
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>What Does the USA Visa Fee Cover?</h2>
+          <p>
+            The visa application fee is associated with processing your visa application. However, paying the visa
+            application fee does not mean that your visa is guaranteed to be approved.
+          </p>
+          <p>The fee also does not necessarily cover other expenses you may have during the application process, such as:</p>
+          <ul className="spage-list">
+            {feeCovers.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>Is the USA Visa Fee Refundable?</h2>
+          <p>
+            Visa application fees are generally non-refundable, even if your application is refused or you decide not to
+            continue with the application.
+          </p>
+          <p>Before making the payment, carefully check your visa category and the applicable fee requirements.</p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Fee Payment</h2>
+          <p>
+            Applicants should follow the current payment instructions provided through the official US visa application
+            process in India.
+          </p>
+          <p>
+            After completing the payment, keep your payment receipt or confirmation information safely. You may need the
+            payment information while scheduling or managing your visa appointment.
+          </p>
+          <p>
+            For more information about the appointment process, read our{' '}
+            <Link className="spage-link" href="/usa-visa/appointment">
+              USA Visa Appointment Guide
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Fee and Exchange Rate</h2>
+          <p>
+            US visa fees are set according to the applicable US government fee schedule, while the amount payable in
+            India may be affected by the applicable exchange-rate or payment arrangements.
+          </p>
+          <p>
+            Because exchange rates and official fee schedules can change, applicants should verify the current amount
+            before making a payment.
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>Are There Any Additional USA Visa Fees?</h2>
+          <p>
+            Depending on your visa category, nationality, circumstances, or applicable US government rules, additional
+            fees may apply in some cases.
+          </p>
+          <p>
+            Applicants should check the latest official information for their specific visa category before making
+            travel or payment arrangements.
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Fee for Different Visa Categories</h2>
+          <p>The applicable fee depends on the visa category. Common categories include:</p>
+          <ul className="spage-list">
+            {visaCategories.map((c) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
+          <p className="spage-mt-16">The fee structure is not the same for every US visa category.</p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Fee Payment Mistakes to Avoid</h2>
+          <p>Before paying your visa fee, make sure you:</p>
+          <ul className="spage-list">
+            {paymentMistakes.map((m) => (
+              <li key={m}>{m}</li>
+            ))}
+          </ul>
+          <p className="spage-mt-16">Incorrect information or payment issues may create unnecessary delays.</p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Fee and Appointment</h2>
+          <p>
+            After paying the applicable visa fee, applicants may need to proceed with the appointment scheduling process
+            according to the current US visa procedure in India.
+          </p>
+          <p>Keep your payment confirmation available when managing your appointment.</p>
+          <p>
+            For a detailed explanation, visit our{' '}
+            <Link className="spage-link" href="/usa-visa/appointment">
+              USA Visa Appointment Guide
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Fee and Required Documents</h2>
+          <p>
+            Paying the visa fee is only one part of the application process. Applicants should also prepare the documents
+            relevant to their visa category and circumstances.
+          </p>
+          <p>
+            For a detailed list of supporting documents, see our{' '}
+            <Link className="spage-link" href="/blog/usa-visa-document-checklist">
+              USA Visa Document Checklist
+            </Link>
+            .
+          </p>
+          <p>
+            You should also complete the required DS-160 accurately. Read our{' '}
+            <Link className="spage-link" href="/blog/ds-160-guide-a-simple-guide-for-usa-visa-applicants">
+              DS-160 Guide
+            </Link>{' '}
+            for more information.
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>Does Paying the USA Visa Fee Guarantee Approval?</h2>
+          <p>No. Paying the visa application fee does not guarantee visa approval.</p>
+          <p>
+            The fee is paid for processing the visa application. The final decision depends on the applicant&rsquo;s
+            circumstances and applicable US immigration requirements.
+          </p>
+          <p>Make sure the information in your application and supporting documents is accurate and consistent.</p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>USA Visa Fees and Processing Time</h2>
+          <p>
+            The visa fee and processing time are separate aspects of the application process. Paying the fee does not
+            guarantee a specific processing timeline.
+          </p>
+          <p>
+            Processing time can depend on factors such as visa category, appointment availability, administrative
+            processing, and individual circumstances.
+          </p>
+          <p>
+            For more information, read our{' '}
+            <Link className="spage-link" href="/usa-visa/processing-time">
+              USA Visa Processing Time guide
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>Important Terms and Conditions</h2>
+          <p>
+            Before using visa assistance or related services, applicants should understand the applicable service terms,
+            payment conditions, cancellation rules, refund policy, and other conditions.
+          </p>
+          <p>
+            Read the <strong>Terms &amp; Conditions</strong> before purchasing or using any A Visa Experts service. The
+            Terms &amp; Conditions explain the conditions applicable to services provided by A Visa Experts and should
+            be reviewed before making a service payment.
+          </p>
+        </div>
+      </section>
+
+      <section className="spage-section">
+        <div className="spage-wrap">
+          <h2>Frequently Asked Questions About USA Visa Fees</h2>
           <div className="spage-faq">
             {faqs.map((f) => (
               <details key={f.q}>
@@ -264,8 +401,11 @@ const UsaVisaFees = () => (
 
       <section className="spage-cta">
         <div className="spage-wrap">
-          <h2>Not sure what your US visa will cost?</h2>
-          <p>Talk to an expert — we&rsquo;ll confirm the current fee for your category and plan your application.</p>
+          <h2>Need Help With Your USA Visa Application?</h2>
+          <p>
+            Understanding the applicable fees and payment requirements can help you prepare for your visa application.
+            If you need assistance with your USA visa application, contact A Visa Experts for guidance.
+          </p>
           <div className="spage-btns">
             <a className="spage-btn primary" href={BOOK_URL}>
               Book an Appointment
