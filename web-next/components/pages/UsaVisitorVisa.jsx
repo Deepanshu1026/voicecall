@@ -415,6 +415,43 @@ const UsaVisitorVisa = () => {
           </div>
         </section>
 
+        {/* USA visa guides */}
+        <section className="spage-section">
+          <div className="spage-wrap">
+            <h2>Explore USA visa guides</h2>
+            <div className="spage-cards">
+              <div className="spage-card">
+                <h3><a className="spage-link" href="/usa-visa/business-visa">USA Business Visa (B-1)</a></h3>
+                <p>Requirements, documents and how to apply for a US business visa.</p>
+              </div>
+              <div className="spage-card">
+                <h3><a className="spage-link" href="/usa-visa/requirements">USA Visa Requirements for India</a></h3>
+                <p>Eligibility, documents and the application process for Indian citizens.</p>
+              </div>
+              <div className="spage-card">
+                <h3><a className="spage-link" href="/usa-visa/fees">USA Visa Fees</a></h3>
+                <p>How much a US visa costs and what the fee covers.</p>
+              </div>
+              <div className="spage-card">
+                <h3><a className="spage-link" href="/usa-visa/appointment">USA Visa Appointment</a></h3>
+                <p>How to book the appointment and what to expect on the day.</p>
+              </div>
+              <div className="spage-card">
+                <h3><a className="spage-link" href="/usa-visa/processing-time">USA Visa Processing Time</a></h3>
+                <p>How long each stage of US visa processing takes.</p>
+              </div>
+              <div className="spage-card">
+                <h3><a className="spage-link" href="/usa-visa/rejection-reasons">USA Visa Rejection Reasons</a></h3>
+                <p>Why US visas get refused and how to avoid it.</p>
+              </div>
+              <div className="spage-card">
+                <h3><a className="spage-link" href="/usa-visa/usa-b1b2-visa">USA B1/B2 Visa</a></h3>
+                <p>Everything about the B1/B2 visitor visa for the USA.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ */}
         <section className="spage-section" id="faq">
           <div className="spage-wrap">
