@@ -411,7 +411,7 @@ const UsaVisitorVisa = () => {
               No consultant, document, or service can guarantee USA visa approval. The final decision is made by the
               appropriate U.S. authorities.
             </p>
-            <a className="spage-link" href="#refusal">Read Common USA Visa Rejection Reasons</a>
+            <a className="spage-link" href="/usa-visa/rejection-reasons">Read the full guide to USA Visa Rejection Reasons</a>
           </div>
         </section>
 
