@@ -48,6 +48,7 @@ const staticPages = [
     images: [{ loc: img('transitvisa_full 1.webp'), title: 'Transit Visa Services - A Visa Experts' }],
   },
   { path: '/usa-visa', priority: '0.9', changefreq: 'monthly' },
+  { path: '/usa-visa/processing-time', priority: '0.8', changefreq: 'monthly' },
   { path: '/usa-visa/usa-b1b2-visa', priority: '0.8', changefreq: 'monthly' },
   { path: '/canada-visa', priority: '0.8', changefreq: 'monthly' },
   { path: '/uk-visa', priority: '0.8', changefreq: 'monthly' },

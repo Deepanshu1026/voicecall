@@ -390,7 +390,7 @@ const UsaVisitorVisa = () => {
               Because processing times can change, applicants should avoid relying on a fixed number of days when
               planning international travel.
             </p>
-            <a className="spage-link" href="#processing">Check USA Visa Processing Time</a>
+            <a className="spage-link" href="/usa-visa/processing-time">Check the full USA Visa Processing Time guide</a>
           </div>
         </section>
 
