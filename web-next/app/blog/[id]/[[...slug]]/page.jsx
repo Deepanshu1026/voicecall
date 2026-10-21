@@ -1,5 +1,6 @@
 import { notFound, permanentRedirect } from 'next/navigation';
 import BlogDetail from '../../../../components/pages/BlogDetail';
+import BlogViewTracker from '../../../../components/BlogViewTracker';
 import { blogAPI } from '../../../../lib/api';
 import { cleanPostHtml } from '../../../../lib/cleanPostHtml';
 
@@ -114,5 +115,10 @@ export default async function Page({ params }) {
     permanentRedirect(`/blog/${post.slug || slugify(post.title)}`);
   }
   const related = await getRelated(params.id);
-  return <BlogDetail post={post} related={related} />;
+  return (
+    <>
+      <BlogViewTracker id={post.id} />
+      <BlogDetail post={post} related={related} />
+    </>
+  );
 }

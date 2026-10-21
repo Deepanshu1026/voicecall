@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import LandingLayout from '../components/user/LandingLayout';
@@ -34,6 +34,7 @@ const BlogDetail = () => {
   const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const viewTracked = useRef(false);
 
   const postId = id;
 
@@ -81,6 +82,12 @@ const BlogDetail = () => {
     };
     loadPost();
     return () => { cancelled = true; };
+  }, [postId]);
+
+  useEffect(() => {
+    if (!postId || viewTracked.current) return;
+    viewTracked.current = true;
+    blogAPI.recordPostView(postId).catch(() => {});
   }, [postId]);
 
   const pageUrl = useMemo(() => `https://avisaexperts.com/blog/${post?.slug || slugify(post?.title || '')}`, [post]);

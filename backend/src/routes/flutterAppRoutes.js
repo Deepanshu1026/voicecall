@@ -1454,9 +1454,32 @@ router.get('/posts/:id', asyncHandler(async (req, res) => {
     throw new AppError('Post not found', 404);
   }
   await ensurePostSlug(post);
-  // Increment clicks
-  await Post.findByIdAndUpdate(post._id, { $inc: { clicks: 1 } });
   res.json({ success: true, data: post });
+}));
+
+// Record a single blog view (click). Called once per real page view by the clients,
+// so the counter is not inflated by metadata/related fetches or bots that read the API.
+router.post('/posts/:id/view', asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  let post;
+  if (/^[0-9a-fA-F]{24}$/.test(id)) {
+    post = await Post.findById(id).select('_id');
+  }
+  if (!post && /^\d+$/.test(id)) {
+    post = await Post.findOne({ legacyId: parseInt(id, 10) }).select('_id');
+  }
+  if (!post) {
+    post = await Post.findOne({ slug: id }).select('_id');
+  }
+  if (!post) {
+    throw new AppError('Post not found', 404);
+  }
+  const updated = await Post.findByIdAndUpdate(
+    post._id,
+    { $inc: { clicks: 1 } },
+    { new: true }
+  ).select('clicks');
+  res.json({ success: true, data: { clicks: updated ? updated.clicks : 0 } });
 }));
 
 router.get('/posts/:id/related', asyncHandler(async (req, res) => {

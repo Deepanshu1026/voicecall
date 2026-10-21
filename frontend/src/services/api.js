@@ -243,6 +243,7 @@ export const blogAPI = {
   getPosts: (params) => api.get('/app/posts', { params }),
   getPostById: (id) => api.get(`/app/posts/${id}`),
   getRelatedPosts: (id) => api.get(`/app/posts/${id}/related`),
+  recordPostView: (id) => api.post(`/app/posts/${id}/view`),
 };
 
 export const bannerAPI = {
