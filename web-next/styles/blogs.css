@@ -16,7 +16,9 @@
 .blogs-page {
   font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--blogs-text);
-  overflow-x: hidden;
+  /* `clip` (not `hidden`) so it does not create a scroll container that would
+     break `position: sticky` on the article's table of contents. */
+  overflow-x: clip;
   background: var(--blogs-white);
 }
 
@@ -476,42 +478,24 @@
 /* The detail page uses one wider, centred container so the hero, breadcrumb and
    article all share the same left/right edges and the content fills the screen. */
 .blog-detail .blogs-container {
-  max-width: 1080px;
+  max-width: 1240px;
 }
 
+/* Title band — a brand gradient (no background photo) so the featured image can
+   be shown properly, at full size, right below it. */
 .blog-detail-hero {
   position: relative;
-  min-height: 420px;
   display: flex;
   align-items: flex-end;
-  padding: 160px 0 60px;
+  padding: 190px 0 54px;
   color: var(--blogs-white);
-  overflow: hidden;
-}
-
-.blog-detail-hero-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.blog-detail-hero-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.blog-detail-hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0, 30, 116, 0.7) 0%, rgba(0, 30, 116, 0.92) 100%);
-  z-index: 1;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(245, 134, 52, 0.22), transparent 55%),
+    linear-gradient(135deg, var(--blogs-primary) 0%, var(--blogs-primary-light) 100%);
 }
 
 .blog-detail-hero-content {
   position: relative;
-  z-index: 2;
   width: 100%;
 }
 
@@ -609,15 +593,21 @@
 
 .blog-detail-content {
   min-width: 0;
+  max-width: 840px;
 }
 
-/* Article typography — wide, centered measure with a tight, readable rhythm */
+.blog-detail-layout:not(.has-toc) .blog-detail-content {
+  margin: 0 auto;
+}
+
+/* Article typography — spacious, readable measure with comfortable rhythm */
 .blog-detail-body {
   font-size: 18px;
-  line-height: 1.6;
-  color: #334155;
+  line-height: 1.85;
+  color: #2d3748;
   max-width: 100%;
   overflow-wrap: break-word;
+  letter-spacing: -0.01em;
 }
 
 .blog-detail-body > *:first-child {
@@ -629,16 +619,43 @@
 .blog-detail-body h3,
 .blog-detail-body h4 {
   color: var(--blogs-primary);
-  line-height: 1.28;
   font-weight: 800;
-  letter-spacing: -0.01em;
-  scroll-margin-top: 120px;
+  scroll-margin-top: 140px;
 }
 
-.blog-detail-body h1 { font-size: 30px; margin: 28px 0 12px; }
-.blog-detail-body h2 { font-size: 27px; margin: 28px 0 12px; }
-.blog-detail-body h3 { font-size: 22px; margin: 24px 0 10px; }
-.blog-detail-body h4 { font-size: 19px; margin: 20px 0 8px; }
+.blog-detail-body h1 {
+  font-size: 32px;
+  line-height: 1.3;
+  margin: 44px 0 20px;
+  letter-spacing: -0.02em;
+}
+
+.blog-detail-body h2 {
+  font-size: 28px;
+  line-height: 1.35;
+  margin: 48px 0 18px;
+  letter-spacing: -0.02em;
+  color: var(--blogs-primary);
+  border-left: 4px solid var(--blogs-accent);
+  padding-left: 16px;
+}
+
+.blog-detail-body h3 {
+  font-size: 22px;
+  line-height: 1.4;
+  margin: 36px 0 14px;
+  letter-spacing: -0.015em;
+  color: var(--blogs-primary-light);
+  font-weight: 700;
+}
+
+.blog-detail-body h4 {
+  font-size: 19px;
+  line-height: 1.45;
+  margin: 28px 0 12px;
+  color: #1e293b;
+  font-weight: 700;
+}
 
 /* Headings must always render at one size. The editor / pasted content can leave
    inline font-size / font-weight / colour on child elements (<b>, <span>, <font>),
@@ -657,7 +674,8 @@
 }
 
 .blog-detail-body p {
-  margin: 0 0 12px;
+  margin: 0 0 22px;
+  line-height: 1.85;
 }
 
 .blog-detail-body p:last-child {
@@ -675,7 +693,7 @@
 .blog-detail-body u,
 .blog-detail-body ins {
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
 }
 
 .blog-detail-body s,
@@ -692,22 +710,23 @@
 
 .blog-detail-body code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.92em;
+  font-size: 0.9em;
   background: #f1f5f9;
   border: 1px solid var(--blogs-border);
   border-radius: 6px;
-  padding: 2px 6px;
+  padding: 3px 7px;
+  color: #0f172a;
 }
 
 .blog-detail-body pre {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 15px;
-  line-height: 1.55;
+  line-height: 1.6;
   background: #0f172a;
   color: #e2e8f0;
-  border-radius: 12px;
-  padding: 18px 20px;
-  margin: 18px 0;
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin: 26px 0;
   overflow-x: auto;
 }
 
@@ -720,10 +739,10 @@
 }
 
 .blog-detail-body mark {
-  background: #fde047;
+  background: #fef08a;
   color: #1f2937;
-  padding: 0 3px;
-  border-radius: 3px;
+  padding: 1px 5px;
+  border-radius: 4px;
 }
 
 .blog-detail-body sub,
@@ -735,8 +754,9 @@
 .blog-detail-body a {
   color: var(--blogs-accent);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
   font-weight: 600;
+  transition: color 0.2s ease;
 }
 
 .blog-detail-body a:hover {
@@ -748,9 +768,9 @@
   display: block;
   max-width: 100%;
   height: auto;
-  border-radius: 14px;
-  margin: 20px auto;
-  box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.45);
+  border-radius: 16px;
+  margin: 32px auto;
+  box-shadow: 0 20px 40px -20px rgba(0, 30, 116, 0.25);
 }
 
 .blog-detail-body p img {
@@ -759,19 +779,19 @@
 }
 
 .blog-detail-body figure {
-  margin: 20px 0;
+  margin: 32px 0;
   text-align: center;
 }
 
 .blog-detail-body figcaption {
-  margin-top: 10px;
+  margin-top: 12px;
   font-size: 14px;
   color: var(--blogs-text-light);
   text-align: center;
+  font-style: italic;
 }
 
-/* Tailwind Preflight resets lists to `list-style: none` — restore real markers
-   for article content (bullets / numbers) including nested lists. */
+/* Bullet and Numbered Lists */
 .blog-detail-body ul { list-style: disc; }
 .blog-detail-body ul ul { list-style: circle; }
 .blog-detail-body ul ul ul { list-style: square; }
@@ -781,12 +801,13 @@
 
 .blog-detail-body ol,
 .blog-detail-body ul {
-  margin: 0 0 12px;
+  margin: 0 0 24px;
   padding-left: 28px;
 }
 
 .blog-detail-body li {
-  margin-bottom: 4px;
+  margin-bottom: 10px;
+  line-height: 1.75;
   color: #334155;
 }
 
@@ -795,42 +816,89 @@
   font-weight: 700;
 }
 
+.blog-detail-body li strong,
+.blog-detail-body li b {
+  color: #0f172a;
+}
+
+/* Callouts / Key Takeaways */
+.blog-detail-body .blog-callout,
+.blog-callout {
+  background: #f0f7ff;
+  border: 1px solid #bfdbfe;
+  border-left: 5px solid var(--blogs-primary);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin: 28px 0;
+  box-shadow: 0 4px 16px rgba(0, 30, 116, 0.04);
+}
+
+.blog-detail-body .blog-callout p,
+.blog-callout p {
+  margin: 0;
+  color: #1e293b;
+  line-height: 1.75;
+  font-size: 17.5px;
+}
+
+.blog-callout strong {
+  color: var(--blogs-primary);
+}
+
+/* Blockquotes */
 .blog-detail-body blockquote {
   border-left: 4px solid var(--blogs-accent);
-  margin: 20px 0;
-  padding: 16px 22px;
+  margin: 28px 0;
+  padding: 20px 26px;
   font-style: italic;
-  font-size: 17.5px;
-  color: var(--blogs-text);
-  background: var(--blogs-bg);
+  font-size: 18.5px;
+  line-height: 1.75;
+  color: #1e293b;
+  background: #fff8f3;
   border-radius: 0 14px 14px 0;
 }
 
 .blog-detail-body hr {
   border: none;
   border-top: 1px solid var(--blogs-border);
-  margin: 26px 0;
+  margin: 36px 0;
 }
 
+/* Tables */
 .blog-detail-body table {
   width: 100%;
-  border-collapse: collapse;
-  margin: 18px 0;
-  font-size: 16px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 28px 0;
+  font-size: 15.5px;
+  border: 1px solid var(--blogs-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 30, 116, 0.04);
 }
 
 .blog-detail-body th,
 .blog-detail-body td {
-  border: 1px solid var(--blogs-border);
-  padding: 12px 14px;
+  padding: 14px 18px;
   text-align: left;
   vertical-align: top;
 }
 
 .blog-detail-body th {
-  background: var(--blogs-bg);
-  color: var(--blogs-primary);
+  background: var(--blogs-primary);
+  color: #ffffff;
   font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.blog-detail-body td {
+  border-top: 1px solid var(--blogs-border);
+  color: #334155;
+  line-height: 1.6;
+}
+
+.blog-detail-body tr:nth-child(even) td {
+  background: #f8fafc;
 }
 
 .blog-detail-actions {
@@ -840,60 +908,302 @@
   flex-wrap: wrap;
 }
 
+/* The sidebar holds only the table of contents and is desktop-only. On smaller
+   screens the TOC is rendered as a collapsible box above the article instead. */
 .blog-detail-sidebar {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-  margin-top: 8px;
-  padding-top: 40px;
+  display: none;
+}
+
+/* Reading progress bar */
+.blog-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 9999;
+  pointer-events: none;
+  background: transparent;
+}
+
+.blog-progress-bar {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 0 3px 3px 0;
+  /* Solid accent (not the brand blue) so the bar stays clearly visible on top of
+     the dark blue contact bar and the white header alike. */
+  background: linear-gradient(90deg, #f58634 0%, #ffb066 100%);
+  box-shadow: 0 0 10px rgba(245, 134, 52, 0.75);
+  transition: width 0.08s linear;
+}
+
+/* Hero meta with icons */
+.blog-detail-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.blog-detail-meta-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Table of contents */
+.blog-toc {
+  display: none;
+}
+
+.blog-toc-title {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--blogs-primary);
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--blogs-border);
+}
+
+.blog-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.blog-toc-item a {
+  display: block;
+  padding: 8px 12px;
+  border-left: 2px solid transparent;
+  border-radius: 0 8px 8px 0;
+  color: var(--blogs-text-light);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.blog-toc-item a:hover {
+  color: var(--blogs-primary);
+  background: var(--blogs-white);
+}
+
+.blog-toc-item a.is-active {
+  color: var(--blogs-accent);
+  border-left-color: var(--blogs-accent);
+  background: rgba(245, 134, 52, 0.1);
+  font-weight: 700;
+}
+
+/* Long lists shrink instead of scrolling, so the box never needs its own
+   scrollbar. Tiers kick in as the number of main headings grows. */
+.blog-toc.is-compact {
+  padding: 18px 14px;
+}
+
+.blog-toc.is-compact .blog-toc-title {
+  font-size: 13px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.blog-toc.is-compact .blog-toc-item a {
+  font-size: 13px;
+  padding: 6px 12px;
+}
+
+.blog-toc.is-dense {
+  padding: 15px 12px;
+}
+
+.blog-toc.is-dense .blog-toc-title {
+  font-size: 12px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+}
+
+.blog-toc.is-dense .blog-toc-item a {
+  font-size: 12px;
+  line-height: 1.35;
+  padding: 4px 10px;
+}
+
+.blog-toc.is-ultra {
+  padding: 13px 11px;
+}
+
+.blog-toc.is-ultra .blog-toc-title {
+  font-size: 11.5px;
+  margin-bottom: 7px;
+  padding-bottom: 7px;
+}
+
+.blog-toc.is-ultra .blog-toc-item a {
+  font-size: 11.5px;
+  line-height: 1.3;
+  padding: 3px 9px;
+}
+
+/* Collapsible TOC for phones / tablets */
+.blog-toc-mobile {
+  border: 1px solid var(--blogs-border);
+  border-radius: 14px;
+  background: var(--blogs-bg);
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.blog-toc-mobile summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--blogs-primary);
+}
+
+.blog-toc-mobile summary::-webkit-details-marker {
+  display: none;
+}
+
+.blog-toc-mobile-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blogs-text-light);
+  background: var(--blogs-white);
+  border: 1px solid var(--blogs-border);
+  border-radius: 50px;
+  padding: 3px 10px;
+}
+
+.blog-toc-mobile .blog-toc-list {
+  max-height: none;
+  padding: 4px 8px 12px;
+}
+
+/* Article tags */
+.blog-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.blog-tag {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 50px;
+  background: var(--blogs-bg);
+  border: 1px solid var(--blogs-border);
+  color: var(--blogs-primary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Share row */
+.blog-share {
+  margin-top: 32px;
+  padding-top: 26px;
   border-top: 1px solid var(--blogs-border);
 }
 
-.blog-sidebar-card {
-  background: var(--blogs-bg);
-  border: 1px solid var(--blogs-border);
-  border-radius: var(--blogs-radius);
-  padding: 28px;
-  box-shadow: var(--blogs-shadow);
-}
-
-.blog-sidebar-card h3 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--blogs-primary);
-  margin: 0 0 12px;
-}
-
-.blog-sidebar-card p {
-  font-size: 14px;
-  color: var(--blogs-text-light);
-  line-height: 1.6;
-  margin: 0 0 20px;
-}
-
-.blog-sidebar-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.blog-sidebar-links li {
-  border-bottom: 1px solid var(--blogs-border);
-}
-
-.blog-sidebar-links a {
+.blog-share-label {
   display: block;
-  padding: 12px 0;
-  color: var(--blogs-text);
-  font-weight: 600;
-  font-size: 14px;
-  text-decoration: none;
-  transition: color 0.3s ease, padding 0.3s ease;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--blogs-text-light);
 }
 
-.blog-sidebar-links a:hover {
-  color: var(--blogs-accent);
-  padding-left: 8px;
+.blog-share-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.blog-share-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--blogs-border);
+  background: var(--blogs-white);
+  color: var(--blogs-text-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.blog-share-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.blog-share-btn:hover {
+  transform: translateY(-2px);
+  color: var(--blogs-white);
+  border-color: transparent;
+}
+
+.blog-share-btn.is-whatsapp:hover { background: #25d366; }
+.blog-share-btn.is-facebook:hover { background: #1877f2; }
+.blog-share-btn.is-x:hover { background: #0f172a; }
+.blog-share-btn.is-linkedin:hover { background: #0a66c2; }
+.blog-share-btn.is-copy:hover { background: var(--blogs-primary); }
+
+.blog-share-copied {
+  font-size: 13px;
+  font-weight: 700;
+  color: #16a34a;
+}
+
+/* Back to top */
+.blog-back-to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 24px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: var(--blogs-primary);
+  color: var(--blogs-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 30, 116, 0.32);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease, background 0.25s ease;
+  z-index: 900;
+}
+
+.blog-back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.blog-back-to-top:hover {
+  background: var(--blogs-accent);
+}
+
+.blog-back-to-top svg {
+  width: 22px;
+  height: 22px;
 }
 
 .blog-related-section {
@@ -978,9 +1288,43 @@
   }
 
   .blog-detail-layout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 44px;
     padding: 60px 0 100px;
+  }
+
+  /* Two columns only when there is a table of contents to show. */
+  .blog-detail-layout.has-toc {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 48px;
+  }
+
+  .blog-detail-sidebar {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Sticky table of contents on the right. `top` clears the fixed top bar
+     (42px) + fixed header (~100px) so the box never hides behind them. */
+  .blog-toc {
+    display: block;
+    position: sticky;
+    top: 150px;
+    background: var(--blogs-bg);
+    border: 1px solid var(--blogs-border);
+    border-radius: var(--blogs-radius);
+    padding: 22px 18px;
+    box-shadow: var(--blogs-shadow);
+  }
+
+  .blog-toc-mobile {
+    display: none;
+  }
+
+  /* Anchor jumps (TOC clicks) must clear the fixed header too. */
+  .blog-detail-body h1,
+  .blog-detail-body h2,
+  .blog-detail-body h3,
+  .blog-detail-body h4 {
+    scroll-margin-top: 150px;
   }
 }
 

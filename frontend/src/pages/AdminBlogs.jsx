@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { adminAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import RichTextEditor from '../components/RichTextEditor';
+import { cleanPostHtml } from '../utils/cleanPostHtml';
 import '../styles/adminBlogs.css';
+import '../styles/blogs.css';
 
 const CATEGORIES = ['General', 'Tourist Visa', 'Country Guides', 'Company News', 'Leadership', 'Immigration Updates', 'Success Stories'];
 
@@ -42,7 +44,9 @@ const AdminBlogs = () => {
   const [editingId, setEditingId] = useState(null);
   const [slugTouched, setSlugTouched] = useState(false);
   const [search, setSearch] = useState('');
+  const [contentTab, setContentTab] = useState('editor'); // 'editor' | 'preview'
   const formRef = useRef(null);
+
 
   const fetchBlogs = async () => {
     try {
@@ -112,8 +116,10 @@ const AdminBlogs = () => {
       toast.error('Content is required');
       return;
     }
+    const cleanedContent = cleanPostHtml(form.content);
     const payload = {
       ...form,
+      content: cleanedContent,
       slug: form.slug || slugify(form.title),
       imageAlt: form.imageAlt || form.title,
       metaTitle: form.metaTitle || form.title,
@@ -153,6 +159,16 @@ const AdminBlogs = () => {
   const previewUrl = form.canonicalUrl || `https://avisaexperts.com/blog/${form.slug || previewSlug}`;
   const serpTitle = form.metaTitle || form.title || 'Your blog title';
   const serpDesc = form.metaDescription || form.excerpt || 'Add a meta description to control how this blog appears on Google.';
+
+  const previewHtml = useMemo(() => cleanPostHtml(form.content || ''), [form.content]);
+  const previewHeadings = useMemo(() => {
+    const matches = [...previewHtml.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi)];
+    return matches.map((m) => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
+  }, [previewHtml]);
+  const previewReadingTime = useMemo(() => {
+    const words = previewHtml.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.round(words / 200));
+  }, [previewHtml]);
 
   return (
     <div className="admin-blogs-page">
@@ -196,13 +212,67 @@ const AdminBlogs = () => {
           </div>
 
           <div className="blog-field full">
-            <label>Content <span className="req">*</span></label>
-            <RichTextEditor
-              value={form.content}
-              onChange={(html) => setForm((prev) => ({ ...prev, content: html }))}
-              placeholder="Write your blog content here..."
-            />
+            <div className="blog-content-head-bar">
+              <label>Content <span className="req">*</span></label>
+              <div className="blog-tab-switcher">
+                <button
+                  type="button"
+                  className={`blog-tab-btn ${contentTab === 'editor' ? 'active' : ''}`}
+                  onClick={() => setContentTab('editor')}
+                >
+                  <i className="bi bi-pencil" /> Editor
+                </button>
+                <button
+                  type="button"
+                  className={`blog-tab-btn ${contentTab === 'preview' ? 'active' : ''}`}
+                  onClick={() => setContentTab('preview')}
+                >
+                  <i className="bi bi-eye" /> Reader View Preview {previewHeadings.length > 0 ? `(${previewHeadings.length} sections)` : ''}
+                </button>
+              </div>
+            </div>
+
+            {contentTab === 'editor' ? (
+              <RichTextEditor
+                value={form.content}
+                onChange={(html) => setForm((prev) => ({ ...prev, content: html }))}
+                placeholder="Write your blog content here..."
+              />
+            ) : (
+              <div className="blog-reader-preview-card">
+                <div className="blog-preview-banner">
+                  <div className="blog-preview-header-meta">
+                    <span className="blog-preview-cat">{form.category || 'General'}</span>
+                    <h3 className="blog-preview-headline">{form.title || 'Untitled Article'}</h3>
+                    <div className="blog-preview-chips">
+                      <span>⏱️ {previewReadingTime} min read</span>
+                      <span>📑 {previewHeadings.length} Chapter sections</span>
+                      <span>👤 {form.author || 'A Visa Experts'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {previewHeadings.length >= 2 && (
+                  <div className="blog-preview-toc-box">
+                    <div className="blog-preview-toc-title">📑 Generated Table of Contents</div>
+                    <ul className="blog-preview-toc-list">
+                      {previewHeadings.map((h, i) => (
+                        <li key={i}>{h}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div
+                  className="blog-detail-body blog-preview-body-content"
+                  dangerouslySetInnerHTML={{
+                    __html: previewHtml || '<p style="color: #94a3b8; font-style: italic;">No content yet. Click Editor to start writing or paste text.</p>',
+                  }}
+                />
+              </div>
+            )}
           </div>
+
 
           <div className="blog-field">
             <label>Featured Image URL</label>

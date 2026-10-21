@@ -4,16 +4,16 @@ import {
   FiAlignLeft, FiAlignCenter, FiAlignRight, FiAlignJustify,
   FiRotateCcw, FiRotateCw, FiChevronDown, FiVideo, FiMinus,
 } from 'react-icons/fi';
-import { FaStrikethrough, FaHighlighter, FaUnderline } from 'react-icons/fa';
+import { FaStrikethrough, FaHighlighter, FaUnderline, FaQuoteLeft, FaLightbulb } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 import { cleanPostHtml } from '../utils/cleanPostHtml';
 import '../styles/richTextEditor.css';
 
 const BLOCK_OPTIONS = [
   { label: 'Paragraph', value: 'p' },
-  { label: 'Heading 1', value: 'h1' },
-  { label: 'Heading 2', value: 'h2' },
-  { label: 'Heading 3', value: 'h3' },
-  { label: 'Heading 4', value: 'h4' },
+  { label: 'Heading 2 (Main Section)', value: 'h2' },
+  { label: 'Heading 3 (Sub-heading)', value: 'h3' },
+  { label: 'Heading 4 (Minor Title)', value: 'h4' },
   { label: 'Quote', value: 'blockquote' },
   { label: 'Code Block', value: 'pre' },
 ];
@@ -105,6 +105,15 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
     }
   };
 
+  const insertCallout = () => {
+    editorRef.current?.focus();
+    restoreSelection();
+    const html = `<div class="blog-callout"><p><strong>💡 Key Takeaway:</strong> Write an important requirement, tip, or visa note here...</p></div><p><br></p>`;
+    document.execCommand('insertHTML', false, html);
+    emitChange();
+    forceUpdate((n) => n + 1);
+  };
+
   const insertLink = () => {
     restoreSelection();
     const url = window.prompt('Enter the link URL:', 'https://');
@@ -127,9 +136,26 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
     forceUpdate((n) => n + 1);
   };
 
+  // Auto-format action: instantly cleans messy text, builds real headings, lists,
+  // and removes Word / Docs styling issues.
+  const handleAutoFormat = () => {
+    const el = editorRef.current;
+    if (!el) return;
+    const current = el.innerHTML || '';
+    if (!current.trim()) {
+      toast('Editor is empty', { icon: 'ℹ️' });
+      return;
+    }
+    const cleaned = cleanPostHtml(current);
+    el.innerHTML = cleaned;
+    lastHtml.current = cleaned;
+    if (onChange) onChange(cleaned);
+    forceUpdate((n) => n + 1);
+    toast.success('✨ Content beautified & structured into clean headings and lists!');
+  };
+
   // Paste from Word / Outlook / Google Docs cleanly: strip the junk (o:p,
-  // MsoNormal, <font>, mso-* styles, stray colours) so lists and text keep
-  // rendering correctly on the website.
+  // MsoNormal, <font>, mso-* styles, stray colours) and convert lists/headings.
   const handlePaste = (e) => {
     const cd = e.clipboardData;
     if (!cd) return;
@@ -141,7 +167,14 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
     if (html) {
       document.execCommand('insertHTML', false, cleanPostHtml(html));
     } else if (text) {
-      document.execCommand('insertText', false, text);
+      // Check if text has bullets or arrow headings
+      const formattedText = cleanPostHtml(
+        text
+          .split(/\r?\n\r?\n/)
+          .map((p) => `<p>${p.replace(/\r?\n/g, '<br/>')}</p>`)
+          .join('')
+      );
+      document.execCommand('insertHTML', false, formattedText);
     }
     emitChange();
     forceUpdate((n) => n + 1);
@@ -150,14 +183,15 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
   const active = (command) => {
     try { return document.queryCommandState(command); } catch { return false; }
   };
+
   const currentBlock = () => {
     try { return (document.queryCommandValue('formatBlock') || 'p').toLowerCase(); } catch { return 'p'; }
   };
 
-  const ToolBtn = ({ title, onClick, isActive, children }) => (
+  const ToolBtn = ({ title, onClick, isActive, children, className = '' }) => (
     <button
       type="button"
-      className={`rte-btn ${isActive ? 'active' : ''}`}
+      className={`rte-btn ${isActive ? 'active' : ''} ${className}`}
       title={title}
       onMouseDown={(e) => e.preventDefault()}
       onClick={onClick}
@@ -168,85 +202,86 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
 
   const Divider = () => <span className="rte-divider" />;
 
+  const isH2 = currentBlock() === 'h2';
+  const isH3 = currentBlock() === 'h3';
+  const isQuote = currentBlock() === 'blockquote';
+
   return (
     <div className="rte-wrapper">
       <div className="rte-toolbar">
+        {/* History */}
         <div className="rte-group">
-          <ToolBtn title="Undo" onClick={() => exec('undo')}><FiRotateCcw /></ToolBtn>
-          <ToolBtn title="Redo" onClick={() => exec('redo')}><FiRotateCw /></ToolBtn>
+          <ToolBtn title="Undo (Ctrl+Z)" onClick={() => exec('undo')}><FiRotateCcw /></ToolBtn>
+          <ToolBtn title="Redo (Ctrl+Y)" onClick={() => exec('redo')}><FiRotateCw /></ToolBtn>
         </div>
 
         <Divider />
 
-        <div className="rte-group" ref={menusRef}>
-          <div className="rte-menu">
-            <button
-              type="button"
-              className="rte-menu-btn"
-              title="Text style"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => setOpenMenu((m) => (m === 'style' ? null : 'style'))}
-            >
-              <span>Style</span>
-              <FiChevronDown />
-            </button>
-            {openMenu === 'style' && (
-              <div className="rte-menu-list">
-                {BLOCK_OPTIONS.map((o) => (
-                  <button
-                    key={o.value}
-                    type="button"
-                    className="rte-menu-item"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => { applyBlock(o.value); setOpenMenu(null); }}
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="rte-menu">
-            <button
-              type="button"
-              className="rte-menu-btn"
-              title="Font size"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => setOpenMenu((m) => (m === 'size' ? null : 'size'))}
-            >
-              <span>Size</span>
-              <FiChevronDown />
-            </button>
-            {openMenu === 'size' && (
-              <div className="rte-menu-list">
-                {SIZE_OPTIONS.map((o) => (
-                  <button
-                    key={o.value}
-                    type="button"
-                    className="rte-menu-item"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => { exec('fontSize', o.value); setOpenMenu(null); }}
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+        {/* Quick Heading Buttons */}
+        <div className="rte-group">
+          <ToolBtn
+            title="Main Section (H2) — Automatically generates Table of Contents"
+            isActive={isH2}
+            onClick={() => applyBlock(isH2 ? 'p' : 'h2')}
+            className="rte-btn-tag"
+          >
+            <strong>H2</strong>
+          </ToolBtn>
+          <ToolBtn
+            title="Sub-heading (H3)"
+            isActive={isH3}
+            onClick={() => applyBlock(isH3 ? 'p' : 'h3')}
+            className="rte-btn-tag"
+          >
+            <strong>H3</strong>
+          </ToolBtn>
+          <ToolBtn
+            title="Normal Paragraph"
+            isActive={currentBlock() === 'p'}
+            onClick={() => applyBlock('p')}
+            className="rte-btn-tag"
+          >
+            <span>¶</span>
+          </ToolBtn>
+          <ToolBtn
+            title="Key Takeaway / Tip Box"
+            onClick={insertCallout}
+            className="rte-btn-callout"
+          >
+            <FaLightbulb />
+            <span className="rte-btn-label">Tip Box</span>
+          </ToolBtn>
         </div>
 
         <Divider />
 
+        {/* Formatting */}
         <div className="rte-group">
-          <ToolBtn title="Bold" isActive={active('bold')} onClick={() => exec('bold')}><FiBold /></ToolBtn>
-          <ToolBtn title="Italic" isActive={active('italic')} onClick={() => exec('italic')}><FiItalic /></ToolBtn>
-          <ToolBtn title="Underline" isActive={active('underline')} onClick={() => exec('underline')}><FaUnderline /></ToolBtn>
+          <ToolBtn title="Bold (Ctrl+B)" isActive={active('bold')} onClick={() => exec('bold')}><FiBold /></ToolBtn>
+          <ToolBtn title="Italic (Ctrl+I)" isActive={active('italic')} onClick={() => exec('italic')}><FiItalic /></ToolBtn>
+          <ToolBtn title="Underline (Ctrl+U)" isActive={active('underline')} onClick={() => exec('underline')}><FaUnderline /></ToolBtn>
           <ToolBtn title="Strikethrough" isActive={active('strikeThrough')} onClick={() => exec('strikeThrough')}><FaStrikethrough /></ToolBtn>
           <ToolBtn title="Inline code" onClick={insertInlineCode}><FiCode /></ToolBtn>
+          <ToolBtn title="Quote Block" isActive={isQuote} onClick={() => applyBlock(isQuote ? 'p' : 'blockquote')}><FaQuoteLeft /></ToolBtn>
         </div>
 
         <Divider />
 
+        {/* Lists & Alignment */}
+        <div className="rte-group">
+          <ToolBtn title="Bullet List" isActive={active('insertUnorderedList')} onClick={() => exec('insertUnorderedList')}><FiList /></ToolBtn>
+          <ToolBtn title="Numbered List" isActive={active('insertOrderedList')} onClick={() => exec('insertOrderedList')}>
+            <span className="rte-ol">1.</span>
+          </ToolBtn>
+          <ToolBtn title="Align left" isActive={active('justifyLeft')} onClick={() => exec('justifyLeft')}><FiAlignLeft /></ToolBtn>
+          <ToolBtn title="Align center" isActive={active('justifyCenter')} onClick={() => exec('justifyCenter')}><FiAlignCenter /></ToolBtn>
+          <ToolBtn title="Align right" isActive={active('justifyRight')} onClick={() => exec('justifyRight')}><FiAlignRight /></ToolBtn>
+          <ToolBtn title="Justify" isActive={active('justifyFull')} onClick={() => exec('justifyFull')}><FiAlignJustify /></ToolBtn>
+        </div>
+
+        <Divider />
+
+        {/* Colors */}
         <div className="rte-group">
           <label className="rte-btn rte-color" title="Text color">
             <FiType />
@@ -272,6 +307,7 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
 
         <Divider />
 
+        {/* Media & Links */}
         <div className="rte-group">
           <ToolBtn title="Insert link" onClick={insertLink}><FiLink /></ToolBtn>
           <ToolBtn title="Insert image" onClick={insertImage}><FiImage /></ToolBtn>
@@ -281,24 +317,52 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
 
         <Divider />
 
-        <div className="rte-group">
-          <ToolBtn title="Bullet list" isActive={active('insertUnorderedList')} onClick={() => exec('insertUnorderedList')}><FiList /></ToolBtn>
-          <ToolBtn title="Numbered list" isActive={active('insertOrderedList')} onClick={() => exec('insertOrderedList')}>
-            <span className="rte-ol">1.</span>
-          </ToolBtn>
-          <ToolBtn title="Align left" isActive={active('justifyLeft')} onClick={() => exec('justifyLeft')}><FiAlignLeft /></ToolBtn>
-          <ToolBtn title="Align center" isActive={active('justifyCenter')} onClick={() => exec('justifyCenter')}><FiAlignCenter /></ToolBtn>
-          <ToolBtn title="Align right" isActive={active('justifyRight')} onClick={() => exec('justifyRight')}><FiAlignRight /></ToolBtn>
-          <ToolBtn title="Justify" isActive={active('justifyFull')} onClick={() => exec('justifyFull')}><FiAlignJustify /></ToolBtn>
+        {/* Dropdowns (More styles & Size) */}
+        <div className="rte-group" ref={menusRef}>
+          <div className="rte-menu">
+            <button
+              type="button"
+              className="rte-menu-btn"
+              title="More block styles"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setOpenMenu((m) => (m === 'style' ? null : 'style'))}
+            >
+              <span>More</span>
+              <FiChevronDown />
+            </button>
+            {openMenu === 'style' && (
+              <div className="rte-menu-list">
+                {BLOCK_OPTIONS.map((o) => (
+                  <button
+                    key={o.value}
+                    type="button"
+                    className="rte-menu-item"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => { applyBlock(o.value); setOpenMenu(null); }}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        <Divider />
-
-        <div className="rte-group">
+        {/* Action: Auto-Format */}
+        <div className="rte-group rte-magic-group">
+          <button
+            type="button"
+            className="rte-magic-btn"
+            title="Clean text, turn arrows into H2 headings, and turn • into clean bullet lists"
+            onClick={handleAutoFormat}
+          >
+            <span>✨ Auto-Format</span>
+          </button>
           <ToolBtn title="Clear formatting" onClick={() => exec('removeFormat')}><FiType /></ToolBtn>
         </div>
       </div>
 
+      {/* Editor Writing Area */}
       <div
         ref={editorRef}
         className="rte-editor"
@@ -311,6 +375,16 @@ const RichTextEditor = ({ value = '', onChange, placeholder = 'Write your blog c
         onKeyUp={saveSelection}
         onMouseUp={saveSelection}
       />
+
+      {/* Hint Footer */}
+      <div className="rte-hint-footer">
+        <span className="rte-hint-item">
+          <strong>Tip:</strong> Use <strong>H2</strong> for chapters to auto-create the Table of Contents.
+        </span>
+        <span className="rte-hint-item">
+          Use <strong>✨ Auto-Format</strong> to convert pasted raw text and bullets.
+        </span>
+      </div>
     </div>
   );
 };
