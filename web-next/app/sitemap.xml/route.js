@@ -33,6 +33,12 @@ const staticPages = [
     images: [{ loc: img('eurpean visa 1.webp'), title: 'Visa Services - A Visa Experts' }],
   },
   {
+    path: '/contact',
+    priority: '0.7',
+    changefreq: 'yearly',
+    images: [{ loc: img('tmlogo 1.webp'), title: 'Contact A Visa Experts' }],
+  },
+  {
     path: '/tourist-visa',
     priority: '0.8',
     changefreq: 'monthly',
