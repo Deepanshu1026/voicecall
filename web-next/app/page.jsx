@@ -2,16 +2,14 @@ import UserHome from '../components/pages/UserHome';
 import { resolveImageUrl, resolveReviewImage } from '../lib/imageUrl';
 
 export const metadata = {
-  title: 'A Visa Experts | No.1 Visitor Visa Company in India',
+  title: 'A Visa Experts | Visitor Visa & Immigration Consultants',
   description:
-    "India's trusted No.1 Visitor Visa & Immigration Company. Expert guidance for UK, USA, Canada & Europe visitor visas, plus visa refusal support. Free advice.",
-  keywords:
-    'visa experts, visitor visa, visitor visa India, visa refusal, UK visa approval, immigration company, tourist visa, Canada visa, UK visa, USA visa, Kaveesh Kapoor',
+    'Visitor visa and immigration consultancy in India. Expert guidance for UK, USA, Canada & Europe visitor visas, plus visa refusal support. Free advice.',
   alternates: { canonical: 'https://avisaexperts.com/', languages: { en: '/', 'en-IN': '/', 'x-default': '/' } },
   openGraph: {
-    title: 'A Visa Experts | No.1 Visitor Visa Company in India',
+    title: 'A Visa Experts | Visitor Visa & Immigration Consultants',
     description:
-      "India's trusted No.1 Visitor Visa & Immigration Company. Expert guidance for UK, USA, Canada & Europe visitor visas, plus visa refusal support.",
+      'Visitor visa and immigration consultancy in India. Expert guidance for UK, USA, Canada & Europe visitor visas, plus visa refusal support.',
     url: 'https://avisaexperts.com/',
     images: ['/images/user/slider4 1.webp'],
   },

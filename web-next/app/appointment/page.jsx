@@ -4,8 +4,6 @@ export const metadata = {
   title: 'Book a Visa Appointment Online | A Visa Experts',
   description:
     'Book a visa appointment with A Visa Experts. Get one-to-one advice, a personalised document checklist and clear next steps for your USA, UK or Canada visa.',
-  keywords:
-    'book visa appointment, visa appointment booking, visa consultation, visa appointment online, visa expert appointment, A Visa Experts appointment, USA visa appointment, UK visa appointment, Canada visa appointment',
   alternates: {
     canonical: '/appointment',
     languages: { en: '/appointment', 'en-IN': '/appointment', 'x-default': '/appointment' },

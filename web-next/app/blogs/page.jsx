@@ -7,8 +7,6 @@ export const metadata = {
   title: 'A Visa Experts Blog | Visa Tips, Guides & Success Stories',
   description:
     "Explore expert visa tips, country guides, immigration updates, and success stories from A Visa Experts, India's trusted visa and immigration company.",
-  keywords:
-    'visa blog, immigration tips, tourist visa, Canada visa, UK visa, Australia visa, Kaveesh Kapoor, A Visa Experts',
   alternates: { canonical: '/blogs', languages: { en: '/blogs', 'en-IN': '/blogs', 'x-default': '/blogs' } },
   openGraph: {
     type: 'website',

@@ -20,6 +20,15 @@ const slugify = (text) =>
 const stripHtml = (html) =>
   html ? html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '';
 
+// Cut at a word boundary (never mid-word) and add an ellipsis.
+const truncateWords = (text, max) => {
+  const value = (text || '').trim();
+  if (value.length <= max) return value;
+  const cut = value.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  return `${(lastSpace > 0 ? cut.slice(0, lastSpace) : cut).replace(/[,;:.\-–—]+$/, '')}…`;
+};
+
 async function getPost(id) {
   try {
     const res = await blogAPI.getPostById(id);
@@ -63,11 +72,7 @@ export async function generateMetadata({ params }) {
       robots: { index: false, follow: true },
     };
   }
-  const desc = post.metaDescription
-    ? stripHtml(post.metaDescription).slice(0, 160)
-    : post.excerpt
-      ? stripHtml(post.excerpt).slice(0, 160)
-      : stripHtml(post.content).slice(0, 160);
+  const desc = truncateWords(stripHtml(post.metaDescription || post.excerpt || post.content), 155);
   const ownUrl = `https://avisaexperts.com/blog/${post.slug || slugify(post.title)}`;
   // Only honour a canonical override if it points to a DIFFERENT domain (true cross-post).
   // Internal /blog/... overrides are ignored so the canonical always matches the real URL.
@@ -84,8 +89,10 @@ export async function generateMetadata({ params }) {
       .filter(Boolean)
       .join(', ');
   const metaTitle = post.metaTitle || post.title;
+  // Only append the brand when the result stays within a sane SERP length.
+  const brandedTitle = `${metaTitle} | A Visa Experts Blog`;
   return {
-    title: metaTitle.includes('A Visa Experts') ? metaTitle : `${metaTitle} | A Visa Experts Blog`,
+    title: metaTitle.includes('A Visa Experts') || brandedTitle.length > 60 ? metaTitle : brandedTitle,
     description: desc,
     keywords,
     authors: [{ name: post.author || 'A Visa Experts' }],

@@ -223,8 +223,10 @@ const BlogDetail = ({ post, related = [] }) => {
       description: metaDescription,
       image: imageUrl,
       url: pageUrl,
-      datePublished: post.created_at,
-      dateModified: post.created_at,
+      // One source of truth for dates: the post's publishedAt, with updatedAt for
+      // dateModified — so the byline, Open Graph and schema always agree.
+      datePublished: post.publishedAt || post.created_at,
+      dateModified: post.updatedAt || post.publishedAt || post.created_at,
       author: {
         '@type': 'Organization',
         name: 'A Visa Experts',
@@ -326,11 +328,19 @@ const BlogDetail = ({ post, related = [] }) => {
                   </span>
                   <span className="blog-detail-meta-item">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M3 9h18M8 3v4M16 3v4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
-                    {formatDate(post.created_at)}
+                    Published {formatDate(post.publishedAt || post.created_at)}
                   </span>
+                  {post.updatedAt &&
+                    new Date(post.updatedAt).getTime() - new Date(post.publishedAt || post.created_at).getTime() >
+                      24 * 60 * 60 * 1000 && (
+                      <span className="blog-detail-meta-item">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7M21 4v5h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        Updated {formatDate(post.updatedAt)}
+                      </span>
+                    )}
                   <span className="blog-detail-meta-item">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
-                    By A Visa Experts
+                    A Visa Experts
                   </span>
                 </div>
               </div>

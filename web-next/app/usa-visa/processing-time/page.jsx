@@ -4,8 +4,6 @@ export const metadata = {
   title: 'USA Visa Processing Time 2026 | A Visa Experts',
   description:
     'Understand USA visa processing time stage by stage — DS-160, fee, appointment wait, interview and passport return — plus practical tips to avoid delays.',
-  keywords:
-    'USA visa processing time, US visa processing time, how long does a US visa take, B1 B2 visa processing time, USA tourist visa processing time, US visa appointment wait time, US visa interview waiver, CEAC visa status',
   alternates: {
     canonical: '/usa-visa/processing-time',
     languages: {

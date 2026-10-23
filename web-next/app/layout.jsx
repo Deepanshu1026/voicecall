@@ -16,13 +16,11 @@ const SITE_URL = 'https://avisaexperts.com';
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'A Visa Experts | No.1 Visa Immigration Company in India',
+    default: 'A Visa Experts | Visa & Immigration Consultants',
     template: '%s',
   },
   description:
-    "A Visa Experts is India's trusted No.1 Visa Immigration Company. We help with tourist, transit and PR visas for USA, UK, Canada, Australia, Europe & NZ. Free consultation with expert immigration consultants.",
-  keywords:
-    'A Visa Experts, Best Visa Immigration Company, Visa Immigration Experts, No.1 Visa Immigration Company, best immigration consultants, best visa consultants, tourist visa consultants, PR consultants, permanent residency application, visa agent, immigration agent, visa consultancy India',
+    'Visa consultancy in India for tourist, transit, business and PR visas — USA, UK, Canada, Australia, Europe & New Zealand. Book a free consultation with our experts.',
   authors: [{ name: 'A Visa Experts' }],
   verification: {
     other: { 'msvalidate.01': '1907D46034778900D454338DBF5A543D' },
@@ -40,18 +38,18 @@ export const metadata = {
     type: 'website',
     locale: 'en_US',
     siteName: 'A Visa Experts',
-    title: 'A Visa Experts | No.1 Visa Immigration Company in India',
+    title: 'A Visa Experts | Visa & Immigration Consultants',
     description:
-      "India's trusted No.1 Visa Immigration Company. Free consultation for tourist, transit & PR visas for USA, UK, Canada, Australia, Europe & NZ.",
+      'Visa consultancy in India for tourist, transit, business and PR visas — USA, UK, Canada, Australia, Europe & New Zealand.',
     url: SITE_URL,
     images: [{ url: '/images/user/tmlogo%201.webp', alt: 'A Visa Experts logo' }],
   },
   twitter: {
     card: 'summary_large_image',
     site: '@avisaexperts',
-    title: 'A Visa Experts | No.1 Visa Immigration Company in India',
+    title: 'A Visa Experts | Visa & Immigration Consultants',
     description:
-      "India's trusted No.1 Visa Immigration Company for tourist, transit & PR visas.",
+      'Visa consultancy in India for tourist, transit, business and PR visas.',
     images: ['/images/user/tmlogo%201.webp'],
   },
 };
@@ -70,7 +68,7 @@ const organizationLd = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/user/tmlogo%201.webp`,
   description:
-    "India's trusted No.1 Visa Immigration Company helping individuals and families secure tourist, transit and PR visas.",
+    'Visa consultancy in India helping individuals and families secure tourist, transit and PR visas.',
   foundingDate: '2018',
   founder: { '@type': 'Person', name: 'Kaveesh Kapoor' },
   contactPoint: {
@@ -134,7 +132,7 @@ const localBusinessLd = {
   telephone: '+91-120-4502750',
   priceRange: '₹₹',
   description:
-    'Trusted No.1 Visa Immigration Company for tourist, transit and permanent residency visas.',
+    'Visa consultancy for tourist, transit and permanent residency visas.',
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'B Block, Sector 2',
@@ -158,13 +156,8 @@ const websiteLd = {
   name: 'A Visa Experts',
   url: SITE_URL,
   description:
-    "India's trusted No.1 Visitor Visa & Immigration Company. Expert guidance for UK, USA, Canada, Australia & Europe visitor visas, tourist visas and permanent residency.",
+    'Visa consultancy in India offering expert guidance for UK, USA, Canada, Australia and Europe visitor visas, tourist visas and permanent residency.',
   inLanguage: 'en-IN',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${SITE_URL}/consultants?q={search_term_string}`,
-    'query-input': 'required name=search_term_string',
-  },
   sameAs: [
     'https://www.instagram.com/avisa.expert/',
     'https://www.facebook.com/profile.php?id=61590985693281',

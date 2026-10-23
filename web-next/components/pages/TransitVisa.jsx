@@ -124,9 +124,8 @@ const TransitVisa = () => {
                   different countries.
                 </p>
                 <p>
-                  Whether you need airport transit or short-term entry, we help you understand the rules and avoid delays.
-                  Trust the No.1 Visa Immigration Company to ensure your journey continues smoothly without unexpected
-                  complications.
+                  Whether you need airport transit or short-term entry, we help you understand the rules and avoid delays,
+                  so your journey continues smoothly without unexpected complications.
                 </p>
                 <button className="visa-about-button" onClick={() => navigate('/consultants')}>
                   Consult Now

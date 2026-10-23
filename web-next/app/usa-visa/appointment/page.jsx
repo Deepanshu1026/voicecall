@@ -4,8 +4,6 @@ export const metadata = {
   title: 'USA Visa Appointment from India | A Visa Experts',
   description:
     'USA visa appointment from India explained — the appointment process, biometrics and interview, what to carry, appointment availability, rescheduling and expedited appointments.',
-  keywords:
-    'USA visa appointment, USA visa appointment from India, US visa appointment booking, US visa biometrics appointment, US visa interview appointment, reschedule US visa appointment, expedited US visa appointment',
   alternates: {
     canonical: '/usa-visa/appointment',
     languages: {

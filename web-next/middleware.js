@@ -35,6 +35,15 @@ export function middleware(request) {
   const { nextUrl } = request;
   const params = nextUrl.searchParams;
 
+  // The homepage takes no parameters, so ANY query string there is a
+  // tracking/duplicate variant (e.g. ?l=76135011277, ?o=…, ?c=…, ?u=…, or an
+  // unknown key). Send them all to the clean canonical URL.
+  if (nextUrl.pathname === '/' && params.toString()) {
+    const url = nextUrl.clone();
+    url.search = '';
+    return NextResponse.redirect(url, 301);
+  }
+
   const toDelete = [];
   for (const key of params.keys()) {
     const k = key.toLowerCase();

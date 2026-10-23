@@ -4,8 +4,6 @@ export const metadata = {
   title: 'USA Visa Rejection Reasons 2026 | A Visa Experts',
   description:
     'Why do US visas get refused? See the most common USA visa rejection reasons, what 214(b) and 221(g) mean, and how to strengthen your reapplication.',
-  keywords:
-    'USA visa rejection reasons, US visa refusal reasons, why US visa rejected, 214(b) refusal, 221(g), US visa refusal, USA tourist visa refusal, US visa reapply after refusal, USA visa rejection',
   alternates: {
     canonical: '/usa-visa/rejection-reasons',
     languages: {

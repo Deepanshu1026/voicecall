@@ -4,8 +4,6 @@ export const metadata = {
   title: 'USA Visa Requirements for Indians 2026 | A Visa Experts',
   description:
     'USA visa requirements for Indians — eligibility, passport and documents, financial and employment proof, DS-160, photo and interview requirements.',
-  keywords:
-    'USA visa requirements for Indians, US visa requirements India, documents required for US visa, USA visa eligibility, US visa financial requirements, DS-160 requirements, USA visa photo requirements, US visa interview requirements',
   alternates: {
     canonical: '/usa-visa/requirements',
     languages: {
