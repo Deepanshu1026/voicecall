@@ -151,6 +151,7 @@ const guides = [
   { label: 'UK 10 Year Visa (Long-Term Visitor Visa)', href: '/uk-visa/long-term-visitor-visa' },
   { label: 'UK Visa Fees for Indians', href: '/uk-visa/fees' },
   { label: 'UK Visa Processing Time in India', href: '/uk-visa/processing-time' },
+  { label: 'UK Visa Rejection Reasons and Refusal Guide', href: '/uk-visa/refusal' },
   { label: 'UK Tourist Visa Documents Checklist', href: '/blog/uk-tourist-visa-documents-checklist' },
   { label: 'UK Visa Application Form Guide', href: '/blog/uk-visa-application-form-guide' },
   { label: 'UK Visa Bank Balance Requirements', href: '/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need' },
@@ -445,7 +446,11 @@ const UkVisitorVisa = () => (
           </ul>
           <p>
             Most UK visitor visa refusals have no right of appeal; a fresh application addressing the refusal reasons is
-            the usual route.
+            the usual route. See the full guide to{' '}
+            <a className="spage-link" href="/uk-visa/refusal">
+              UK visa rejection reasons
+            </a>
+            .
           </p>
         </div>
       </section>

@@ -365,6 +365,13 @@ const UkFamilyVisitVisa = () => (
               <li key={item}>{item}</li>
             ))}
           </ul>
+          <p className="spage-subnote">
+            See{' '}
+            <a className="spage-link" href="/uk-visa/refusal">
+              UK visa rejection reasons
+            </a>
+            .
+          </p>
         </div>
       </section>
 

@@ -75,6 +75,12 @@ const staticPages = [
     images: [{ loc: img('uk 1.webp'), title: 'UK Visa Processing Time in India - A Visa Experts' }],
   },
   {
+    path: '/uk-visa/refusal',
+    priority: '0.8',
+    changefreq: 'monthly',
+    images: [{ loc: img('uk 1.webp'), title: 'UK Visa Rejection Reasons - A Visa Experts' }],
+  },
+  {
     path: '/tourist-visa',
     priority: '0.8',
     changefreq: 'monthly',

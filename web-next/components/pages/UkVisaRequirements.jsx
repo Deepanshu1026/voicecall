@@ -356,6 +356,13 @@ const UkVisaRequirements = () => (
               <li key={item}>{item}</li>
             ))}
           </ul>
+          <p className="spage-subnote">
+            Full guide:{' '}
+            <a className="spage-link" href="/uk-visa/refusal">
+              UK visa rejection reasons and what to do after a refusal
+            </a>
+            .
+          </p>
         </div>
       </section>
 

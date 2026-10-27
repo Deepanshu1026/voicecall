@@ -283,8 +283,11 @@ const UkVisaFees = () => (
             ))}
           </ul>
           <p>
-            Since a refused application means paying again for a new one, review the UK visa application mistakes guide
-            before applying. If you were refused before, check the common refusal reasons.
+            Since a refused application means paying again for a new one, review the{' '}
+            <a className="spage-link" href="/uk-visa/refusal">
+              common refusal reasons
+            </a>{' '}
+            before applying.
           </p>
         </div>
       </section>
