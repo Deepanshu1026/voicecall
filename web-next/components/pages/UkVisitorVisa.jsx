@@ -145,6 +145,7 @@ const faqs = [
 ];
 
 const guides = [
+  { label: 'UK Visa Requirements for Indians', href: '/uk-visa/requirements' },
   { label: 'UK Tourist Visa Documents Checklist', href: '/blog/uk-tourist-visa-documents-checklist' },
   { label: 'UK Visa Application Form Guide', href: '/blog/uk-visa-application-form-guide' },
   { label: 'UK Visa Bank Balance Requirements', href: '/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need' },
@@ -310,6 +311,13 @@ const UkVisitorVisa = () => (
               href="/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need"
             >
               UK visa bank balance
+            </a>
+            .
+          </p>
+          <p className="spage-subnote">
+            See the full{' '}
+            <a className="spage-link" href="/uk-visa/requirements">
+              UK visa requirements for Indians
             </a>
             .
           </p>

@@ -1022,6 +1022,17 @@
   margin: 0 0 22px;
 }
 
+.spage-hero a {
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.spage-hero a:hover {
+  color: #ffd9b8;
+}
+
 .spage-btns {
   display: flex;
   gap: 14px;
