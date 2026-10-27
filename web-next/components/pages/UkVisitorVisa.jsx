@@ -146,6 +146,7 @@ const faqs = [
 
 const guides = [
   { label: 'UK Visa Requirements for Indians', href: '/uk-visa/requirements' },
+  { label: 'UK Business Visa from India', href: '/uk-visa/business-visitor-visa' },
   { label: 'UK Tourist Visa Documents Checklist', href: '/blog/uk-tourist-visa-documents-checklist' },
   { label: 'UK Visa Application Form Guide', href: '/blog/uk-visa-application-form-guide' },
   { label: 'UK Visa Bank Balance Requirements', href: '/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need' },
@@ -265,7 +266,11 @@ const UkVisitorVisa = () => (
             ))}
           </div>
           <p className="spage-mt-16">
-            Looking for transit specifically? See our{' '}
+            Travelling for work? Read the full{' '}
+            <a className="spage-link" href="/uk-visa/business-visitor-visa">
+              UK business visa guide
+            </a>
+            . Looking for transit specifically? See our{' '}
             <a className="spage-link" href="/transit-visa">
               transit visa
             </a>{' '}
