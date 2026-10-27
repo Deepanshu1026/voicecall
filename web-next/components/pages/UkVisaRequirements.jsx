@@ -299,9 +299,13 @@ const UkVisaRequirements = () => (
             </div>
           ))}
           <p className="spage-subnote">
-            Full guide:{' '}
+            Full guides:{' '}
             <a className="spage-link" href="/uk-visa/business-visitor-visa">
               UK business visa from India
+            </a>{' '}
+            and the{' '}
+            <a className="spage-link" href="/uk-visa/family-visit-visa">
+              UK visit visa for parents
             </a>
             .
           </p>
