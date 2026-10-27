@@ -150,6 +150,7 @@ const guides = [
   { label: 'UK Visit Visa for Parents from India', href: '/uk-visa/family-visit-visa' },
   { label: 'UK 10 Year Visa (Long-Term Visitor Visa)', href: '/uk-visa/long-term-visitor-visa' },
   { label: 'UK Visa Fees for Indians', href: '/uk-visa/fees' },
+  { label: 'UK Visa Processing Time in India', href: '/uk-visa/processing-time' },
   { label: 'UK Tourist Visa Documents Checklist', href: '/blog/uk-tourist-visa-documents-checklist' },
   { label: 'UK Visa Application Form Guide', href: '/blog/uk-visa-application-form-guide' },
   { label: 'UK Visa Bank Balance Requirements', href: '/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need' },
@@ -421,6 +422,13 @@ const UkVisitorVisa = () => (
             A decision on a UK visitor visa is usually made within 3 weeks of the biometrics appointment. Priority
             service, where available, aims for around 5 working days, and super priority for the next working day. Busy
             seasons can take longer.
+          </p>
+          <p className="spage-subnote">
+            Full timeline:{' '}
+            <a className="spage-link" href="/uk-visa/processing-time">
+              UK visa processing time in India
+            </a>
+            .
           </p>
         </div>
       </section>

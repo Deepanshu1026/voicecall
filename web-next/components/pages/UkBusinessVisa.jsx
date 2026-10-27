@@ -352,7 +352,11 @@ const UkBusinessVisa = () => (
           <h2>UK Business Visa Processing Time</h2>
           <p>
             A decision is usually made within 3 weeks of the biometrics appointment. Priority (around 5 working days)
-            and super priority (next working day) may be available.
+            and super priority (next working day) may be available. See{' '}
+            <a className="spage-link" href="/uk-visa/processing-time">
+              UK visa processing time in India
+            </a>
+            .
           </p>
         </div>
       </section>

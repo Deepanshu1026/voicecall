@@ -270,7 +270,11 @@ const UkLongTermVisa = () => (
           <h2>UK 10 Year Visa Processing Time</h2>
           <p>
             Long-term visas follow the same process as a 6-month visa. A decision is usually made within 3 weeks of the
-            biometrics appointment.
+            biometrics appointment. See{' '}
+            <a className="spage-link" href="/uk-visa/processing-time">
+              UK visa processing time in India
+            </a>
+            .
           </p>
         </div>
       </section>

@@ -333,6 +333,10 @@ const UkFamilyVisitVisa = () => (
             <a className="spage-link" href="/blog/uk-visa-application-form-guide">
               UK visa application form
             </a>
+            . Timeline:{' '}
+            <a className="spage-link" href="/uk-visa/processing-time">
+              UK visa processing time in India
+            </a>
             .
           </p>
         </div>

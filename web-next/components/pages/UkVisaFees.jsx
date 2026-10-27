@@ -208,7 +208,11 @@ const UkVisaFees = () => (
           </div>
           <p>
             Priority services are not always available at every centre or in every season. Paying for a faster decision
-            does not change how the application is assessed.
+            does not change how the application is assessed. See{' '}
+            <a className="spage-link" href="/uk-visa/processing-time">
+              UK visa processing time in India
+            </a>
+            .
           </p>
         </div>
       </section>
