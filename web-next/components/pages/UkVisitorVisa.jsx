@@ -149,6 +149,7 @@ const guides = [
   { label: 'UK Business Visa from India', href: '/uk-visa/business-visitor-visa' },
   { label: 'UK Visit Visa for Parents from India', href: '/uk-visa/family-visit-visa' },
   { label: 'UK 10 Year Visa (Long-Term Visitor Visa)', href: '/uk-visa/long-term-visitor-visa' },
+  { label: 'UK Visa Fees for Indians', href: '/uk-visa/fees' },
   { label: 'UK Tourist Visa Documents Checklist', href: '/blog/uk-tourist-visa-documents-checklist' },
   { label: 'UK Visa Application Form Guide', href: '/blog/uk-visa-application-form-guide' },
   { label: 'UK Visa Bank Balance Requirements', href: '/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need' },
@@ -401,6 +402,13 @@ const UkVisitorVisa = () => (
             The UK visa fee depends on the visa length: a 6-month visitor visa costs less than a 2, 5 or 10-year visa.
             Priority and super priority services, where available, cost extra. Fees are set by the UK government and
             change from time to time, so check the current fee before paying.
+          </p>
+          <p className="spage-subnote">
+            Full breakdown:{' '}
+            <a className="spage-link" href="/uk-visa/fees">
+              UK visa fees for Indians
+            </a>
+            .
           </p>
         </div>
       </section>

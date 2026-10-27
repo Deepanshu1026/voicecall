@@ -254,6 +254,13 @@ const UkLongTermVisa = () => (
             The longer the visa, the higher the fee. The fee is paid upfront and is generally not refunded if the
             application is refused. Fees change from time to time; check the current fee before applying.
           </p>
+          <p className="spage-subnote">
+            Full breakdown:{' '}
+            <a className="spage-link" href="/uk-visa/fees">
+              UK visa fees for Indians
+            </a>
+            .
+          </p>
         </div>
       </section>
 

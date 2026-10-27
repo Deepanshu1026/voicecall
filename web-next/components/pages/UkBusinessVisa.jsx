@@ -336,6 +336,13 @@ const UkBusinessVisa = () => (
             The fee depends on the visa length: a 6-month visa costs less than a 2, 5 or 10-year visa. Faster-decision
             services cost extra where available. Fees change from time to time; check the current fee before paying.
           </p>
+          <p className="spage-subnote">
+            Full breakdown:{' '}
+            <a className="spage-link" href="/uk-visa/fees">
+              UK visa fees for Indians
+            </a>
+            .
+          </p>
         </div>
       </section>
 

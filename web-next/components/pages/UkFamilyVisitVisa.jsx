@@ -342,7 +342,13 @@ const UkFamilyVisitVisa = () => (
       <section className="spage-section">
         <div className="spage-wrap">
           <h2>UK Visa for Parents Fees</h2>
-          <p>Each parent pays a separate visa fee. The fee depends on the visa length.</p>
+          <p>
+            Each parent pays a separate visa fee. The fee depends on the visa length. See{' '}
+            <a className="spage-link" href="/uk-visa/fees">
+              UK visa fees for Indians
+            </a>
+            .
+          </p>
         </div>
       </section>
 

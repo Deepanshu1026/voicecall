@@ -63,6 +63,12 @@ const staticPages = [
     images: [{ loc: img('uk 1.webp'), title: 'UK 10 Year Visa for Indians - A Visa Experts' }],
   },
   {
+    path: '/uk-visa/fees',
+    priority: '0.8',
+    changefreq: 'monthly',
+    images: [{ loc: img('uk 1.webp'), title: 'UK Visa Fees for Indians - A Visa Experts' }],
+  },
+  {
     path: '/tourist-visa',
     priority: '0.8',
     changefreq: 'monthly',
