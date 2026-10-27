@@ -303,9 +303,13 @@ const UkVisaRequirements = () => (
             <a className="spage-link" href="/uk-visa/business-visitor-visa">
               UK business visa from India
             </a>{' '}
-            and the{' '}
+            , the{' '}
             <a className="spage-link" href="/uk-visa/family-visit-visa">
               UK visit visa for parents
+            </a>{' '}
+            and the{' '}
+            <a className="spage-link" href="/uk-visa/long-term-visitor-visa">
+              UK long-term visitor visa
             </a>
             .
           </p>

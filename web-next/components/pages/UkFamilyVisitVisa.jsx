@@ -81,7 +81,7 @@ const purposes = [
   },
   {
     title: 'UK Visa for Parents Visiting Every Year',
-    text: 'Parents who visit regularly can consider a 2, 5 or 10-year visa.',
+    text: 'Parents who visit regularly can consider a 2, 5 or 10-year visa. See the UK long-term visitor visa.',
   },
 ];
 
@@ -296,6 +296,13 @@ const UkFamilyVisitVisa = () => (
               <p>{item.text}</p>
             </div>
           ))}
+          <p className="spage-subnote">
+            Comparing options? See the{' '}
+            <a className="spage-link" href="/uk-visa/long-term-visitor-visa">
+              UK long-term visitor visa (2, 5 and 10 year)
+            </a>
+            .
+          </p>
         </div>
       </section>
 

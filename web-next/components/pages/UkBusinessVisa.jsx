@@ -374,7 +374,13 @@ const UkBusinessVisa = () => (
               </tbody>
             </table>
           </div>
-          <p>Frequent business travellers can consider a long-term visa.</p>
+          <p>
+            Frequent business travellers can consider a{' '}
+            <a className="spage-link" href="/uk-visa/long-term-visitor-visa">
+              long-term visitor visa
+            </a>
+            .
+          </p>
         </div>
       </section>
 
