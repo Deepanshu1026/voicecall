@@ -390,8 +390,12 @@ const UkVisitorVisa = () => (
             The form is filled online in English. See our{' '}
             <a className="spage-link" href="/blog/uk-visa-application-form-guide">
               UK visa application form guide
-            </a>
-            .
+            </a>{' '}
+            and the{' '}
+            <a className="spage-link" href="/blog/uk-visa-biometrics-appointment">
+              UK visa appointment and biometrics
+            </a>{' '}
+            walkthrough.
           </p>
         </div>
       </section>

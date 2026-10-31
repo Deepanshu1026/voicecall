@@ -332,6 +332,10 @@ const UkFamilyVisitVisa = () => (
             Guide:{' '}
             <a className="spage-link" href="/blog/uk-visa-application-form-guide">
               UK visa application form
+            </a>{' '}
+            and the{' '}
+            <a className="spage-link" href="/blog/uk-visa-biometrics-appointment">
+              appointment and biometrics walkthrough
             </a>
             . Timeline:{' '}
             <a className="spage-link" href="/uk-visa/processing-time">

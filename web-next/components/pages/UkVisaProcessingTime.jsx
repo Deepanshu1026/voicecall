@@ -140,7 +140,11 @@ const UkVisaProcessingTime = () => (
           <p>
             The 3-week period starts after the biometrics appointment and document submission, not when you fill in the
             online form. Your passport is usually returned to you on the day of the appointment, as UK visitor visas are
-            now issued as eVisas.
+            now issued as eVisas. See the full{' '}
+            <a className="spage-link" href="/blog/uk-visa-biometrics-appointment">
+              UK visa appointment and biometrics
+            </a>{' '}
+            walkthrough.
           </p>
         </div>
       </section>
