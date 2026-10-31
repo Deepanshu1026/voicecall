@@ -316,7 +316,7 @@ const BlogDetail = ({ post, related = [] }) => {
         </div>
 
         <article className="blog-detail">
-          <div className="blog-detail-hero">
+          <div className="blog-detail-hero" id="top">
             <div className="blog-detail-hero-content">
               <div className="blogs-container">
                 <span className="blog-detail-category">{post.category || 'General'}</span>
