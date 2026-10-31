@@ -75,6 +75,7 @@
     { "src": "/blog/minimum-bank-balance-for-uk-visa-what-you-really-need-to-know-in-2026", "status": 301, "headers": { "Location": "/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need" } },
     { "src": "/blog/minimum-bank-balance-for-uk-tourist-visa-from-india-a-clear-guide-by-avisaexperts", "status": 301, "headers": { "Location": "/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need" } },
     { "src": "/blog/usa-visit-visa-from-india-b1b2-visa-guide-for-indian-travelers", "status": 301, "headers": { "Location": "/blog/usa-tourist-visa" } },
+    { "src": "/blog/canada-eta-vs-visa-for-indians", "status": 301, "headers": { "Location": "/blog/canada-eta-vs-visa" } },
     { "src": "/blog/([^/]+)/([^/]+)", "dest": "https://avisaexperts-next.vercel.app/blog/$1/$2" },
     { "src": "/blog/([^/]+)", "dest": "https://avisaexperts-next.vercel.app/blog/$1" },
     { "src": "/_next/(.*)", "dest": "https://avisaexperts-next.vercel.app/_next/$1" },

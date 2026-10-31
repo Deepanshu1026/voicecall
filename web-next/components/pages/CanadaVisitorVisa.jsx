@@ -400,8 +400,8 @@ const CanadaSections = () => (
         <h2>Explore Canada Visa Guides</h2>
         <ul className="spage-list">
           <li>
-            <a className="spage-link" href="/blog/canada-eta-vs-visa-for-indians">
-              Canada eTA ya Visa? Indian Passport Holders Ke Liye Seedha Jawab
+            <a className="spage-link" href="/blog/canada-eta-vs-visa">
+              Canada eTA vs Visa: Kya Fark Hai?
             </a>
           </li>
           <li>
