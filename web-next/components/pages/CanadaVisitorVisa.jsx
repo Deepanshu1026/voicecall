@@ -394,6 +394,35 @@ const CanadaSections = () => (
         </p>
       </div>
     </section>
+
+    <section className="spage-section">
+      <div className="spage-wrap">
+        <h2>Explore Canada Visa Guides</h2>
+        <ul className="spage-list">
+          <li>
+            <a className="spage-link" href="/blog/canada-eta-vs-visa-for-indians">
+              Canada eTA ya Visa? Indian Passport Holders Ke Liye Seedha Jawab
+            </a>
+          </li>
+          <li>
+            <a
+              className="spage-link"
+              href="/blog/your-guide-to-canada-visa-application-a-visa-experts-visa-immigration-experts"
+            >
+              Your Guide to Canada Visa Application
+            </a>
+          </li>
+          <li>
+            <a
+              className="spage-link"
+              href="/blog/canada-work-permit-a-golden-opportunity-to-build-your-future-abroad"
+            >
+              Canada Work Permit: A Golden Opportunity
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
   </>
 );
 
