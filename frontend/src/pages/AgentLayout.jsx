@@ -41,6 +41,8 @@ const AgentLayout = () => {
   const { on } = useSocket();
   const [totalUnread, setTotalUnread] = useState(0);
   const unreadRef = useRef(totalUnread);
+  const [maintenanceOn, setMaintenanceOn] = useState(false);
+  const [maintenanceBusy, setMaintenanceBusy] = useState(false);
 
   const fetchUnread = useCallback(async () => {
     try {
@@ -53,6 +55,32 @@ const AgentLayout = () => {
   }, []);
 
   useEffect(() => { fetchUnread(); }, [fetchUnread]);
+
+  // Site-wide maintenance switch (admins only)
+  useEffect(() => {
+    if (!isAdmin) return;
+    api
+      .get('/settings/maintenance')
+      .then((res) => setMaintenanceOn(!!res.data?.data?.enabled))
+      .catch(() => {});
+  }, [isAdmin]);
+
+  const enableMaintenance = useCallback(async () => {
+    const confirmed = window.confirm(
+      'Turn ON maintenance mode for the WHOLE website?\n\n' +
+        'Every visitor will see only the maintenance page. This switch is one-way and cannot be turned off from here.'
+    );
+    if (!confirmed) return;
+    setMaintenanceBusy(true);
+    try {
+      await api.post('/settings/maintenance/enable');
+      setMaintenanceOn(true);
+    } catch (err) {
+      window.alert(err.response?.data?.message || err.message || 'Failed to enable maintenance mode');
+    } finally {
+      setMaintenanceBusy(false);
+    }
+  }, []);
 
   useEffect(() => {
     const handlers = ['message:new', 'messages:read', 'conversation:updated', 'conversation:new'];
@@ -131,6 +159,22 @@ const AgentLayout = () => {
             </NavLink>
           ))}
         </nav>
+        {isAdmin && (
+          <button
+            type="button"
+            className={`sidebar-maintenance ${maintenanceOn ? 'is-on' : ''}`}
+            onClick={enableMaintenance}
+            disabled={maintenanceBusy || maintenanceOn}
+            title={
+              maintenanceOn
+                ? 'Maintenance mode is ON — the whole website shows only the maintenance page'
+                : 'Show the maintenance page for the whole website'
+            }
+          >
+            <i className={maintenanceOn ? 'bi bi-cone-striped' : 'bi bi-tools'} />
+            <span>{maintenanceOn ? 'Maintenance ON' : maintenanceBusy ? 'Enabling…' : 'Maintenance Mode'}</span>
+          </button>
+        )}
         <button className="sidebar-logout" onClick={handleLogout}>
           <i className="bi bi-box-arrow-right" />
           <span>Logout</span>

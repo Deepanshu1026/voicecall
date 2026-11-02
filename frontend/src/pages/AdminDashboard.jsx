@@ -12,9 +12,6 @@ const AdminDashboard = () => {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [maintenanceOn, setMaintenanceOn] = useState(false);
-  const [maintenanceBusy, setMaintenanceBusy] = useState(false);
-  const [maintenanceMsg, setMaintenanceMsg] = useState('');
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -34,33 +31,6 @@ const AdminDashboard = () => {
     };
     fetchSettings();
   }, []);
-
-  useEffect(() => {
-    api
-      .get('/settings/maintenance')
-      .then((res) => setMaintenanceOn(!!res.data?.data?.enabled))
-      .catch(() => {});
-  }, []);
-
-  const enableMaintenance = async () => {
-    const confirmed = window.confirm(
-      'Turn ON maintenance mode for the WHOLE website?\n\n' +
-        'Every visitor will see only the maintenance page. The staff area stays accessible. ' +
-        'There is no button to turn it back off.'
-    );
-    if (!confirmed) return;
-    setMaintenanceBusy(true);
-    setMaintenanceMsg('');
-    try {
-      await api.post('/settings/maintenance/enable');
-      setMaintenanceOn(true);
-      setMaintenanceMsg('Maintenance mode is now ON for the whole website.');
-    } catch (err) {
-      setMaintenanceMsg(err.response?.data?.message || err.message || 'Failed to enable maintenance mode');
-    } finally {
-      setMaintenanceBusy(false);
-    }
-  };
 
   const handleToggle = () => {
     setSettings((prev) => ({ ...prev, unlimitedFreeChat: !prev.unlimitedFreeChat }));
@@ -172,29 +142,6 @@ const AdminDashboard = () => {
         >
           {saving ? 'Saving...' : 'Save Settings'}
         </button>
-      </div>
-
-      <div className="admin-dashboard-card admin-dashboard-danger">
-        <h2 className="admin-dashboard-title">Website Maintenance</h2>
-        <p className="admin-dashboard-subtitle">
-          This shows the maintenance page for the <strong>whole website</strong> — every visitor will see only that
-          page. The staff area stays accessible. This switch is one-way: there is no button to turn it back off.
-        </p>
-
-        {maintenanceOn ? (
-          <p className="admin-dashboard-message success">Maintenance mode is ON.</p>
-        ) : (
-          <button
-            type="button"
-            className="admin-dashboard-save admin-dashboard-danger-btn"
-            onClick={enableMaintenance}
-            disabled={maintenanceBusy}
-          >
-            {maintenanceBusy ? 'Enabling...' : 'Enable Maintenance Mode'}
-          </button>
-        )}
-
-        {maintenanceMsg && <p className="admin-dashboard-message">{maintenanceMsg}</p>}
       </div>
     </div>
   );
