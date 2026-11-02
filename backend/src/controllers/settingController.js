@@ -135,4 +135,40 @@ const getContactSubmissions = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { getSettings, updateSettings, getContactSettings, updateContactSettings, submitContactForm, getContactSubmissions };
+// Site-wide maintenance switch. One-way: the admin can enable it from the
+// dashboard, but there is deliberately no "disable" endpoint.
+const MAINTENANCE_KEY = 'maintenance';
+
+const getMaintenance = asyncHandler(async (req, res) => {
+  const doc = await Setting.findOne({ key: MAINTENANCE_KEY }).lean();
+  const value = doc && doc.value && typeof doc.value === 'object' ? doc.value : {};
+  ApiResponse.success(res, {
+    enabled: !!value.enabled,
+    enabledAt: value.enabledAt || null,
+  });
+});
+
+const enableMaintenance = asyncHandler(async (req, res) => {
+  const value = {
+    enabled: true,
+    enabledAt: new Date().toISOString(),
+    enabledBy: req.employee ? req.employee.email || req.employee.username || null : null,
+  };
+  await Setting.findOneAndUpdate(
+    { key: MAINTENANCE_KEY },
+    { $set: { key: MAINTENANCE_KEY, value } },
+    { upsert: true }
+  );
+  ApiResponse.success(res, value, 'Maintenance mode enabled for the whole website');
+});
+
+module.exports = {
+  getSettings,
+  updateSettings,
+  getContactSettings,
+  updateContactSettings,
+  submitContactForm,
+  getContactSubmissions,
+  getMaintenance,
+  enableMaintenance,
+};

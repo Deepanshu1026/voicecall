@@ -179,3 +179,20 @@
     text-align: left;
   }
 }
+
+/* Maintenance switch card */
+.admin-dashboard-card + .admin-dashboard-card {
+  margin-top: 24px;
+}
+
+.admin-dashboard-danger {
+  border-color: #fecaca;
+}
+
+.admin-dashboard-danger-btn {
+  background: #dc2626;
+}
+
+.admin-dashboard-danger-btn:hover:not(:disabled) {
+  background: #b91c1c;
+}

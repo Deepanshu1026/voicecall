@@ -31,8 +31,37 @@ const JUNK_EXACT = new Set([
 
 const JUNK_PREFIXES = ['utm_'];
 
-export function middleware(request) {
+// Site-wide maintenance switch. Checked here so every marketing/blog page is
+// gated server-side before it renders. Cached briefly and fails open (a backend
+// hiccup must never take the site down).
+const MAINTENANCE_API = 'https://voicecall-6ylg.onrender.com/api/settings/maintenance';
+const MAINTENANCE_TTL_MS = 30000;
+let maintenanceCache = { at: 0, enabled: false };
+
+async function isMaintenanceOn() {
+  const now = Date.now();
+  if (now - maintenanceCache.at < MAINTENANCE_TTL_MS) return maintenanceCache.enabled;
+  try {
+    const res = await fetch(MAINTENANCE_API, { cache: 'no-store' });
+    const json = await res.json();
+    maintenanceCache = { at: now, enabled: !!json?.data?.enabled };
+  } catch (e) {
+    maintenanceCache = { at: now, enabled: false };
+  }
+  return maintenanceCache.enabled;
+}
+
+export async function middleware(request) {
   const { nextUrl } = request;
+
+  // Maintenance mode: show only the maintenance page for the whole website.
+  if (nextUrl.pathname !== '/maintenance' && (await isMaintenanceOn())) {
+    const url = nextUrl.clone();
+    url.pathname = '/maintenance';
+    url.search = '';
+    return NextResponse.rewrite(url);
+  }
+
   const params = nextUrl.searchParams;
 
   // The homepage takes no parameters, so ANY query string there is a

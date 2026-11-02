@@ -3,6 +3,7 @@ import { useAuth } from './context/AuthContext';
 import { useKeepAlive } from './hooks/useKeepAlive';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import LoadingScreen from './components/common/LoadingScreen';
+import MaintenanceGate from './components/common/MaintenanceGate';
 import UserLogin from './pages/UserLogin';
 import UserRegister from './pages/UserRegister';
 import AgentLogin from './pages/AgentLogin';
@@ -55,7 +56,8 @@ function App() {
   if (loading) return <LoadingScreen />;
 
   return (
-    <Routes>
+    <MaintenanceGate>
+      <Routes>
       {/* User auth */}
       <Route
         path="/login"
@@ -166,7 +168,8 @@ function App() {
       {/* Default landing */}
       <Route path="/" element={<UserHome />} />
       <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+      </Routes>
+    </MaintenanceGate>
   );
 }
 
