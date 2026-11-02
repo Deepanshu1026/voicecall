@@ -1,162 +1,86 @@
 .maint {
-  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 48px 20px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #001e74 0%, #0a2a8a 55%, #123a9e 100%);
+  padding: 56px 24px;
+  background: #ffffff;
   font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.maint-glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(90px);
-  pointer-events: none;
-}
-
-.maint-glow-a {
-  width: 440px;
-  height: 440px;
-  background: rgba(245, 134, 52, 0.3);
-  top: -140px;
-  left: -100px;
-}
-
-.maint-glow-b {
-  width: 400px;
-  height: 400px;
-  background: rgba(56, 189, 248, 0.22);
-  bottom: -150px;
-  right: -110px;
-}
-
-.maint-card {
-  position: relative;
-  z-index: 1;
+.maint-inner {
   width: 100%;
-  max-width: 620px;
-  padding: 44px 40px 34px;
-  border-radius: 22px;
-  background: #ffffff;
+  max-width: 920px;
   text-align: center;
-  box-shadow: 0 30px 80px -30px rgba(0, 15, 60, 0.7);
 }
 
 .maint-logo {
   display: block;
-  width: 92px;
+  width: 74px;
   height: auto;
-  margin: 0 auto 18px;
-}
-
-.maint-pill {
-  display: inline-block;
-  margin-bottom: 16px;
-  padding: 6px 14px;
-  border-radius: 50px;
-  border: 1px solid #fed7aa;
-  background: #fff7ed;
-  color: #c2410c;
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
+  margin: 0 auto 30px;
 }
 
 .maint h1 {
-  margin: 0 0 12px;
-  font-size: 32px;
-  font-weight: 800;
-  line-height: 1.2;
+  margin: 0 0 30px;
+  font-size: clamp(38px, 7vw, 66px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: #3f4a52;
+}
+
+.maint-art {
+  display: block;
+  width: 100%;
+  max-width: 880px;
+  height: auto;
+  margin: 0 auto 34px;
+}
+
+.maint-text {
+  max-width: 640px;
+  margin: 0 auto 20px;
+  font-size: 17px;
+  line-height: 1.75;
+  color: #6b7280;
+}
+
+.maint-contact {
+  margin: 0;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.maint-contact a {
   color: #001e74;
-}
-
-.maint-lead {
-  margin: 0 0 26px;
-  font-size: 16.5px;
-  line-height: 1.65;
-  color: #475569;
-}
-
-.maint-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-  margin-bottom: 22px;
-}
-
-.maint-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 13px 22px;
-  border-radius: 50px;
-  font-size: 15px;
   font-weight: 700;
   text-decoration: none;
-  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.maint-btn svg {
-  width: 17px;
-  height: 17px;
-  flex-shrink: 0;
-}
-
-.maint-btn.primary {
-  background: #f58634;
-  color: #ffffff;
-  box-shadow: 0 14px 30px -14px rgba(245, 134, 52, 0.95);
-}
-
-.maint-btn.primary:hover {
-  background: #e0701e;
-  transform: translateY(-2px);
-}
-
-.maint-btn.ghost {
-  background: #ffffff;
-  color: #001e74;
-  border: 1.5px solid #e2e8f0;
-}
-
-.maint-btn.ghost:hover {
-  border-color: #001e74;
-  transform: translateY(-2px);
-}
-
-.maint-hours {
-  margin: 0;
-  padding-top: 18px;
-  border-top: 1px solid #eef2f7;
-  font-size: 13px;
-  line-height: 1.7;
-  color: #94a3b8;
+.maint-contact a:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 480px) {
-  .maint-card {
-    padding: 32px 22px 26px;
-    border-radius: 18px;
+  .maint {
+    padding: 40px 18px;
+  }
+
+  .maint-logo {
+    width: 60px;
+    margin-bottom: 22px;
   }
 
   .maint h1 {
-    font-size: 25px;
+    margin-bottom: 22px;
   }
 
-  .maint-lead {
+  .maint-art {
+    margin-bottom: 26px;
+  }
+
+  .maint-text {
     font-size: 15px;
-  }
-
-  .maint-actions {
-    flex-direction: column;
-  }
-
-  .maint-btn {
-    justify-content: center;
   }
 }
