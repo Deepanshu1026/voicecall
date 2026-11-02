@@ -9,6 +9,7 @@ const {
   getContactSubmissions,
   getMaintenance,
   enableMaintenance,
+  disableMaintenance,
 } = require('../controllers/settingController');
 const { employeeAuth } = require('../middleware/employeeAuth');
 const AppError = require('../utils/AppError');
@@ -29,8 +30,9 @@ router.put('/contact', employeeAuth, requireAdmin, updateContactSettings);
 router.post('/contact/submit', submitContactForm);
 router.get('/contact/submissions', employeeAuth, requireAdmin, getContactSubmissions);
 
-// Site-wide maintenance switch (one-way)
+// Site-wide maintenance switch
 router.get('/maintenance', getMaintenance);
 router.post('/maintenance/enable', employeeAuth, requireAdmin, enableMaintenance);
+router.post('/maintenance/disable', employeeAuth, requireAdmin, disableMaintenance);
 
 module.exports = router;

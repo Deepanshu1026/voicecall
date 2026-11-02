@@ -162,6 +162,20 @@ const enableMaintenance = asyncHandler(async (req, res) => {
   ApiResponse.success(res, value, 'Maintenance mode enabled for the whole website');
 });
 
+const disableMaintenance = asyncHandler(async (req, res) => {
+  const value = {
+    enabled: false,
+    disabledAt: new Date().toISOString(),
+    disabledBy: req.employee ? req.employee.email || req.employee.username || null : null,
+  };
+  await Setting.findOneAndUpdate(
+    { key: MAINTENANCE_KEY },
+    { $set: { key: MAINTENANCE_KEY, value } },
+    { upsert: true }
+  );
+  ApiResponse.success(res, value, 'Maintenance mode disabled');
+});
+
 module.exports = {
   getSettings,
   updateSettings,
@@ -171,4 +185,5 @@ module.exports = {
   getContactSubmissions,
   getMaintenance,
   enableMaintenance,
+  disableMaintenance,
 };
