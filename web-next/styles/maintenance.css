@@ -1,86 +1,205 @@
 .maint {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 56px 24px;
-  background: #ffffff;
+  overflow: hidden;
+  background-color: #04102e;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
   font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #ffffff;
 }
 
-.maint-inner {
+.maint::before {
+  content: '';
+  position: absolute;
+  top: -280px;
+  left: 50%;
+  width: 760px;
+  height: 760px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 134, 52, 0.3), transparent 62%);
+  pointer-events: none;
+}
+
+.maint-card {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  max-width: 920px;
+  max-width: 640px;
+  padding: 44px 36px 34px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.85);
   text-align: center;
 }
 
-.maint-logo {
-  display: block;
-  width: 74px;
-  height: auto;
-  margin: 0 auto 30px;
+.maint-brand {
+  margin: 0 0 22px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.maint-badge {
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(245, 134, 52, 0.15);
+  border: 1px solid rgba(245, 134, 52, 0.45);
+}
+
+.maint-badge svg {
+  width: 34px;
+  height: 34px;
+  color: #f58634;
+  animation: maint-spin 7s linear infinite;
 }
 
 .maint h1 {
-  margin: 0 0 30px;
-  font-size: clamp(38px, 7vw, 66px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  color: #3f4a52;
-}
-
-.maint-art {
-  display: block;
-  width: 100%;
-  max-width: 880px;
-  height: auto;
-  margin: 0 auto 34px;
+  margin: 0 0 14px;
+  font-size: clamp(26px, 5vw, 38px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #ffffff;
 }
 
 .maint-text {
-  max-width: 640px;
-  margin: 0 auto 20px;
-  font-size: 17px;
-  line-height: 1.75;
-  color: #6b7280;
+  max-width: 520px;
+  margin: 0 auto 26px;
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.72);
 }
 
-.maint-contact {
-  margin: 0;
-  font-size: 14px;
-  color: #9ca3af;
+.maint-progress {
+  position: relative;
+  height: 6px;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto 30px;
+  overflow: hidden;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.maint-contact a {
-  color: #001e74;
+.maint-progress span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  border-radius: 50px;
+  background: linear-gradient(90deg, transparent, #f58634, transparent);
+  animation: maint-slide 1.7s ease-in-out infinite;
+}
+
+.maint-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 26px;
+}
+
+.maint-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 22px;
+  border-radius: 50px;
+  font-size: 15px;
   font-weight: 700;
   text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
-.maint-contact a:hover {
-  text-decoration: underline;
+.maint-btn svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
+.maint-btn.primary {
+  background: #f58634;
+  color: #ffffff;
+  box-shadow: 0 16px 34px -16px rgba(245, 134, 52, 0.95);
+}
+
+.maint-btn.primary:hover {
+  background: #e0701e;
+  transform: translateY(-2px);
+}
+
+.maint-btn.ghost {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.28);
+}
+
+.maint-btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-2px);
+}
+
+.maint-hours {
+  margin: 0;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 13px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.48);
+}
+
+@keyframes maint-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes maint-slide {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(260%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .maint-badge svg,
+  .maint-progress span {
+    animation: none;
+  }
 }
 
 @media (max-width: 480px) {
-  .maint {
-    padding: 40px 18px;
+  .maint-card {
+    padding: 32px 22px 26px;
+    border-radius: 20px;
   }
 
-  .maint-logo {
-    width: 60px;
-    margin-bottom: 22px;
+  .maint-actions {
+    flex-direction: column;
   }
 
-  .maint h1 {
-    margin-bottom: 22px;
-  }
-
-  .maint-art {
-    margin-bottom: 26px;
-  }
-
-  .maint-text {
-    font-size: 15px;
+  .maint-btn {
+    justify-content: center;
   }
 }
