@@ -16,28 +16,9 @@
 }
 
 .maint-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 1px;
-  font-size: 27px;
-  letter-spacing: -0.8px;
-  line-height: 1;
-  color: #111111;
-}
-
-.maint-logo .go {
-  font-weight: 400;
-}
-
-.maint-logo .daddy {
-  font-weight: 800;
-}
-
-.maint-logo .mark {
-  width: 13px;
-  height: 13px;
-  margin: 0 3px;
-  color: #00a4a6;
+  display: block;
+  height: 30px;
+  width: auto;
 }
 
 .maint-body {
@@ -100,7 +81,7 @@
   }
 
   .maint-logo {
-    font-size: 23px;
+    height: 25px;
   }
 
   .maint-body {

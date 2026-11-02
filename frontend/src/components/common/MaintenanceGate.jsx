@@ -6,16 +6,7 @@ import '../../styles/maintenance.css';
 const MaintenanceScreen = () => (
   <div className="maint">
     <header className="maint-header">
-      <span className="maint-logo">
-        <span className="go">Go</span>
-        <svg className="mark" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            fill="currentColor"
-            d="M12 21s-7.5-4.7-9.3-9A5.3 5.3 0 0 1 12 6.4 5.3 5.3 0 0 1 21.3 12c-1.8 4.3-9.3 9-9.3 9z"
-          />
-        </svg>
-        <span className="daddy">Daddy</span>
-      </span>
+      <img className="maint-logo" src="/images/user/godaddy-logo.svg" alt="GoDaddy" width={166} height={34} />
     </header>
 
     <section className="maint-body">
