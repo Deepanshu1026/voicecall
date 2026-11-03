@@ -1230,8 +1230,21 @@
   box-shadow: 0 12px 30px -22px rgba(0, 30, 116, 0.4);
 }
 
+/* Sidebar variant lives in a ~300px column, so stack it */
+.blog-consultant.sidebar {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.blog-consultant.sidebar .blog-consultant-btn {
+  width: 100%;
+  margin-left: 0;
+  text-align: center;
+}
+
 .blog-consultant.inline {
-  max-width: 560px;
+  max-width: 620px;
   margin: 32px auto 0;
 }
 
@@ -1309,14 +1322,16 @@
   transform: translateY(-1px);
 }
 
-/* Narrow (sidebar) width: let the button drop to its own row */
-@media (max-width: 1023px) {
+/* The inline card goes full width on small screens too */
+@media (max-width: 640px) {
   .blog-consultant.inline {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .blog-consultant.inline .blog-consultant-btn {
     width: 100%;
+    margin-left: 0;
     text-align: center;
   }
 }
