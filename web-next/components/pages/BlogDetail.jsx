@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import LandingLayout from '../LandingLayout';
-import BlogConsultantCard from '../BlogConsultantCard';
+import BlogChatPopup from '../BlogChatPopup';
 import { cleanPostHtml } from '../../lib/cleanPostHtml';
 
 const fallbackImage = '/images/user/touristvisa_full 1.webp';
@@ -409,8 +409,6 @@ const BlogDetail = ({ post, related = [] }) => {
                   </div>
                 </div>
 
-                <BlogConsultantCard variant="inline" />
-
                 <div className="blog-detail-actions">
                   <button className="blogs-cta-primary" onClick={() => navigate('/book-appointment')}>
                     Book Consultation
@@ -428,7 +426,6 @@ const BlogDetail = ({ post, related = [] }) => {
                       <h3 className="blog-toc-title">Table of Contents</h3>
                       {renderToc('desktop')}
                     </nav>
-                    <BlogConsultantCard variant="sidebar" />
                   </div>
                 </aside>
               )}
@@ -478,6 +475,8 @@ const BlogDetail = ({ post, related = [] }) => {
         >
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="m6 14 6-6 6 6" /></svg>
         </button>
+
+        <BlogChatPopup />
       </div>
     </LandingLayout>
   );
