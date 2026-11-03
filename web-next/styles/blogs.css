@@ -1211,6 +1211,124 @@
   color: #16a34a;
 }
 
+/* Consultant card (blog pages) */
+.blog-sidebar-sticky {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.blog-consultant {
+  background: var(--blogs-bg);
+  border: 1px solid var(--blogs-border);
+  border-radius: var(--blogs-radius);
+  padding: 20px;
+  box-shadow: var(--blogs-shadow);
+}
+
+.blog-consultant.inline {
+  max-width: 460px;
+  margin: 32px auto 0;
+}
+
+.blog-consultant-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.blog-consultant-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--blogs-primary);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.blog-consultant-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blog-consultant-tag {
+  display: inline-block;
+  margin-bottom: 3px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--blogs-accent);
+}
+
+.blog-consultant h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--blogs-primary);
+}
+
+.blog-consultant-role {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--blogs-text-light);
+}
+
+.blog-consultant-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.blog-consultant-facts li {
+  padding: 4px 10px;
+  border: 1px solid var(--blogs-border);
+  border-radius: 50px;
+  background: var(--blogs-white);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blogs-primary);
+}
+
+.blog-consultant-text {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--blogs-text-light);
+}
+
+.blog-consultant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 50px;
+  background: var(--blogs-accent);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.blog-consultant-btn:hover {
+  background: var(--blogs-accent-hover);
+  transform: translateY(-1px);
+}
+
 /* Back to top */
 .blog-back-to-top {
   position: fixed;
@@ -1345,17 +1463,25 @@
     flex-direction: column;
   }
 
-  /* Sticky table of contents on the right. `top` clears the fixed top bar
-     (42px) + fixed header (~100px) so the box never hides behind them. */
-  .blog-toc {
-    display: block;
+  /* The TOC and the consultant card stick together as one block, so the card
+     never slides behind the table of contents. `top` clears the fixed top bar
+     (42px) + fixed header (~100px). */
+  .blog-sidebar-sticky {
     position: sticky;
     top: 150px;
+  }
+
+  .blog-toc {
+    display: block;
     background: var(--blogs-bg);
     border: 1px solid var(--blogs-border);
     border-radius: var(--blogs-radius);
     padding: 22px 18px;
     box-shadow: var(--blogs-shadow);
+  }
+
+  .blog-consultant.inline {
+    display: none;
   }
 
   .blog-toc-mobile {

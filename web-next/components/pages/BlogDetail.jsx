@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import LandingLayout from '../LandingLayout';
+import BlogConsultantCard from '../BlogConsultantCard';
 import { cleanPostHtml } from '../../lib/cleanPostHtml';
 
 const fallbackImage = '/images/user/touristvisa_full 1.webp';
@@ -408,6 +409,8 @@ const BlogDetail = ({ post, related = [] }) => {
                   </div>
                 </div>
 
+                <BlogConsultantCard variant="inline" />
+
                 <div className="blog-detail-actions">
                   <button className="blogs-cta-primary" onClick={() => navigate('/book-appointment')}>
                     Book Consultation
@@ -420,10 +423,13 @@ const BlogDetail = ({ post, related = [] }) => {
 
               {toc.length >= 2 && (
                 <aside className="blog-detail-sidebar">
-                  <nav className={`blog-toc${tocDensity}`} aria-label="Table of contents">
-                    <h3 className="blog-toc-title">Table of Contents</h3>
-                    {renderToc('desktop')}
-                  </nav>
+                  <div className="blog-sidebar-sticky">
+                    <nav className={`blog-toc${tocDensity}`} aria-label="Table of contents">
+                      <h3 className="blog-toc-title">Table of Contents</h3>
+                      {renderToc('desktop')}
+                    </nav>
+                    <BlogConsultantCard variant="sidebar" />
+                  </div>
                 </aside>
               )}
             </div>
