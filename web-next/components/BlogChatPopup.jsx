@@ -39,7 +39,8 @@ const BlogChatPopup = () => {
         if (!cancelled && pick) setAdvisor(pick);
       })
       .catch(() => {});
-    const timer = setTimeout(() => setOpen(true), 1200);
+    // Give the reader a moment with the article before the chat pops up.
+    const timer = setTimeout(() => setOpen(true), 5000);
     return () => {
       cancelled = true;
       clearTimeout(timer);
