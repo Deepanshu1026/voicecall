@@ -23,7 +23,7 @@ const BlogChatPopup = () => {
   const [open, setOpen] = useState(false);
   const [typed, setTyped] = useState('');
   const [message, setMessage] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [connecting, setConnecting] = useState(false);
   const [imageOk, setImageOk] = useState(true);
   const inputRef = useRef(null);
 
@@ -65,9 +65,11 @@ const BlogChatPopup = () => {
   const showImage = imageOk && avatar && !/cloudinary\.com/i.test(avatar);
 
   const send = async () => {
-    if (busy) return;
-    setBusy(true);
+    if (connecting) return;
+    setConnecting(true);
     const targetId = advisor?.id || advisor?._id;
+
+    // Not signed in? Create a guest session first so the chat works straight away.
     try {
       const hasToken =
         typeof window !== 'undefined' &&
@@ -82,13 +84,15 @@ const BlogChatPopup = () => {
         if (data && data.token) {
           localStorage.setItem('accessToken', data.token);
           localStorage.setItem('refreshToken', data.refreshToken || '');
+          localStorage.removeItem('employeeAccessToken');
+          localStorage.removeItem('employeeRefreshToken');
         }
       }
     } catch (e) {
-      // carry on to the consultants page regardless
-    } finally {
-      setBusy(false);
+      // Even if the guest session fails we still send them to the consultants page,
+      // where they can sign in and chat.
     }
+
     window.location.assign(targetId ? `/consultants?userId=${targetId}` : '/consultants');
   };
 
@@ -135,10 +139,21 @@ const BlogChatPopup = () => {
       </div>
 
       <div className="blog-chat-body">
-        <div className="blog-chat-bubble">
-          {typed}
-          {typed.length < GREETING.length && <span className="blog-chat-caret" />}
-        </div>
+        {connecting ? (
+          <div className="blog-chat-bubble blog-chat-connecting">
+            Connecting you to {name}
+            <span className="blog-chat-dots" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+          </div>
+        ) : (
+          <div className="blog-chat-bubble">
+            {typed}
+            {typed.length < GREETING.length && <span className="blog-chat-caret" />}
+          </div>
+        )}
       </div>
 
       <form
@@ -156,7 +171,7 @@ const BlogChatPopup = () => {
           onChange={(e) => setMessage(e.target.value)}
           aria-label="Your message"
         />
-        <button type="submit" disabled={busy} aria-label="Send">
+        <button type="submit" disabled={connecting} aria-label="Send">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path fill="currentColor" d="M3.4 20.4 21 12 3.4 3.6 3 10l12 2-12 2z" />
           </svg>
