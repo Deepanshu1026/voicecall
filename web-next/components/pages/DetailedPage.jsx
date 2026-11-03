@@ -1,4 +1,3 @@
-import LandingLayout from '../LandingLayout';
 import '../../styles/detailedPage.css';
 
 const REPO = 'https://github.com/Deepanshu1026/voicecall';
@@ -187,12 +186,11 @@ const Section = ({ id, num, title, children }) => (
 );
 
 const DetailedPage = () => (
-  <LandingLayout>
-    <div className="dpage">
-      <section className="dpage-hero">
-        <div className="dpage-wrap">
-          <span className="dpage-badge">Developer &amp; DevOps reference</span>
-          <h1>Detailed Page</h1>
+  <div className="dpage">
+    <section className="dpage-hero">
+      <div className="dpage-wrap">
+        <span className="dpage-badge">Developer &amp; DevOps reference</span>
+        <h1>Detailed Page</h1>
           <p>
             Everything a new developer or DevOps engineer needs for the A Visa Experts platform — what each app is,
             where it is deployed, how requests are routed, how the API and database fit together, and how to ship a
@@ -392,11 +390,10 @@ const DetailedPage = () => (
                 Talk to a consultant
               </a>
             </div>
-          </Section>
-        </div>
+        </Section>
       </div>
     </div>
-  </LandingLayout>
+  </div>
 );
 
 export default DetailedPage;

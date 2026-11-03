@@ -19,7 +19,7 @@
 
 /* Hero */
 .dpage-hero {
-  padding: 190px 0 108px;
+  padding: 68px 0 104px;
   color: #ffffff;
   background:
     radial-gradient(circle at 12% 18%, rgba(245, 134, 52, 0.26), transparent 55%),
@@ -181,7 +181,7 @@
 .dpage-section {
   padding: 30px 0;
   border-top: 1px solid var(--dp-border);
-  scroll-margin-top: 160px;
+  scroll-margin-top: 28px;
 }
 
 .dpage-section:first-child {
@@ -556,16 +556,16 @@
   .dpage-toc {
     display: block;
     position: sticky;
-    top: 152px;
+    top: 28px;
     align-self: start;
-    max-height: calc(100vh - 180px);
+    max-height: calc(100vh - 56px);
     overflow-y: auto;
   }
 }
 
 @media (max-width: 480px) {
   .dpage-hero {
-    padding: 150px 0 96px;
+    padding: 48px 0 92px;
   }
 
   .dpage-hero h1 {
