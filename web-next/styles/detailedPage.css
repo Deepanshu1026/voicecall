@@ -309,17 +309,20 @@
   margin: 0;
 }
 
-/* App cards — flex so rows stretch to equal height and the last row stays even */
+/* App cards — fixed-width columns, centred, so every card is the same size and
+   the final (2-card) row stays centred instead of stretching wider. */
 .dpage-cards {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 340px);
+  justify-content: center;
+  align-items: stretch;
   gap: 18px;
 }
 
 .dpage-card {
-  flex: 1 1 300px;
   display: flex;
   flex-direction: column;
+  height: 100%;
   padding: 20px 22px;
   border: 1px solid var(--dp-border);
   border-top: 3px solid var(--dp-muted);
