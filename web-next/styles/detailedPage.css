@@ -309,14 +309,17 @@
   margin: 0;
 }
 
-/* App cards */
+/* App cards — flex so rows stretch to equal height and the last row stays even */
 .dpage-cards {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 18px;
 }
 
 .dpage-card {
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
   padding: 20px 22px;
   border: 1px solid var(--dp-border);
   border-top: 3px solid var(--dp-muted);
@@ -333,9 +336,10 @@
 
 .dpage-card-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 10px;
 }
 
@@ -383,7 +387,8 @@
   display: grid;
   grid-template-columns: 84px minmax(0, 1fr);
   gap: 6px 12px;
-  margin: 0;
+  margin: auto 0 0;
+  padding-top: 4px;
 }
 
 .dpage-card dt {
@@ -530,10 +535,6 @@
 }
 
 @media (min-width: 768px) {
-  .dpage-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .dpage-callouts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -542,10 +543,6 @@
 @media (min-width: 1024px) {
   .dpage-hero h1 {
     font-size: 52px;
-  }
-
-  .dpage-cards {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .dpage-layout {
