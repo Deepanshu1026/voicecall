@@ -14,9 +14,9 @@ const baseUrl = 'https://avisaexperts.com';
 const apiBase = 'https://voicecall-6ylg.onrender.com/api';
 const today = new Date().toISOString().split('T')[0];
 
-const HOME_TITLE = 'A Visa Experts | No.1 Visa Immigration Company in India';
+const HOME_TITLE = 'A Visa Experts | Visitor Visa & Immigration Consultants';
 const HOME_DESCRIPTION =
-  "A Visa Experts is India's trusted No.1 Visa Immigration Company. We help with tourist, work, transit and PR visas for USA, UK, Canada, Australia, Europe & NZ. Free consultation with expert immigration consultants.";
+  'Visitor visa and immigration consultancy in India. Expert guidance for UK, USA, Canada, Australia, Europe and NZ tourist, transit and PR visas. Free consultation.';
 
 const pages = [
   {
