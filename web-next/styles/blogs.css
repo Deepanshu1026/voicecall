@@ -892,6 +892,32 @@
   margin-bottom: 4px;
 }
 
+/* Weak vs clear example answers */
+.blog-detail-body .blog-weak,
+.blog-detail-body .blog-clear {
+  padding: 8px 0 8px 14px;
+  border-left: 3px solid var(--blogs-border);
+  border-radius: 0 8px 8px 0;
+}
+
+.blog-detail-body .blog-weak {
+  border-left-color: #ef4444;
+  background: #fef2f2;
+}
+
+.blog-detail-body .blog-clear {
+  border-left-color: #10b981;
+  background: #ecfdf5;
+}
+
+.blog-detail-body .blog-weak strong {
+  color: #b91c1c;
+}
+
+.blog-detail-body .blog-clear strong {
+  color: #047857;
+}
+
 /* "Back to top" jump links */
 .blog-detail-body .blog-top-link {
   display: inline-block;
