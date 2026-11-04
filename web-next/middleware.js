@@ -8,6 +8,9 @@ const JUNK_EXACT = new Set([
   's',
   'c',
   'l',
+  // Legacy blog_pages/post.php?id=…&title=… 301s land here as /blogs?id=…&title=…
+  'id',
+  'title',
   'fbclid',
   'gclid',
   'gclsrc',

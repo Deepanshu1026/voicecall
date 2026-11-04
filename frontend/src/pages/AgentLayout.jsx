@@ -137,6 +137,7 @@ const AgentLayout = () => {
         title="Agent Dashboard | A Visa Experts"
         description="Agent portal for A Visa Experts. Manage applications, client chats, and daily logins."
         canonicalPath="/agent/dashboard"
+        noindex
       />
     <div className="agent-portal-layout">
       <aside className="agent-portal-sidebar">

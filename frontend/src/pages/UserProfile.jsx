@@ -6,6 +6,7 @@ import { authAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { HiArrowLeft, HiChatBubbleLeftRight, HiPhone, HiVideoCamera, HiCalendar, HiMapPin, HiCurrencyRupee } from 'react-icons/hi2';
 import { getAvatarUrl, getDisplayName, getInitials, formatLastSeen } from '../utils/helpers';
+import SEO from '../components/common/SEO';
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -83,6 +84,13 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Private profile page — keep it out of search results */}
+      <SEO
+        title="User Profile | A Visa Experts"
+        description="View a user profile on A Visa Experts."
+        canonicalPath={`/user/${id}`}
+        noindex
+      />
       <div className="max-w-2xl mx-auto p-4">
         <div className="flex items-center gap-4 mb-6">
           <button onClick={() => navigate(-1)} className="btn-ghost p-2">

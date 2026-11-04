@@ -8,6 +8,7 @@ Disallow: /agent/
 Disallow: /chat
 Disallow: /settings
 Disallow: /profile
+Disallow: /user/
 Disallow: /appointment-payment
 
 # NOTE: junk query-param URLs (e.g. ?c=, ?utm_*) are intentionally NOT disallowed.
