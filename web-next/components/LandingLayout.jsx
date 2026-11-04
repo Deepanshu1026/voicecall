@@ -277,7 +277,15 @@ const LandingLayout = ({ children }) => {
                           </defs>
                         </svg>
                       ) : (
-                        <img className="flag-img" width={132} height={88} src={item.flag} alt={`${item.title || 'Country'} flag - A Visa Experts`} />
+                        <img
+                  className="flag-img"
+                  width={132}
+                  height={88}
+                  src={item.flag}
+                  alt={`${item.title || 'Country'} flag - A Visa Experts`}
+                  loading="lazy"
+                  decoding="async"
+                />
                       )}
                       <div className="ofic-nm">{item.title} <span>{item.span}</span></div>
                     </div>

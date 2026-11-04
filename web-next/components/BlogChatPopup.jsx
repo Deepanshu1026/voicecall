@@ -27,20 +27,23 @@ const BlogChatPopup = () => {
   const [imageOk, setImageOk] = useState(true);
   const inputRef = useRef(null);
 
-  // Load an advisor, then pop the chat open shortly after the page settles.
+  // Wait a few seconds before touching the network, so the consultant request
+  // never competes with the article's own content for bandwidth.
   useEffect(() => {
     let cancelled = false;
-    userAPI
-      .getConsultants()
-      .then((res) => {
+    const timer = setTimeout(async () => {
+      try {
+        const res = await userAPI.getConsultants();
         const list = res.data?.data || [];
         const active = list.filter((c) => (c.workStatus || 'active') === 'active');
         const pick = (active.length ? active : list)[0];
         if (!cancelled && pick) setAdvisor(pick);
-      })
-      .catch(() => {});
-    // Give the reader a moment with the article before the chat pops up.
-    const timer = setTimeout(() => setOpen(true), 5000);
+      } catch (e) {
+        /* the popup still opens without an advisor */
+      }
+      if (!cancelled) setOpen(true);
+    }, 5000);
+
     return () => {
       cancelled = true;
       clearTimeout(timer);

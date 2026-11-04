@@ -169,6 +169,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        {/* Warm up the API origin early (banner + consultant data come from here). */}
+        <link rel="preconnect" href="https://voicecall-6ylg.onrender.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         {children}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-TDW4SCLJRV"

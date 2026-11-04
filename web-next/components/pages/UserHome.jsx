@@ -260,7 +260,14 @@ const UserHome = ({ initialReviews = [] }) => {
             {heroCards.map((card, idx) => (
               <a href={card.href || '/'} className="new-hero-card-wrapper" key={idx} aria-label={`Learn more about ${card.title}`}>
                 <div className="new-hero-card">
-                  <img src={card.img} alt={`${card.title} - Visa Services by A Visa Experts`} width={146} height={144} />
+                  <img
+                    src={card.img}
+                    alt={`${card.title} - Visa Services by A Visa Experts`}
+                    width={146}
+                    height={144}
+                    loading="lazy"
+                    decoding="async"
+                  />
                   <div className="new-hero-card-content">
                     <h2>{card.title}</h2>
                     <p>{card.text}</p>

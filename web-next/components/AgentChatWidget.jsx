@@ -63,9 +63,11 @@ const AgentChatWidget = () => {
         if (!cancelled) setLoading(false);
       }
     };
-    fetchAgents();
+    // Delay the request so it never competes with the page's own content.
+    const timer = setTimeout(fetchAgents, 4000);
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
   }, []);
 
