@@ -767,3 +767,34 @@
   color: #5f6368;
   background: #f8f9fa;
 }
+
+/* ---- GSC table: totals footer + all-time column ---- */
+.gsc-table tfoot td {
+  padding: 11px 12px;
+  border-top: 2px solid #e5e7eb;
+  font-size: 13px;
+  font-weight: 700;
+  color: #202124;
+  font-variant-numeric: tabular-nums;
+}
+
+.gsc-table tfoot td.num {
+  text-align: right;
+}
+
+.gsc-total-sub {
+  font-weight: 400;
+  color: #80868b;
+  font-size: 11.5px;
+}
+
+.gsc-alltime {
+  color: #5f6368;
+}
+
+.gsc-none {
+  padding: 22px 12px;
+  text-align: center;
+  color: #80868b;
+  font-size: 13px;
+}

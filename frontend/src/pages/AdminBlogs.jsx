@@ -107,11 +107,22 @@ const AdminBlogs = () => {
 
   const summary = useMemo(() => {
     const totals = analytics?.totals || [];
+    const posts = analytics?.posts || [];
     const last7 = totals.slice(-7).reduce((a, b) => a + b, 0);
     const period = totals.reduce((a, b) => a + b, 0);
     const today = totals[totals.length - 1] || 0;
     const yesterday = totals[totals.length - 2] || 0;
-    return { today, yesterday, last7, period, delta: today - yesterday };
+    const withViews = posts.filter((p) => p.period > 0);
+    return {
+      today,
+      yesterday,
+      last7,
+      period,
+      delta: today - yesterday,
+      allTime: posts.reduce((a, p) => a + (p.allTime || 0), 0),
+      postsWithViews: withViews.length,
+      rowsShown: Math.min(withViews.length, 100),
+    };
   }, [analytics]);
 
   const maxRow = useMemo(
@@ -362,13 +373,28 @@ const AdminBlogs = () => {
                   <th className="num">Today</th>
                   <th className="num">Yesterday</th>
                   <th className="num">Change</th>
+                  <th className="num">All-time</th>
                 </tr>
               </thead>
               <tbody>
-                {(analytics.posts || [])
-                  .filter((p) => p.period > 0 || p.allTime > 0)
-                  .slice(0, 20)
-                  .map((p) => (
+                {(() => {
+                  // Only posts viewed in the selected period, busiest first — so
+                  // the rows always add up to the total shown above.
+                  const rows = (analytics.posts || [])
+                    .filter((p) => p.period > 0)
+                    .sort((a, b) => b.period - a.period || b.allTime - a.allTime);
+
+                  if (!rows.length) {
+                    return (
+                      <tr>
+                        <td colSpan={6} className="gsc-none">
+                          No views recorded in this period yet.
+                        </td>
+                      </tr>
+                    );
+                  }
+
+                  return rows.slice(0, 100).map((p) => (
                     <tr key={p.id}>
                       <td className="gsc-title">{p.title}</td>
                       <td className="num">
@@ -382,9 +408,27 @@ const AdminBlogs = () => {
                           {p.today - p.yesterday >= 0 ? '\u25B2' : '\u25BC'} {Math.abs(p.today - p.yesterday)}
                         </span>
                       </td>
+                      <td className="num gsc-alltime">{p.allTime}</td>
                     </tr>
-                  ))}
+                  ));
+                })()}
               </tbody>
+              <tfoot>
+                <tr>
+                  <td>
+                    Total
+                    {' '}
+                    <span className="gsc-total-sub">
+                      ({summary.rowsShown} of {summary.postsWithViews} {summary.postsWithViews === 1 ? 'blog' : 'blogs'})
+                    </span>
+                  </td>
+                  <td className="num">{summary.period}</td>
+                  <td className="num">{summary.today}</td>
+                  <td className="num">{summary.yesterday}</td>
+                  <td />
+                  <td className="num gsc-alltime">{summary.allTime}</td>
+                </tr>
+              </tfoot>
             </table>
           </div>
           <p className="gsc-note">
