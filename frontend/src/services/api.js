@@ -213,6 +213,7 @@ export const agentPortalAPI = {
 
 export const appointmentAPI = {
   book: (data) => api.post('/app/appointments', data),
+  getCancelledDates: () => api.get('/app/cancelled-dates'),
 };
 
 export const adminAPI = {
@@ -238,6 +239,9 @@ export const adminAPI = {
   createBlog: (data) => api.post('/admin/blogs', data),
   updateBlog: (id, data) => api.put(`/admin/blogs/${id}`, data),
   deleteBlog: (id) => api.delete(`/admin/blogs/${id}`),
+  getCancelledDates: () => api.get('/admin/cancelled-dates'),
+  addCancelledDates: (dates) => api.post('/admin/cancelled-dates', { dates }),
+  deleteCancelledDate: (date) => api.delete(`/admin/cancelled-dates/${date}`),
 };
 
 export const blogAPI = {

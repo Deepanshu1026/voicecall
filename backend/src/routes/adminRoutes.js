@@ -27,6 +27,10 @@ router.post('/reviews', adminController.createReview);
 router.put('/reviews/:id', adminController.updateReview);
 router.delete('/reviews/:id', adminController.deleteReview);
 
+router.get('/cancelled-dates', adminController.getCancelledDates);
+router.post('/cancelled-dates', adminController.addCancelledDates);
+router.delete('/cancelled-dates/:date', adminController.deleteCancelledDate);
+
 router.get('/blogs/analytics', adminController.getBlogAnalytics);
 router.get('/blogs', adminController.getBlogs);
 router.post('/blogs', adminController.createBlog);

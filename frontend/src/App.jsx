@@ -22,6 +22,7 @@ import AdminInstagramToken from './pages/AdminInstagramToken';
 import AdminUserDetails from './pages/AdminUserDetails';
 import AdminReviews from './pages/AdminReviews';
 import AdminBlogs from './pages/AdminBlogs';
+import AdminBlockedDates from './pages/AdminBlockedDates';
 import BookedAppointments from './pages/BookedAppointments';
 import ApplicationsPage from './pages/ApplicationsPage';
 import Chat from './pages/Chat';
@@ -163,6 +164,7 @@ function App() {
         <Route path="admin/users" element={<AdminUserDetails />} />
         <Route path="admin/reviews" element={<AdminReviews />} />
         <Route path="admin/blogs" element={<AdminBlogs />} />
+        <Route path="admin/blocked-dates" element={<AdminBlockedDates />} />
       </Route>
 
       {/* Default landing */}

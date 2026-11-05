@@ -6,6 +6,7 @@ const User = require('../models/User');
 const Review = require('../models/Review');
 const Post = require('../models/Post');
 const PostView = require('../models/PostView');
+const CancelledDate = require('../models/CancelledDate');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const ApiResponse = require('../utils/ApiResponse');
@@ -539,7 +540,59 @@ const deleteBlog = asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'Blog deleted' });
 });
 
+// ==================== BLOCKED (CANCELLED) DATES ====================
+// Dates on which users cannot book the Premium (Chairman) meeting.
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+const getCancelledDates = asyncHandler(async (req, res) => {
+  const dates = await CancelledDate.find().sort({ meetingDate: 1 }).lean();
+  ApiResponse.success(res, { dates: dates.map((d) => d.meetingDate) });
+});
+
+const addCancelledDates = asyncHandler(async (req, res) => {
+  const raw = Array.isArray(req.body.dates) ? req.body.dates : [req.body.date];
+  const dates = [
+    ...new Set(
+      raw
+        .map((d) => String(d || '').trim())
+        .filter((d) => DATE_RE.test(d))
+    ),
+  ];
+
+  if (!dates.length) {
+    throw new AppError('Provide at least one date in YYYY-MM-DD format', 400);
+  }
+
+  await CancelledDate.bulkWrite(
+    dates.map((meetingDate) => ({
+      updateOne: {
+        filter: { meetingDate },
+        update: { $setOnInsert: { meetingDate, createdAt: new Date() } },
+        upsert: true,
+      },
+    })),
+    { ordered: false }
+  );
+
+  const all = await CancelledDate.find().sort({ meetingDate: 1 }).lean();
+  ApiResponse.success(res, {
+    added: dates.length,
+    dates: all.map((d) => d.meetingDate),
+  });
+});
+
+const deleteCancelledDate = asyncHandler(async (req, res) => {
+  const date = String(req.params.date || '').trim();
+  if (!DATE_RE.test(date)) throw new AppError('Invalid date format. Use YYYY-MM-DD.', 400);
+  const result = await CancelledDate.deleteOne({ meetingDate: date });
+  ApiResponse.success(res, { deleted: result.deletedCount, date });
+});
+
 module.exports = {
+  getCancelledDates,
+  addCancelledDates,
+  deleteCancelledDate,
   getAllConversations,
   getConversationMessages,
   editMessage,

@@ -766,6 +766,14 @@ router.post('/appointments', asyncHandler(async (req, res) => {
   const date = datetime.split(' ')[0] || '';
   const selectedPlanLower = selected_plan.toLowerCase();
 
+  // Premium (Chairman) meetings cannot be booked on blocked dates.
+  if (selectedPlanLower === 'premium') {
+    const blocked = await CancelledDate.findOne({ meetingDate: date }).lean();
+    if (blocked) {
+      throw new AppError('Chairman is not available on this date. Please select another date.', 400);
+    }
+  }
+
   // Calculate end time (add 30 minutes to start)
   const timeParts = time_slot.split(':');
   let endTime = time_slot;
@@ -879,6 +887,26 @@ router.get('/time-slots', asyncHandler(async (req, res) => {
   const targetDate = date || new Date().toISOString().split('T')[0];
   const targetPlan = (plan || 'Basic').toLowerCase();
   const theSlots = targetPlan === 'premium' ? premiumSlots : targetPlan === 'advance' ? advanceSlots : baseSlots;
+
+  // Premium (Chairman) meetings cannot be booked on blocked dates.
+  if (targetPlan === 'premium') {
+    const blocked = await CancelledDate.findOne({ meetingDate: targetDate }).lean();
+    if (blocked) {
+      const unavailableData = theSlots.map((slot) => ({
+        time: slot, available: 0, total: 1, booked: 0, remaining: 0,
+      }));
+      const slotData = time_slot
+        ? [unavailableData.find((s) => s.time === time_slot) || { time: time_slot, available: 0, total: 1, booked: 0, remaining: 0 }]
+        : unavailableData;
+      return res.json({
+        status: 'success',
+        unavailable: true,
+        reason: 'chairman_unavailable',
+        message: 'Chairman is not available on this date. Please select another date.',
+        data: slotData,
+      });
+    }
+  }
 
   // Count existing bookings per slot
   const bookings = await Appointment.aggregate([

@@ -79,15 +79,35 @@ const Appointment = () => {
   const [premiumPopup, setPremiumPopup] = useState({ show: false, message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [referenceId, setReferenceId] = useState('');
+  const [blockedDates, setBlockedDates] = useState([]);
   const scheduleRef = useRef(null);
 
+  // Premium (Chairman) unavailable dates, managed by the admin.
+  useEffect(() => {
+    appointmentAPI
+      .getCancelledDates()
+      .then((res) => {
+        const dates = res.data?.dates || res.data?.data?.dates || [];
+        setBlockedDates(Array.isArray(dates) ? dates : []);
+      })
+      .catch(() => setBlockedDates([]));
+  }, []);
+
+  const isChairmanUnavailable =
+    selectedPlan === 'Premium' && blockedDates.includes(formData.date);
+
   const refreshSlots = useCallback(() => {
+    if (selectedPlan === 'Premium' && blockedDates.includes(formData.date)) {
+      setAvailableSlots([]);
+      setSelectedTime('');
+      return;
+    }
     const slots = getAvailableSlots(selectedPlan, formData.date);
     setAvailableSlots(slots);
     if (selectedTime && !slots.includes(selectedTime)) {
       setSelectedTime('');
     }
-  }, [selectedPlan, formData.date, selectedTime]);
+  }, [selectedPlan, formData.date, selectedTime, blockedDates]);
 
   useEffect(() => {
     refreshSlots();
@@ -138,6 +158,9 @@ const Appointment = () => {
       tomorrow.setDate(tomorrow.getDate() + 1);
       value = getNextAvailableDate(tomorrow);
       showPremiumPopup('Premium meetings are only available from tomorrow. Date updated automatically.');
+    }
+    if (selectedPlan === 'Premium' && blockedDates.includes(value)) {
+      showPremiumPopup('Chairman is not available on this date. Please select another date.');
     }
     setFormData((prev) => ({ ...prev, date: value }));
     setSelectedTime('');
@@ -545,6 +568,12 @@ const Appointment = () => {
                     <div style={{ fontSize: '24px', marginBottom: '10px' }}>⚠️</div>
                     <h4>Sunday Appointments Not Available</h4>
                     <p>Please select a weekday (Monday-Saturday) for your appointment.</p>
+                  </div>
+                ) : isChairmanUnavailable ? (
+                  <div className="premium-notice">
+                    <div style={{ fontSize: '24px', marginBottom: '10px' }}>⚠️</div>
+                    <h4>Premium Meeting Notice</h4>
+                    <p>Chairman is not available on this date. Please select another date.</p>
                   </div>
                 ) : isPremiumBlocked ? (
                   <div className="premium-notice">
