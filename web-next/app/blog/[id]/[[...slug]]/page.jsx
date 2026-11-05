@@ -5,6 +5,22 @@ import { blogAPI } from '../../../../lib/api';
 import { cleanPostHtml } from '../../../../lib/cleanPostHtml';
 
 export const revalidate = 300;
+export const dynamicParams = true;
+
+// Pre-render every published post so blog pages are served from the CDN cache
+// instead of hitting the API on every request. Unknown/new slugs are still
+// rendered on demand (dynamicParams) and then cached.
+export async function generateStaticParams() {
+  try {
+    const res = await blogAPI.getPosts({ limit: 1000 });
+    const posts = res.data?.data || [];
+    return posts
+      .filter((p) => p && (p.slug || p._id))
+      .map((p) => ({ id: p.slug || String(p._id) }));
+  } catch (e) {
+    return [];
+  }
+}
 
 const isLegacyId = (value) => /^[0-9a-fA-F]{24}$/.test(value) || /^\d+$/.test(value);
 
