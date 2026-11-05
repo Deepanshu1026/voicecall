@@ -709,3 +709,49 @@
   .gsc { padding: 16px 14px 10px; }
   .gsc-title { max-width: 150px; }
 }
+
+/* Collapsible header for the views panel */
+.gsc { padding: 0; overflow: hidden; }
+
+.gsc-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 22px;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-family: Roboto, "Segoe UI", Arial, sans-serif;
+}
+
+.gsc-toggle:hover { background: #f8f9fa; }
+
+.gsc-toggle-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #202124;
+}
+
+.gsc-toggle-title i { color: #1a73e8; }
+
+.gsc-toggle-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a73e8;
+}
+
+.gsc-body {
+  padding: 4px 22px 14px;
+  border-top: 1px solid #f1f3f4;
+}
+
+.gsc.is-open { box-shadow: 0 1px 3px rgba(60, 64, 67, 0.14); }

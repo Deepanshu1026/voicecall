@@ -47,6 +47,7 @@ const AdminBlogs = () => {
   const [contentTab, setContentTab] = useState('editor'); // 'editor' | 'preview'
   const [analytics, setAnalytics] = useState(null);
   const [analyticsDays, setAnalyticsDays] = useState(14);
+  const [showAnalytics, setShowAnalytics] = useState(false);
   const formRef = useRef(null);
 
 
@@ -68,8 +69,11 @@ const AdminBlogs = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
+  // Only fetch the analytics once the panel is opened.
   useEffect(() => {
+    if (!showAnalytics) return undefined;
     let cancelled = false;
+    setAnalytics(null);
     adminAPI
       .getBlogAnalytics(analyticsDays)
       .then((res) => {
@@ -79,7 +83,7 @@ const AdminBlogs = () => {
     return () => {
       cancelled = true;
     };
-  }, [analyticsDays]);
+  }, [showAnalytics, analyticsDays]);
 
   const viewsById = useMemo(() => {
     const map = {};
@@ -219,12 +223,29 @@ const AdminBlogs = () => {
         )}
       </div>
 
-      {/* Views analytics */}
-      {analytics && (analytics.totals || []).length > 1 && (
-        <section className="gsc">
+      {/* Views analytics (collapsed until opened) */}
+      <section className={`gsc ${showAnalytics ? 'is-open' : ''}`}>
+        <button
+          type="button"
+          className="gsc-toggle"
+          onClick={() => setShowAnalytics((v) => !v)}
+          aria-expanded={showAnalytics}
+        >
+          <span className="gsc-toggle-title"><i className="bi bi-graph-up-arrow" /> Blog views</span>
+          <span className="gsc-toggle-hint">
+            {showAnalytics ? 'Hide' : 'Show daily views'}
+            <i className={`bi bi-chevron-${showAnalytics ? 'up' : 'down'}`} />
+          </span>
+        </button>
+
+        {showAnalytics && (
+        <div className="gsc-body">
+          {!analytics ? (
+            <p className="gsc-note">Loading views…</p>
+          ) : (
+          <>
           <div className="gsc-head">
             <div>
-              <h3>Blog views</h3>
               <p className="gsc-sub">
                 <strong>{summary.period.toLocaleString()}</strong> views in the last {analyticsDays} days
                 <span className={`gsc-delta ${summary.delta >= 0 ? 'up' : 'down'}`}>
@@ -330,8 +351,11 @@ const AdminBlogs = () => {
           <p className="gsc-note">
             One view is counted per real page visit. Daily history begins when tracking was added, so earlier days show zero.
           </p>
-        </section>
-      )}
+          </>
+          )}
+        </div>
+        )}
+      </section>
 
       {/* Editor */}
       <form className="blog-form-card" onSubmit={handleSubmit} ref={formRef}>
