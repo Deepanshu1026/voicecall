@@ -119,6 +119,21 @@ const AdminBlogs = () => {
     [analytics]
   );
 
+  const gscSummary = useMemo(() => {
+    const withGsc = (analytics?.posts || []).filter((p) => p.gsc);
+    const clicks = withGsc.reduce((a, p) => a + (p.gsc.clicks || 0), 0);
+    const impressions = withGsc.reduce((a, p) => a + (p.gsc.impressions || 0), 0);
+    const weighted = withGsc.reduce((a, p) => a + (p.gsc.position || 0) * (p.gsc.impressions || 0), 0);
+    return {
+      posts: withGsc.length,
+      clicks,
+      impressions,
+      ctr: impressions ? clicks / impressions : 0,
+      position: impressions ? weighted / impressions : 0,
+      syncedAt: withGsc[0]?.gsc?.syncedAt || null,
+    };
+  }, [analytics]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => {
@@ -275,6 +290,38 @@ const AdminBlogs = () => {
             </label>
           </div>
 
+          {gscSummary.posts > 0 && (
+            <div className="gsc-search">
+              <div className="gsc-search-head">
+                <span className="gsc-search-title">
+                  <i className="bi bi-google" /> Google Search
+                </span>
+                <span className="gsc-search-meta">
+                  last 3 months
+                  {gscSummary.syncedAt && ` · synced ${new Date(gscSummary.syncedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`}
+                </span>
+              </div>
+              <div className="gsc-search-stats">
+                <div className="gsc-stat">
+                  <span className="gsc-stat-value">{gscSummary.clicks.toLocaleString()}</span>
+                  <span className="gsc-stat-label">Clicks</span>
+                </div>
+                <div className="gsc-stat">
+                  <span className="gsc-stat-value">{gscSummary.impressions.toLocaleString()}</span>
+                  <span className="gsc-stat-label">Impressions</span>
+                </div>
+                <div className="gsc-stat">
+                  <span className="gsc-stat-value">{(gscSummary.ctr * 100).toFixed(2)}%</span>
+                  <span className="gsc-stat-label">CTR</span>
+                </div>
+                <div className="gsc-stat">
+                  <span className="gsc-stat-value">{gscSummary.position.toFixed(1)}</span>
+                  <span className="gsc-stat-label">Avg. position</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {(analytics.totals || []).every((v) => v === 0) ? (
             <p className="gsc-empty">
               No views recorded in this period yet. Views are counted from the day tracking started, so the chart
@@ -360,13 +407,16 @@ const AdminBlogs = () => {
                   <th>Blog</th>
                   <th className="num">Views</th>
                   <th className="num">Today</th>
-                  <th className="num">Yesterday</th>
                   <th className="num">Change</th>
+                  <th className="num gsc-col">Google clicks</th>
+                  <th className="num gsc-col">Impressions</th>
+                  <th className="num gsc-col">Position</th>
                 </tr>
               </thead>
               <tbody>
                 {(analytics.posts || [])
-                  .filter((p) => p.period > 0 || p.allTime > 0)
+                  .filter((p) => p.period > 0 || p.allTime > 0 || (p.gsc && p.gsc.clicks > 0))
+                  .sort((a, b) => (b.gsc?.clicks || 0) - (a.gsc?.clicks || 0) || b.period - a.period)
                   .slice(0, 20)
                   .map((p) => (
                     <tr key={p.id}>
@@ -376,19 +426,23 @@ const AdminBlogs = () => {
                         <span className="gsc-num">{p.period}</span>
                       </td>
                       <td className="num">{p.today}</td>
-                      <td className="num">{p.yesterday}</td>
                       <td className="num">
                         <span className={`gsc-change ${p.today - p.yesterday >= 0 ? 'up' : 'down'}`}>
                           {p.today - p.yesterday >= 0 ? '\u25B2' : '\u25BC'} {Math.abs(p.today - p.yesterday)}
                         </span>
                       </td>
+                      <td className="num gsc-col"><strong>{p.gsc ? p.gsc.clicks.toLocaleString() : '—'}</strong></td>
+                      <td className="num gsc-col">{p.gsc ? p.gsc.impressions.toLocaleString() : '—'}</td>
+                      <td className="num gsc-col">{p.gsc ? p.gsc.position.toFixed(1) : '—'}</td>
                     </tr>
                   ))}
               </tbody>
             </table>
           </div>
           <p className="gsc-note">
-            One view is counted per real page visit. Daily history begins when tracking was added, so earlier days show zero.
+            <strong>Views</strong> are counted by us — one per real page visit — and daily history begins when tracking
+            was added, so earlier days show zero. <strong>Google clicks</strong>, impressions and position come from
+            Search Console and cover the last 3 months; update them by importing a fresh export.
           </p>
           </>
           )}
@@ -592,6 +646,17 @@ const AdminBlogs = () => {
                     <>
                       <span>•</span>
                       <span className="blog-item-today" title="Views today">{viewsById[b._id].today} today</span>
+                    </>
+                  )}
+                  {b.gsc && b.gsc.clicks > 0 && (
+                    <>
+                      <span>•</span>
+                      <span
+                        className="blog-item-gsc"
+                        title={`Google Search Console (last 3 months) — ${b.gsc.impressions.toLocaleString()} impressions, ${(b.gsc.ctr * 100).toFixed(2)}% CTR, avg position ${b.gsc.position.toFixed(1)}`}
+                      >
+                        <i className="bi bi-google" /> {b.gsc.clicks} clicks
+                      </span>
                     </>
                   )}
                 </div>

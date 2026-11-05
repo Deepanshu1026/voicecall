@@ -20,6 +20,14 @@ const postSchema = new mongoose.Schema({
   status: { type: String, default: 'published' },
   source: { type: String, default: '' },
   clicks: { type: Number, default: 0 },
+  // Google Search Console numbers for this post's page (imported from an export).
+  gsc: {
+    clicks: { type: Number, default: 0 },
+    impressions: { type: Number, default: 0 },
+    ctr: { type: Number, default: 0 },
+    position: { type: Number, default: 0 },
+    syncedAt: { type: Date, default: null },
+  },
 }, {
   timestamps: true,
 });
