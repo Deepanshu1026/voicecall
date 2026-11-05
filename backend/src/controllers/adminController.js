@@ -5,6 +5,7 @@ const ApiKey = require('../models/ApiKey');
 const User = require('../models/User');
 const Review = require('../models/Review');
 const Post = require('../models/Post');
+const PostView = require('../models/PostView');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const ApiResponse = require('../utils/ApiResponse');
@@ -440,6 +441,51 @@ const getBlogs = asyncHandler(async (req, res) => {
   res.json({ success: true, data: posts });
 });
 
+// Per-day blog views for the admin blogs page: a day-by-day series so the team
+// can see whether views are growing.
+const getBlogAnalytics = asyncHandler(async (req, res) => {
+  const days = Math.min(Math.max(parseInt(req.query.days, 10) || 14, 7), 60);
+
+  const dayKeys = [];
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - i);
+    dayKeys.push(d.toISOString().slice(0, 10));
+  }
+
+  const [posts, rows] = await Promise.all([
+    Post.find({}).select('title slug status clicks createdAt').sort({ createdAt: -1 }).lean(),
+    PostView.find({ day: { $in: dayKeys } }).lean(),
+  ]);
+
+  const byPost = new Map();
+  for (const row of rows) {
+    const key = String(row.post);
+    if (!byPost.has(key)) byPost.set(key, new Map());
+    byPost.get(key).set(row.day, row.count);
+  }
+
+  const result = posts.map((p) => {
+    const map = byPost.get(String(p._id));
+    const series = dayKeys.map((d) => (map ? map.get(d) || 0 : 0));
+    return {
+      id: p._id,
+      title: p.title,
+      slug: p.slug,
+      status: p.status,
+      allTime: p.clicks || 0,
+      today: series[series.length - 1] || 0,
+      yesterday: series[series.length - 2] || 0,
+      period: series.reduce((a, b) => a + b, 0),
+      series,
+    };
+  });
+
+  const totals = dayKeys.map((_, i) => result.reduce((a, p) => a + p.series[i], 0));
+
+  ApiResponse.success(res, { days: dayKeys, totals, posts: result });
+});
+
 const createBlog = asyncHandler(async (req, res) => {
   const {
     title, slug, excerpt, content, featuredImage, imageAlt, category, tags, author,
@@ -512,6 +558,7 @@ module.exports = {
   updateReview,
   deleteReview,
   getBlogs,
+  getBlogAnalytics,
   createBlog,
   updateBlog,
   deleteBlog,

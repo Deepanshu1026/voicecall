@@ -45,6 +45,8 @@ const AdminBlogs = () => {
   const [slugTouched, setSlugTouched] = useState(false);
   const [search, setSearch] = useState('');
   const [contentTab, setContentTab] = useState('editor'); // 'editor' | 'preview'
+  const [analytics, setAnalytics] = useState(null);
+  const [analyticsDays, setAnalyticsDays] = useState(14);
   const formRef = useRef(null);
 
 
@@ -65,6 +67,38 @@ const AdminBlogs = () => {
     fetchBlogs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
+
+  useEffect(() => {
+    let cancelled = false;
+    adminAPI
+      .getBlogAnalytics(analyticsDays)
+      .then((res) => {
+        if (!cancelled) setAnalytics(res.data?.data || null);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [analyticsDays]);
+
+  const viewsById = useMemo(() => {
+    const map = {};
+    (analytics?.posts || []).forEach((p) => {
+      map[String(p.id)] = p;
+    });
+    return map;
+  }, [analytics]);
+
+  const summary = useMemo(() => {
+    const totals = analytics?.totals || [];
+    const last7 = totals.slice(-7).reduce((a, b) => a + b, 0);
+    const period = totals.reduce((a, b) => a + b, 0);
+    const today = totals[totals.length - 1] || 0;
+    const yesterday = totals[totals.length - 2] || 0;
+    return { today, yesterday, last7, period, delta: today - yesterday };
+  }, [analytics]);
+
+  const chartMax = useMemo(() => Math.max(1, ...(analytics?.totals || [0])), [analytics]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -181,6 +215,63 @@ const AdminBlogs = () => {
           <button className="blog-btn ghost" onClick={resetForm}>+ New Blog</button>
         )}
       </div>
+
+      {/* Views analytics */}
+      {analytics && (
+        <section className="blog-analytics">
+          <div className="blog-analytics-head">
+            <h3><i className="bi bi-graph-up-arrow" /> Blog Views</h3>
+            <div className="blog-analytics-range">
+              {[7, 14, 30].map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  className={analyticsDays === d ? 'active' : ''}
+                  onClick={() => setAnalyticsDays(d)}
+                >
+                  {d} days
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="blog-analytics-cards">
+            <div className="blog-stat">
+              <span className="blog-stat-label">Today</span>
+              <span className="blog-stat-value">{summary.today}</span>
+              <span className={`blog-stat-delta ${summary.delta >= 0 ? 'up' : 'down'}`}>
+                {summary.delta >= 0 ? '\u25B2' : '\u25BC'} {Math.abs(summary.delta)} vs yesterday
+              </span>
+            </div>
+            <div className="blog-stat">
+              <span className="blog-stat-label">Yesterday</span>
+              <span className="blog-stat-value">{summary.yesterday}</span>
+            </div>
+            <div className="blog-stat">
+              <span className="blog-stat-label">Last 7 days</span>
+              <span className="blog-stat-value">{summary.last7}</span>
+            </div>
+            <div className="blog-stat">
+              <span className="blog-stat-label">Last {analyticsDays} days</span>
+              <span className="blog-stat-value">{summary.period}</span>
+            </div>
+          </div>
+
+          <div className="blog-chart">
+            {analytics.totals.map((v, i) => (
+              <div className="blog-chart-col" key={analytics.days[i]} title={`${analytics.days[i]} — ${v} view${v === 1 ? '' : 's'}`}>
+                <span className="blog-chart-bar" style={{ height: `${Math.max(4, Math.round((v / chartMax) * 100))}%` }} />
+                <span className="blog-chart-label">
+                  {i % Math.ceil(analytics.totals.length / 10) === 0 ? analytics.days[i].slice(8) : ''}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="blog-analytics-note">
+            One view is counted per real page visit. Showing {analytics.days[0]} to {analytics.days[analytics.days.length - 1]}.
+          </p>
+        </section>
+      )}
 
       {/* Editor */}
       <form className="blog-form-card" onSubmit={handleSubmit} ref={formRef}>
@@ -374,7 +465,23 @@ const AdminBlogs = () => {
                   <span>•</span>
                   <span>{b.publishedAt ? new Date(b.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}</span>
                   {b.clicks > 0 && <><span>•</span><span>{b.clicks} views</span></>}
+                  {viewsById[b._id] && (
+                    <>
+                      <span>•</span>
+                      <span className="blog-item-today" title="Views today">{viewsById[b._id].today} today</span>
+                    </>
+                  )}
                 </div>
+                {viewsById[b._id] && (
+                  <div className="blog-item-spark" title={`Daily views, last ${analyticsDays} days`}>
+                    {viewsById[b._id].series.slice(-analyticsDays).map((v, i) => (
+                      <span
+                        key={i}
+                        style={{ height: `${Math.max(12, Math.round((v / Math.max(1, ...viewsById[b._id].series)) * 100))}%` }}
+                      />
+                    ))}
+                  </div>
+                )}
                 {b.excerpt && <p className="blog-item-excerpt">{b.excerpt}</p>}
               </div>
               <div className="blog-item-actions">

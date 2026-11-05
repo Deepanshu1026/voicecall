@@ -10,6 +10,7 @@ const Notification = require('../models/Notification');
 const OtpVerification = require('../models/OtpVerification');
 const CancelledDate = require('../models/CancelledDate');
 const Post = require('../models/Post');
+const PostView = require('../models/PostView');
 const { generateTokens } = require('../utils/generateToken');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
@@ -1479,6 +1480,11 @@ router.post('/posts/:id/view', asyncHandler(async (req, res) => {
     { $inc: { clicks: 1 } },
     { new: true }
   ).select('clicks');
+
+  // Also keep a per-day counter so the admin can see views trend day by day.
+  const day = new Date().toISOString().slice(0, 10);
+  await PostView.updateOne({ post: post._id, day }, { $inc: { count: 1 } }, { upsert: true });
+
   res.json({ success: true, data: { clicks: updated ? updated.clicks : 0 } });
 }));
 
