@@ -1,18 +1,30 @@
 import UsaVisaFees from '../../../components/pages/UsaVisaFees';
 
+const SITE_URL = 'https://avisaexperts.com';
+
+const TITLE = 'US Visa Fees from India: Kaise Pay Karein? (2026)';
+const DESCRIPTION =
+  'US B1/B2 tourist visa fee kaise pay karein? Payment options, reschedule par fee ka kya hota hai, sab simple steps mein samjhiye.';
+
 export const metadata = {
-  title: 'USA Visa Fees for Indian Applicants 2026 | A Visa Experts',
-  description:
-    'Understanding USA visa fees for Indian applicants — the visa application (MRV) fee, what the fee covers, refund rules, payment steps and fee categories.',
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: {
-    canonical: '/usa-visa/fees',
+    canonical: `${SITE_URL}/usa-visa/fees`,
     languages: { en: '/usa-visa/fees', 'en-IN': '/usa-visa/fees', 'x-default': '/usa-visa/fees' },
   },
   openGraph: {
-    title: 'USA Visa Fees for Indian Applicants 2026 | A Visa Experts',
-    description:
-      'USA visa fees explained for Indian applicants — what the fee covers, refund rules and payment steps.',
-    url: 'https://avisaexperts.com/usa-visa/fees',
+    type: 'article',
+    title: TITLE,
+    description: DESCRIPTION,
+    url: `${SITE_URL}/usa-visa/fees`,
+    siteName: 'A Visa Experts',
+    images: ['/images/user/statueofliberty 1.webp'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: TITLE,
+    description: DESCRIPTION,
     images: ['/images/user/statueofliberty 1.webp'],
   },
 };
