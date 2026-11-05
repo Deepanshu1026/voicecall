@@ -454,7 +454,7 @@ const getBlogAnalytics = asyncHandler(async (req, res) => {
   }
 
   const [posts, rows] = await Promise.all([
-    Post.find({}).select('title slug status clicks gsc createdAt').sort({ createdAt: -1 }).lean(),
+    Post.find({}).select('title slug status clicks createdAt').sort({ createdAt: -1 }).lean(),
     PostView.find({ day: { $in: dayKeys } }).lean(),
   ]);
 
@@ -478,15 +478,6 @@ const getBlogAnalytics = asyncHandler(async (req, res) => {
       yesterday: series[series.length - 2] || 0,
       period: series.reduce((a, b) => a + b, 0),
       series,
-      gsc: p.gsc && p.gsc.syncedAt
-        ? {
-          clicks: p.gsc.clicks || 0,
-          impressions: p.gsc.impressions || 0,
-          ctr: p.gsc.ctr || 0,
-          position: p.gsc.position || 0,
-          syncedAt: p.gsc.syncedAt,
-        }
-        : null,
     };
   });
 
