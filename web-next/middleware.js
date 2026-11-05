@@ -37,15 +37,22 @@ const JUNK_PREFIXES = ['utm_'];
 // Site-wide maintenance switch. Checked here so every marketing/blog page is
 // gated server-side before it renders. Cached briefly and fails open (a backend
 // hiccup must never take the site down).
+// This runs on every HTML navigation and has to reach the API, so keep the
+// cache generous (the flag only changes when an admin toggles it) and cap the
+// wait so a slow backend can never stall a page.
 const MAINTENANCE_API = 'https://voicecall-6ylg.onrender.com/api/settings/maintenance';
-const MAINTENANCE_TTL_MS = 30000;
+const MAINTENANCE_TTL_MS = 120000;
+const MAINTENANCE_TIMEOUT_MS = 1500;
 let maintenanceCache = { at: 0, enabled: false };
 
 async function isMaintenanceOn() {
   const now = Date.now();
   if (now - maintenanceCache.at < MAINTENANCE_TTL_MS) return maintenanceCache.enabled;
   try {
-    const res = await fetch(MAINTENANCE_API, { cache: 'no-store' });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), MAINTENANCE_TIMEOUT_MS);
+    const res = await fetch(MAINTENANCE_API, { cache: 'no-store', signal: controller.signal });
+    clearTimeout(timer);
     const json = await res.json();
     maintenanceCache = { at: now, enabled: !!json?.data?.enabled };
   } catch (e) {

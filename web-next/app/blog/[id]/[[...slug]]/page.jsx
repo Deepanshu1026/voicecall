@@ -14,10 +14,15 @@ export async function generateStaticParams() {
   try {
     const res = await blogAPI.getPosts({ limit: 1000 });
     const posts = res.data?.data || [];
-    return posts
+    const params = posts
       .filter((p) => p && (p.slug || p._id))
-      .map((p) => ({ id: p.slug || String(p._id) }));
+      // The route is [id]/[[...slug]], so the optional catch-all must be
+      // supplied explicitly (empty array = the plain /blog/<id> URL).
+      .map((p) => ({ id: p.slug || String(p._id), slug: [] }));
+    console.log(`[blog] generateStaticParams -> ${params.length} posts`);
+    return params;
   } catch (e) {
+    console.log(`[blog] generateStaticParams failed: ${e.message}`);
     return [];
   }
 }
