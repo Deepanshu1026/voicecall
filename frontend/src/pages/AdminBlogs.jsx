@@ -98,7 +98,10 @@ const AdminBlogs = () => {
     return { today, yesterday, last7, period, delta: today - yesterday };
   }, [analytics]);
 
-  const chartMax = useMemo(() => Math.max(1, ...(analytics?.totals || [0])), [analytics]);
+  const maxRow = useMemo(
+    () => Math.max(1, ...(analytics?.posts || []).map((p) => p.period || 0)),
+    [analytics]
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -217,58 +220,115 @@ const AdminBlogs = () => {
       </div>
 
       {/* Views analytics */}
-      {analytics && (
-        <section className="blog-analytics">
-          <div className="blog-analytics-head">
-            <h3><i className="bi bi-graph-up-arrow" /> Blog Views</h3>
-            <div className="blog-analytics-range">
-              {[7, 14, 30].map((d) => (
-                <button
-                  key={d}
-                  type="button"
-                  className={analyticsDays === d ? 'active' : ''}
-                  onClick={() => setAnalyticsDays(d)}
-                >
-                  {d} days
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="blog-analytics-cards">
-            <div className="blog-stat">
-              <span className="blog-stat-label">Today</span>
-              <span className="blog-stat-value">{summary.today}</span>
-              <span className={`blog-stat-delta ${summary.delta >= 0 ? 'up' : 'down'}`}>
-                {summary.delta >= 0 ? '\u25B2' : '\u25BC'} {Math.abs(summary.delta)} vs yesterday
-              </span>
-            </div>
-            <div className="blog-stat">
-              <span className="blog-stat-label">Yesterday</span>
-              <span className="blog-stat-value">{summary.yesterday}</span>
-            </div>
-            <div className="blog-stat">
-              <span className="blog-stat-label">Last 7 days</span>
-              <span className="blog-stat-value">{summary.last7}</span>
-            </div>
-            <div className="blog-stat">
-              <span className="blog-stat-label">Last {analyticsDays} days</span>
-              <span className="blog-stat-value">{summary.period}</span>
-            </div>
-          </div>
-
-          <div className="blog-chart">
-            {analytics.totals.map((v, i) => (
-              <div className="blog-chart-col" key={analytics.days[i]} title={`${analytics.days[i]} — ${v} view${v === 1 ? '' : 's'}`}>
-                <span className="blog-chart-bar" style={{ height: `${Math.max(4, Math.round((v / chartMax) * 100))}%` }} />
-                <span className="blog-chart-label">
-                  {i % Math.ceil(analytics.totals.length / 10) === 0 ? analytics.days[i].slice(8) : ''}
+      {analytics && (analytics.totals || []).length > 1 && (
+        <section className="gsc">
+          <div className="gsc-head">
+            <div>
+              <h3>Blog views</h3>
+              <p className="gsc-sub">
+                <strong>{summary.period.toLocaleString()}</strong> views in the last {analyticsDays} days
+                <span className={`gsc-delta ${summary.delta >= 0 ? 'up' : 'down'}`}>
+                  {summary.delta >= 0 ? '\u25B2' : '\u25BC'} {Math.abs(summary.delta)} today vs yesterday
                 </span>
-              </div>
-            ))}
+              </p>
+            </div>
+            <label className="gsc-range">
+              <span className="visually-hidden">Date range</span>
+              <select value={analyticsDays} onChange={(e) => setAnalyticsDays(Number(e.target.value))}>
+                <option value={7}>Last 7 days</option>
+                <option value={14}>Last 14 days</option>
+                <option value={30}>Last 30 days</option>
+              </select>
+            </label>
           </div>
-          <p className="blog-analytics-note">
-            One view is counted per real page visit. Showing {analytics.days[0]} to {analytics.days[analytics.days.length - 1]}.
+
+          {(() => {
+            const W = 1000;
+            const H = 250;
+            const padL = 44;
+            const padR = 16;
+            const padT = 16;
+            const padB = 30;
+            const totals = analytics.totals || [];
+            const n = totals.length;
+            const max = Math.max(1, ...totals);
+            const step = max <= 4 ? 1 : Math.ceil(max / 4);
+            const top = Math.ceil(max / step) * step;
+            const x = (i) => padL + (n <= 1 ? 0 : (i / (n - 1)) * (W - padL - padR));
+            const y = (v) => padT + (1 - v / top) * (H - padT - padB);
+            const line = totals.map((v, i) => `${x(i)},${y(v)}`).join(' L ');
+            const area = `M ${x(0)},${y(0)} L ${line} L ${x(n - 1)},${y(0)} Z`;
+            const labelEvery = Math.max(1, Math.ceil(n / 7));
+            const grid = Array.from({ length: 5 }, (_, k) => top - (top / 4) * k);
+
+            return (
+              <svg className="gsc-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Daily blog views">
+                <defs>
+                  <linearGradient id="gscFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#1a73e8" stopOpacity="0.26" />
+                    <stop offset="100%" stopColor="#1a73e8" stopOpacity="0.02" />
+                  </linearGradient>
+                </defs>
+                {grid.map((val, i) => (
+                  <g key={i}>
+                    <line x1={padL} y1={y(val)} x2={W - padR} y2={y(val)} stroke="#e8eaed" strokeWidth="1" />
+                    <text x={padL - 10} y={y(val) + 4} textAnchor="end" className="gsc-axis">{Math.round(val)}</text>
+                  </g>
+                ))}
+                <path d={area} fill="url(#gscFill)" />
+                <polyline points={totals.map((v, i) => `${x(i)},${y(v)}`).join(' ')} fill="none" stroke="#1a73e8" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+                {totals.map((v, i) => (
+                  <circle key={i} cx={x(i)} cy={y(v)} r="4" fill="#fff" stroke="#1a73e8" strokeWidth="2">
+                    <title>{`${analytics.days[i]} — ${v} view${v === 1 ? '' : 's'}`}</title>
+                  </circle>
+                ))}
+                {analytics.days.map((d, i) =>
+                  i % labelEvery === 0 || i === n - 1 ? (
+                    <text key={d} x={x(i)} y={H - 8} textAnchor="middle" className="gsc-axis">
+                      {d.slice(8)}/{d.slice(5, 7)}
+                    </text>
+                  ) : null
+                )}
+              </svg>
+            );
+          })()}
+
+          <div className="gsc-table-wrap">
+            <table className="gsc-table">
+              <thead>
+                <tr>
+                  <th>Blog</th>
+                  <th className="num">Views</th>
+                  <th className="num">Today</th>
+                  <th className="num">Yesterday</th>
+                  <th className="num">Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(analytics.posts || [])
+                  .filter((p) => p.period > 0 || p.allTime > 0)
+                  .slice(0, 20)
+                  .map((p) => (
+                    <tr key={p.id}>
+                      <td className="gsc-title">{p.title}</td>
+                      <td className="num">
+                        <span className="gsc-bar" style={{ width: `${maxRow ? Math.round((p.period / maxRow) * 100) : 0}%` }} />
+                        <span className="gsc-num">{p.period}</span>
+                      </td>
+                      <td className="num">{p.today}</td>
+                      <td className="num">{p.yesterday}</td>
+                      <td className="num">
+                        <span className={`gsc-change ${p.today - p.yesterday >= 0 ? 'up' : 'down'}`}>
+                          {p.today - p.yesterday >= 0 ? '\u25B2' : '\u25BC'} {Math.abs(p.today - p.yesterday)}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="gsc-note">
+            One view is counted per real page visit. Daily history begins when tracking was added, so earlier days show zero.
           </p>
         </section>
       )}
@@ -472,16 +532,6 @@ const AdminBlogs = () => {
                     </>
                   )}
                 </div>
-                {viewsById[b._id] && (
-                  <div className="blog-item-spark" title={`Daily views, last ${analyticsDays} days`}>
-                    {viewsById[b._id].series.slice(-analyticsDays).map((v, i) => (
-                      <span
-                        key={i}
-                        style={{ height: `${Math.max(12, Math.round((v / Math.max(1, ...viewsById[b._id].series)) * 100))}%` }}
-                      />
-                    ))}
-                  </div>
-                )}
                 {b.excerpt && <p className="blog-item-excerpt">{b.excerpt}</p>}
               </div>
               <div className="blog-item-actions">
