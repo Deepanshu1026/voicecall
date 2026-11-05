@@ -37,35 +37,43 @@ const JUNK_PREFIXES = ['utm_'];
 // Site-wide maintenance switch. Checked here so every marketing/blog page is
 // gated server-side before it renders. Cached briefly and fails open (a backend
 // hiccup must never take the site down).
-// This runs on every HTML navigation and has to reach the API, so keep the
-// cache generous (the flag only changes when an admin toggles it) and cap the
-// wait so a slow backend can never stall a page.
+// Never block a request on this. A refresh is kicked off in the background and
+// the last known value is used, so the maintenance check adds ~0ms to a page.
+// It fails open (a backend hiccup can never take the site down).
 const MAINTENANCE_API = 'https://voicecall-6ylg.onrender.com/api/settings/maintenance';
 const MAINTENANCE_TTL_MS = 120000;
 const MAINTENANCE_TIMEOUT_MS = 1500;
-let maintenanceCache = { at: 0, enabled: false };
+let maintenanceCache = { at: 0, enabled: false, pending: false };
 
-async function isMaintenanceOn() {
+function refreshMaintenance(event) {
   const now = Date.now();
-  if (now - maintenanceCache.at < MAINTENANCE_TTL_MS) return maintenanceCache.enabled;
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), MAINTENANCE_TIMEOUT_MS);
-    const res = await fetch(MAINTENANCE_API, { cache: 'no-store', signal: controller.signal });
-    clearTimeout(timer);
-    const json = await res.json();
-    maintenanceCache = { at: now, enabled: !!json?.data?.enabled };
-  } catch (e) {
-    maintenanceCache = { at: now, enabled: false };
-  }
-  return maintenanceCache.enabled;
+  if (maintenanceCache.pending || now - maintenanceCache.at < MAINTENANCE_TTL_MS) return;
+
+  maintenanceCache.pending = true;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), MAINTENANCE_TIMEOUT_MS);
+
+  const task = fetch(MAINTENANCE_API, { cache: 'no-store', signal: controller.signal })
+    .then((res) => res.json())
+    .then((json) => {
+      maintenanceCache = { at: Date.now(), enabled: !!json?.data?.enabled, pending: false };
+    })
+    .catch(() => {
+      maintenanceCache = { at: Date.now(), enabled: false, pending: false };
+    })
+    .finally(() => clearTimeout(timer));
+
+  // Keep the edge function alive until the refresh settles.
+  if (event && typeof event.waitUntil === 'function') event.waitUntil(task);
 }
 
-export async function middleware(request) {
+export async function middleware(request, event) {
   const { nextUrl } = request;
 
+  refreshMaintenance(event);
+
   // Maintenance mode: show only the maintenance page for the whole website.
-  if (nextUrl.pathname !== '/maintenance' && (await isMaintenanceOn())) {
+  if (nextUrl.pathname !== '/maintenance' && maintenanceCache.enabled) {
     const url = nextUrl.clone();
     url.pathname = '/maintenance';
     url.search = '';
