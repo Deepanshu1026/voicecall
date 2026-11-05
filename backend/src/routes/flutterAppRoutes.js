@@ -766,12 +766,15 @@ router.post('/appointments', asyncHandler(async (req, res) => {
   const date = datetime.split(' ')[0] || '';
   const selectedPlanLower = selected_plan.toLowerCase();
 
-  // Premium (Chairman) meetings cannot be booked on blocked dates.
-  if (selectedPlanLower === 'premium') {
-    const blocked = await CancelledDate.findOne({ meetingDate: date }).lean();
-    if (blocked) {
-      throw new AppError('Chairman is not available on this date. Please select another date.', 400);
-    }
+  // Admin-blocked dates apply per meeting type (all, or specific plans).
+  const blockedDate = await CancelledDate.findOne({ meetingDate: date }).lean();
+  if (blockedDate && CancelledDate.blocksPlan(blockedDate.plans, selectedPlanLower)) {
+    throw new AppError(
+      selectedPlanLower === 'premium'
+        ? 'Chairman is not available on this date. Please select another date.'
+        : 'Meetings are not available on this date. Please select another date.',
+      400
+    );
   }
 
   // Calculate end time (add 30 minutes to start)
@@ -888,24 +891,24 @@ router.get('/time-slots', asyncHandler(async (req, res) => {
   const targetPlan = (plan || 'Basic').toLowerCase();
   const theSlots = targetPlan === 'premium' ? premiumSlots : targetPlan === 'advance' ? advanceSlots : baseSlots;
 
-  // Premium (Chairman) meetings cannot be booked on blocked dates.
-  if (targetPlan === 'premium') {
-    const blocked = await CancelledDate.findOne({ meetingDate: targetDate }).lean();
-    if (blocked) {
-      const unavailableData = theSlots.map((slot) => ({
-        time: slot, available: 0, total: 1, booked: 0, remaining: 0,
-      }));
-      const slotData = time_slot
-        ? [unavailableData.find((s) => s.time === time_slot) || { time: time_slot, available: 0, total: 1, booked: 0, remaining: 0 }]
-        : unavailableData;
-      return res.json({
-        status: 'success',
-        unavailable: true,
-        reason: 'chairman_unavailable',
-        message: 'Chairman is not available on this date. Please select another date.',
-        data: slotData,
-      });
-    }
+  // Admin-blocked dates apply per meeting type (all, or specific plans).
+  const blockedDate = await CancelledDate.findOne({ meetingDate: targetDate }).lean();
+  if (blockedDate && CancelledDate.blocksPlan(blockedDate.plans, targetPlan)) {
+    const unavailableData = theSlots.map((slot) => ({
+      time: slot, available: 0, total: 1, booked: 0, remaining: 0,
+    }));
+    const slotData = time_slot
+      ? [unavailableData.find((s) => s.time === time_slot) || { time: time_slot, available: 0, total: 1, booked: 0, remaining: 0 }]
+      : unavailableData;
+    return res.json({
+      status: 'success',
+      unavailable: true,
+      reason: 'date_blocked',
+      message: targetPlan === 'premium'
+        ? 'Chairman is not available on this date. Please select another date.'
+        : 'Meetings are not available on this date. Please select another date.',
+      data: slotData,
+    });
   }
 
   // Count existing bookings per slot
@@ -941,9 +944,26 @@ router.get('/time-slots', asyncHandler(async (req, res) => {
 
 // ==================== CANCELLED DATES ====================
 
+// Premium (Chairman) unavailable dates — consumed by the mobile app.
 router.get('/cancelled-dates', asyncHandler(async (req, res) => {
-  const dates = await CancelledDate.find().sort({ meetingDate: 1 }).lean();
-  res.json({ success: true, dates: dates.map((d) => d.meetingDate) });
+  const rows = await CancelledDate.find().lean();
+  const dates = rows
+    .filter((r) => CancelledDate.blocksPlan(r.plans, 'premium'))
+    .map((r) => r.meetingDate)
+    .sort();
+  res.json({ success: true, dates });
+}));
+
+// Full blocked-date list with the meeting types each date applies to — used by the website.
+router.get('/blocked-dates', asyncHandler(async (req, res) => {
+  const rows = await CancelledDate.find().sort({ meetingDate: 1 }).lean();
+  res.json({
+    success: true,
+    entries: rows.map((r) => ({
+      date: r.meetingDate,
+      plans: Array.isArray(r.plans) && r.plans.length ? r.plans : ['all'],
+    })),
+  });
 }));
 
 // ==================== MEETINGS STATUS ====================

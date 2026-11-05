@@ -541,44 +541,92 @@ const deleteBlog = asyncHandler(async (req, res) => {
 });
 
 // ==================== BLOCKED (CANCELLED) DATES ====================
-// Dates on which users cannot book the Premium (Chairman) meeting.
+// Dates on which users cannot book a meeting. Each date is blocked either for
+// every meeting type ('all') or for a specific set of plans.
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const VALID_PLANS = ['basic', 'advance', 'premium'];
+
+const toDateStr = (d) => d.toISOString().slice(0, 10);
+
+// 'all' wins; otherwise keep only known plan names (fallback to 'all').
+const normalizePlans = (value) => {
+  const raw = Array.isArray(value) ? value : value ? [value] : ['all'];
+  const cleaned = [
+    ...new Set(raw.map((p) => String(p || '').trim().toLowerCase()).filter(Boolean)),
+  ];
+  if (!cleaned.length || cleaned.includes('all')) return ['all'];
+  const plans = cleaned.filter((p) => VALID_PLANS.includes(p));
+  return plans.length ? plans : ['all'];
+};
+
+// Expand a from/to pair into individual YYYY-MM-DD strings (capped at ~1 year).
+const expandRange = (from, to) => {
+  if (!DATE_RE.test(String(from)) || !DATE_RE.test(String(to))) return [];
+  const start = new Date(`${from}T00:00:00Z`);
+  const end = new Date(`${to}T00:00:00Z`);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end < start) return [];
+  const out = [];
+  const cursor = new Date(start);
+  while (cursor <= end && out.length <= 366) {
+    out.push(toDateStr(cursor));
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return out;
+};
 
 const getCancelledDates = asyncHandler(async (req, res) => {
-  const dates = await CancelledDate.find().sort({ meetingDate: 1 }).lean();
-  ApiResponse.success(res, { dates: dates.map((d) => d.meetingDate) });
+  const rows = await CancelledDate.find().sort({ meetingDate: 1 }).lean();
+  ApiResponse.success(res, {
+    dates: rows.map((r) => r.meetingDate),
+    entries: rows.map((r) => ({ date: r.meetingDate, plans: normalizePlans(r.plans) })),
+  });
 });
 
 const addCancelledDates = asyncHandler(async (req, res) => {
-  const raw = Array.isArray(req.body.dates) ? req.body.dates : [req.body.date];
-  const dates = [
-    ...new Set(
-      raw
-        .map((d) => String(d || '').trim())
-        .filter((d) => DATE_RE.test(d))
-    ),
-  ];
+  const body = req.body || {};
+  const plans = normalizePlans(body.plans ?? body.plan);
 
-  if (!dates.length) {
-    throw new AppError('Provide at least one date in YYYY-MM-DD format', 400);
+  let dates = [];
+  if (body.from && body.to) {
+    dates = expandRange(body.from, body.to);
+    if (!dates.length) throw new AppError('Invalid date range', 400);
+  } else {
+    const raw = Array.isArray(body.entries)
+      ? body.entries.map((e) => (typeof e === 'string' ? e : e && e.date))
+      : Array.isArray(body.dates)
+        ? body.dates
+        : [body.date];
+    dates = [...new Set(raw.map((d) => String(d || '').trim()).filter((d) => DATE_RE.test(d)))];
+    if (!dates.length) throw new AppError('Provide at least one date in YYYY-MM-DD format', 400);
+  }
+
+  // Optional per-entry plans (the admin UI sends these); otherwise use the request-level plans.
+  const entryPlans = new Map();
+  if (Array.isArray(body.entries)) {
+    body.entries.forEach((e) => {
+      if (e && typeof e === 'object' && DATE_RE.test(String(e.date))) {
+        entryPlans.set(String(e.date), normalizePlans(e.plans));
+      }
+    });
   }
 
   await CancelledDate.bulkWrite(
     dates.map((meetingDate) => ({
       updateOne: {
         filter: { meetingDate },
-        update: { $setOnInsert: { meetingDate, createdAt: new Date() } },
+        update: { $set: { meetingDate, plans: entryPlans.get(meetingDate) || plans } },
         upsert: true,
       },
     })),
     { ordered: false }
   );
 
-  const all = await CancelledDate.find().sort({ meetingDate: 1 }).lean();
+  const rows = await CancelledDate.find().sort({ meetingDate: 1 }).lean();
   ApiResponse.success(res, {
     added: dates.length,
-    dates: all.map((d) => d.meetingDate),
+    dates: rows.map((r) => r.meetingDate),
+    entries: rows.map((r) => ({ date: r.meetingDate, plans: normalizePlans(r.plans) })),
   });
 });
 

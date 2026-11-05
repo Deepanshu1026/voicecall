@@ -79,25 +79,34 @@ const Appointment = () => {
   const [premiumPopup, setPremiumPopup] = useState({ show: false, message: '' });
   const [submitting, setSubmitting] = useState(false);
   const [referenceId, setReferenceId] = useState('');
-  const [blockedDates, setBlockedDates] = useState([]);
+  const [blockedEntries, setBlockedEntries] = useState([]);
   const scheduleRef = useRef(null);
 
-  // Premium (Chairman) unavailable dates, managed by the admin.
+  // Admin-blocked dates, each with the meeting types it applies to.
   useEffect(() => {
     appointmentAPI
-      .getCancelledDates()
+      .getBlockedDates()
       .then((res) => {
-        const dates = res.data?.dates || res.data?.data?.dates || [];
-        setBlockedDates(Array.isArray(dates) ? dates : []);
+        const list = res.data?.entries || res.data?.data?.entries || [];
+        setBlockedEntries(Array.isArray(list) ? list : []);
       })
-      .catch(() => setBlockedDates([]));
+      .catch(() => setBlockedEntries([]));
   }, []);
 
-  const isChairmanUnavailable =
-    selectedPlan === 'Premium' && blockedDates.includes(formData.date);
+  const isBlocked = useCallback(
+    (date, plan) =>
+      blockedEntries.some((entry) => {
+        if (!entry || entry.date !== date) return false;
+        const plans = Array.isArray(entry.plans) && entry.plans.length ? entry.plans : ['all'];
+        return plans.includes('all') || plans.includes(String(plan || '').toLowerCase());
+      }),
+    [blockedEntries]
+  );
+
+  const isDateUnavailable = isBlocked(formData.date, selectedPlan);
 
   const refreshSlots = useCallback(() => {
-    if (selectedPlan === 'Premium' && blockedDates.includes(formData.date)) {
+    if (isBlocked(formData.date, selectedPlan)) {
       setAvailableSlots([]);
       setSelectedTime('');
       return;
@@ -107,7 +116,7 @@ const Appointment = () => {
     if (selectedTime && !slots.includes(selectedTime)) {
       setSelectedTime('');
     }
-  }, [selectedPlan, formData.date, selectedTime, blockedDates]);
+  }, [selectedPlan, formData.date, selectedTime, isBlocked]);
 
   useEffect(() => {
     refreshSlots();
@@ -159,8 +168,12 @@ const Appointment = () => {
       value = getNextAvailableDate(tomorrow);
       showPremiumPopup('Premium meetings are only available from tomorrow. Date updated automatically.');
     }
-    if (selectedPlan === 'Premium' && blockedDates.includes(value)) {
-      showPremiumPopup('Chairman is not available on this date. Please select another date.');
+    if (isBlocked(value, selectedPlan)) {
+      showPremiumPopup(
+        selectedPlan === 'Premium'
+          ? 'Chairman is not available on this date. Please select another date.'
+          : 'Meetings are not available on this date. Please select another date.'
+      );
     }
     setFormData((prev) => ({ ...prev, date: value }));
     setSelectedTime('');
@@ -569,11 +582,15 @@ const Appointment = () => {
                     <h4>Sunday Appointments Not Available</h4>
                     <p>Please select a weekday (Monday-Saturday) for your appointment.</p>
                   </div>
-                ) : isChairmanUnavailable ? (
+                ) : isDateUnavailable ? (
                   <div className="premium-notice">
                     <div style={{ fontSize: '24px', marginBottom: '10px' }}>⚠️</div>
-                    <h4>Premium Meeting Notice</h4>
-                    <p>Chairman is not available on this date. Please select another date.</p>
+                    <h4>{selectedPlan === 'Premium' ? 'Premium Meeting Notice' : 'Meeting Notice'}</h4>
+                    <p>
+                      {selectedPlan === 'Premium'
+                        ? 'Chairman is not available on this date. Please select another date.'
+                        : 'Meetings are not available on this date. Please select another date.'}
+                    </p>
                   </div>
                 ) : isPremiumBlocked ? (
                   <div className="premium-notice">
