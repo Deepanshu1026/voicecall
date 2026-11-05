@@ -1,5 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { adminAPI } from '../services/api';
+
+// Pick a "nice" axis maximum and step (1, 2, 5, 10, 20, 50 …) so the chart's
+// gridline labels are whole numbers and never repeat.
+const niceScale = (maxValue) => {
+  if (maxValue <= 5) return { top: Math.max(1, maxValue), step: 1 };
+  const rough = maxValue / 4;
+  const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+  const norm = rough / mag;
+  const nice = norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10;
+  const step = nice * mag;
+  return { top: Math.ceil(maxValue / step) * step, step };
+};
 import toast from 'react-hot-toast';
 import RichTextEditor from '../components/RichTextEditor';
 import { cleanPostHtml } from '../utils/cleanPostHtml';
@@ -263,56 +275,83 @@ const AdminBlogs = () => {
             </label>
           </div>
 
-          {(() => {
-            const W = 1000;
-            const H = 250;
-            const padL = 44;
-            const padR = 16;
-            const padT = 16;
-            const padB = 30;
-            const totals = analytics.totals || [];
-            const n = totals.length;
-            const max = Math.max(1, ...totals);
-            const step = max <= 4 ? 1 : Math.ceil(max / 4);
-            const top = Math.ceil(max / step) * step;
-            const x = (i) => padL + (n <= 1 ? 0 : (i / (n - 1)) * (W - padL - padR));
-            const y = (v) => padT + (1 - v / top) * (H - padT - padB);
-            const line = totals.map((v, i) => `${x(i)},${y(v)}`).join(' L ');
-            const area = `M ${x(0)},${y(0)} L ${line} L ${x(n - 1)},${y(0)} Z`;
-            const labelEvery = Math.max(1, Math.ceil(n / 7));
-            const grid = Array.from({ length: 5 }, (_, k) => top - (top / 4) * k);
+          {(analytics.totals || []).every((v) => v === 0) ? (
+            <p className="gsc-empty">
+              No views recorded in this period yet. Views are counted from the day tracking started, so the chart
+              fills in as the days go by.
+            </p>
+          ) : (
+            (() => {
+              const W = 1000;
+              const H = 240;
+              const padL = 46;
+              const padR = 16;
+              const padT = 18;
+              const padB = 32;
+              const totals = analytics.totals || [];
+              const n = totals.length;
+              const maxV = Math.max(0, ...totals);
+              const { top, step } = niceScale(maxV);
+              const ticks = [];
+              for (let v = 0; v <= top; v += step) ticks.push(v);
+              const x = (i) => padL + (n <= 1 ? 0 : (i / (n - 1)) * (W - padL - padR));
+              const y = (v) => padT + (1 - v / top) * (H - padT - padB);
+              const pts = totals.map((v, i) => `${x(i)},${y(v)}`).join(' ');
+              const area = `M ${x(0)},${y(0)} L ${totals.map((v, i) => `${x(i)},${y(v)}`).join(' L ')} L ${x(n - 1)},${y(0)} Z`;
+              const labelEvery = Math.max(1, Math.ceil(n / 7));
 
-            return (
-              <svg className="gsc-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Daily blog views">
-                <defs>
-                  <linearGradient id="gscFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#1a73e8" stopOpacity="0.26" />
-                    <stop offset="100%" stopColor="#1a73e8" stopOpacity="0.02" />
-                  </linearGradient>
-                </defs>
-                {grid.map((val, i) => (
-                  <g key={i}>
-                    <line x1={padL} y1={y(val)} x2={W - padR} y2={y(val)} stroke="#e8eaed" strokeWidth="1" />
-                    <text x={padL - 10} y={y(val) + 4} textAnchor="end" className="gsc-axis">{Math.round(val)}</text>
-                  </g>
-                ))}
-                <path d={area} fill="url(#gscFill)" />
-                <polyline points={totals.map((v, i) => `${x(i)},${y(v)}`).join(' ')} fill="none" stroke="#1a73e8" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-                {totals.map((v, i) => (
-                  <circle key={i} cx={x(i)} cy={y(v)} r="4" fill="#fff" stroke="#1a73e8" strokeWidth="2">
-                    <title>{`${analytics.days[i]} — ${v} view${v === 1 ? '' : 's'}`}</title>
-                  </circle>
-                ))}
-                {analytics.days.map((d, i) =>
-                  i % labelEvery === 0 || i === n - 1 ? (
-                    <text key={d} x={x(i)} y={H - 8} textAnchor="middle" className="gsc-axis">
-                      {d.slice(8)}/{d.slice(5, 7)}
-                    </text>
-                  ) : null
-                )}
-              </svg>
-            );
-          })()}
+              return (
+                <svg className="gsc-chart" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Daily blog views">
+                  <defs>
+                    <linearGradient id="gscFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#1a73e8" stopOpacity="0.24" />
+                      <stop offset="100%" stopColor="#1a73e8" stopOpacity="0.02" />
+                    </linearGradient>
+                  </defs>
+
+                  {ticks.map((v) => (
+                    <g key={v}>
+                      <line
+                        x1={padL}
+                        y1={y(v)}
+                        x2={W - padR}
+                        y2={y(v)}
+                        stroke={v === 0 ? '#dadce0' : '#e8eaed'}
+                        strokeWidth="1"
+                      />
+                      <text x={padL - 10} y={y(v) + 4} textAnchor="end" className="gsc-axis">{v}</text>
+                    </g>
+                  ))}
+
+                  <path d={area} fill="url(#gscFill)" />
+                  <polyline
+                    points={pts}
+                    fill="none"
+                    stroke="#1a73e8"
+                    strokeWidth="2.5"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                  />
+
+                  {totals.map((v, i) =>
+                    v > 0 ? (
+                      <circle key={i} cx={x(i)} cy={y(v)} r="4" fill="#fff" stroke="#1a73e8" strokeWidth="2">
+                        <title>{`${analytics.days[i]} — ${v} view${v === 1 ? '' : 's'}`}</title>
+                      </circle>
+                    ) : null
+                  )}
+
+                  {analytics.days.map((d, i) =>
+                    i % labelEvery === 0 || i === n - 1 ? (
+                      <text key={d} x={x(i)} y={H - 9} textAnchor="middle" className="gsc-axis">
+                        {d.slice(8)}/{d.slice(5, 7)}
+                      </text>
+                    ) : null
+                  )}
+                </svg>
+              );
+            })()
+          )}
 
           <div className="gsc-table-wrap">
             <table className="gsc-table">
