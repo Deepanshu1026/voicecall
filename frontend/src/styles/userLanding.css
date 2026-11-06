@@ -3733,14 +3733,14 @@ html {
   color: #fff;
 }
 
-/* Hanging garland: a sagging string with individual lamps. Each lamp gets its
-   own staggered animation-delay so the light runs along the garland. */
+/* Hanging garland: a shallow sagging string with small round lamps. Each lamp
+   gets its own staggered animation-delay so the light runs along the garland. */
 .diwali-garland {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -22px;
-  height: 26px;
+  bottom: -20px;
+  height: 24px;
   pointer-events: none;
   z-index: 5;
 }
@@ -3755,13 +3755,12 @@ html {
 
 .diwali-bulb {
   position: absolute;
-  top: 9px;
-  width: 14px;
-  height: 21px;
-  margin-left: -7px;
+  top: 6px;
+  width: 8px;
+  height: 14px;
+  margin-left: -4px;
   transform-origin: 50% 0;
-  animation: diwaliTwinkle 2.2s ease-in-out infinite;
-  will-change: opacity, transform, filter;
+  animation: diwaliTwinkle 1.9s ease-in-out infinite;
 }
 
 .diwali-bulb svg {
@@ -3771,14 +3770,14 @@ html {
 
 @keyframes diwaliTwinkle {
   0%, 100% {
-    opacity: 0.4;
-    transform: scale(0.9);
-    filter: drop-shadow(0 0 2px currentColor);
+    opacity: 0.45;
+    transform: scale(0.92);
+    filter: drop-shadow(0 0 1.5px currentColor);
   }
   45% {
     opacity: 1;
-    transform: scale(1.08);
-    filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 4px currentColor);
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 7px currentColor) drop-shadow(0 0 3px currentColor);
   }
 }
 

@@ -19,30 +19,30 @@ const PhoneIcon = () => (
 );
 
 // ---- Hanging garland -------------------------------------------------------
-// Rendered as real lamps (not a background image) so each one can twinkle on
-// its own staggered delay, producing a light that runs along the string.
-const GARLAND_LAMPS = 12;
+// Real lamps (not a background image) so each one can twinkle on its own
+// staggered delay. Shape, colours and string sag match the original design.
+const GARLAND_LAMPS = 30;
 const GARLAND_STEP = 1600 / GARLAND_LAMPS;
-const GARLAND_COLORS = ['#ff9b2f', '#ffd93b', '#6fdc6f', '#ff6a3d'];
+const GARLAND_COLORS = ['#f2760f', '#2f9e44', '#f5b301'];
 
 const GARLAND_PATH = (() => {
-  let d = 'M0 5';
+  let d = 'M0 3';
   for (let i = 0; i < GARLAND_LAMPS; i += 1) {
     const mid = (GARLAND_STEP * i + GARLAND_STEP / 2).toFixed(1);
     const end = (GARLAND_STEP * (i + 1)).toFixed(1);
-    d += ` Q${mid} 19 ${end} 5`;
+    d += ` Q${mid} 11 ${end} 3`;
   }
   return d;
 })();
 
 const DiwaliGarland = () => (
   <span className="diwali-garland" aria-hidden="true">
-    <svg className="diwali-garland-string" viewBox="0 0 1600 26" preserveAspectRatio="none">
+    <svg className="diwali-garland-string" viewBox="0 0 1600 24" preserveAspectRatio="none">
       <path
         d={GARLAND_PATH}
         fill="none"
         stroke="#e3a83b"
-        strokeWidth="1.5"
+        strokeWidth="1.4"
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
       />
@@ -54,16 +54,12 @@ const DiwaliGarland = () => (
         style={{
           left: `${((i + 0.5) / GARLAND_LAMPS) * 100}%`,
           color: GARLAND_COLORS[i % GARLAND_COLORS.length],
-          animationDelay: `${i * 0.17}s`,
+          animationDelay: `${i * 0.07}s`,
         }}
       >
-        <svg width="14" height="21" viewBox="0 0 14 21">
-          <line x1="7" y1="0" x2="7" y2="5" stroke="#e3a83b" strokeWidth="1.2" />
-          <path
-            d="M7 5c-3.1 0-5 2.4-5 5.4 0 3.4 2.2 6.2 5 6.2s5-2.8 5-6.2C12 7.4 10.1 5 7 5z"
-            fill="currentColor"
-          />
-          <ellipse cx="7" cy="9" rx="2.2" ry="1.6" fill="#fff" opacity="0.55" />
+        <svg width="8" height="14" viewBox="0 0 8 14">
+          <line x1="4" y1="0" x2="4" y2="3.6" stroke="#e3a83b" strokeWidth="1" />
+          <circle cx="4" cy="9" r="3.3" fill="currentColor" />
         </svg>
       </span>
     ))}
