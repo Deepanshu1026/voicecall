@@ -3935,19 +3935,26 @@ html {
   color: #fff;
 }
 
-/* Hanging garland: a shallow sagging string with small round lamps. Each lamp
-   gets its own staggered animation-delay so the light runs along the garland. */
+/* Diwali jhalar: one sagging wire with lamps threaded along it. The effects are
+   driven from LandingLayout.jsx with requestAnimationFrame. */
 .diwali-garland {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -20px;
-  height: 24px;
+  bottom: -30px;
+  height: 50px;
   pointer-events: none;
   z-index: 5;
 }
 
-.diwali-garland-string {
+.jhalar {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.jhalar svg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -3955,40 +3962,33 @@ html {
   overflow: visible;
 }
 
-.diwali-bulb {
+.jhalar .wire {
+  fill: none;
+  stroke: #3a2a10;
+  stroke-width: 2;
+}
+
+.jhalar .b {
   position: absolute;
-  top: 6px;
-  width: 8px;
-  height: 14px;
-  margin-left: -4px;
-  transform-origin: 50% 0;
-  animation: diwaliTwinkle 1.9s ease-in-out infinite;
+  width: 11px;
+  height: 11px;
+  margin-left: -5.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff 0 15%, var(--c) 55%);
+  box-shadow: 0 0 8px 3px var(--c), 0 0 22px 8px var(--c);
+  will-change: opacity, box-shadow, filter;
 }
 
-.diwali-bulb svg {
-  display: block;
-  overflow: visible;
-}
-
-@keyframes diwaliTwinkle {
-  0%, 100% {
-    opacity: 0.45;
-    transform: scale(0.92);
-    filter: drop-shadow(0 0 1.5px currentColor);
-  }
-  45% {
-    opacity: 1;
-    transform: scale(1.12);
-    filter: drop-shadow(0 0 7px currentColor) drop-shadow(0 0 3px currentColor);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .diwali-bulb {
-    animation: none;
-    opacity: 1;
-    filter: drop-shadow(0 0 6px currentColor);
-  }
+.jhalar .b::before {
+  /* gold cap */
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: -4px;
+  width: 5px;
+  height: 5px;
+  background: #c9a24a;
+  border-radius: 1px;
 }
 
 @media (max-width: 720px) {
