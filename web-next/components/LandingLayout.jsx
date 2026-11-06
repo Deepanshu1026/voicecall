@@ -18,6 +18,58 @@ const PhoneIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
 );
 
+// ---- Hanging garland -------------------------------------------------------
+// Rendered as real lamps (not a background image) so each one can twinkle on
+// its own staggered delay, producing a light that runs along the string.
+const GARLAND_LAMPS = 12;
+const GARLAND_STEP = 1600 / GARLAND_LAMPS;
+const GARLAND_COLORS = ['#ff9b2f', '#ffd93b', '#6fdc6f', '#ff6a3d'];
+
+const GARLAND_PATH = (() => {
+  let d = 'M0 5';
+  for (let i = 0; i < GARLAND_LAMPS; i += 1) {
+    const mid = (GARLAND_STEP * i + GARLAND_STEP / 2).toFixed(1);
+    const end = (GARLAND_STEP * (i + 1)).toFixed(1);
+    d += ` Q${mid} 19 ${end} 5`;
+  }
+  return d;
+})();
+
+const DiwaliGarland = () => (
+  <span className="diwali-garland" aria-hidden="true">
+    <svg className="diwali-garland-string" viewBox="0 0 1600 26" preserveAspectRatio="none">
+      <path
+        d={GARLAND_PATH}
+        fill="none"
+        stroke="#e3a83b"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+    {Array.from({ length: GARLAND_LAMPS }).map((_, i) => (
+      <span
+        key={i}
+        className="diwali-bulb"
+        style={{
+          left: `${((i + 0.5) / GARLAND_LAMPS) * 100}%`,
+          color: GARLAND_COLORS[i % GARLAND_COLORS.length],
+          animationDelay: `${i * 0.17}s`,
+        }}
+      >
+        <svg width="14" height="21" viewBox="0 0 14 21">
+          <line x1="7" y1="0" x2="7" y2="5" stroke="#e3a83b" strokeWidth="1.2" />
+          <path
+            d="M7 5c-3.1 0-5 2.4-5 5.4 0 3.4 2.2 6.2 5 6.2s5-2.8 5-6.2C12 7.4 10.1 5 7 5z"
+            fill="currentColor"
+          />
+          <ellipse cx="7" cy="9" rx="2.2" ry="1.6" fill="#fff" opacity="0.55" />
+        </svg>
+      </span>
+    ))}
+  </span>
+);
+
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
@@ -191,7 +243,7 @@ const LandingLayout = ({ children }) => {
           </button>
         </div>
         {/* Festive garland hanging from the header */}
-        <span className="diwali-garland" aria-hidden="true" />
+        <DiwaliGarland />
       </header>
 
       {/* Offer banner popup */}
