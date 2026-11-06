@@ -3865,3 +3865,92 @@ html {
 .mask-alpha {
   mask-type: alpha;
 }
+
+/* ============================================================
+   Diwali theme (temporary festival decoration)
+   - The top contact bar becomes a greeting bar (same 42px height,
+     so nothing below it moves).
+   - A garland hangs from the bottom edge of the header.
+   Remove this whole block + the .diwali markup to revert.
+   ============================================================ */
+.landing-top-bar.diwali {
+  background: linear-gradient(90deg, #5c0d12 0%, #8d1a21 50%, #5c0d12 100%);
+  border-bottom: 1px solid rgba(255, 209, 122, 0.35);
+  box-shadow: 0 2px 10px rgba(92, 13, 18, 0.35);
+}
+
+.landing-top-bar.diwali .landing-top-bar-inner {
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.diwali-greeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  color: #ffe2ab;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.diwali-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diwali-greeting strong {
+  color: #ffc94d;
+  font-weight: 700;
+}
+
+.diwali-lamp {
+  flex: 0 0 auto;
+  filter: drop-shadow(0 0 4px rgba(255, 176, 46, 0.55));
+  animation: diwaliGlow 2.6s ease-in-out infinite;
+}
+
+@keyframes diwaliGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .diwali-lamp { animation: none; }
+}
+
+.diwali-phones {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  flex: 0 0 auto;
+}
+
+.landing-top-bar.diwali .landing-top-bar-phone {
+  color: #ffe6b3;
+}
+
+.landing-top-bar.diwali .landing-top-bar-phone:hover {
+  color: #fff;
+}
+
+/* Hanging garland (string + lamps) along the bottom of the header */
+.diwali-garland {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -20px;
+  height: 24px;
+  pointer-events: none;
+  z-index: 5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='24' viewBox='0 0 160 24'%3E%3Cpath d='M0 3 Q20 13 40 3 T80 3 T120 3 T160 3' fill='none' stroke='%23e3a83b' stroke-width='1.5' stroke-linecap='round'/%3E%3Cg stroke='%23e3a83b' stroke-width='1.2'%3E%3Cline x1='20' y1='10' x2='20' y2='13.5'/%3E%3Cline x1='60' y1='10' x2='60' y2='13.5'/%3E%3Cline x1='100' y1='10' x2='100' y2='13.5'/%3E%3Cline x1='140' y1='10' x2='140' y2='13.5'/%3E%3C/g%3E%3Ccircle cx='20' cy='17' r='3.2' fill='%23f2760f'/%3E%3Ccircle cx='60' cy='17' r='3.2' fill='%232f9e44'/%3E%3Ccircle cx='100' cy='17' r='3.2' fill='%23f5b301'/%3E%3Ccircle cx='140' cy='17' r='3.2' fill='%23f2760f'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: center top;
+  background-size: 160px 24px;
+}
+
+@media (max-width: 720px) {
+  .diwali-phones { display: none; }
+  .diwali-greeting { font-size: 12px; }
+}
