@@ -222,7 +222,11 @@ const UsaVisitorVisa = () => {
               Applicants should understand the purpose of their trip and choose the appropriate visa category before
               starting their application.
             </p>
-            <a className="spage-link" href="/blog/usa-tourist-visa">Read the complete USA Tourist Visa Guide</a>
+            <p>
+              <a className="spage-link" href="/blog/usa-tourist-visa">Read the complete USA Tourist Visa Guide</a>
+              {' '}or see{' '}
+              <a className="spage-link" href="/blog/diwali-abroad-family-visa-guide">Diwali abroad with family</a>.
+            </p>
           </div>
         </section>
 

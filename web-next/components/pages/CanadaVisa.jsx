@@ -72,6 +72,7 @@ const faqs = [
 ];
 
 const guides = [
+  { label: 'Diwali abroad with family', href: '/blog/diwali-abroad-family-visa-guide' },
   { label: 'Canada eTA vs Visa: Kya Fark Hai?', href: '/blog/canada-eta-vs-visa' },
   { label: 'Your Guide to Canada Visa Application', href: '/blog/your-guide-to-canada-visa-application-a-visa-experts-visa-immigration-experts' },
   { label: 'Canada Work Permit: A Golden Opportunity', href: '/blog/canada-work-permit-a-golden-opportunity-to-build-your-future-abroad' },

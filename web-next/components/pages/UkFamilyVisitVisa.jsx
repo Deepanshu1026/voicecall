@@ -341,6 +341,10 @@ const UkFamilyVisitVisa = () => (
             <a className="spage-link" href="/uk-visa/processing-time">
               UK visa processing time in India
             </a>
+            . Visiting for a festival? See{' '}
+            <a className="spage-link" href="/blog/diwali-abroad-family-visa-guide">
+              Diwali abroad with family
+            </a>
             .
           </p>
         </div>
