@@ -276,6 +276,34 @@ const BlogDetail = ({ post, related = [] }) => {
     };
   }, [post, pageUrl]);
 
+  // FAQPage schema, built from the post's own "Common questions" section so any
+  // blog that ends with Q&A gets rich-result eligibility automatically.
+  const faqJsonLd = useMemo(() => {
+    if (!post?.content) return null;
+    const html = post.content;
+    const h2s = [...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi)];
+    const idx = h2s.findIndex((m) => /question|faq/i.test(m[1].replace(/<[^>]+>/g, '')));
+    if (idx === -1) return null;
+    const start = h2s[idx].index + h2s[idx][0].length;
+    const end = h2s[idx + 1] ? h2s[idx + 1].index : html.length;
+    const pairs = [...html.slice(start, end).matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/gi)]
+      .map((m) => ({
+        q: m[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(),
+        a: m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
+      }))
+      .filter((x) => x.q && x.a);
+    if (pairs.length < 2) return null;
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: pairs.map((x) => ({
+        '@type': 'Question',
+        name: x.q,
+        acceptedAnswer: { '@type': 'Answer', text: x.a },
+      })),
+    };
+  }, [post]);
+
   // Longer lists step down in size so the box fits without its own scrollbar.
   const tocDensity =
     toc.length > 22 ? ' is-ultra' : toc.length > 15 ? ' is-dense' : toc.length > 10 ? ' is-compact' : '';
@@ -309,6 +337,12 @@ const BlogDetail = ({ post, related = [] }) => {
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+          />
+        )}
+        {faqJsonLd && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
           />
         )}
 
