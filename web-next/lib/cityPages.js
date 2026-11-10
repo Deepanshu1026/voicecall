@@ -8,6 +8,11 @@
 //    (Phase 2) must say so honestly and must NOT show a fake local address.
 //
 // A page only becomes live + enters sitemap-cities.xml when status === 'published'.
+//
+// IMPORTANT: the Next App Router does not support partial dynamic segments, so
+// each city also needs its own tiny route folder:
+//   web-next/app/visa-consultant-in-<slug>/page.jsx
+// (copy the Noida one and change SLUG). Set status to 'published' here too.
 
 export const BOOK_URL = '/book-appointment';
 

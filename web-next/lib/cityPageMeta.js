@@ -1,24 +1,20 @@
-import { notFound } from 'next/navigation';
-import CityPage from '../../components/pages/CityPage';
-import { CITY_PAGES } from '../../lib/cityPages';
-
-export const revalidate = 3600;
-export const dynamicParams = false;
+import { CITY_PAGES } from './cityPages';
 
 const SITE = 'https://avisaexperts.com';
 
-export function generateStaticParams() {
-  return Object.entries(CITY_PAGES)
-    .filter(([, page]) => page.status === 'published')
-    .map(([slug]) => ({ city: slug }));
-}
+// Note: the Next App Router does NOT support partial dynamic segments, so
+// `visa-consultant-in-[city]` is treated as a literal folder name. Each city
+// therefore gets its own tiny route file (app/visa-consultant-in-<slug>/page.jsx)
+// that reuses these helpers.
 
-export async function generateMetadata({ params }) {
-  const page = CITY_PAGES[params.city];
+export const cityPath = (slug) => `/visa-consultant-in-${slug}`;
+
+export function cityMetadata(slug) {
+  const page = CITY_PAGES[slug];
   if (!page || page.status !== 'published') {
     return { title: 'Page not found | A Visa Experts', robots: { index: false, follow: true } };
   }
-  const url = `${SITE}/visa-consultant-in-${params.city}`;
+  const url = `${SITE}${cityPath(slug)}`;
   return {
     title: page.metaTitle,
     description: page.metaDescription,
@@ -34,11 +30,10 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function Page({ params }) {
-  const page = CITY_PAGES[params.city];
-  if (!page || page.status !== 'published') notFound();
-
-  const url = `${SITE}/visa-consultant-in-${params.city}`;
+export function cityJsonLd(slug) {
+  const page = CITY_PAGES[slug];
+  if (!page) return null;
+  const url = `${SITE}${cityPath(slug)}`;
   const graph = [];
 
   if (page.office) {
@@ -71,12 +66,5 @@ export default function Page({ params }) {
     });
   }
 
-  const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
-
-  return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <CityPage page={page} />
-    </>
-  );
+  return { '@context': 'https://schema.org', '@graph': graph };
 }
