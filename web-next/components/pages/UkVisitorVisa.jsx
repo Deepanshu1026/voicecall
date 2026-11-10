@@ -157,6 +157,7 @@ const guides = [
   { label: 'UK Visa Bank Balance Requirements', href: '/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need' },
   { label: 'UK eVisa and ETA Update for Indians', href: '/blog/uk-evisa-update-2026' },
   { label: 'UK Transit Visa Explained', href: '/blog/uk-transit-visa-fully-explained-by-a-visa-experts' },
+  { label: 'London visa requirements', href: '/blog/london-visa-requirements-for-indians' },
   { label: 'London Tourist Visa Guide', href: '/blog/london-tourist-visa-your-complete-guide-to-explore-the-uk-with-avisa-experts' },
   { label: 'Transit Visa Services', href: '/transit-visa' },
   { label: 'Latest UK Visa News and Updates', href: '/blog/visa-guide-2026-uk-visa-us-visa-canada-visa-australia-visa-latest-travel-visa-updates' },

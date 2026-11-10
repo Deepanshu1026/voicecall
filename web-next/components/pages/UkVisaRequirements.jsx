@@ -311,6 +311,10 @@ const UkVisaRequirements = () => (
             <a className="spage-link" href="/uk-visa/long-term-visitor-visa">
               UK long-term visitor visa
             </a>
+            . Visiting the capital? See{' '}
+            <a className="spage-link" href="/blog/london-visa-requirements-for-indians">
+              London visa requirements
+            </a>
             .
           </p>
         </div>
