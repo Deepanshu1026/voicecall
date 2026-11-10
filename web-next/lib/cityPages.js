@@ -88,19 +88,25 @@ export const CITY_PAGES = {
     ],
   },
 
-  // Phase 1 also lists Delhi and Ahmedabad. Fill in the real office details and
-  // flip status to 'published' when the content is genuinely unique.
-  delhi: {
-    status: 'draft',
-    city: 'Delhi',
-    state: 'Delhi',
-    kind: 'office',
-  },
+  // --- Not published (kept here as a reminder of the plan) ---
+  //
+  // Ahmedabad: deferred for now, on request. Leave as draft.
+  //
+  // Delhi: the plan lists it as an office city, but the site's footer and
+  // contact page only list Noida in India (plus New York, Florida, Seattle and
+  // London). So Delhi would have to be an ONLINE-served city (kind: 'online'),
+  // which must say so honestly and show no local address.
   ahmedabad: {
     status: 'draft',
     city: 'Ahmedabad',
     state: 'Gujarat',
     kind: 'office',
+  },
+  delhi: {
+    status: 'draft',
+    city: 'Delhi',
+    state: 'Delhi',
+    kind: 'online',
   },
 };
 
