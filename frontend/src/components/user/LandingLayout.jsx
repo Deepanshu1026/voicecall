@@ -6,8 +6,8 @@ import SocialLinks from '../common/SocialLinks';
 import '../../styles/userLanding.css';
 
 // Small diya used to dress up the festive greeting bar.
-const DiwaliLamp = () => (
-  <svg className="diwali-lamp" width="15" height="17" viewBox="0 0 16 18" aria-hidden="true">
+const FestiveLamp = () => (
+  <svg className="festive-lamp" width="15" height="17" viewBox="0 0 16 18" aria-hidden="true">
     <path d="M8 .9c.8 1.1 1 1.9 1 2.5 0 .9-.45 1.5-1 1.5s-1-.6-1-1.5c0-.6.2-1.4 1-2.5z" fill="#ffd166" />
     <path d="M2.6 6.4c-.5 0-.9.4-.9.9 0 2.7 2.8 4.9 6.3 4.9s6.3-2.2 6.3-4.9c0-.5-.4-.9-.9-.9H2.6z" fill="#f2760f" />
     <path d="M4.7 13.2h6.6l-.6 1.9c-.2.7-.8 1.1-1.5 1.1H6.8c-.7 0-1.3-.4-1.5-1.1l-.6-1.9z" fill="#c25e0d" />
@@ -106,18 +106,18 @@ const LandingLayout = ({ children }) => {
   return (
     <div className="user-landing">
       {/* Top bar — Diwali greeting */}
-      <div className="landing-top-bar diwali">
+      <div className="landing-top-bar festive">
         <div className="landing-top-bar-inner">
-          <span className="diwali-greeting">
-            <DiwaliLamp />
-            <span className="diwali-text">
-              <strong>Happy Diwali!</strong>
+          <span className="festive-greeting">
+            <FestiveLamp />
+            <span className="festive-text">
+              <strong>Happy Bhai Dooj!</strong>
               {' '}
-              Wishing you and your family light, joy and prosperity.
+              Wishing every brother and sister a day full of love and blessings.
             </span>
-            <DiwaliLamp />
+            <FestiveLamp />
           </span>
-          <span className="diwali-phones">
+          <span className="festive-phones">
             <a href="tel:+911204502750" className="landing-top-bar-phone">
               <PhoneIcon />
               +91 120-4502750
