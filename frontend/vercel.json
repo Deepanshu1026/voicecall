@@ -71,6 +71,7 @@
     { "src": "/immigration-lawyers", "dest": "https://avisaexperts-next.vercel.app/immigration-lawyers" },
     { "src": "/appointment", "dest": "https://avisaexperts-next.vercel.app/appointment" },
     { "src": "/contact", "dest": "https://avisaexperts-next.vercel.app/contact" },
+    { "src": "/visa-consultant-in-([^/]+)", "dest": "https://avisaexperts-next.vercel.app/visa-consultant-in-$1" },
     { "src": "/detailed-page", "dest": "https://avisaexperts-next.vercel.app/detailed-page" },
     { "src": "/blogs", "dest": "https://avisaexperts-next.vercel.app/blogs" },
     { "src": "/blog/minimum-bank-balance-for-uk-visa-what-you-really-need-to-know-in-2026", "status": 301, "headers": { "Location": "/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need" } },
