@@ -1,8 +1,4 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import LandingLayout from '../LandingLayout';
-import { reviewsAPI } from '../../lib/api';
 import { BOOK_URL } from '../../lib/cityPages';
 import '../../styles/visaPages.css';
 import '../../styles/cityPage.css';
@@ -19,28 +15,7 @@ const Stars = ({ rating }) => (
   </span>
 );
 
-const CityPage = ({ page }) => {
-  const [reviews, setReviews] = useState([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    reviewsAPI
-      .getPublic()
-      .then((res) => {
-        if (cancelled) return;
-        const list = Array.isArray(res.data?.data) ? res.data.data : [];
-        // Prefer reviews that mention this city / office, then top up with the rest.
-        const city = (page.city || '').toLowerCase();
-        const local = list.filter((r) => String(r.story || '').toLowerCase().includes(city));
-        const rest = list.filter((r) => !local.includes(r));
-        setReviews([...local, ...rest].slice(0, 4));
-      })
-      .catch(() => setReviews([]));
-    return () => {
-      cancelled = true;
-    };
-  }, [page.city]);
-
+const CityPage = ({ page, reviews = [] }) => {
   const { office } = page;
 
   return (
