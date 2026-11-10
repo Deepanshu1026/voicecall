@@ -91,6 +91,17 @@ const CityPage = ({ page, reviews = [] }) => {
               ))}
             </div>
             {page.centresNote && <p className="spage-subnote">{page.centresNote}</p>}
+
+            {page.countryCityLinks?.length > 0 && (
+              <>
+                <h3 className="city-subhead">Visa help by country, for {page.city}</h3>
+                <div className="city-tags">
+                  {page.countryCityLinks.map((c) => (
+                    <a className="spage-link" key={c.href} href={c.href}>{c.label}</a>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </section>
 

@@ -53,6 +53,14 @@ export const CITY_PAGES = {
       { label: 'Tourist visa', href: '/tourist-visa' },
       { label: 'Transit visa', href: '/transit-visa' },
     ],
+    // Country + this city pages (see lib/cityCountryPages.js)
+    countryCityLinks: [
+      { label: 'UK visa consultant in Noida', href: '/uk-visa-consultant-in-noida' },
+      { label: 'USA visa consultant in Noida', href: '/usa-visa-consultant-in-noida' },
+      { label: 'Canada visa consultant in Noida', href: '/canada-visa-consultant-in-noida' },
+      { label: 'Schengen visa consultant in Noida', href: '/schengen-visa-consultant-in-noida' },
+      { label: 'Australia visa consultant in Noida', href: '/australia-visa-consultant-in-noida' },
+    ],
     centresNote:
       'UK, USA, Canada and Schengen visa application centres are all in Delhi NCR. When you book with us we tell you exactly which centre applies to you, what to carry, and how much travel time to allow.',
     documentsLinks: [

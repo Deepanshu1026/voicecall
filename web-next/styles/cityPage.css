@@ -149,3 +149,10 @@
 .services-cta-note a:hover {
   color: #fff;
 }
+
+/* Sub-heading inside the country-links section */
+.city-subhead {
+  margin: 26px 0 10px;
+  font-size: 18px;
+  color: #1e293b;
+}
