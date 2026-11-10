@@ -2,6 +2,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import SEO from '../components/common/SEO';
 import '../styles/agentAuth.css';
 
 const EMPLOYEE_ROLES = ['case_manager', 'manager', 'senior_manager', 'admin'];
@@ -54,6 +55,12 @@ const AgentLogin = () => {
 
   return (
     <div className="agent-auth-page">
+      <SEO
+        title="Agent Sign In | A Visa Experts"
+        description="Log in to the A Visa Experts agent portal."
+        canonicalPath="/agent/login"
+        noindex
+      />
       <div className="agent-auth-card">
         <img className="agent-auth-logo" src="/images/user/tmlogo 1.webp" alt="A Visa Experts logo" />
         <span className="agent-portal-badge">Agent Portal</span>

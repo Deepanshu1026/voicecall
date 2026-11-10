@@ -16,5 +16,5 @@ Disallow: /appointment-payment
 # see the redirect and de-index them. Disallowing would block that and leave them
 # as "Indexed, though blocked by robots.txt".
 
-Sitemap: https://avisaexperts.com/sitemap.xml
+Sitemap: https://avisaexperts.com/sitemap_index.xml
 Sitemap: https://avisaexperts.com/sitemap-images.xml
