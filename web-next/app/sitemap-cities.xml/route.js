@@ -1,13 +1,12 @@
 import { urlset, xmlResponse } from '../../lib/sitemap';
+import { publishedCitySlugs } from '../../lib/cityPages';
 
 export const revalidate = 3600;
 
-// Add a path here ONLY after that page is live (see the City Pages Plan sheet).
-// An empty list is fine until the first city page is published.
-const PAGES = [
-  // '/visa-consultant-in-noida',
-];
-
+// Driven by lib/cityPages.js - a page appears here only once its status is
+// 'published'. See avisaexperts-city-pages-and-sitemap-plan.xlsx.
 export async function GET() {
-  return xmlResponse(urlset(PAGES.map((path) => ({ path }))));
+  return xmlResponse(
+    urlset(publishedCitySlugs().map((slug) => ({ path: `/visa-consultant-in-${slug}` })))
+  );
 }

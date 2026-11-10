@@ -380,6 +380,11 @@ const Services = () => {
           <div className="services-cta-inner">
             <h2>Ready to Start Your Visa Journey?</h2>
             <p>Book a free consultation and get personalized guidance from our experts.</p>
+            <p className="services-cta-note">
+              Prefer to meet in person? Our office is in Noida - see{' '}
+              <a href="/visa-consultant-in-noida">visa consultant in Noida</a> for directions, timings and
+              client reviews.
+            </p>
             <div className="services-cta-buttons">
               <button className="services-cta-primary" onClick={() => navigate('/book-appointment')}>
                 Schedule Appointment
