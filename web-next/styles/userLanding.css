@@ -3935,62 +3935,6 @@ html {
   color: #fff;
 }
 
-/* Diwali jhalar: one sagging wire with lamps threaded along it. The effects are
-   driven from LandingLayout.jsx with requestAnimationFrame. */
-.diwali-garland {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -30px;
-  height: 50px;
-  pointer-events: none;
-  z-index: 5;
-}
-
-.jhalar {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.jhalar svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.jhalar .wire {
-  fill: none;
-  stroke: #3a2a10;
-  stroke-width: 2;
-}
-
-.jhalar .b {
-  position: absolute;
-  width: 11px;
-  height: 11px;
-  margin-left: -5.5px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #fff 0 15%, var(--c) 55%);
-  box-shadow: 0 0 8px 3px var(--c), 0 0 22px 8px var(--c);
-  will-change: opacity, box-shadow, filter;
-}
-
-.jhalar .b::before {
-  /* gold cap */
-  content: "";
-  position: absolute;
-  left: 3px;
-  top: -4px;
-  width: 5px;
-  height: 5px;
-  background: #c9a24a;
-  border-radius: 1px;
-}
-
 @media (max-width: 720px) {
   .diwali-phones { display: none; }
   .diwali-greeting { font-size: 12px; }
