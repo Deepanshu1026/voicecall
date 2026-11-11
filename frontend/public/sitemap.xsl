@@ -57,7 +57,7 @@
             <xsl:when test="s:sitemapindex">
               <p class="count">
                 This XML Sitemap Index file contains
-                <strong><xsl:value-of select="count(s:sitemap)"/></strong> sitemaps.
+                <strong><xsl:value-of select="count(s:sitemapindex/s:sitemap)"/></strong> sitemaps.
               </p>
               <div class="card">
                 <table>
@@ -68,7 +68,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <xsl:for-each select="s:sitemap">
+                    <xsl:for-each select="s:sitemapindex/s:sitemap">
                       <xsl:sort select="s:loc"/>
                       <tr>
                         <td><a href="{s:loc}"><xsl:value-of select="s:loc"/></a></td>
@@ -84,7 +84,7 @@
             <xsl:otherwise>
               <p class="count">
                 This XML Sitemap contains
-                <strong><xsl:value-of select="count(s:url)"/></strong> URLs.
+                <strong><xsl:value-of select="count(s:urlset/s:url)"/></strong> URLs.
               </p>
               <div class="card">
                 <table>
@@ -96,7 +96,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <xsl:for-each select="s:url">
+                    <xsl:for-each select="s:urlset/s:url">
                       <xsl:sort select="s:loc"/>
                       <tr>
                         <td><a href="{s:loc}"><xsl:value-of select="s:loc"/></a></td>
