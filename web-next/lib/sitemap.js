@@ -30,7 +30,10 @@ export function urlset(urls) {
       return `<url><loc>${SITE}${escapeXml(path)}</loc>${lm}</url>`;
     })
     .join('\n');
+  // The xml-stylesheet line makes browsers show a readable table instead of raw
+  // XML (search engines ignore it and read the XML as usual).
   return `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="${SITE}/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${body}
 </urlset>`;
