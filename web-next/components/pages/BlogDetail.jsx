@@ -281,17 +281,26 @@ const BlogDetail = ({ post, related = [] }) => {
   const faqJsonLd = useMemo(() => {
     if (!post?.content) return null;
     const html = post.content;
+    const strip = (s) => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
     const h2s = [...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi)];
-    const idx = h2s.findIndex((m) => /question|faq/i.test(m[1].replace(/<[^>]+>/g, '')));
+    const idx = h2s.findIndex((m) => /question|faq|answers?/i.test(strip(m[1])));
     if (idx === -1) return null;
     const start = h2s[idx].index + h2s[idx][0].length;
     const end = h2s[idx + 1] ? h2s[idx + 1].index : html.length;
-    const pairs = [...html.slice(start, end).matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/gi)]
-      .map((m) => ({
-        q: m[1].replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(),
-        a: m[2].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
-      }))
+    const section = html.slice(start, end);
+
+    // Preferred: H3 question followed by a paragraph answer.
+    let pairs = [...section.matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/gi)]
+      .map((m) => ({ q: strip(m[1]), a: strip(m[2]) }))
       .filter((x) => x.q && x.a);
+
+    // Fallback: a two-column Q&A table (e.g. a "Quick answers" section).
+    if (pairs.length < 2) {
+      pairs = [...section.matchAll(/<tr[^>]*>\s*<t[hd][^>]*>([\s\S]*?)<\/t[hd]>\s*<t[hd][^>]*>([\s\S]*?)<\/t[hd]>\s*<\/tr>/gi)]
+        .map((m) => ({ q: strip(m[1]), a: strip(m[2]) }))
+        .filter((x) => x.q && x.a && !/^questions?$/i.test(x.q));
+    }
+
     if (pairs.length < 2) return null;
     return {
       '@context': 'https://schema.org',
