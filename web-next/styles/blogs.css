@@ -90,41 +90,44 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* Toolbar */
+/* Toolbar - kept deliberately compact; it is sticky, so every pixel is
+   permanent screen space. */
 .blogs-toolbar {
   background: var(--blogs-white);
-  padding: 28px 0;
+  padding: 12px 0 14px;
   border-bottom: 1px solid var(--blogs-border);
   position: sticky;
-  top: 70px;
+  top: 140px;
   z-index: 180;
   box-shadow: 0 4px 20px rgba(0, 30, 116, 0.04);
 }
 
 .blogs-search {
   position: relative;
-  max-width: 480px;
-  margin: 0 auto 20px;
+  max-width: 360px;
+  margin: 0 auto 10px;
 }
 
 .blogs-search svg {
   position: absolute;
-  left: 18px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
   color: var(--blogs-text-light);
   pointer-events: none;
 }
 
 .blogs-search input {
   width: 100%;
-  padding: 15px 18px 15px 48px;
-  border: 2px solid var(--blogs-border);
+  padding: 9px 16px 9px 40px;
+  border: 1px solid var(--blogs-border);
   border-radius: 50px;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--blogs-text);
   background: var(--blogs-bg);
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   box-sizing: border-box;
 }
 
@@ -141,21 +144,45 @@
 
 .blogs-categories {
   display: flex;
-  gap: 10px;
+  gap: 7px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .blogs-categories button {
-  padding: 10px 20px;
+  padding: 6px 13px;
   border-radius: 50px;
   border: 1px solid var(--blogs-border);
   background: var(--blogs-white);
   color: var(--blogs-text-light);
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 600;
+  line-height: 1.4;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+/* Phones: one scrollable row instead of two wrapped rows */
+@media (max-width: 720px) {
+  .blogs-toolbar {
+    top: 96px;
+  }
+
+  .blogs-categories {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .blogs-categories::-webkit-scrollbar {
+    display: none;
+  }
+
+  .blogs-categories button {
+    flex: 0 0 auto;
+  }
 }
 
 .blogs-categories button:hover {
