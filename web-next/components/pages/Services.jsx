@@ -385,6 +385,17 @@ const Services = () => {
               <a href="/visa-consultant-in-noida">visa consultant in Noida</a> for directions, timings and
               client reviews.
             </p>
+            <p className="services-cta-note">
+              We also work online with applicants in{' '}
+              <a href="/visa-consultant-in-gurgaon">Gurgaon</a>,{' '}
+              <a href="/visa-consultant-in-ghaziabad">Ghaziabad</a>,{' '}
+              <a href="/visa-consultant-in-chandigarh">Chandigarh</a>,{' '}
+              <a href="/visa-consultant-in-ludhiana">Ludhiana</a>,{' '}
+              <a href="/visa-consultant-in-jalandhar">Jalandhar</a>,{' '}
+              <a href="/visa-consultant-in-amritsar">Amritsar</a>,{' '}
+              <a href="/visa-consultant-in-vadodara">Vadodara</a> and{' '}
+              <a href="/visa-consultant-in-surat">Surat</a>.
+            </p>
             <div className="services-cta-buttons">
               <button className="services-cta-primary" onClick={() => navigate('/book-appointment')}>
                 Schedule Appointment

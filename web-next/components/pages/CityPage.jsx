@@ -35,6 +35,26 @@ const CityPage = ({ page, reviews = [] }) => {
           </div>
         </section>
 
+        {/* Online-served cities: no fake local address, explain how it works */}
+        {!office && page.online && (
+          <section className="spage-section">
+            <div className="spage-wrap">
+              <h2>How we help {page.city} applicants</h2>
+              <p className="city-honest">{page.online.honest}</p>
+              <ul className="spage-checklist">
+                {(page.online.steps || []).map((s) => (
+                  <li key={s.slice(0, 24)}>{s}</li>
+                ))}
+              </ul>
+              {page.online.centre && <p className="spage-subnote">{page.online.centre}</p>}
+              <div className="spage-btns">
+                <a className="spage-btn primary" href={BOOK_URL}>Book a Free Online Consultation</a>
+                <a className="spage-btn dark" href="/consultants">Talk to a Consultant</a>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Office / how to reach us */}
         {office && (
           <section className="spage-section">

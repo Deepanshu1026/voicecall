@@ -15,6 +15,216 @@ const CTA = {
   consult: '/consultants',
 };
 
+// ---- Phase 2: country + ONLINE-served city ----------------------------------
+// Built from a shared country block + a city block, so the copy stays
+// country-accurate and city-specific without 14 near-identical hand-written
+// pages. No fake local addresses anywhere.
+
+const COUNTRY_BLOCKS = {
+  uk: {
+    country: 'UK',
+    countryPath: '/uk-visa',
+    tail: 'Documents, funds, the biometrics appointment and refusal review.',
+    angle:
+      'A UK Standard Visitor Visa is decided on your documents, not an interview, so the file has to make your purpose, funds and ties to India obvious. We go through it with {city} applicants line by line before anything is submitted.',
+    help: [
+      'Choosing between a Standard Visitor Visa, a family visit and a long-term 2, 5 or 10-year visa.',
+      'Building the document file: bank statements, income proof, employer letter, invitation letter and host documents.',
+      'Checking your finances for the things officers query most - unexplained deposits, thin balances and funds that do not match your income.',
+      'Booking and preparing for the biometrics appointment, and telling you exactly what to carry.',
+      'If you have been refused before, reviewing the refusal letter and rebuilding the application around the actual reason.',
+    ],
+    centre:
+      'The UK visa application centre serving applicants from here is in Chandigarh or Delhi NCR depending on availability. We confirm which centre applies to you, and what to carry, when you book.',
+    documentsLinks: [
+      { label: 'UK tourist visa documents checklist', href: '/blog/uk-tourist-visa-documents-checklist' },
+      { label: 'UK visa bank balance requirements', href: '/blog/uk-visa-bank-balance-requirements-2026-how-much-money-do-you-need' },
+      { label: 'UK visa application form guide', href: '/blog/uk-visa-application-form-guide' },
+    ],
+    moreLinks: [
+      { label: 'UK visa from India', href: '/uk-visa' },
+      { label: 'UK visa requirements', href: '/uk-visa/requirements' },
+      { label: 'UK visit visa for parents', href: '/uk-visa/family-visit-visa' },
+      { label: 'UK visa processing time', href: '/uk-visa/processing-time' },
+      { label: 'UK visa refusal reasons', href: '/uk-visa/refusal' },
+    ],
+    faqs: [
+      { q: 'Do I need an interview for a UK tourist visa?', a: 'Usually no. You give biometrics and submit documents. An interview is only requested in some cases.' },
+      { q: 'How long does a UK visa take?', a: 'A decision usually comes within about three weeks of your biometrics appointment.' },
+    ],
+  },
+
+  canada: {
+    country: 'Canada',
+    countryPath: '/canada-visa',
+    tail: 'Visitor visa or super visa, invitation letters, biometrics and refusal review.',
+    angle:
+      'Canada applications live or die on the paper trail. Whether it is a visitor visa to see family or a super visa for parents, the officer is reading your documents to decide whether you will return - and {city} applications are no different.',
+    help: [
+      'Choosing between a Canada visitor visa and a super visa for parents (a long-stay option for eligible families).',
+      'Getting the invitation letter right, including what your host in Canada must include.',
+      'Assembling funds and income proof, and explaining any large or recent deposits before the officer asks.',
+      'Booking the biometrics appointment at the Canada visa application centre and preparing what to carry.',
+      'Reviewing previous refusals and rebuilding around the stated reason.',
+    ],
+    centre:
+      'Biometrics for Canada are given at a Canada visa application centre. Depending on where you are, that will be Chandigarh, Ahmedabad or Delhi NCR - we book it and confirm the centre when you apply.',
+    documentsLinks: [
+      { label: 'Canada visa guide', href: '/blog/your-guide-to-canada-visa-application-a-visa-experts-visa-immigration-experts' },
+      { label: 'Canada eTA vs visa', href: '/blog/canada-eta-vs-visa' },
+      { label: 'Tourist and visitor visa guide', href: '/blog/tourist-visitor-visa-from-india-a-simple-guide' },
+    ],
+    moreLinks: [
+      { label: 'Canada visa from India', href: '/canada-visa' },
+      { label: 'Tourist visa services', href: '/tourist-visa' },
+      { label: 'Talk to a consultant', href: '/consultants' },
+    ],
+    faqs: [
+      { q: 'What is the difference between a visitor visa and a super visa?', a: 'A visitor visa is for short trips. A super visa is for parents and grandparents of Canadian citizens or permanent residents and allows much longer stays per entry.' },
+      { q: 'Do I need biometrics for Canada?', a: 'Yes, for most applicants. They are given at a Canada visa application centre.' },
+    ],
+  },
+
+  usa: {
+    country: 'USA',
+    countryPath: '/usa-visa',
+    tail: 'DS-160, B1/B2 documents, the Delhi interview and interview preparation.',
+    angle:
+      'A USA visitor visa is the one that most depends on the interview. Most applicants need a B1/B2 visa - a DS-160 form, an OFC appointment for fingerprints and photo, and an interview at the US Embassy or consulate. For {city} applicants the travel is the only difference; the preparation is the same.',
+    help: [
+      'Filling the DS-160 accurately - small inconsistencies here cause trouble later.',
+      'Choosing between B1, B2 and B1/B2, and matching it to your actual purpose of travel.',
+      'Preparing the document file: employment or business proof, finances, property and family ties, previous travel.',
+      'Booking the OFC biometrics appointment and the interview slot, and explaining the waiting times.',
+      'Mock interview practice over video - the most useful hour you can spend before the real thing.',
+      'If you were refused under 214(b), reviewing what changed and whether it is worth reapplying.',
+    ],
+    centre:
+      'The US Embassy is in New Delhi, with OFC biometrics centres in Delhi NCR and Mumbai. Interview waiting times change constantly - we check current slot availability before you fix travel dates.',
+    documentsLinks: [
+      { label: 'USA visa document checklist', href: '/blog/usa-visa-document-checklist' },
+      { label: 'DS-160 guide', href: '/blog/ds-160-guide-a-simple-guide-for-usa-visa-applicants' },
+      { label: 'USA visa interview questions', href: '/blog/usa-visa-interview-questions-answers' },
+    ],
+    moreLinks: [
+      { label: 'USA visa from India', href: '/usa-visa' },
+      { label: 'USA B1/B2 visa', href: '/usa-visa/usa-b1b2-visa' },
+      { label: 'USA visa appointment', href: '/usa-visa/appointment' },
+      { label: 'USA visa processing time', href: '/usa-visa/processing-time' },
+      { label: 'USA visa rejection reasons', href: '/usa-visa/rejection-reasons' },
+    ],
+    faqs: [
+      { q: 'Do I have to attend an interview for a USA visa?', a: 'For most first-time B1/B2 applicants, yes. Assume you will attend one.' },
+      { q: 'Where is the interview held?', a: 'At the US Embassy in New Delhi. Biometrics are taken separately at an OFC centre before the interview.' },
+    ],
+  },
+};
+
+const SERVED_CITIES = {
+  chandigarh: {
+    city: 'Chandigarh',
+    countries: ['uk', 'canada'],
+    angle:
+      'Chandigarh sends a large number of applicants to the UK and Canada, usually to visit children or relatives who have settled there. Those files get read closely, and the paperwork is where they are decided.',
+    faqs: [
+      { q: 'Do you have an office in Chandigarh?', a: 'No. We are based in Noida and serve Chandigarh applicants online by phone, chat and video.' },
+      { q: 'Can everything be arranged without travelling to Delhi?', a: 'Yes. Only biometrics or an interview requires you to attend in person, and that is at a visa centre.' },
+      { q: 'How do I send documents if we never meet?', a: 'Scans or clear photos by email or WhatsApp. We review them on a call and tell you what to add or fix.' },
+      { q: 'My visa was refused. Can you look at it?', a: 'Yes - that is one of the most common reasons people come to us. We start with the refusal letter.' },
+    ],
+  },
+
+  ludhiana: {
+    city: 'Ludhiana',
+    countries: ['uk', 'canada'],
+    angle:
+      'For Ludhiana applicants the trip is usually family: a son or daughter in Canada, a brother in the UK, a wedding or a new grandchild. Those applications need the relationship and the funds to be obvious on paper.',
+    faqs: [
+      { q: 'Do you have an office in Ludhiana?', a: 'No. We serve Ludhiana applicants online from our Noida office.' },
+      { q: 'What matters most when visiting family?', a: 'Proof of the relationship and proof you will return. Both have to be on paper - we go through exactly how.' },
+      { q: 'Can you help with a super visa for parents?', a: 'Yes. For Canada, a super visa is often the better fit for parents, and we will tell you honestly which applies.' },
+      { q: 'Do you handle refused applications?', a: 'Yes. We read the refusal letter and rebuild the file around the reason given.' },
+    ],
+  },
+
+  jalandhar: {
+    city: 'Jalandhar',
+    countries: ['uk', 'canada'],
+    angle:
+      'Jalandhar has one of the strongest family links to the UK and Canada of any city in India. Most applications are parents or siblings visiting relatives, or attending a wedding or graduation.',
+    faqs: [
+      { q: 'Do you have an office in Jalandhar?', a: 'No. We are based in Noida and serve Jalandhar applicants online.' },
+      { q: 'What documents prove a family relationship?', a: 'Birth certificates, marriage certificates, old photographs and the host\u2019s documents together. We tell you which ones actually matter for your case.' },
+      { q: 'I want to visit my son in Canada. Which visa?', a: 'Usually a visitor visa, or a super visa if you qualify and want longer stays. We will tell you which fits and why.' },
+      { q: 'Do you handle refused applications?', a: 'Yes. We read the refusal letter and rebuild the file around the reason given.' },
+    ],
+  },
+
+  amritsar: {
+    city: 'Amritsar',
+    countries: ['uk', 'canada'],
+    angle:
+      'Most Amritsar applications we handle are family visits to the UK or Canada, or parents travelling for a wedding, a birth or a graduation. The trip is genuine - the job is proving it on paper.',
+    faqs: [
+      { q: 'Do you have an office in Amritsar?', a: 'No. We serve Amritsar applicants online from our Noida office.' },
+      { q: 'Do I need to show property or land?', a: 'It helps to show ties to India, but it is not the only thing. Pension, family responsibilities and ongoing commitments count too.' },
+      { q: 'Can you help my parents apply to visit me?', a: 'Yes - that is most of what we do for Punjab applicants.' },
+      { q: 'What if I was refused before?', a: 'We start with the refusal letter and fix the specific reason, rather than submitting the same documents again.' },
+    ],
+  },
+
+  vadodara: {
+    city: 'Vadodara',
+    countries: ['usa', 'uk', 'canada'],
+    angle:
+      'Vadodara applicants come to us for two main reasons: family visits to the USA, UK and Canada, and business travel. Both live or die on the documents you submit.',
+    faqs: [
+      { q: 'Do you have an office in Vadodara?', a: 'No. We are based in Noida and serve Vadodara applicants online.' },
+      { q: 'Can I prepare for a USA interview over video?', a: 'Yes. Mock interviews work well over video - the same questions and the same practice, just on a screen.' },
+      { q: 'What if I run a business and travel often?', a: 'Business records, turnover and tax filings matter more than a large balance. We help you present them clearly.' },
+      { q: 'Do I have to go to Delhi for the USA visa?', a: 'For the interview and biometrics, yes - those are in Delhi NCR or Mumbai. Everything before that can be done online.' },
+    ],
+  },
+
+  surat: {
+    city: 'Surat',
+    countries: ['usa', 'uk', 'canada'],
+    angle:
+      'Surat applicants are often travelling for business - buyers, suppliers, trade fairs - or to visit family in the USA, UK and Canada. Business travel needs the company paperwork to be as clean as the personal file.',
+    faqs: [
+      { q: 'Do you have an office in Surat?', a: 'No. We serve Surat applicants online from our Noida office.' },
+      { q: 'I am travelling for business. What documents matter?', a: 'A letter from your company explaining the purpose and who is paying, plus company registration, turnover and tax filings.' },
+      { q: 'Can I apply for a USA business visa online?', a: 'The DS-160 and the paperwork are online. The interview and biometrics are in person, in Delhi NCR or Mumbai.' },
+      { q: 'What if a previous application was refused?', a: 'We read the refusal first and rebuild the application around the stated reason.' },
+    ],
+  },
+};
+
+const SERVED_PAGES = {};
+for (const [citySlug, city] of Object.entries(SERVED_CITIES)) {
+  for (const key of city.countries) {
+    const c = COUNTRY_BLOCKS[key];
+    const slug = `${key}-visa-consultant-in-${citySlug}`;
+    SERVED_PAGES[slug] = {
+      status: 'published',
+      country: c.country,
+      countryPath: c.countryPath,
+      city: city.city,
+      cityPath: `/visa-consultant-in-${citySlug}`,
+      metaTitle: `${c.country} Visa Consultant in ${city.city} | A Visa Experts`,
+      metaDescription: `${c.country} visa help for ${city.city} applicants, served online from our Noida office. ${c.tail}`,
+      h1: `${c.country} Visa Help for ${city.city} Applicants`,
+      hero: [city.angle, c.angle.replace(/\{city\}/g, city.city)],
+      help: c.help,
+      centreNote: c.centre,
+      documentsLinks: c.documentsLinks,
+      moreLinks: c.moreLinks,
+      faqs: [...city.faqs, ...c.faqs],
+      cta: CTA,
+    };
+  }
+}
+
 export const CITY_COUNTRY_PAGES = {
   'uk-visa-consultant-in-noida': {
     status: 'published',
@@ -309,6 +519,9 @@ export const CITY_COUNTRY_PAGES = {
     ],
     cta: CTA,
   },
+
+  // Phase 2: country + online-served city (built above)
+  ...SERVED_PAGES,
 };
 
 export const publishedCityCountrySlugs = () =>
