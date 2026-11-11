@@ -23,6 +23,7 @@ import AdminUserDetails from './pages/AdminUserDetails';
 import AdminReviews from './pages/AdminReviews';
 import AdminBlogs from './pages/AdminBlogs';
 import AdminBlockedDates from './pages/AdminBlockedDates';
+import AdminPageViews from './pages/AdminPageViews';
 import BookedAppointments from './pages/BookedAppointments';
 import ApplicationsPage from './pages/ApplicationsPage';
 import Chat from './pages/Chat';
@@ -165,6 +166,7 @@ function App() {
         <Route path="admin/reviews" element={<AdminReviews />} />
         <Route path="admin/blogs" element={<AdminBlogs />} />
         <Route path="admin/blocked-dates" element={<AdminBlockedDates />} />
+        <Route path="admin/page-views" element={<AdminPageViews />} />
       </Route>
 
       {/* Default landing */}

@@ -31,6 +31,7 @@ const adminMenu = [
   { path: '/agent/dashboard/admin/reviews', label: 'Add Review', icon: 'bi bi-star' },
   { path: '/agent/dashboard/admin/blogs', label: 'Blogs', icon: 'bi bi-journal-text' },
   { path: '/agent/dashboard/admin/blocked-dates', label: 'Blocked Dates', icon: 'bi bi-calendar-x' },
+  { path: '/agent/dashboard/admin/page-views', label: 'Page Views', icon: 'bi bi-bar-chart-line' },
 ];
 
 const AgentLayout = () => {

@@ -237,6 +237,7 @@ export const adminAPI = {
   deleteReview: (id) => api.delete(`/admin/reviews/${id}`),
   getBlogs: (params) => api.get('/admin/blogs', { params }),
   getBlogAnalytics: (days = 14) => api.get('/admin/blogs/analytics', { params: { days } }),
+  getPageViews: (days = 14) => api.get('/admin/page-views', { params: { days } }),
   createBlog: (data) => api.post('/admin/blogs', data),
   updateBlog: (id, data) => api.put(`/admin/blogs/${id}`, data),
   deleteBlog: (id) => api.delete(`/admin/blogs/${id}`),

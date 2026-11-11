@@ -32,6 +32,7 @@ router.post('/cancelled-dates', adminController.addCancelledDates);
 router.delete('/cancelled-dates/:date', adminController.deleteCancelledDate);
 
 router.get('/blogs/analytics', adminController.getBlogAnalytics);
+router.get('/page-views', adminController.getPageViews);
 router.get('/blogs', adminController.getBlogs);
 router.post('/blogs', adminController.createBlog);
 router.put('/blogs/:id', adminController.updateBlog);

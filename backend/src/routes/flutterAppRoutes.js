@@ -11,6 +11,7 @@ const OtpVerification = require('../models/OtpVerification');
 const CancelledDate = require('../models/CancelledDate');
 const Post = require('../models/Post');
 const PostView = require('../models/PostView');
+const PageView = require('../models/PageView');
 const { generateTokens } = require('../utils/generateToken');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
@@ -1534,6 +1535,32 @@ router.post('/posts/:id/view', asyncHandler(async (req, res) => {
   await PostView.updateOne({ post: post._id, day }, { $inc: { count: 1 } }, { upsert: true });
 
   res.json({ success: true, data: { clicks: updated ? updated.clicks : 0 } });
+}));
+
+// ==================== PAGE VIEWS ====================
+// Tracks visits to marketing pages (the visa pages in sitemap-visa.xml, plus
+// the rest of the site). Blog posts are tracked separately via PostView.
+
+const PAGE_VIEW_IGNORE = /^\/(_next|api|assets|images|favicon|agent|user|login|register|profile|chat|settings|appointment-payment)/;
+
+router.post('/page-view', asyncHandler(async (req, res) => {
+  let path = String(req.body?.path || '').trim();
+  if (!path) throw new AppError('path is required', 400);
+
+  // Normalise: drop query/hash, collapse trailing slashes, force a leading /.
+  path = path.split('?')[0].split('#')[0].toLowerCase();
+  if (!path.startsWith('/')) path = `/${path}`;
+  if (path.length > 1) path = path.replace(/\/+$/, '');
+  if (path.length > 200) throw new AppError('path is too long', 400);
+
+  // Never count assets, API calls, files or private app pages.
+  if (PAGE_VIEW_IGNORE.test(path) || /\.\w{2,5}$/.test(path)) {
+    return res.json({ success: true, skipped: true });
+  }
+
+  const day = new Date().toISOString().slice(0, 10);
+  await PageView.updateOne({ path, day }, { $inc: { count: 1 } }, { upsert: true });
+  res.json({ success: true, data: { path } });
 }));
 
 router.get('/posts/:id/related', asyncHandler(async (req, res) => {

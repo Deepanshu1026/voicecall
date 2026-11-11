@@ -7,6 +7,7 @@ const Review = require('../models/Review');
 const Post = require('../models/Post');
 const PostView = require('../models/PostView');
 const CancelledDate = require('../models/CancelledDate');
+const PageView = require('../models/PageView');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const ApiResponse = require('../utils/ApiResponse');
@@ -487,6 +488,56 @@ const getBlogAnalytics = asyncHandler(async (req, res) => {
   ApiResponse.success(res, { days: dayKeys, totals, posts: result });
 });
 
+// ==================== PAGE VIEWS ====================
+// Visits to marketing pages (the visa pages listed in sitemap-visa.xml, the
+// city pages, and the rest of the site). Tracked by our own script, not Google.
+
+const getPageViews = asyncHandler(async (req, res) => {
+  const days = Math.min(Math.max(parseInt(req.query.days, 10) || 14, 7), 60);
+
+  const dayKeys = [];
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - i);
+    dayKeys.push(d.toISOString().slice(0, 10));
+  }
+
+  const [periodRows, allRows] = await Promise.all([
+    PageView.find({ day: { $in: dayKeys } }).lean(),
+    PageView.aggregate([{ $group: { _id: '$path', total: { $sum: '$count' } } }]),
+  ]);
+
+  const byPath = new Map();
+  for (const row of periodRows) {
+    if (!byPath.has(row.path)) {
+      byPath.set(row.path, {
+        path: row.path,
+        period: 0,
+        series: dayKeys.map(() => 0),
+      });
+    }
+    const entry = byPath.get(row.path);
+    const idx = dayKeys.indexOf(row.day);
+    if (idx >= 0) entry.series[idx] += row.count;
+    entry.period += row.count;
+  }
+
+  const allTime = new Map(allRows.map((r) => [r._id, r.total]));
+
+  const pages = [...byPath.values()]
+    .map((p) => ({
+      ...p,
+      today: p.series[p.series.length - 1] || 0,
+      yesterday: p.series[p.series.length - 2] || 0,
+      allTime: allTime.get(p.path) || p.period,
+    }))
+    .sort((a, b) => b.period - a.period);
+
+  const totals = dayKeys.map((_, i) => pages.reduce((a, p) => a + p.series[i], 0));
+
+  ApiResponse.success(res, { days: dayKeys, totals, pages });
+});
+
 const createBlog = asyncHandler(async (req, res) => {
   const {
     title, slug, excerpt, content, featuredImage, imageAlt, category, tags, author,
@@ -638,6 +689,7 @@ const deleteCancelledDate = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
+  getPageViews,
   getCancelledDates,
   addCancelledDates,
   deleteCancelledDate,

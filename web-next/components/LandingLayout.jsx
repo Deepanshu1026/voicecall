@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { bannerAPI } from '../lib/api';
 import SocialLinks from './SocialLinks';
+import PageViewTracker from './PageViewTracker';
 
 // Small diya used to dress up the festive greeting bar.
 const FestiveLamp = () => (
@@ -118,7 +119,8 @@ const LandingLayout = ({ children }) => {
 
   return (
     <div className="user-landing">
-      {/* Top bar — Diwali greeting */}
+      <PageViewTracker />
+      {/* Top bar - festival greeting */}
       <div className="landing-top-bar festive">
         <div className="landing-top-bar-inner">
           <span className="festive-greeting">

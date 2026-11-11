@@ -1,0 +1,173 @@
+/* Admin - Page views */
+
+.pv-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.pv-sub {
+  margin: 0;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.pv-sub strong {
+  font-size: 17px;
+  color: #111827;
+}
+
+.pv-today {
+  color: #6b7280;
+}
+
+.pv-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pv-toggle {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 9px;
+  background: #f1f2f5;
+  gap: 3px;
+}
+
+.pv-toggle button {
+  padding: 6px 13px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #4b5563;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pv-toggle button.active {
+  background: #fff;
+  color: #4f46e5;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.12);
+}
+
+.pv-controls select {
+  padding: 7px 11px;
+  border: 1px solid #d7dae0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #1f2937;
+  background: #fff;
+}
+
+.pv-table-wrap {
+  overflow-x: auto;
+}
+
+.pv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.pv-table thead th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid #e5e7eb;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.pv-table thead th.num,
+.pv-table tbody td.num {
+  text-align: right;
+}
+
+.pv-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f2f4;
+  color: #1f2937;
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.pv-table tbody tr:hover {
+  background: #fafbff;
+}
+
+.pv-path {
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.pv-path a {
+  color: #1a56db;
+  text-decoration: none;
+}
+
+.pv-path a:hover {
+  text-decoration: underline;
+}
+
+.pv-bar {
+  display: inline-block;
+  height: 8px;
+  min-width: 2px;
+  margin-right: 8px;
+  border-radius: 4px;
+  background: #4f46e5;
+  vertical-align: middle;
+}
+
+.pv-num {
+  display: inline-block;
+  min-width: 28px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.pv-change {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.pv-change.up {
+  color: #0f9d58;
+}
+
+.pv-change.down {
+  color: #d93025;
+}
+
+.pv-alltime {
+  color: #5f6368;
+}
+
+.pv-empty {
+  margin: 0;
+  padding: 12px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.pv-note {
+  margin: 14px 0 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #80868b;
+}
+
+@media (max-width: 640px) {
+  .pv-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
