@@ -1,6 +1,6 @@
 import { urlset, xmlResponse } from '../../lib/sitemap';
 
-export const revalidate = 3600;
+export const revalidate = 600;
 
 const PAGES = [
   '/',
