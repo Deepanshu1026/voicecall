@@ -227,6 +227,13 @@ const UsaVisitorVisa = () => {
               {' '}or see{' '}
               <a className="spage-link" href="/blog/diwali-abroad-family-visa-guide">Diwali abroad with family</a>.
             </p>
+            <p className="spage-subnote">
+              Planning a New York trip? Read{' '}
+              <a className="spage-link" href="/blog/new-york-visa-requirements-for-indians">
+                New York visa for Indians
+              </a>{' '}
+              for the reverse timeline from your travel date.
+            </p>
           </div>
         </section>
 

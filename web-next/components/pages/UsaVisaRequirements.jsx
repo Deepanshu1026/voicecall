@@ -318,6 +318,11 @@ const UsaVisaRequirements = () => (
           </ul>
           <p className="spage-subnote">
             The documents should be genuine and consistent with the information provided in your visa application.
+            Visiting New York? See{' '}
+            <Link className="spage-link" href="/blog/new-york-visa-requirements-for-indians">
+              New York visa for Indians
+            </Link>
+            .
           </p>
         </div>
       </section>
