@@ -90,15 +90,15 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* Toolbar - kept deliberately compact; it is sticky, so every pixel is
-   permanent screen space. */
+/* Toolbar - compact, and NOT sticky: a sticky bar permanently eats ~100px of
+   the viewport and floats over the hero while you scroll. It now scrolls away
+   with the page. */
 .blogs-toolbar {
   background: var(--blogs-white);
   padding: 12px 0 14px;
   border-bottom: 1px solid var(--blogs-border);
-  position: sticky;
-  top: 140px;
-  z-index: 180;
+  position: relative;
+  z-index: 1;
   box-shadow: 0 4px 20px rgba(0, 30, 116, 0.04);
 }
 
@@ -164,10 +164,6 @@
 
 /* Phones: one scrollable row instead of two wrapped rows */
 @media (max-width: 720px) {
-  .blogs-toolbar {
-    top: 96px;
-  }
-
   .blogs-categories {
     flex-wrap: nowrap;
     justify-content: flex-start;
