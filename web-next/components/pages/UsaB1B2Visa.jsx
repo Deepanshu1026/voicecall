@@ -403,13 +403,17 @@ const UsaB1B2Visa = () => {
             </p>
             <p>
               For detailed preparation, read our{' '}
-              <a
-                className="spage-link"
-                href="/blog/usa-visitor-visa-interview-questions-for-indians-complete-guide-2025"
-              >
+              <a className="spage-link" href="/blog/usa-visa-interview-questions-answers">
                 USA Visa Interview Questions and Answers Guide
               </a>
               .
+            </p>
+            <p className="spage-subnote">
+              Not sure what the visa actually means? See{' '}
+              <a className="spage-link" href="/blog/b1-b2-visa-meaning">
+                B1/B2 visa meaning
+              </a>
+              {' '}for what B, 1 and 2 stand for.
             </p>
           </div>
         </section>
