@@ -5,15 +5,6 @@ import { bannerAPI } from '../../services/api';
 import SocialLinks from '../common/SocialLinks';
 import '../../styles/userLanding.css';
 
-// Small diya used to dress up the festive greeting bar.
-const FestiveLamp = () => (
-  <svg className="festive-lamp" width="15" height="17" viewBox="0 0 16 18" aria-hidden="true">
-    <path d="M8 .9c.8 1.1 1 1.9 1 2.5 0 .9-.45 1.5-1 1.5s-1-.6-1-1.5c0-.6.2-1.4 1-2.5z" fill="#ffd166" />
-    <path d="M2.6 6.4c-.5 0-.9.4-.9.9 0 2.7 2.8 4.9 6.3 4.9s6.3-2.2 6.3-4.9c0-.5-.4-.9-.9-.9H2.6z" fill="#f2760f" />
-    <path d="M4.7 13.2h6.6l-.6 1.9c-.2.7-.8 1.1-1.5 1.1H6.8c-.7 0-1.3-.4-1.5-1.1l-.6-1.9z" fill="#c25e0d" />
-  </svg>
-);
-
 const PhoneIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
 );
@@ -105,28 +96,18 @@ const LandingLayout = ({ children }) => {
 
   return (
     <div className="user-landing">
-      {/* Top bar — Diwali greeting */}
-      <div className="landing-top-bar festive">
+      {/* Top contact bar */}
+      <div className="landing-top-bar">
         <div className="landing-top-bar-inner">
-          <span className="festive-greeting">
-            <FestiveLamp />
-            <span className="festive-text">
-              <strong>Happy Bhai Dooj!</strong>
-              {' '}
-              Wishing every brother and sister a day full of love and blessings.
-            </span>
-            <FestiveLamp />
-          </span>
-          <span className="festive-phones">
-            <a href="tel:+911204502750" className="landing-top-bar-phone">
-              <PhoneIcon />
-              +91 120-4502750
-            </a>
-            <a href="tel:+919711000022" className="landing-top-bar-phone">
-              <PhoneIcon />
-              +91 9711000022
-            </a>
-          </span>
+          <span className="landing-top-bar-label">Call us on</span>
+          <a href="tel:+911204502750" className="landing-top-bar-phone">
+            <PhoneIcon />
+            +91 120-4502750
+          </a>
+          <a href="tel:+919711000022" className="landing-top-bar-phone">
+            <PhoneIcon />
+            +91 9711000022
+          </a>
         </div>
       </div>
 
