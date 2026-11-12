@@ -307,19 +307,6 @@ const LandingLayout = ({ children }) => {
           </div>
         </div>
 
-        {/* Diwali greeting banner */}
-        <div className="diwali-footer">
-          <img
-            src="/images/user/diwali-footer.jpg"
-            srcSet="/images/user/diwali-footer-sm.jpg 900w, /images/user/diwali-footer.jpg 1800w"
-            sizes="100vw"
-            width={1800}
-            height={600}
-            alt="Happy Diwali from A Visa Experts — Goddess Lakshmi with diyas, elephants and peacocks"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
       </footer>
 
       <div className="footer-bottom-text">

@@ -3939,21 +3939,3 @@ html {
   .festive-phones { display: none; }
   .festive-greeting { font-size: 12px; }
 }
-
-/* ============================================================
-   Diwali greeting banner in the footer
-   (temporary festival decoration - remove with the image + markup)
-   ============================================================ */
-.diwali-footer {
-  position: relative;
-  z-index: 1;
-  margin: 44px 0 0;
-  line-height: 0;
-  background: #4a0d0f;
-}
-
-.diwali-footer img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
