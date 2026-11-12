@@ -283,24 +283,36 @@ const BlogDetail = ({ post, related = [] }) => {
     const html = post.content;
     const strip = (s) => s.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
     const h2s = [...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi)];
-    const idx = h2s.findIndex((m) => /question|faq|answers?/i.test(strip(m[1])));
-    if (idx === -1) return null;
-    const start = h2s[idx].index + h2s[idx][0].length;
-    const end = h2s[idx + 1] ? h2s[idx + 1].index : html.length;
-    const section = html.slice(start, end);
 
     // Preferred: H3 question followed by a paragraph answer.
-    let pairs = [...section.matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/gi)]
-      .map((m) => ({ q: strip(m[1]), a: strip(m[2]) }))
-      .filter((x) => x.q && x.a);
-
     // Fallback: a two-column Q&A table (e.g. a "Quick answers" section).
-    if (pairs.length < 2) {
-      pairs = [...section.matchAll(/<tr[^>]*>\s*<t[hd][^>]*>([\s\S]*?)<\/t[hd]>\s*<t[hd][^>]*>([\s\S]*?)<\/t[hd]>\s*<\/tr>/gi)]
+    const extract = (section) => {
+      let found = [...section.matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>\s*<p[^>]*>([\s\S]*?)<\/p>/gi)]
         .map((m) => ({ q: strip(m[1]), a: strip(m[2]) }))
-        .filter((x) => x.q && x.a && !/^questions?$/i.test(x.q));
-    }
+        .filter((x) => x.q && x.a);
+      if (found.length < 2) {
+        found = [...section.matchAll(/<tr[^>]*>\s*<t[hd][^>]*>([\s\S]*?)<\/t[hd]>\s*<t[hd][^>]*>([\s\S]*?)<\/t[hd]>\s*<\/tr>/gi)]
+          .map((m) => ({ q: strip(m[1]), a: strip(m[2]) }))
+          .filter((x) => x.q && x.a && !/^questions?$/i.test(x.q));
+      }
+      return found;
+    };
 
+    // Score every section: a heading that clearly says questions/FAQ wins, and
+    // otherwise the section with the most Q&A pairs is used. This avoids
+    // matching an unrelated heading that merely contains the word "answer".
+    let best = { pairs: [], score: 0 };
+    h2s.forEach((m, i) => {
+      const start = m.index + m[0].length;
+      const end = h2s[i + 1] ? h2s[i + 1].index : html.length;
+      const pairs = extract(html.slice(start, end));
+      const heading = strip(m[1]);
+      const strong = /faq|question/i.test(heading) || /\banswers?\s*$/i.test(heading);
+      const score = pairs.length + (strong ? 100 : 0);
+      if (score > best.score) best = { pairs, score };
+    });
+
+    const pairs = best.pairs;
     if (pairs.length < 2) return null;
     return {
       '@context': 'https://schema.org',
