@@ -3587,12 +3587,37 @@ html {
 }
 
 @media (max-width: 480px) {
-
-  .agent-chat-widget,
+  /* Small round button instead of a full-width bar covering the page */
   .agent-widget-fab {
-    width: calc(100% - 20px);
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    gap: 0;
+    border-radius: 50%;
+    justify-content: center;
+    right: 14px;
+    bottom: 14px;
+  }
+
+  .agent-widget-fab span:not(.agent-widget-fab-emoji) {
+    display: none;
+  }
+
+  /* Panel: a compact bottom sheet, so most of the page stays visible */
+  .agent-chat-widget {
+    left: 10px;
     right: 10px;
+    width: auto;
     bottom: 10px;
+    max-height: 68vh;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .agent-chat-list {
+    flex: 1 1 auto;
+    min-height: 0;
   }
 }
 

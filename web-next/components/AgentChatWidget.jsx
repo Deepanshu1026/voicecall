@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { userAPI, API_BASE_URL } from '../lib/api';
 import '../styles/userLanding.css';
@@ -13,12 +13,15 @@ const fallbackAgents = [
 
 const AgentChatWidget = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [agents, setAgents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(true);
+  // Start with the built-in list so there is never a "loading" state on screen.
+  const [agents, setAgents] = useState(fallbackAgents);
+  // Start CLOSED: show only the small button until the visitor has had time
+  // to look at the page.
+  const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const [guestLoading, setGuestLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const hasAutoOpened = useRef(false);
 
   useEffect(() => {
     setMounted(true);
@@ -34,37 +37,31 @@ const AgentChatWidget = () => {
     }
   }, []);
 
-  // Auto-close popup after 5 seconds (no animation, to avoid layout shift)
+  // Open once, after 15 seconds - long enough to read the page first.
   useEffect(() => {
-    if (!open) return undefined;
+    if (hasAutoOpened.current) return undefined;
     const timer = setTimeout(() => {
-      setOpen(false);
-    }, 5000);
+      hasAutoOpened.current = true;
+      setOpen(true);
+    }, 15000);
     return () => clearTimeout(timer);
-  }, [open]);
+  }, []);
 
+  // Swap in the real consultant list in the background. The built-in list is
+  // already on screen, so there is no spinner and no "agents loading" text.
   useEffect(() => {
     let cancelled = false;
     const fetchAgents = async () => {
       try {
         const res = await userAPI.getConsultants();
         const data = res.data?.data || [];
-        if (!cancelled) {
-          if (data.length > 0) {
-            setAgents(data.slice(0, 5));
-          } else {
-            setAgents(fallbackAgents);
-          }
-        }
-      } catch (err) {
-        console.error('Failed to load agents:', err);
-        if (!cancelled) setAgents(fallbackAgents);
-      } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled && data.length > 0) setAgents(data.slice(0, 5));
+      } catch {
+        /* keep the built-in list */
       }
     };
-    // Delay the request so it never competes with the page's own content.
-    const timer = setTimeout(fetchAgents, 4000);
+    // Small delay so the request never competes with the page's own content.
+    const timer = setTimeout(fetchAgents, 2500);
     return () => {
       cancelled = true;
       clearTimeout(timer);
@@ -129,7 +126,10 @@ const AgentChatWidget = () => {
     <button
       className="agent-widget-fab"
       style={{ position: 'fixed' }}
-      onClick={() => setOpen(true)}
+      onClick={() => {
+        hasAutoOpened.current = true;
+        setOpen(true);
+      }}
       aria-label="Open agent chat"
     >
       <span className="agent-widget-fab-emoji">💬</span>
@@ -152,9 +152,7 @@ const AgentChatWidget = () => {
       </div>
 
       <div className="agent-chat-list">
-        {loading ? (
-          <p className="agent-chat-empty">एजेंट लोड हो रहे हैं...</p>
-        ) : agents.length === 0 ? (
+        {agents.length === 0 ? (
           <p className="agent-chat-empty">अभी कोई एजेंट उपलब्ध नहीं हैं।</p>
         ) : (
           agents.map((agent) => {
