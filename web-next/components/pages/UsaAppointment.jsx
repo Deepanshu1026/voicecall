@@ -202,6 +202,13 @@ const UsaAppointment = () => (
             </Link>
             .
           </p>
+          <p className="spage-subnote">
+            Interview coming up? See{' '}
+            <Link className="spage-link" href="/blog/us-visa-interview-tips-day-before-checklist">
+              what to do the day before your interview
+            </Link>
+            .
+          </p>
         </div>
       </section>
 
