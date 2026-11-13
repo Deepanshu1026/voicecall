@@ -413,7 +413,11 @@ const UsaB1B2Visa = () => {
               <a className="spage-link" href="/blog/b1-b2-visa-meaning">
                 B1/B2 visa meaning
               </a>
-              {' '}for what B, 1 and 2 stand for.
+              {' '}for what B, 1 and 2 stand for. Planning a West Coast trip? See{' '}
+              <a className="spage-link" href="/blog/california-visa-requirements-for-indians">
+                visiting California on a B1/B2 visa
+              </a>
+              .
             </p>
           </div>
         </section>

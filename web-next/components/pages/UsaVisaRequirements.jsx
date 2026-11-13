@@ -207,6 +207,13 @@ const UsaVisaRequirements = () => (
             business activities, understanding the required documents and eligibility conditions can help you prepare
             your application correctly.
           </p>
+          <p className="spage-subnote">
+            Going to California? Read our{' '}
+            <Link className="spage-link" href="/blog/california-visa-requirements-for-indians">
+              California visa requirements for Indians
+            </Link>
+            {' '}guide.
+          </p>
         </div>
       </section>
 
