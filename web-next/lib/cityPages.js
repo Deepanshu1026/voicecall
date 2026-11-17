@@ -24,7 +24,7 @@ export const CITY_PAGES = {
     kind: 'office', // office | online
     metaTitle: 'Visa Consultant in Noida | A Visa Experts',
     metaDescription:
-      'Visa consultants in Noida for UK, USA, Canada, Schengen and Australia visas. Walk-in office in Sector 2, 5 minutes from Noida Sector 15 Metro, plus free online consultation.',
+      'Visa consultant in Noida for UK, USA, Canada, Schengen and Australia tourist visas. Visit our Sector 2 office near Sector 15 Metro or apply online.',
     h1: 'Visa Consultant in Noida',
     hero: [
       'A Visa Experts is based in Noida. If you are applying for a UK, USA, Canada, Schengen or Australia visa and would rather sit across a table than fill in a form alone, you are welcome to visit our office in Sector 2.',
@@ -493,7 +493,7 @@ export const CITY_PAGES = {
     kind: 'online',
     metaTitle: 'Visa Consultant for Delhi NCR | A Visa Experts',
     metaDescription:
-      'Visa help for Delhi NCR applicants, served from our Noida office - a short drive or a direct Blue Line ride away. UK, USA, Canada and Schengen visas, online or in person.',
+      'Visa help for Delhi NCR travellers from our Noida office. UK, USA, Canada and Schengen tourist visas, in person or online.',
     h1: 'Visa Help for Delhi Travellers - From Our Noida Office',
     hero: [
       'We do not have an office in Delhi. Delhi NCR applicants are served from our Noida office, which is a short drive away and directly connected by the Blue Line to Noida Sector 15 Metro.',
