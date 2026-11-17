@@ -146,6 +146,13 @@ const UkVisaProcessingTime = () => (
             </a>{' '}
             walkthrough.
           </p>
+          <p className="spage-subnote">
+            Already done with biometrics? Read{' '}
+            <a className="spage-link" href="/blog/uk-visa-processing-time-after-biometrics">
+              UK visa processing time after biometrics
+            </a>
+            .
+          </p>
         </div>
       </section>
 
