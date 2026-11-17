@@ -192,7 +192,7 @@ const LandingLayout = ({ children }) => {
         <div className="footer-wrapper">
           <div className="footer-section footer-logo-section">
             <img className="footer-logo" src="/images/user/tmlogo 1.webp" alt="A Visa Experts logo" />
-            <p>A Visa Expert helps individuals secure visas for the US, UK, Canada, New Zealand, and Australia. Our experienced team offers
+            <p>A Visa Experts helps individuals secure visas for the US, UK, Canada, New Zealand, and Australia. Our experienced team offers
               personalized guidance, ensuring a smooth application process for tourist and transit visas.</p>
           </div>
 
@@ -214,7 +214,11 @@ const LandingLayout = ({ children }) => {
           <div className="footer-section footer-second-clm">
             <h3>Get In Touch</h3>
             <ul>
-              <li><a href="/">Contact Us</a></li>
+              <li><a href="/contact">Contact Us</a></li>
+              <li><a href="tel:+919711000022">+91 9711000022</a></li>
+              <li><a href="mailto:info@avisaexperts.com">info@avisaexperts.com</a></li>
+              <li><a href="/visa-consultant-in-noida">Visa Consultant in Noida</a></li>
+              <li><a href="/visa-consultant-in-delhi">Visa Consultant for Delhi NCR</a></li>
             </ul>
           </div>
 

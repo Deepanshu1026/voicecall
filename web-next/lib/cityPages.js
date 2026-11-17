@@ -34,7 +34,7 @@ export const CITY_PAGES = {
       address: 'B Block, Sector 2, Noida, Uttar Pradesh 201301',
       phone: '+91 120-4502750',
       phoneHref: 'tel:+911204502750',
-      hours: 'Monday to Saturday, 10:00 am - 7:00 pm',
+      hours: 'Monday to Saturday, 10:00 am - 6:00 pm',
       travel: [
         {
           title: 'Coming from Delhi?',
@@ -487,10 +487,48 @@ export const CITY_PAGES = {
     kind: 'office',
   },
   delhi: {
-    status: 'draft',
+    status: 'published',
     city: 'Delhi',
     state: 'Delhi',
     kind: 'online',
+    metaTitle: 'Visa Consultant for Delhi NCR | A Visa Experts',
+    metaDescription:
+      'Visa help for Delhi NCR applicants, served from our Noida office - a short drive or a direct Blue Line ride away. UK, USA, Canada and Schengen visas, online or in person.',
+    h1: 'Visa Help for Delhi Travellers - From Our Noida Office',
+    hero: [
+      'We do not have an office in Delhi. Delhi NCR applicants are served from our Noida office, which is a short drive away and directly connected by the Blue Line to Noida Sector 15 Metro.',
+      'You can come to Noida, or do the whole thing online by phone, chat or video. Either way the work is the same: choosing the right visa, building the document file and preparing for the appointment or interview.',
+    ],
+    online: {
+      honest: 'To be clear: our office is in Noida, not Delhi. There is no A Visa Experts office in Delhi.',
+      steps: [
+        'Free consultation by phone, chat or video - or in person at Noida, whichever suits you.',
+        'Send your documents digitally for a full review before anything is submitted.',
+        'We complete and check the application form with you.',
+        'We book your biometrics or interview slot and tell you exactly what to carry.',
+      ],
+      centre: 'Visa application centres for the UK, USA, Canada and Schengen are all in Delhi NCR, so you are close to them. We confirm which centre applies to you and what to allow for travel.',
+    },
+    countries: [
+      { label: 'UK visa', href: '/uk-visa' },
+      { label: 'USA visa', href: '/usa-visa' },
+      { label: 'Canada visa', href: '/canada-visa' },
+      { label: 'Tourist visa', href: '/tourist-visa' },
+      { label: 'Transit visa', href: '/transit-visa' },
+    ],
+    documentsLinks: [
+      { label: 'UK tourist visa documents checklist', href: '/blog/uk-tourist-visa-documents-checklist' },
+      { label: 'USA visa document checklist', href: '/blog/usa-visa-document-checklist' },
+      { label: 'Tourist and visitor visa guide', href: '/blog/tourist-visitor-visa-from-india-a-simple-guide' },
+    ],
+    faqs: [
+      { q: 'Do you have an office in Delhi?', a: 'No. Our office is in Noida, and we serve Delhi NCR applicants from there - in person or online.' },
+      { q: 'How do I reach your Noida office from Delhi?', a: 'Take the Blue Line to Noida Sector 15 Metro Station; the office is a 5 minute walk away. The Blue Line runs directly from Rajiv Chowk / Connaught Place with no change of trains.' },
+      { q: 'Can everything be done without travelling to Noida?', a: 'Yes. Consultation, documents and the form can all be handled online. You only attend in person for biometrics or an interview.' },
+      { q: 'Can I apply for a UK visa from Delhi?', a: 'Yes. The application is online, and the biometrics appointment is in Delhi NCR. We prepare the file and book the slot.' },
+      { q: 'Do you help if my visa was refused before?', a: 'Yes. We read the refusal letter first and rebuild the application around the actual reason.' },
+      { q: 'Which visas do you handle for Delhi applicants?', a: 'UK, USA, Canada, Schengen, Australia, plus tourist, transit and family visit visas.' },
+    ],
   },
 };
 

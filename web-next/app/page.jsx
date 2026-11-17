@@ -2,14 +2,14 @@ import UserHome from '../components/pages/UserHome';
 import { resolveImageUrl, resolveReviewImage } from '../lib/imageUrl';
 
 export const metadata = {
-  title: 'A Visa Experts | Visitor Visa & Immigration Consultants',
+  title: 'Visa Consultant in Noida & Delhi NCR | A Visa Experts',
   description:
-    'Visitor visa and immigration consultancy in India. Expert guidance for UK, USA, Canada & Europe visitor visas, plus visa refusal support. Free advice.',
+    'A Visa Experts helps with tourist and transit visas for USA, UK, Canada, Europe and Australia. Visit our Noida office in Sector 2 or call +91 9711000022.',
   alternates: { canonical: 'https://avisaexperts.com/', languages: { en: '/', 'en-IN': '/', 'x-default': '/' } },
   openGraph: {
-    title: 'A Visa Experts | Visitor Visa & Immigration Consultants',
+    title: 'Visa Consultant in Noida & Delhi NCR | A Visa Experts',
     description:
-      'Visitor visa and immigration consultancy in India. Expert guidance for UK, USA, Canada & Europe visitor visas, plus visa refusal support.',
+      'Tourist and transit visas for USA, UK, Canada, Europe and Australia. Noida office in Sector 2, or call +91 9711000022.',
     url: 'https://avisaexperts.com/',
     images: ['/images/user/slider4 1.webp'],
   },

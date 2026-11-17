@@ -3879,8 +3879,19 @@ html {
   display: block;
 }
 
+/* Testimonials are rendered once each (no marquee duplication), so the track
+   wraps into a normal grid instead of one clipped, scrolling row. */
 .reviews-track-static {
   animation: none;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.reviews-wrapper:has(.reviews-track-static) {
+  -webkit-mask-image: none;
+  mask-image: none;
+  overflow: visible;
 }
 
 .flag-img {
@@ -3889,4 +3900,40 @@ html {
 
 .mask-alpha {
   mask-type: alpha;
+}
+
+/* Homepage location block */
+.home-location-section {
+  padding: 56px 24px 64px;
+  background: #f7f9fc;
+}
+
+.home-location-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.home-location-inner h2 {
+  margin: 0 0 14px;
+  font-size: 26px;
+  color: #0f172a;
+}
+
+.home-location-inner p {
+  margin: 0 auto 14px;
+  max-width: 760px;
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: #475569;
+}
+
+.home-location-links a {
+  color: #1a56db;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.home-location-links a:hover {
+  text-decoration: underline;
 }

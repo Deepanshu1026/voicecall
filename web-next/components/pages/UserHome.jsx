@@ -21,8 +21,20 @@ const UserHome = ({ initialReviews = [] }) => {
   const [reviews, setReviews] = useState(initialReviews);
   const [contactSettings, setContactSettings] = useState(DEFAULT_CONTACT);
 
+  // Keep one card per testimonial title, so the same heading never repeats.
+  const dedupeByTitle = (list) => {
+    const seen = new Set();
+    return list.filter((r) => {
+      const key = String(r.name || '').trim().toLowerCase();
+      if (!key) return true; // titleless reviews still show
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+
   const applyReviews = useCallback((list) => {
-    setReviews(list);
+    setReviews(dedupeByTitle(list));
   }, []);
 
   useEffect(() => {
@@ -191,12 +203,9 @@ const UserHome = ({ initialReviews = [] }) => {
     },
   ];
 
-  const trackReviews = useMemo(
-    () => (reviews.length > 1 ? [...reviews, ...reviews] : reviews),
-    [reviews]
-  );
-
-  const marqueeDuration = Math.max(30, reviews.length * 6);
+  // Each testimonial is rendered once. (It used to be duplicated to make a
+  // seamless marquee loop, which showed every name twice.)
+  const trackReviews = reviews;
 
   const renderStars = (rating) => {
     const stars = [];
@@ -245,7 +254,7 @@ const UserHome = ({ initialReviews = [] }) => {
         <div className="new-hero-sec">
           <div className="new-hero-left">
             <h1>
-              <span>Visitor Visa Services for International Travel.</span>
+              <span>Tourist and Transit Visa Services in Noida, Delhi NCR</span>
             </h1>
             <div className="parent_btn">
               <button className="herobtn" onClick={() => navigate('/book-appointment')}>
@@ -472,20 +481,15 @@ const UserHome = ({ initialReviews = [] }) => {
         </div>
 
         <div className="reviews-wrapper">
-          <div
-            className={`reviews-track${reviews.length > 1 ? '' : ' reviews-track-static'}`}
-            style={reviews.length > 1 ? { animationDuration: `${marqueeDuration}s` } : undefined}
-          >
+          <div className="reviews-track reviews-track-static">
             {trackReviews.map((review, idx) => {
               const visa = review.visa || review.title;
               const name = review.name;
               const label = name || visa || 'Client';
-              const isDuplicate = reviews.length > 1 && idx >= reviews.length;
               return (
                 <article
                   className="review-card"
                   key={`${review.id ?? idx}-${idx}`}
-                  aria-hidden={isDuplicate || undefined}
                 >
                   <div
                     className="review-media"
@@ -515,7 +519,7 @@ const UserHome = ({ initialReviews = [] }) => {
                     <p className="review-text">{review.text}</p>
                     <div className="review-footer">
                       <div className="review-meta">
-                        {name && <h3 className="review-name">{name}</h3>}
+                        {name && <p className="review-name">{name}</p>}
                         {visa && <span className="review-visa">{visa}</span>}
                       </div>
                     </div>
@@ -524,6 +528,25 @@ const UserHome = ({ initialReviews = [] }) => {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* Location */}
+      <section className="home-location-section">
+        <div className="home-location-inner">
+          <h2>Visit us in Noida, or work with us online</h2>
+          <p>
+            Our office is at B Block, Sector 2, Noida - a 5 minute walk from Noida Sector 15 Metro on the
+            Blue Line, which runs directly from Rajiv Chowk / Connaught Place. Delhi NCR clients are served
+            from the same office, or entirely online.
+          </p>
+          <p className="home-location-links">
+            <a href="/visa-consultant-in-noida">Visa consultant in Noida</a>
+            <span aria-hidden="true"> · </span>
+            <a href="/visa-consultant-in-delhi">Visa consultant for Delhi NCR</a>
+            <span aria-hidden="true"> · </span>
+            <a href="/contact">Contact us</a>
+          </p>
         </div>
       </section>
 
