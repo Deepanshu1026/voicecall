@@ -5,7 +5,7 @@ const URL = `${SITE}/australia-visa/transit-visa`;
 
 const TITLE = 'Australia Transit Visa for Indians 2026: Subclass 771 Explained';
 const DESCRIPTION =
-  'Do Indians need a transit visa for Australia? Yes, even for short layovers. Subclass 771 explained: the 72-hour limit, documents, how to apply, and when you need a tourist visa instead.';
+  'Do Indians need a transit visa for Australia? Yes, even for short layovers. Subclass 771 explained: the 72-hour limit, documents and how to apply.';
 
 export const metadata = {
   title: TITLE,
