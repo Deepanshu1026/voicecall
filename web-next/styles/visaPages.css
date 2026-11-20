@@ -1571,3 +1571,8 @@
   font-size: 17px;
   color: #94a3b8;
 }
+
+/* Australia hero */
+.hero-australia {
+  background: linear-gradient(135deg, #0b3d2c 0%, #157a52 55%, #0b3d2c 100%);
+}

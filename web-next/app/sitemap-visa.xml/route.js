@@ -20,6 +20,7 @@ const PAGES = [
   '/usa-visa/requirements',
   '/usa-visa/usa-b1b2-visa',
   '/canada-visa',
+  '/australia-visa/transit-visa',
 ];
 
 export async function GET() {
