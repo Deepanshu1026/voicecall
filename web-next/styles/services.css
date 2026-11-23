@@ -938,3 +938,11 @@
 
 /* Destination card image (replaces inline background-image) */
 .services-destination-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* Inline link inside the transit-visa about block */
+.visa-about-link {
+  color: #1a56db;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

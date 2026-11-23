@@ -127,6 +127,13 @@ const TransitVisa = () => {
                   Whether you need airport transit or short-term entry, we help you understand the rules and avoid delays,
                   so your journey continues smoothly without unexpected complications.
                 </p>
+                <p>
+                  Changing flights in the USA? See{' '}
+                  <a className="visa-about-link" href="/blog/usa-transit-visa-everything-you-need-to-know-before-flying">
+                    US transit visa for Indians
+                  </a>
+                  {' '}for the C-1 vs B1/B2 choice.
+                </p>
                 <button className="visa-about-button" onClick={() => navigate('/consultants')}>
                   Consult Now
                 </button>
