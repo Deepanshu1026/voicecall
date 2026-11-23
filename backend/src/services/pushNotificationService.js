@@ -44,12 +44,18 @@ function init() {
 }
 
 function buildMessage({ title, body, data = {}, imageUrl }) {
+  // FCM requires every data value to be a string, so coerce them here. The app
+  // reads data.url to open an external link when the notification is tapped.
+  const stringData = Object.fromEntries(
+    Object.entries(data || {}).map(([key, value]) => [key, value == null ? '' : String(value)])
+  );
+
   const message = {
     notification: {
       title,
       body,
     },
-    data,
+    data: stringData,
   };
 
   if (imageUrl) {

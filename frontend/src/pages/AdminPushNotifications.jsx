@@ -22,6 +22,7 @@ const AdminPushNotifications = () => {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [linkUrl, setLinkUrl] = useState('');
   const [dataKey, setDataKey] = useState('');
   const [dataValue, setDataValue] = useState('');
   const [confirmModal, setConfirmModal] = useState(null);
@@ -44,6 +45,12 @@ const AdminPushNotifications = () => {
     if (dataKey.trim() && dataValue.trim()) {
       data[dataKey.trim()] = dataValue.trim();
     }
+    // The app opens data.url when the notification is tapped, so a YouTube,
+    // Instagram or any other https link works out of the box.
+    const link = linkUrl.trim();
+    if (link) {
+      data.url = /^https?:\/\//i.test(link) ? link : `https://${link}`;
+    }
     return data;
   };
 
@@ -51,6 +58,7 @@ const AdminPushNotifications = () => {
     setTitle('');
     setBody('');
     setImageUrl('');
+    setLinkUrl('');
     setDataKey('');
     setDataValue('');
     setSelectedUserId('');
@@ -256,6 +264,21 @@ const AdminPushNotifications = () => {
               </div>
 
               <div className="push-form-group">
+                <label className="push-form-label">Open a link when tapped (optional)</label>
+                <input
+                  type="url"
+                  className="push-form-control"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                />
+                <div className="push-helper">
+                  Paste a YouTube, Instagram or any https link. When the user taps the notification, it opens in their
+                  phone&rsquo;s browser or app. Leave blank to open the app normally.
+                </div>
+              </div>
+
+              <div className="push-form-group">
                 <label className="push-form-label">Custom Data Payload (optional)</label>
                 <div className="push-data-row">
                   <input
@@ -409,6 +432,12 @@ const AdminPushNotifications = () => {
                 ? `You are about to send "${title.trim()}" to all ${totalTokens.toLocaleString()} active tokens. This action cannot be undone.`
                 : `You are about to send "${title.trim()}" to user ID ${selectedUserId.trim()}.`}
             </p>
+            {linkUrl.trim() && (
+              <p className="push-modal-link">
+                <i className="bi bi-box-arrow-up-right" /> Tapping it will open:{' '}
+                <strong>{getDataPayload().url}</strong>
+              </p>
+            )}
             <div className="push-modal-actions">
               <button
                 type="button"

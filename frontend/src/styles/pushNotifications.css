@@ -643,3 +643,19 @@
   color: #64748b;
   margin-top: 4px;
 }
+
+/* Link preview in the send-confirmation modal */
+.push-modal-link {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.push-modal-link .bi {
+  margin-right: 4px;
+}
