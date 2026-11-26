@@ -101,6 +101,13 @@ const UkVisaFees = () => (
             This page explains each part of the cost so you can understand what you are paying for when you check the
             current fee.
           </p>
+          <p className="spage-subnote">
+            Not sure which visa length to choose? Read{' '}
+            <a className="spage-link" href="/blog/uk-visa-duration-options">
+              UK visa duration options
+            </a>
+            .
+          </p>
           <div className="spage-btns">
             <a className="spage-btn primary" href={BOOK_URL}>
               Book a Consultation
