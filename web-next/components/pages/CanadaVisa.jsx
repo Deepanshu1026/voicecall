@@ -72,6 +72,7 @@ const faqs = [
 ];
 
 const guides = [
+  { label: 'Canada Transit Visa for Indians', href: '/canada-visa/transit-visa' },
   { label: 'Diwali abroad with family', href: '/blog/diwali-abroad-family-visa-guide' },
   { label: 'Canada eTA vs Visa: Kya Fark Hai?', href: '/blog/canada-eta-vs-visa' },
   { label: 'Your Guide to Canada Visa Application', href: '/blog/your-guide-to-canada-visa-application-a-visa-experts-visa-immigration-experts' },
@@ -181,6 +182,13 @@ const CanadaVisa = () => (
           <p>
             Indian passport holders are not eligible for Canada&rsquo;s Transit Without Visa program. If your layover is
             longer than 48 hours, or you plan to leave the airport and visit Canada, you need a tourist visa instead.
+          </p>
+          <p className="spage-subnote">
+            For the full rules, documents and steps, read our{' '}
+            <a className="spage-link" href="/canada-visa/transit-visa">
+              Canada transit visa for Indians
+            </a>
+            {' '}guide.
           </p>
         </div>
       </section>

@@ -1576,3 +1576,18 @@
 .hero-australia {
   background: linear-gradient(135deg, #0b3d2c 0%, #157a52 55%, #0b3d2c 100%);
 }
+
+/* Quick-answer callout used on visa pages */
+.spage-callout {
+  margin: 18px 0 0;
+  padding: 16px 20px;
+  border-left: 4px solid #4f46e5;
+  border-radius: 0 12px 12px 0;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.spage-callout strong {
+  color: #fff;
+}

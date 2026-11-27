@@ -50,8 +50,8 @@ const TransitVisa = () => {
 
   const highlights = [
     {
-      title: '100% Success Rate',
-      text: 'With years of experience and a commitment to excellence, we have achieved a strong success rate. Our experts carefully examine each application, ensuring every detail is correct and every requirement is met.',
+      title: 'Clear, Honest Guidance',
+      text: 'We explain the rules for your route in simple words and check your documents before you apply.',
     },
     {
       title: 'One Stop Solution',
@@ -59,7 +59,7 @@ const TransitVisa = () => {
     },
     {
       title: 'Expert Services',
-      text: 'We thoroughly examine every application, ensuring accuracy and completeness. As the Best Visa Immigration Company, we work diligently to meet all requirements for successful approval.',
+      text: 'We thoroughly examine every application, ensuring accuracy and completeness. Our team works through every requirement carefully before it is submitted.',
     },
   ];
 
@@ -119,9 +119,8 @@ const TransitVisa = () => {
                 <h2>Pass Through Countries Smoothly</h2>
                 <p>
                   A transit visa allows travelers to pass through a country on their way to another destination. It\u2019s typically
-                  required for short stays, even if you\u2019re only in the airport for a few hours. At A Visa Experts, the Best Visa
-                  Immigration Company, our Visa Immigration Experts provide clear guidance on transit visa requirements for
-                  different countries.
+                  required for short stays, even if you\u2019re only in the airport for a few hours. At A Visa Experts, our
+                  team provides clear guidance on transit visa requirements for different countries.
                 </p>
                 <p>
                   Whether you need airport transit or short-term entry, we help you understand the rules and avoid delays,
@@ -177,6 +176,13 @@ const TransitVisa = () => {
                 </div>
               ))}
             </div>
+            <p className="visa-about-link-line">
+              Flying through Toronto or Vancouver? Read our{' '}
+              <a className="visa-about-link" href="/canada-visa/transit-visa">
+                Canada transit visa guide
+              </a>
+              .
+            </p>
           </div>
         </section>
 

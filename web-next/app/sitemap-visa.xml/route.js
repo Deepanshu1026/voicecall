@@ -20,6 +20,7 @@ const PAGES = [
   '/usa-visa/requirements',
   '/usa-visa/usa-b1b2-visa',
   '/canada-visa',
+  '/canada-visa/transit-visa',
   '/australia-visa/transit-visa',
 ];
 

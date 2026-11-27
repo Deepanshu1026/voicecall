@@ -946,3 +946,11 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* Link line under a card grid on the transit-visa page */
+.visa-about-link-line {
+  margin: 26px 0 0;
+  text-align: center;
+  font-size: 15px;
+  color: #334155;
+}
